@@ -180,11 +180,20 @@ exports.updateProfile = async (req, res) => {
     }
 
     // Verify that text fields are included in updateData
+    console.log('=== PROFILE UPDATE DEBUG ===');
+    console.log('Profile update - companyName:', updateData.companyName);
     console.log('Profile update - description:', updateData.description?.substring(0, 50));
     console.log('Profile update - location:', updateData.location?.substring(0, 50));
     console.log('Profile update - whyJoinUs:', updateData.whyJoinUs?.substring(0, 50));
     console.log('Profile update - googleMapsEmbed:', updateData.googleMapsEmbed?.substring(0, 50));
+    console.log('Profile update - teamSize:', updateData.teamSize);
+    console.log('Profile update - establishedSince:', updateData.establishedSince);
+    console.log('Profile update - industrySector:', updateData.industrySector);
+    console.log('Profile update - companyType:', updateData.companyType);
+    console.log('Profile update - website:', updateData.website);
+    console.log('Profile update - corporateAddress:', updateData.corporateAddress);
     console.log('Profile update - all updateData keys:', Object.keys(updateData));
+    console.log('=== END DEBUG ===');
 
     const profile = await EmployerProfile.findOneAndUpdate(
       { employerId: req.user._id },
@@ -193,9 +202,19 @@ exports.updateProfile = async (req, res) => {
     ).populate('employerId', 'name email phone companyName');
 
     // Verify fields were saved to database
+    console.log('=== SAVED PROFILE DEBUG ===');
+    console.log('Saved profile - companyName:', profile.companyName);
+    console.log('Saved profile - description:', profile.description?.substring(0, 50));
+    console.log('Saved profile - location:', profile.location?.substring(0, 50));
     console.log('Saved profile - whyJoinUs:', profile.whyJoinUs?.substring(0, 50));
     console.log('Saved profile - googleMapsEmbed:', profile.googleMapsEmbed?.substring(0, 50));
-    console.log('Saved profile - location:', profile.location?.substring(0, 50));
+    console.log('Saved profile - teamSize:', profile.teamSize);
+    console.log('Saved profile - establishedSince:', profile.establishedSince);
+    console.log('Saved profile - industrySector:', profile.industrySector);
+    console.log('Saved profile - companyType:', profile.companyType);
+    console.log('Saved profile - website:', profile.website);
+    console.log('Saved profile - corporateAddress:', profile.corporateAddress);
+    console.log('=== END SAVED DEBUG ===');
 
     // Check if profile is now complete and notify admin for approval
     try {
@@ -228,6 +247,9 @@ exports.updateProfile = async (req, res) => {
       console.error('Notification creation failed:', notifError);
     }
 
+    // Clear employer-related caches when profile is updated
+    cacheInvalidation.clearEmployerGridCaches();
+
     res.json({ success: true, profile });
   } catch (error) {
     console.error('Profile update error:', error);
@@ -254,6 +276,9 @@ exports.uploadLogo = async (req, res) => {
       { new: true, upsert: true }
     );
 
+    // Clear employer grid caches when logo is updated
+    cacheInvalidation.clearEmployerGridCaches();
+
     res.json({ success: true, logo: logoBase64, profile });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -274,6 +299,9 @@ exports.uploadCover = async (req, res) => {
       { coverImage: coverBase64 },
       { new: true, upsert: true }
     );
+
+    // Clear employer grid caches when cover image is updated
+    cacheInvalidation.clearEmployerGridCaches();
 
     res.json({ success: true, coverImage: coverBase64, profile });
   } catch (error) {
@@ -297,6 +325,9 @@ exports.uploadDocument = async (req, res) => {
       updateData,
       { new: true, upsert: true }
     );
+
+    // Clear employer grid caches when document is updated
+    cacheInvalidation.clearEmployerGridCaches();
 
     res.json({ success: true, filePath: documentBase64, profile });
   } catch (error) {

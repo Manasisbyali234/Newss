@@ -149,7 +149,6 @@ function EmpSupport() {
             const requiredData = {
                 name: formData.name || 'Employer User',
                 email: formData.email, // This will be auto-fetched from login credentials
-                phone: formData.phone || 'Not provided',
                 userType: formData.userType,
                 userId: formData.userId || '',
                 subject: formData.subject,
@@ -157,6 +156,11 @@ function EmpSupport() {
                 priority: formData.priority,
                 message: formData.message
             };
+            
+            // Only add phone if it's a valid phone number
+            if (formData.phone && formData.phone.trim() && formData.phone !== 'Not provided') {
+                requiredData.phone = formData.phone;
+            }
             
             // Use fallback email if none found
             if (!requiredData.email) {
@@ -172,10 +176,15 @@ function EmpSupport() {
                 submitData.append('attachments', file);
             });
 
+            console.log('Submitting support ticket with data:', Object.fromEntries(submitData));
+            
             const response = await fetch('/api/public/support', {
                 method: 'POST',
                 body: submitData
             });
+            
+            console.log('Response status:', response.status);
+            console.log('Response headers:', Object.fromEntries(response.headers.entries()));
             
             if (response.ok) {
                 setIsSubmitted(true);
@@ -192,11 +201,25 @@ function EmpSupport() {
                 if (fileInput) fileInput.value = '';
             } else {
                 const data = await response.json();
-                setErrors({ submit: data.message || 'Failed to submit support ticket' });
+                console.log('Backend error response:', data);
+                
+                // Handle validation errors
+                if (data.errors && Array.isArray(data.errors)) {
+                    const errorMessages = data.errors.map(err => err.msg).join(', ');
+                    setErrors({ submit: `Validation Error: ${errorMessages}` });
+                } else {
+                    setErrors({ submit: data.message || 'Failed to submit support ticket' });
+                }
             }
         } catch (error) {
+            console.log('Support submission error:', error);
             
-            setErrors({ submit: 'Backend server not running. Please start the backend server on port 5000.' });
+            // Check if it's a network error
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                setErrors({ submit: 'Backend server not running. Please start the backend server on port 5000.' });
+            } else {
+                setErrors({ submit: `Network error: ${error.message}` });
+            }
         } finally {
             setIsSubmitting(false);
         }

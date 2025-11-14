@@ -323,20 +323,8 @@ export default function EmpPostedJobs() {
 													>
 														<Eye size={16} />
 													</button>
-													<button
-														className="btn btn-outline-success btn-sm"
-														onClick={() => navigate(`/employer/edit-job/${job._id}`)}
-														title="Edit Job"
-													>
-														<Edit size={16} />
-													</button>
-													<button
-														className={`btn btn-outline-${job.status === 'active' ? 'warning' : 'info'} btn-sm`}
-														onClick={() => handleStatusToggle(job._id, job.status)}
-														title={job.status === 'active' ? 'Deactivate Job' : 'Activate Job'}
-													>
-														{job.status === 'active' ? <Pause size={16} /> : <Play size={16} /> }
-													</button>
+
+
 												</div>
 											</div>
 										</div>

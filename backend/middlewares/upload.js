@@ -67,19 +67,15 @@ const upload = multer({
 const uploadGallery = multer({
   storage,
   fileFilter: (req, file, cb) => {
-    if (file.fieldname === 'gallery') {
-      if (file.mimetype.startsWith('image/')) {
-        cb(null, true);
-      } else {
-        cb(new Error('Only image files allowed for gallery'), false);
-      }
+    if (file.fieldname === 'gallery' && file.mimetype.startsWith('image/')) {
+      cb(null, true);
     } else {
-      cb(new Error('Invalid field name for gallery upload'), false);
+      cb(new Error('Only image files allowed'), false);
     }
   },
   limits: { 
-    fileSize: 2 * 1024 * 1024, // 2MB limit per image for gallery
-    files: 10 // Allow up to 10 files for gallery
+    fileSize: 2 * 1024 * 1024,
+    files: 10
   }
 });
 

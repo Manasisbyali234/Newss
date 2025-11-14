@@ -579,99 +579,53 @@ function EmpCompanyProfilePage() {
 
         const currentCount = formData.gallery?.length || 0;
         if (currentCount + files.length > 10) {
-            showToast(`You can only upload ${10 - currentCount} more images. Maximum 10 images allowed. Selected: ${files.length} files, Current: ${currentCount} images`, 'warning', 6000);
+            showToast(`Maximum 10 images allowed. Current: ${currentCount}`, 'warning');
             return;
         }
-
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml'];
-        const maxSize = 2 * 1024 * 1024; // 2MB
-
-        // Validate all files before upload
-        for (const file of files) {
-            if (!allowedTypes.includes(file.type)) {
-                showToast(`Invalid file type: ${file.name}. Only JPG, PNG, and SVG are allowed.`, 'error');
-                return;
-            }
-            if (file.size > maxSize) {
-                showToast(`File too large: ${file.name}. Maximum size is 2MB.`, 'error');
-                return;
-            }
-        }
-
-        // Show upload progress
-        showToast(`Uploading ${files.length} image${files.length > 1 ? 's' : ''}...`, 'info', 2000);
 
         const formDataObj = new FormData();
         files.forEach(file => formDataObj.append('gallery', file));
 
         try {
             const token = localStorage.getItem('employerToken');
-            if (!token) {
-                showToast('Please login again to upload files.', 'warning');
-                return;
-            }
-            
-            const data = await safeApiCall('http://localhost:5000/api/employer/profile/gallery', {
+            const response = await fetch('http://localhost:5000/api/employer/profile/gallery', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: formDataObj
             });
             
+            const data = await response.json();
+            
             if (data.success) {
-                setFormData(prev => ({
-                    ...prev,
-                    gallery: data.gallery || []
-                }));
-                showToast(`Successfully uploaded ${files.length} image${files.length > 1 ? 's' : ''} to gallery! Total images: ${data.gallery?.length || 0}/10`, 'success', 4000);
+                setFormData(prev => ({ ...prev, gallery: data.gallery }));
+                showToast(`Uploaded ${files.length} images successfully!`, 'success');
                 e.target.value = '';
             } else {
-                showToast(data.message || 'Gallery upload failed', 'error');
+                showToast(data.message || 'Upload failed', 'error');
             }
         } catch (error) {
-            if (error.name === 'AuthError') {
-                showToast('Session expired. Please login again.', 'warning');
-                localStorage.removeItem('employerToken');
-                window.location.href = '/employer/login';
-                return;
-            }
-            displayError(error, { useToast: true });
+            showToast('Upload failed', 'error');
         }
     };
 
     const handleDeleteGalleryImage = async (imageId) => {
-        if (!window.confirm('Are you sure you want to delete this image?')) {
-            return;
-        }
+        if (!window.confirm('Delete this image?')) return;
 
         try {
             const token = localStorage.getItem('employerToken');
-            if (!token) {
-                showToast('Please login again to delete files.', 'warning');
-                return;
-            }
-            
-            const data = await safeApiCall(`http://localhost:5000/api/employer/profile/gallery/${imageId}`, {
+            const response = await fetch(`http://localhost:5000/api/employer/profile/gallery/${imageId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             
+            const data = await response.json();
+            
             if (data.success) {
-                setFormData(prev => ({
-                    ...prev,
-                    gallery: data.gallery || []
-                }));
-                showToast('Gallery image deleted successfully!', 'success');
-            } else {
-                showToast(data.message || 'Failed to delete image', 'error');
+                setFormData(prev => ({ ...prev, gallery: data.gallery }));
+                showToast('Image deleted', 'success');
             }
         } catch (error) {
-            if (error.name === 'AuthError') {
-                showToast('Session expired. Please login again.', 'warning');
-                localStorage.removeItem('employerToken');
-                window.location.href = '/employer/login';
-                return;
-            }
-            displayError(error, { useToast: true });
+            showToast('Delete failed', 'error');
         }
     };
 

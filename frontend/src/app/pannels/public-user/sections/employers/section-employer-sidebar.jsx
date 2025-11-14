@@ -45,11 +45,27 @@ function SectionEmployerSidebar({ onFilterChange }) {
                 const establishedYearSet = new Set();
 
                 data.employers.forEach(emp => {
-                    if (emp.profile?.industry) industrySet.add(emp.profile.industry);
-                    if (emp.profile?.corporateAddress) locationSet.add(emp.profile.corporateAddress);
-                    if (emp.profile?.companyType) companyTypeSet.add(emp.profile.companyType);
-                    if (emp.establishedSince || emp.profile?.establishedSince) {
-                        establishedYearSet.add(emp.establishedSince || emp.profile.establishedSince);
+                    // Extract industry from both industrySector and industry fields
+                    const industry = emp.profile?.industrySector || emp.profile?.industry;
+                    if (industry && industry !== 'Various Industries') {
+                        industrySet.add(industry);
+                    }
+                    
+                    // Extract location from both corporateAddress and location fields
+                    const location = emp.profile?.corporateAddress || emp.profile?.location;
+                    if (location && location !== 'Multiple Locations') {
+                        locationSet.add(location);
+                    }
+                    
+                    // Extract company type
+                    if (emp.profile?.companyType) {
+                        companyTypeSet.add(emp.profile.companyType);
+                    }
+                    
+                    // Extract established year
+                    const establishedYear = emp.establishedSince || emp.profile?.establishedSince;
+                    if (establishedYear && establishedYear !== 'Not specified') {
+                        establishedYearSet.add(establishedYear);
                     }
                 });
 

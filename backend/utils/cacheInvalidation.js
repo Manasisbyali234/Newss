@@ -53,11 +53,34 @@ class CacheInvalidation {
   // Clear employer-specific caches
   clearEmployerCaches(employerId) {
     const keys = Array.from(this.cache.cache.keys());
+    
+    // Clear all employer-related caches
+    const employerPatterns = [
+      'employers_',
+      'recruiters_',
+      'employer_',
+      employerId ? `employerId=${employerId}` : null,
+      employerId ? `employer_${employerId}` : null
+    ].filter(Boolean);
+    
     keys.forEach(key => {
-      if (key.includes(`employerId=${employerId}`) || key.includes(`employer_${employerId}`)) {
+      if (employerPatterns.some(pattern => key.includes(pattern))) {
         this.cache.delete(key);
       }
     });
+    
+    console.log(`Cleared employer caches for ${employerId || 'all employers'}`);
+  }
+
+  // Clear all employer grid caches (when any profile is updated)
+  clearEmployerGridCaches() {
+    const keys = Array.from(this.cache.cache.keys());
+    keys.forEach(key => {
+      if (key.includes('employers_') || key.includes('recruiters_')) {
+        this.cache.delete(key);
+      }
+    });
+    console.log('Cleared all employer grid caches');
   }
 
   // Clear all caches (nuclear option)

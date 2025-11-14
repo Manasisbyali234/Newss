@@ -129,49 +129,18 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Body Parser Middleware with error handling
-app.use(express.json({ 
-  limit: '50mb',
-  verify: (req, res, buf, encoding) => {
-    // Log request size for debugging
-    if (buf && buf.length > 10 * 1024 * 1024) { // 10MB
-      // Removed console debug line for security;
-    }
-  }
-}));
+// Skip body parsing for file uploads
+app.use('/api/employer/profile/gallery', (req, res, next) => next());
+
+// Body Parser Middleware
+app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Handle payload too large errors
+// Handle errors
 app.use((error, req, res, next) => {
   if (error.type === 'entity.too.large') {
-    return res.status(413).json({
-      success: false,
-      message: 'Request too large. Please upload smaller files or reduce the number of attachments.'
-    });
+    return res.status(413).json({ success: false, message: 'Request too large' });
   }
-  
-  // Handle multer errors
-  if (error.code === 'LIMIT_FILE_SIZE') {
-    return res.status(413).json({
-      success: false,
-      message: 'File size too large. Each file must be under 15MB.'
-    });
-  }
-  
-  if (error.code === 'LIMIT_FILE_COUNT') {
-    return res.status(413).json({
-      success: false,
-      message: 'Too many files. Maximum 3 files allowed.'
-    });
-  }
-  
-  if (error.message && error.message.includes('File type not supported')) {
-    return res.status(400).json({
-      success: false,
-      message: error.message
-    });
-  }
-  
   next(error);
 });
 

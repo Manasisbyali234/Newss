@@ -394,15 +394,17 @@ exports.getEmployerProfile = async (req, res) => {
 
 exports.getEmployers = async (req, res) => {
   try {
-    const { page = 1, limit = 10, sortBy, keyword, location, industry, teamSize } = req.query;
+    const { page = 1, limit = 10, sortBy, keyword, location, industry, teamSize, companyType, establishedSince } = req.query;
     
     const keywordFilter = keyword?.trim();
     const locationFilter = location?.trim();
     const industryFilter = industry?.trim();
     const teamSizeFilter = teamSize?.trim();
+    const companyTypeFilter = companyType?.trim();
+    const establishedSinceFilter = establishedSince?.trim();
     const createRegex = (value) => new RegExp(value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
     
-    const cacheKey = `employers_v3_${JSON.stringify({ page, limit, sortBy, keyword: keywordFilter, location: locationFilter, industry: industryFilter, teamSize: teamSizeFilter })}`;
+    const cacheKey = `employers_v4_${JSON.stringify({ page, limit, sortBy, keyword: keywordFilter, location: locationFilter, industry: industryFilter, teamSize: teamSizeFilter, companyType: companyTypeFilter, establishedSince: establishedSinceFilter })}`;
     const cached = cache.get(cacheKey);
     
     if (cached) {
@@ -437,15 +439,27 @@ exports.getEmployers = async (req, res) => {
           pipeline: [
             {
               $project: {
+                // Basic Information
                 logo: 1,
-                industry: 1,
-                corporateAddress: 1,
-                website: 1,
-                companySize: 1,
-                teamSize: 1,
+                coverImage: 1,
+                companyName: 1,
+                description: 1,
                 location: 1,
+                whyJoinUs: 1,
+                website: 1,
                 establishedSince: 1,
-                foundedYear: 1
+                teamSize: 1,
+                
+                // Company Details
+                corporateAddress: 1,
+                companyType: 1,
+                industrySector: 1,
+                
+                // Legacy fields for backward compatibility
+                industry: 1,
+                companySize: 1,
+                foundedYear: 1,
+                companyDescription: 1
               }
             }
           ]
@@ -469,9 +483,9 @@ exports.getEmployers = async (req, res) => {
           jobCount: { $ifNull: [{ $arrayElemAt: ['$jobs.count', 0] }, 0] },
           establishedSince: {
             $ifNull: [
-              { $toInt: { $arrayElemAt: ['$profile.establishedSince', 0] } },
-              { $toInt: { $arrayElemAt: ['$profile.foundedYear', 0] } },
-              0
+              '$profile.establishedSince',
+              { $toString: '$profile.foundedYear' },
+              'Not specified'
             ]
           }
         }
@@ -481,7 +495,12 @@ exports.getEmployers = async (req, res) => {
     const matchConditions = [];
 
     if (keywordFilter) {
-      matchConditions.push({ companyName: createRegex(keywordFilter) });
+      matchConditions.push({
+        $or: [
+          { companyName: createRegex(keywordFilter) },
+          { 'profile.companyName': createRegex(keywordFilter) }
+        ]
+      });
     }
 
     if (locationFilter) {
@@ -495,7 +514,13 @@ exports.getEmployers = async (req, res) => {
     }
 
     if (industryFilter) {
-      matchConditions.push({ 'profile.industry': createRegex(industryFilter) });
+      const industryRegex = createRegex(industryFilter);
+      matchConditions.push({
+        $or: [
+          { 'profile.industrySector': industryRegex },
+          { 'profile.industry': industryRegex }
+        ]
+      });
     }
 
     if (teamSizeFilter) {
@@ -504,6 +529,19 @@ exports.getEmployers = async (req, res) => {
         $or: [
           { 'profile.teamSize': teamSizeRegex },
           { 'profile.companySize': teamSizeRegex }
+        ]
+      });
+    }
+
+    if (companyTypeFilter) {
+      matchConditions.push({ 'profile.companyType': createRegex(companyTypeFilter) });
+    }
+
+    if (establishedSinceFilter) {
+      matchConditions.push({
+        $or: [
+          { 'profile.establishedSince': createRegex(establishedSinceFilter) },
+          { 'profile.foundedYear': parseInt(establishedSinceFilter) || 0 }
         ]
       });
     }
@@ -522,8 +560,7 @@ exports.getEmployers = async (req, res) => {
           createdAt: 1,
           profile: 1,
           jobCount: 1,
-          establishedSince: 1,
-          foundedYear: 1
+          establishedSince: 1
         }
       },
       { $sort: sortCriteria },
@@ -542,10 +579,36 @@ exports.getEmployers = async (req, res) => {
     const employers = result.employers || [];
     const totalEmployers = result.totalCount[0]?.count || 0;
     
+    // Enhance employer data with proper field mapping
+    const enhancedEmployers = employers.map(employer => {
+      const profile = employer.profile || {};
+      
+      return {
+        ...employer,
+        // Use profile company name if available, fallback to employer company name
+        companyName: profile.companyName || employer.companyName,
+        // Map established since properly
+        establishedSince: profile.establishedSince || (profile.foundedYear ? profile.foundedYear.toString() : 'Not specified'),
+        profile: {
+          ...profile,
+          // Ensure all necessary fields are available
+          logo: profile.logo,
+          coverImage: profile.coverImage,
+          description: profile.description || profile.companyDescription || 'We are a dynamic company focused on delivering excellent services and creating opportunities for talented professionals.',
+          location: profile.location || profile.corporateAddress || 'Multiple Locations',
+          teamSize: profile.teamSize || profile.companySize || 'Growing',
+          industry: profile.industrySector || profile.industry || 'Various Industries',
+          companyType: profile.companyType || 'Company',
+          website: profile.website,
+          whyJoinUs: profile.whyJoinUs
+        }
+      };
+    });
+    
     const response = {
       success: true,
-      employers,
-      total: employers.length,
+      employers: enhancedEmployers,
+      total: enhancedEmployers.length,
       totalCount: totalEmployers,
       currentPage: parseInt(page),
       totalPages: Math.ceil(totalEmployers / parseInt(limit)),

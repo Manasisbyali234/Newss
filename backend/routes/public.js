@@ -36,8 +36,8 @@ router.post('/support', uploadSupport.array('attachments', 3), [
   body('message').notEmpty().withMessage('Message is required'),
   body('userType').isIn(['employer', 'candidate', 'guest']).withMessage('Valid user type is required'),
   body('category').optional().isIn(['technical', 'billing', 'account', 'job-posting', 'application', 'general']),
-  body('priority').optional().isIn(['low', 'medium', 'high', 'urgent']),
-  ...phoneValidationRules()
+  body('priority').optional().isIn(['low', 'medium', 'high', 'urgent'])
+  // Removed phone validation to make it truly optional
 ], handleValidationErrors, publicController.submitSupportTicket);
 
 // Content Routes

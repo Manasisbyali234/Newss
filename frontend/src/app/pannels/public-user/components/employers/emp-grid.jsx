@@ -164,13 +164,13 @@ const EmployersGridPage = memo(() => {
                                 <h4 className="job-title">{employer.companyName}</h4>
                                 <div className="job-location">
                                     <i className="feather-map-pin" />
-                                    {employer.profile?.corporateAddress || 'Multiple Locations'}
+                                    {employer.profile?.location || employer.profile?.corporateAddress || 'Multiple Locations'}
                                 </div>
                             </div>
                         </div>
                         <div className="job-type-badge">
                             <span className="job-type-pill full-time">
-                                {employer.profile?.industry || 'Company'}
+                                {employer.profile?.industry || employer.profile?.industrySector || 'Company'}
                             </span>
                         </div>
                     </div>
