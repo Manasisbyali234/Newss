@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { api } from "../../../../../utils/api";
 import { validatePhoneNumber, ensureCountryCode } from "../../../../../utils/phoneValidation";
+import PhoneInput from "../../../../../components/PhoneInput";
 
 function SectionCandicateBasicInfo() {
     const [formData, setFormData] = useState({
@@ -170,19 +171,19 @@ function SectionCandicateBasicInfo() {
                                 <div className="form-group">
                                     <label>Phone</label>
                                     <div className="ls-inputicon-box">
-                                        <input 
-                                            className={`form-control ${errors.phone ? 'is-invalid' : ''}`} 
-                                            name="company_phone" 
-                                            type="text" 
-                                            placeholder="+91 9876543210" 
+                                        <PhoneInput
                                             value={formData.phone}
-                                            onChange={(e) => handleInputChange('phone', e.target.value)}
+                                            onChange={(value) => handleInputChange('phone', value)}
+                                            error={errors.phone}
+                                            setError={(errorSetter) => {
+                                                if (typeof errorSetter === 'function') {
+                                                    setErrors(errorSetter);
+                                                }
+                                            }}
+                                            name="phone"
+                                            placeholder="+91 9876543210"
+                                            className=""
                                         />
-                                        {errors.phone && (
-                                            <div className="text-danger mt-1" style={{fontSize: '12px'}}>
-                                                {errors.phone}
-                                            </div>
-                                        )}
                                         <i className="fs-input-icon fa fa-phone-alt" />
                                     </div>
                                 </div>

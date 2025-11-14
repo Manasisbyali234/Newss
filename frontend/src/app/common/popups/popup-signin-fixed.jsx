@@ -15,9 +15,30 @@ function SignInPopup() {
     const [placementpassword, setPlacementPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [showCanPassword, setShowCanPassword] = useState(false);
     const [showEmpPassword, setShowEmpPassword] = useState(false);
     const [showPlacementPassword, setShowPlacementPassword] = useState(false);
+    const [errorTimeout, setErrorTimeout] = useState(null);
+
+    const clearMessages = () => {
+        setError('');
+        setSuccess('');
+        if (errorTimeout) {
+            clearTimeout(errorTimeout);
+            setErrorTimeout(null);
+        }
+    };
+
+    const setErrorWithTimeout = (message) => {
+        setError(message);
+        if (errorTimeout) clearTimeout(errorTimeout);
+        const timeout = setTimeout(() => {
+            setError('');
+            setErrorTimeout(null);
+        }, 3000); // 3 seconds
+        setErrorTimeout(timeout);
+    };
 
     useEffect(() => {
         setCanUsername('');
@@ -26,12 +47,43 @@ function SignInPopup() {
         setEmpPassword('');
         setPlacementUsername('');
         setPlacementPassword('');
+        clearMessages();
+
+        // Clear messages when modal opens
+        const modal = document.getElementById('sign_up_popup2');
+        const handleModalShow = () => {
+            clearMessages();
+        };
+
+        // Clear messages when tabs change
+        const handleTabChange = () => {
+            clearMessages();
+        };
+
+        if (modal) {
+            modal.addEventListener('show.bs.modal', handleModalShow);
+            
+            // Add event listeners for tab changes
+            const tabButtons = modal.querySelectorAll('[data-bs-toggle="tab"]');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', handleTabChange);
+            });
+
+            return () => {
+                modal.removeEventListener('show.bs.modal', handleModalShow);
+                tabButtons.forEach(button => {
+                    button.removeEventListener('click', handleTabChange);
+                });
+                if (errorTimeout) clearTimeout(errorTimeout);
+            };
+        }
     }, []);
 
     const handleCandidateLogin = async (event) => {
         event.preventDefault();
         setLoading(true);
         setError('');
+        setSuccess('');
         
         const result = await login({
             email: canusername.trim(),
@@ -41,7 +93,7 @@ function SignInPopup() {
         if (result.success) {
             moveToCandidate();
         } else {
-            setError(result.message);
+            setErrorWithTimeout(result.message);
         }
         setLoading(false);
     }
@@ -50,6 +102,7 @@ function SignInPopup() {
         event.preventDefault();
         setLoading(true);
         setError('');
+        setSuccess('');
         
         const result = await login({
             email: empusername,
@@ -59,7 +112,7 @@ function SignInPopup() {
         if (result.success) {
             moveToEmployer();
         } else {
-            setError(result.message);
+            setErrorWithTimeout(result.message);
         }
         setLoading(false);
     }
@@ -82,6 +135,7 @@ function SignInPopup() {
         event.preventDefault();
         setLoading(true);
         setError('');
+        setSuccess('');
         
         const result = await login({
             email: placementusername,
@@ -91,7 +145,7 @@ function SignInPopup() {
         if (result.success) {
             moveToPlacement();
         } else {
-            setError(result.message);
+            setErrorWithTimeout(result.message);
         }
         setLoading(false);
     }
@@ -102,6 +156,43 @@ function SignInPopup() {
         bootstrapModal?.hide();
         navigate(placementRoute(placement.DASHBOARD));
     }
+
+    const handleForgotPassword = () => {
+        const modal = document.getElementById('sign_up_popup2');
+        const bootstrapModal = window.bootstrap?.Modal?.getInstance(modal);
+        bootstrapModal?.hide();
+        navigate(pubRoute(publicUser.pages.FORGOT));
+    }
+
+    const buttonStyle = {
+        backgroundColor: '#1967d2',
+        color: '#f0f6fe',
+        border: '1px solid #1967d2',
+        borderRadius: '10px',
+        padding: '12px',
+        fontWeight: 700,
+        fontSize: '16px',
+        minHeight: '48px',
+        transition: 'background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease',
+        width: '100%',
+        maxWidth: 'none',
+        minWidth: '100%',
+        display: 'block',
+        boxSizing: 'border-box',
+        flex: '1 1 100%'
+    };
+
+    const handleButtonEnter = (event) => {
+        event.currentTarget.style.backgroundColor = '#165bbf';
+        event.currentTarget.style.borderColor = '#165bbf';
+        event.currentTarget.style.color = '#f0f6fe';
+    };
+
+    const handleButtonLeave = (event) => {
+        event.currentTarget.style.backgroundColor = '#1967d2';
+        event.currentTarget.style.borderColor = '#1967d2';
+        event.currentTarget.style.color = '#f0f6fe';
+    };
 
     return (
 			<>
@@ -114,6 +205,7 @@ function SignInPopup() {
 				>
 					<div className="modal-dialog modal-dialog-centered">
 						<div className="modal-content">
+							{/* <form> */}
 							<div className="modal-header">
 								<h2 className="modal-title" id="sign_up_popupLabel2">
 									Login
@@ -137,9 +229,8 @@ function SignInPopup() {
 												data-bs-toggle="tab"
 												data-bs-target="#login-candidate"
 												type="button"
-												style={{color: '#ffffff'}} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#ffffff'}
 											>
-												<i className="fas fa-user-tie" style={{color: '#ffffff'}} />
+												<i className="fas fa-user-tie" />
 												Candidate
 											</button>
 										</li>
@@ -151,9 +242,8 @@ function SignInPopup() {
 												data-bs-toggle="tab"
 												data-bs-target="#login-Employer"
 												type="button"
-												style={{color: '#ffffff'}} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#ffffff'}
 											>
-												<i className="fas fa-building" style={{color: '#ffffff'}} />
+												<i className="fas fa-building" />
 												Employer
 											</button>
 										</li>
@@ -164,9 +254,8 @@ function SignInPopup() {
 												data-bs-toggle="tab"
 												data-bs-target="#login-Placement"
 												type="button"
-												style={{color: '#ffffff'}} onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#ffffff'}
 											>
-												<i className="fas fa-graduation-cap" style={{color: '#ffffff'}} />
+												<i className="fas fa-graduation-cap" />
 												Placement Officer
 											</button>
 										</li>
@@ -183,6 +272,11 @@ function SignInPopup() {
 												{error && (
 													<div className="col-12">
 														<div className="alert alert-danger">{error}</div>
+													</div>
+												)}
+												{success && (
+													<div className="col-12">
+														<div className="alert alert-success">{success}</div>
 													</div>
 												)}
 												<div className="col-lg-12">
@@ -216,21 +310,19 @@ function SignInPopup() {
 																setCanPassword(event.target.value);
 															}}
 														/>
-														<button
-															type="button"
-															className="btn position-absolute password-eye-icon"
-															style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+														<span
+															style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', userSelect: 'none', background: '#f8f9fa', padding: '5px 8px', borderRadius: '4px' }}
 															onClick={() => setShowCanPassword(!showCanPassword)}
 														>
-															<i className={showCanPassword ? "fas fa-eye-slash" : "fas fa-eye"} style={{ color: '#fd7e14', pointerEvents: 'none' }} />
-														</button>
+															<i className={showCanPassword ? "fas fa-eye-slash" : "fas fa-eye"} style={{ color: '#fd7e14' }} />
+														</span>
 													</div>
 												</div>
 
 												<div className="col-lg-12">
 													<div className="form-group mb-3">
 														<div className="text-end">
-															<NavLink to={pubRoute(publicUser.pages.FORGOT)} onClick={() => navigate(pubRoute(publicUser.pages.FORGOT))}>Forgot Password</NavLink>
+															<a onClick={handleForgotPassword} style={{cursor: 'pointer'}}>Forgot Password</a>
 														</div>
 													</div>
 												</div>
@@ -238,23 +330,15 @@ function SignInPopup() {
 												<div className="col-md-12">
 													<button
 														type="submit"
-														className="site-button"
-														style={{width: '120px', maxWidth: '120px'}}
+														style={buttonStyle}
+														onMouseEnter={handleButtonEnter}
+														onMouseLeave={handleButtonLeave}
 													>
 														Log in
 													</button>
 
-													<div className="mt-3 mb-3">
-														Don't have an account ?
-														<button
-															className="twm-backto-login"
-															data-bs-target="#sign_up_popup"
-															data-bs-toggle="modal"
-															data-bs-dismiss="modal"
-															style={{width: '80px', maxWidth: '80px', padding: '5px 10px'}}
-														>
-															Sign Up
-														</button>
+													<div className="mt-3 mb-3" style={{color: "#000"}}>
+														Don't have an account? <a href="#sign_up_popup" data-bs-target="#sign_up_popup" data-bs-toggle="modal" data-bs-dismiss="modal" onClick={clearMessages} style={{textDecoration: "underline", cursor: "pointer", color: "#fd7e14"}}>Sign Up</a>
 													</div>
 												</div>
 											</div>
@@ -270,6 +354,11 @@ function SignInPopup() {
 												{error && (
 													<div className="col-12">
 														<div className="alert alert-danger">{error}</div>
+													</div>
+												)}
+												{success && (
+													<div className="col-12">
+														<div className="alert alert-success">{success}</div>
 													</div>
 												)}
 												<div className="col-lg-12">
@@ -303,21 +392,19 @@ function SignInPopup() {
 																setEmpPassword(event.target.value);
 															}}
 														/>
-														<button
-															type="button"
-															className="btn position-absolute password-eye-icon"
-															style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+														<span
+															style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', userSelect: 'none', background: '#f8f9fa', padding: '5px 8px', borderRadius: '4px' }}
 															onClick={() => setShowEmpPassword(!showEmpPassword)}
 														>
-															<i className={showEmpPassword ? "fas fa-eye-slash" : "fas fa-eye"} style={{ color: '#fd7e14', pointerEvents: 'none' }} />
-														</button>
+															<i className={showEmpPassword ? "fas fa-eye-slash" : "fas fa-eye"} style={{ color: '#fd7e14' }} />
+														</span>
 													</div>
 												</div>
 
 												<div className="col-lg-12">
 													<div className="form-group mb-3">
 														<div className="text-end">
-															<a href="/forgot-password">Forgot Password</a>
+															<a onClick={handleForgotPassword} style={{cursor: 'pointer'}}>Forgot Password</a>
 														</div>
 													</div>
 												</div>
@@ -325,23 +412,15 @@ function SignInPopup() {
 												<div className="col-md-12">
 													<button
 														type="submit"
-														className="site-button"
-														style={{width: '120px', maxWidth: '120px'}}
+														style={buttonStyle}
+														onMouseEnter={handleButtonEnter}
+														onMouseLeave={handleButtonLeave}
 													>
 														Log in
 													</button>
 
-													<div className="mt-3 mb-3">
-														Don't have an account ?
-														<button
-															className="twm-backto-login"
-															data-bs-target="#sign_up_popup"
-															data-bs-toggle="modal"
-															data-bs-dismiss="modal"
-															style={{width: '80px', maxWidth: '80px', padding: '5px 10px'}}
-														>
-															Sign Up
-														</button>
+													<div className="mt-3 mb-3" style={{color: "#000"}}>
+														Don't have an account? <a href="#sign_up_popup" data-bs-target="#sign_up_popup" data-bs-toggle="modal" data-bs-dismiss="modal" onClick={clearMessages} style={{textDecoration: "underline", cursor: "pointer", color: "#fd7e14"}}>Sign Up</a>
 													</div>
 												</div>
 											</div>
@@ -357,6 +436,11 @@ function SignInPopup() {
 												{error && (
 													<div className="col-12">
 														<div className="alert alert-danger">{error}</div>
+													</div>
+												)}
+												{success && (
+													<div className="col-12">
+														<div className="alert alert-success">{success}</div>
 													</div>
 												)}
 												<div className="col-lg-12">
@@ -390,21 +474,19 @@ function SignInPopup() {
 																setPlacementPassword(event.target.value);
 															}}
 														/>
-														<button
-															type="button"
-															className="btn position-absolute password-eye-icon"
-															style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-															onClick={() => setShowPlacementPassword(!showPlacementPassword)}
+														<span
+															style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', userSelect: 'none', background: '#f8f9fa', padding: '5px 8px', borderRadius: '4px' }}
+															onClick={() => setPlacementPassword(!showPlacementPassword)}
 														>
-															<i className={showPlacementPassword ? "fas fa-eye-slash" : "fas fa-eye"} style={{ color: '#fd7e14', pointerEvents: 'none' }} />
-														</button>
+															<i className={showPlacementPassword ? "fas fa-eye-slash" : "fas fa-eye"} style={{ color: '#fd7e14' }} />
+														</span>
 													</div>
 												</div>
 
 												<div className="col-lg-12">
 													<div className="form-group mb-3">
 														<div className="text-end">
-															<NavLink to={pubRoute(publicUser.pages.FORGOT)} onClick={() => navigate(pubRoute(publicUser.pages.FORGOT))}>Forgot Password</NavLink>
+															<a onClick={handleForgotPassword} style={{cursor: 'pointer'}}>Forgot Password</a>
 														</div>
 													</div>
 												</div>
@@ -412,23 +494,15 @@ function SignInPopup() {
 												<div className="col-md-12">
 													<button
 														type="submit"
-														className="site-button"
-														style={{width: '120px', maxWidth: '120px'}}
+														style={buttonStyle}
+														onMouseEnter={handleButtonEnter}
+														onMouseLeave={handleButtonLeave}
 													>
 														Log in
 													</button>
 
-													<div className="mt-3 mb-3">
-														Don't have an account ?
-														<button
-															className="twm-backto-login"
-															data-bs-target="#sign_up_popup"
-															data-bs-toggle="modal"
-															data-bs-dismiss="modal"
-															style={{width: '80px', maxWidth: '80px', padding: '5px 10px'}}
-														>
-															Sign Up
-														</button>
+													<div className="mt-3 mb-3" style={{color: "#000"}}>
+														Don't have an account? <a href="#sign_up_popup" data-bs-target="#sign_up_popup" data-bs-toggle="modal" data-bs-dismiss="modal" onClick={clearMessages} style={{textDecoration: "underline", cursor: "pointer", color: "#fd7e14"}}>Sign Up</a>
 													</div>
 												</div>
 											</div>
@@ -436,6 +510,7 @@ function SignInPopup() {
 									</div>
 								</div>
 							</div>
+							{/* </form> */}
 						</div>
 					</div>
 				</div>

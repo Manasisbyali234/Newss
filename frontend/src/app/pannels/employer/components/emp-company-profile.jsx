@@ -2,7 +2,11 @@ import { Briefcase, Building, Calendar, FileText, Globe, Hash, IdCard, Image as 
 import { useEffect, useState } from "react";
 import { loadScript } from "../../../../globals/constants";
 import CountryCodeSelector from "../../../../components/CountryCodeSelector";
+import { ErrorDisplay, GlobalErrorDisplay } from "../../../../components/ErrorDisplay";
+import { validateField, validateForm, displayError, safeApiCall, getErrorMessage } from "../../../../utils/errorHandler";
+import showToast from "../../../../utils/toastNotification";
 import './emp-company-profile.css';
+import '../../../../components/ErrorDisplay.css';
 
 function EmpCompanyProfilePage() {
     const [formData, setFormData] = useState({
@@ -64,7 +68,27 @@ function EmpCompanyProfilePage() {
     const [loading, setLoading] = useState(false);
     const [authSections, setAuthSections] = useState([{ id: 1, companyName: '' }]);
     const [errors, setErrors] = useState({});
+    const [globalErrors, setGlobalErrors] = useState([]);
     const [fetchingCity, setFetchingCity] = useState(false);
+    const [validationRules] = useState({
+        companyName: { required: true, minLength: 2 },
+        phone: { required: true, phone: true },
+        email: { required: true, email: true },
+        website: { url: true },
+        establishedSince: { year: true },
+        corporateAddress: { minLength: 10 },
+        officialEmail: { email: true },
+        officialMobile: { phone: true },
+        cin: { pattern: /^[A-Z]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/, patternMessage: 'Invalid CIN format. Must be 21 characters (e.g., U12345AB1234ABC123456)' },
+        gstNumber: { pattern: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/, patternMessage: 'Invalid GST format. Must be 15 characters (e.g., 12ABCDE1234F1Z5)' },
+        panNumber: { pattern: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, patternMessage: 'Invalid PAN format. Must be 10 characters (e.g., ABCDE1234F)' },
+        contactFullName: { required: true, minLength: 2 },
+        contactLastName: { required: true, minLength: 2 },
+        contactDesignation: { required: true, minLength: 2 },
+        contactOfficialEmail: { required: true, email: true },
+        contactMobile: { required: true, phone: true },
+        alternateContact: { phone: true }
+    });
 
     useEffect(() => {
         loadScript("js/custom.js");
@@ -75,22 +99,16 @@ function EmpCompanyProfilePage() {
         try {
             const token = localStorage.getItem('employerToken');
             if (!token) {
-                alert('Please login to access your profile.');
+                showToast('Please login to access your profile.', 'warning');
                 window.location.href = '/employer/login';
                 return;
             }
-            const response = await fetch('http://localhost:5000/api/employer/profile', {
+            
+            const data = await safeApiCall('http://localhost:5000/api/employer/profile', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            const data = await response.json();
-            if (response.status === 401) {
-                alert('Session expired. Please login again.');
-                localStorage.removeItem('employerToken');
-                window.location.href = '/employer/login';
-                return;
-            }
             if (data.success && data.profile) {
                 const profileData = { ...data.profile };
 
@@ -175,101 +193,50 @@ function EmpCompanyProfilePage() {
                 }
             }
         } catch (error) {
-            
+            if (error.name === 'AuthError') {
+                showToast('Session expired. Please login again.', 'warning');
+                localStorage.removeItem('employerToken');
+                window.location.href = '/employer/login';
+                return;
+            }
+            displayError(error, { useToast: true });
         }
     };
 
     const handleInputChange = async (field, value) => {
+        // Handle uppercase conversion for specific fields
+        if (['cin', 'gstNumber', 'panNumber'].includes(field)) {
+            value = value.toUpperCase();
+        }
+        
         setFormData(prev => ({ ...prev, [field]: value }));
         
-        // Clear error when user starts typing
-        if (errors[field]) {
-            setErrors(prev => ({ ...prev, [field]: '' }));
+        // Clear global errors when user starts making changes
+        if (globalErrors.length > 0) {
+            setGlobalErrors([]);
+        }
+        
+        // Real-time validation
+        const fieldRules = validationRules[field];
+        if (fieldRules) {
+            const fieldErrors = validateField(field, value, fieldRules);
+            setErrors(prev => ({
+                ...prev,
+                [field]: fieldErrors.length > 0 ? fieldErrors : undefined
+            }));
+        } else {
+            // Clear error for fields without validation rules
+            setErrors(prev => {
+                const newErrors = { ...prev };
+                delete newErrors[field];
+                return newErrors;
+            });
         }
         
         // Fetch city when pincode is entered
         if (field === 'pincode' && value.length === 6) {
             await fetchCityFromPincode(value);
         }
-        
-        // Real-time validation for specific fields
-        const newErrors = { ...errors };
-        
-        switch (field) {
-            case 'email':
-            case 'officialEmail':
-            case 'contactOfficialEmail':
-                if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                    newErrors[field] = 'Please enter a valid email address';
-                } else {
-                    delete newErrors[field];
-                }
-                break;
-            case 'phone':
-            case 'officialMobile':
-            case 'contactMobile':
-            case 'alternateContact':
-                if (value) {
-                    const cleanNumber = value.replace(/[\s\-\(\)]/g, '');
-                    if (cleanNumber.length < 7 || cleanNumber.length > 15) {
-                        newErrors[field] = 'Phone number must be between 7-15 digits';
-                    } else {
-                        delete newErrors[field];
-                    }
-                } else {
-                    delete newErrors[field];
-                }
-                break;
-            case 'website':
-                if (value && !/^https?:\/\/.+/.test(value)) {
-                    newErrors[field] = 'Website must start with http:// or https://';
-                } else {
-                    delete newErrors[field];
-                }
-                break;
-            case 'establishedSince':
-                if (value && !/^\d{4}$/.test(value)) {
-                    newErrors[field] = 'Please enter a valid 4-digit year';
-                } else {
-                    delete newErrors[field];
-                }
-                break;
-            case 'cin':
-                // Convert to uppercase
-                value = value.toUpperCase();
-                setFormData(prev => ({ ...prev, [field]: value }));
-                
-                if (value && !/^[A-Z]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/.test(value)) {
-                    newErrors[field] = 'Invalid CIN format. Must be 21 characters (e.g., U12345AB1234ABC123456)';
-                } else {
-                    delete newErrors[field];
-                }
-                break;
-            case 'gstNumber':
-                // Convert to uppercase
-                value = value.toUpperCase();
-                setFormData(prev => ({ ...prev, [field]: value }));
-                
-                if (value && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(value)) {
-                    newErrors[field] = 'Invalid GST format. Must be 15 characters (e.g., 12ABCDE1234F1Z5)';
-                } else {
-                    delete newErrors[field];
-                }
-                break;
-            case 'panNumber':
-                // Convert to uppercase
-                value = value.toUpperCase();
-                setFormData(prev => ({ ...prev, [field]: value }));
-                
-                if (value && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(value)) {
-                    newErrors[field] = 'Invalid PAN format. Must be 10 characters (e.g., ABCDE1234F)';
-                } else {
-                    delete newErrors[field];
-                }
-                break;
-        }
-        
-        setErrors(newErrors);
     };
 
     const fetchCityFromPincode = async (pincode) => {
@@ -283,121 +250,39 @@ function EmpCompanyProfilePage() {
             if (data && data[0]?.Status === 'Success' && data[0]?.PostOffice?.length > 0) {
                 const city = data[0].PostOffice[0].District;
                 setFormData(prev => ({ ...prev, city }));
+                showToast(`City auto-filled: ${city}`, 'success', 2000);
             } else {
                 setFormData(prev => ({ ...prev, city: '' }));
-                alert('Invalid pincode or city not found');
+                showToast('Invalid pincode or city not found', 'warning');
             }
         } catch (error) {
             console.error('Error fetching city:', error);
+            showToast('Failed to fetch city from pincode', 'error');
         } finally {
             setFetchingCity(false);
         }
     };
 
-    const validateForm = () => {
-        const newErrors = {};
+    const validateFormData = () => {
+        const formErrors = validateForm(formData, validationRules);
+        setErrors(formErrors);
         
-        // Basic Information Validation
-        if (!formData.companyName?.trim()) {
-            newErrors.companyName = 'Company name is required';
-        } else if (formData.companyName.length < 2) {
-            newErrors.companyName = 'Company name must be at least 2 characters';
+        const errorCount = Object.keys(formErrors).length;
+        if (errorCount > 0) {
+            const errorMessages = [];
+            Object.entries(formErrors).forEach(([field, fieldErrors]) => {
+                if (Array.isArray(fieldErrors)) {
+                    fieldErrors.forEach(error => {
+                        errorMessages.push(`${field}: ${error}`);
+                    });
+                } else {
+                    errorMessages.push(`${field}: ${fieldErrors}`);
+                }
+            });
+            setGlobalErrors(errorMessages);
         }
         
-        if (!formData.phone?.trim()) {
-            newErrors.phone = 'Phone number is required';
-        } else {
-            const cleanNumber = formData.phone.replace(/[\s\-\(\)]/g, '');
-            if (cleanNumber.length < 7 || cleanNumber.length > 15) {
-                newErrors.phone = 'Phone number must be between 7-15 digits';
-            }
-        }
-        
-        if (!formData.email?.trim()) {
-            newErrors.email = 'Email address is required';
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            newErrors.email = 'Please enter a valid email address';
-        }
-        
-        if (formData.website && !/^https?:\/\/.+/.test(formData.website)) {
-            newErrors.website = 'Website must start with http:// or https://';
-        }
-        
-        if (formData.establishedSince && !/^\d{4}$/.test(formData.establishedSince)) {
-            newErrors.establishedSince = 'Please enter a valid 4-digit year';
-        }
-        
-        // Company Details Validation
-        if (formData.corporateAddress && formData.corporateAddress.length < 10) {
-            newErrors.corporateAddress = 'Corporate address must be at least 10 characters';
-        }
-        
-        if (formData.officialEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.officialEmail)) {
-            newErrors.officialEmail = 'Please enter a valid official email address';
-        }
-        
-        if (formData.officialMobile) {
-            const cleanNumber = formData.officialMobile.replace(/[\s\-\(\)]/g, '');
-            if (cleanNumber.length < 7 || cleanNumber.length > 15) {
-                newErrors.officialMobile = 'Official mobile number must be between 7-15 digits';
-            }
-        }
-        
-        if (formData.cin && !/^[A-Z]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/.test(formData.cin)) {
-            newErrors.cin = 'Invalid CIN format. Must be 21 characters (e.g., U12345AB1234ABC123456)';
-        }
-        
-        if (formData.gstNumber && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(formData.gstNumber)) {
-            newErrors.gstNumber = 'Invalid GST format. Must be 15 characters (e.g., 12ABCDE1234F1Z5)';
-        }
-        
-        if (formData.panNumber && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(formData.panNumber)) {
-            newErrors.panNumber = 'Invalid PAN format. Must be 10 characters (e.g., ABCDE1234F)';
-        }
-        
-        // Primary Contact Validation
-        if (!formData.contactFullName?.trim()) {
-            newErrors.contactFullName = 'Full name is required';
-        } else if (formData.contactFullName.length < 2) {
-            newErrors.contactFullName = 'Full name must be at least 2 characters';
-        }
-        
-        if (!formData.contactLastName?.trim()) {
-            newErrors.contactLastName = 'Last name is required';
-        } else if (formData.contactLastName.length < 2) {
-            newErrors.contactLastName = 'Last name must be at least 2 characters';
-        }
-        
-        if (!formData.contactDesignation?.trim()) {
-            newErrors.contactDesignation = 'Designation is required';
-        } else if (formData.contactDesignation.length < 2) {
-            newErrors.contactDesignation = 'Designation must be at least 2 characters';
-        }
-        
-        if (!formData.contactOfficialEmail?.trim()) {
-            newErrors.contactOfficialEmail = 'Official email is required';
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contactOfficialEmail)) {
-            newErrors.contactOfficialEmail = 'Please enter a valid email address';
-        }
-        
-        if (!formData.contactMobile?.trim()) {
-            newErrors.contactMobile = 'Contact mobile number is required';
-        } else {
-            const cleanNumber = formData.contactMobile.replace(/[\s\-\(\)]/g, '');
-            if (cleanNumber.length < 7 || cleanNumber.length > 15) {
-                newErrors.contactMobile = 'Contact mobile number must be between 7-15 digits';
-            }
-        }
-        
-        if (formData.alternateContact) {
-            const cleanNumber = formData.alternateContact.replace(/[\s\-\(\)]/g, '');
-            if (cleanNumber.length < 7 || cleanNumber.length > 15) {
-                newErrors.alternateContact = 'Alternate contact number must be between 7-15 digits';
-            }
-        }
-        
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
+        return errorCount === 0;
     };
 
     // Validate image file by size, type, and minimum dimensions
@@ -452,7 +337,7 @@ function EmpCompanyProfilePage() {
             allowedTypes: ['image/jpeg', 'image/png']
         });
         if (!result.ok) {
-            alert(`Logo: ${result.message}`);
+            showToast(`Logo upload failed: ${result.message}`, 'error');
             return;
         }
 
@@ -461,29 +346,30 @@ function EmpCompanyProfilePage() {
         try {
             const token = localStorage.getItem('employerToken');
             if (!token) {
-                alert('Please login again to upload files.');
+                showToast('Please login again to upload files.', 'warning');
                 return;
             }
-            const response = await fetch('http://localhost:5000/api/employer/profile/logo', {
+            
+            const data = await safeApiCall('http://localhost:5000/api/employer/profile/logo', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
                 body
             });
-            const data = await response.json();
-            if (response.status === 401) {
-                alert('Session expired. Please login again.');
+            
+            if (data.success) {
+                handleInputChange('logo', data.logo);
+                showToast('Logo uploaded successfully!', 'success');
+            } else {
+                showToast(data.message || 'Logo upload failed', 'error');
+            }
+        } catch (error) {
+            if (error.name === 'AuthError') {
+                showToast('Session expired. Please login again.', 'warning');
                 localStorage.removeItem('employerToken');
                 window.location.href = '/employer/login';
                 return;
             }
-            if (data.success) {
-                handleInputChange('logo', data.logo);
-            } else {
-                alert(data.message || 'Logo upload failed');
-            }
-        } catch (error) {
-            
-            alert('Logo upload failed. Please try again.');
+            displayError(error, { useToast: true });
         }
     };
 
@@ -499,7 +385,7 @@ function EmpCompanyProfilePage() {
             allowedTypes: ['image/jpeg', 'image/png']
         });
         if (!result.ok) {
-            alert(`Cover Image: ${result.message}`);
+            showToast(`Cover image upload failed: ${result.message}`, 'error');
             return;
         }
 
@@ -508,29 +394,30 @@ function EmpCompanyProfilePage() {
         try {
             const token = localStorage.getItem('employerToken');
             if (!token) {
-                alert('Please login again to upload files.');
+                showToast('Please login again to upload files.', 'warning');
                 return;
             }
-            const response = await fetch('http://localhost:5000/api/employer/profile/cover', {
+            
+            const data = await safeApiCall('http://localhost:5000/api/employer/profile/cover', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
                 body
             });
-            const data = await response.json();
-            if (response.status === 401) {
-                alert('Session expired. Please login again.');
+            
+            if (data.success) {
+                handleInputChange('coverImage', data.coverImage);
+                showToast('Cover image uploaded successfully!', 'success');
+            } else {
+                showToast(data.message || 'Cover image upload failed', 'error');
+            }
+        } catch (error) {
+            if (error.name === 'AuthError') {
+                showToast('Session expired. Please login again.', 'warning');
                 localStorage.removeItem('employerToken');
                 window.location.href = '/employer/login';
                 return;
             }
-            if (data.success) {
-                handleInputChange('coverImage', data.coverImage);
-            } else {
-                alert(data.message || 'Cover image upload failed');
-            }
-        } catch (error) {
-            
-            alert('Cover image upload failed. Please try again.');
+            displayError(error, { useToast: true });
         }
     };
 
@@ -542,11 +429,11 @@ function EmpCompanyProfilePage() {
         const maxBytes = 5 * 1024 * 1024;
         const allowed = ['image/jpeg', 'image/png', 'application/pdf'];
         if (file.size > maxBytes) {
-            alert('Document is too large. Max size is 5MB.');
+            showToast('Document is too large. Max size is 5MB.', 'error');
             return;
         }
         if (!allowed.includes(file.type)) {
-            alert('Invalid document type. Allowed: JPEG, PNG, PDF.');
+            showToast('Invalid document type. Allowed: JPEG, PNG, PDF.', 'error');
             return;
         }
 
@@ -556,29 +443,30 @@ function EmpCompanyProfilePage() {
         try {
             const token = localStorage.getItem('employerToken');
             if (!token) {
-                alert('Please login again to upload files.');
+                showToast('Please login again to upload files.', 'warning');
                 return;
             }
-            const response = await fetch('http://localhost:5000/api/employer/profile/document', {
+            
+            const data = await safeApiCall('http://localhost:5000/api/employer/profile/document', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: body
             });
-            const data = await response.json();
-            if (response.status === 401) {
-                alert('Session expired. Please login again.');
+            
+            if (data.success) {
+                handleInputChange(fieldName, data.filePath);
+                showToast('Document uploaded successfully!', 'success');
+            } else {
+                showToast(data.message || 'Document upload failed', 'error');
+            }
+        } catch (error) {
+            if (error.name === 'AuthError') {
+                showToast('Session expired. Please login again.', 'warning');
                 localStorage.removeItem('employerToken');
                 window.location.href = '/employer/login';
                 return;
             }
-            if (data.success) {
-                handleInputChange(fieldName, data.filePath);
-            } else {
-                alert(data.message || 'Document upload failed');
-            }
-        } catch (error) {
-            
-            alert('Document upload failed. Please try again.');
+            displayError(error, { useToast: true });
         }
     };
 
@@ -592,7 +480,7 @@ function EmpCompanyProfilePage() {
 
         // For consultancy, require company name
         if (formData.employerCategory === 'consultancy' && !companyName.trim()) {
-            alert('Please enter the company name before uploading the authorization letter.');
+            showToast('Please enter the company name before uploading the authorization letter.', 'warning');
             return;
         }
 
@@ -600,11 +488,11 @@ function EmpCompanyProfilePage() {
         const maxBytes = 5 * 1024 * 1024;
         const allowed = ['image/jpeg', 'image/png', 'application/pdf'];
         if (file.size > maxBytes) {
-            alert('Document is too large. Max size is 5MB.');
+            showToast('Document is too large. Max size is 5MB.', 'error');
             return;
         }
         if (!allowed.includes(file.type)) {
-            alert('Invalid document type. Allowed: JPEG, PNG, PDF.');
+            showToast('Invalid document type. Allowed: JPEG, PNG, PDF.', 'error');
             return;
         }
 
@@ -616,35 +504,35 @@ function EmpCompanyProfilePage() {
         try {
             const token = localStorage.getItem('employerToken');
             if (!token) {
-                alert('Please login again to upload files.');
+                showToast('Please login again to upload files.', 'warning');
                 return;
             }
-            const response = await fetch('http://localhost:5000/api/employer/profile/authorization-letter', {
+            
+            const data = await safeApiCall('http://localhost:5000/api/employer/profile/authorization-letter', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: body
             });
-            const data = await response.json();
-            if (response.status === 401) {
-                alert('Session expired. Please login again.');
-                localStorage.removeItem('employerToken');
-                window.location.href = '/employer/login';
-                return;
-            }
+            
             if (data.success) {
                 setFormData(prev => ({
                     ...prev,
                     authorizationLetters: data.profile.authorizationLetters || []
                 }));
-                alert('Authorization letter uploaded successfully!');
+                showToast('Authorization letter uploaded successfully!', 'success');
                 // Clear the file input
                 e.target.value = '';
             } else {
-                alert(data.message || 'Document upload failed');
+                showToast(data.message || 'Document upload failed', 'error');
             }
         } catch (error) {
-            
-            alert('Document upload failed. Please try again.');
+            if (error.name === 'AuthError') {
+                showToast('Session expired. Please login again.', 'warning');
+                localStorage.removeItem('employerToken');
+                window.location.href = '/employer/login';
+                return;
+            }
+            displayError(error, { useToast: true });
         }
     };
 
@@ -656,32 +544,32 @@ function EmpCompanyProfilePage() {
         try {
             const token = localStorage.getItem('employerToken');
             if (!token) {
-                alert('Please login again to delete files.');
+                showToast('Please login again to delete files.', 'warning');
                 return;
             }
-            const response = await fetch(`http://localhost:5000/api/employer/profile/authorization-letter/${documentId}`, {
+            
+            const data = await safeApiCall(`http://localhost:5000/api/employer/profile/authorization-letter/${documentId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            const data = await response.json();
-            if (response.status === 401) {
-                alert('Session expired. Please login again.');
-                localStorage.removeItem('employerToken');
-                window.location.href = '/employer/login';
-                return;
-            }
+            
             if (data.success) {
                 setFormData(prev => ({
                     ...prev,
                     authorizationLetters: data.profile.authorizationLetters || []
                 }));
-                alert('Authorization letter deleted successfully!');
+                showToast('Authorization letter deleted successfully!', 'success');
             } else {
-                alert(data.message || 'Failed to delete document');
+                showToast(data.message || 'Failed to delete document', 'error');
             }
         } catch (error) {
-            
-            alert('Failed to delete document. Please try again.');
+            if (error.name === 'AuthError') {
+                showToast('Session expired. Please login again.', 'warning');
+                localStorage.removeItem('employerToken');
+                window.location.href = '/employer/login';
+                return;
+            }
+            displayError(error, { useToast: true });
         }
     };
 
@@ -691,23 +579,27 @@ function EmpCompanyProfilePage() {
 
         const currentCount = formData.gallery?.length || 0;
         if (currentCount + files.length > 10) {
-            alert(`You can only upload ${10 - currentCount} more images. Maximum 10 images allowed.`);
+            showToast(`You can only upload ${10 - currentCount} more images. Maximum 10 images allowed. Selected: ${files.length} files, Current: ${currentCount} images`, 'warning', 6000);
             return;
         }
 
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/svg+xml'];
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml'];
         const maxSize = 2 * 1024 * 1024; // 2MB
 
+        // Validate all files before upload
         for (const file of files) {
             if (!allowedTypes.includes(file.type)) {
-                alert(`Invalid file type: ${file.name}. Only JPG, PNG, and SVG are allowed.`);
+                showToast(`Invalid file type: ${file.name}. Only JPG, PNG, and SVG are allowed.`, 'error');
                 return;
             }
             if (file.size > maxSize) {
-                alert(`File too large: ${file.name}. Maximum size is 2MB.`);
+                showToast(`File too large: ${file.name}. Maximum size is 2MB.`, 'error');
                 return;
             }
         }
+
+        // Show upload progress
+        showToast(`Uploading ${files.length} image${files.length > 1 ? 's' : ''}...`, 'info', 2000);
 
         const formDataObj = new FormData();
         files.forEach(file => formDataObj.append('gallery', file));
@@ -715,34 +607,34 @@ function EmpCompanyProfilePage() {
         try {
             const token = localStorage.getItem('employerToken');
             if (!token) {
-                alert('Please login again to upload files.');
+                showToast('Please login again to upload files.', 'warning');
                 return;
             }
-            const response = await fetch('http://localhost:5000/api/employer/profile/gallery', {
+            
+            const data = await safeApiCall('http://localhost:5000/api/employer/profile/gallery', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: formDataObj
             });
-            const data = await response.json();
-            if (response.status === 401) {
-                alert('Session expired. Please login again.');
-                localStorage.removeItem('employerToken');
-                window.location.href = '/employer/login';
-                return;
-            }
+            
             if (data.success) {
                 setFormData(prev => ({
                     ...prev,
                     gallery: data.gallery || []
                 }));
-                alert('Gallery images uploaded successfully!');
+                showToast(`Successfully uploaded ${files.length} image${files.length > 1 ? 's' : ''} to gallery! Total images: ${data.gallery?.length || 0}/10`, 'success', 4000);
                 e.target.value = '';
             } else {
-                alert(data.message || 'Gallery upload failed');
+                showToast(data.message || 'Gallery upload failed', 'error');
             }
         } catch (error) {
-            
-            alert('Gallery upload failed. Please try again.');
+            if (error.name === 'AuthError') {
+                showToast('Session expired. Please login again.', 'warning');
+                localStorage.removeItem('employerToken');
+                window.location.href = '/employer/login';
+                return;
+            }
+            displayError(error, { useToast: true });
         }
     };
 
@@ -754,32 +646,32 @@ function EmpCompanyProfilePage() {
         try {
             const token = localStorage.getItem('employerToken');
             if (!token) {
-                alert('Please login again to delete files.');
+                showToast('Please login again to delete files.', 'warning');
                 return;
             }
-            const response = await fetch(`http://localhost:5000/api/employer/profile/gallery/${imageId}`, {
+            
+            const data = await safeApiCall(`http://localhost:5000/api/employer/profile/gallery/${imageId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            const data = await response.json();
-            if (response.status === 401) {
-                alert('Session expired. Please login again.');
-                localStorage.removeItem('employerToken');
-                window.location.href = '/employer/login';
-                return;
-            }
+            
             if (data.success) {
                 setFormData(prev => ({
                     ...prev,
                     gallery: data.gallery || []
                 }));
-                alert('Gallery image deleted successfully!');
+                showToast('Gallery image deleted successfully!', 'success');
             } else {
-                alert(data.message || 'Failed to delete image');
+                showToast(data.message || 'Failed to delete image', 'error');
             }
         } catch (error) {
-            
-            alert('Failed to delete image. Please try again.');
+            if (error.name === 'AuthError') {
+                showToast('Session expired. Please login again.', 'warning');
+                localStorage.removeItem('employerToken');
+                window.location.href = '/employer/login';
+                return;
+            }
+            displayError(error, { useToast: true });
         }
     };
 
@@ -804,7 +696,7 @@ function EmpCompanyProfilePage() {
         e.preventDefault();
         setLoading(true);
         
-        if (!validateForm()) {
+        if (!validateFormData()) {
             setLoading(false);
             // Scroll to first error
             const firstErrorField = document.querySelector('.is-invalid');
@@ -812,6 +704,7 @@ function EmpCompanyProfilePage() {
                 firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 firstErrorField.focus();
             }
+            showToast('Please fix the validation errors before submitting', 'warning');
             return;
         }
         
@@ -892,33 +785,39 @@ function EmpCompanyProfilePage() {
                 body: JSON.stringify(profileData)
             });
 
-            if (response.ok) {
-                const responseData = await response.json();
+            const data = await safeApiCall('http://localhost:5000/api/employer/profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(profileData)
+            });
+
+            if (data.success) {
                 let successMessage = 'Profile updated successfully!';
                 
                 // Check if whyJoinUs and googleMapsEmbed were saved
                 if (profileData.whyJoinUs || profileData.googleMapsEmbed) {
-                    successMessage += '\n\nGoogle Maps and Why Join Us sections have been saved.';
+                    successMessage += ' Google Maps and Why Join Us sections have been saved.';
                 }
                 
-                alert(successMessage);
+                showToast(successMessage, 'success', 4000);
                 // Refresh profile data to get latest state
                 fetchProfile();
             } else {
-                const error = await response.json();
-                if (response.status === 413) {
-                    alert('Request too large. Please ensure all files are uploaded individually before saving the profile.');
-                } else {
-                    alert(error.message || 'Failed to update profile');
-                }
+                showToast(data.message || 'Failed to update profile', 'error');
             }
         } catch (error) {
-            
-            if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-                alert('Network error or request too large. Please check your connection and ensure all files are uploaded individually.');
-            } else {
-                alert('Failed to update profile. Please try again.');
+            if (error.name === 'AuthError') {
+                showToast('Session expired. Please login again.', 'warning');
+                localStorage.removeItem('employerToken');
+                window.location.href = '/employer/login';
+                return;
             }
+            
+            const errorMessage = getErrorMessage(error, 'profile');
+            showToast(errorMessage, 'error');
         } finally {
             setLoading(false);
         }
@@ -934,6 +833,14 @@ function EmpCompanyProfilePage() {
                     <i className="fas fa-info-circle me-2"></i>
                     <strong>Tip:</strong> Upload all files (logo, documents, etc.) individually first, then click "Save Profile" to save your text information.
                 </div>
+                
+                {globalErrors.length > 0 && (
+                    <GlobalErrorDisplay 
+                        errors={globalErrors}
+                        onDismiss={() => setGlobalErrors([])}
+                        className="mt-3"
+                    />
+                )}
             </div>
             </div>
 
@@ -1039,11 +946,7 @@ function EmpCompanyProfilePage() {
                                         onChange={(e) => handleInputChange('companyName', e.target.value)}
                                         placeholder="Enter company name"
                                     />
-                                    {errors.companyName && (
-                                        <div className="text-danger mt-1" style={{fontSize: '12px'}}>
-                                            {errors.companyName}
-                                        </div>
-                                    )}
+                                    <ErrorDisplay errors={errors} fieldName="companyName" />
                                 </div>
                             </div>
 
@@ -1063,11 +966,7 @@ function EmpCompanyProfilePage() {
                                             placeholder="9087654321"
                                         />
                                     </div>
-                                    {errors.phone && (
-                                        <div className="text-danger mt-1" style={{fontSize: '12px'}}>
-                                            {errors.phone}
-                                        </div>
-                                    )}
+                                    <ErrorDisplay errors={errors} fieldName="phone" />
                                 </div>
                             </div>
 
@@ -1081,11 +980,7 @@ function EmpCompanyProfilePage() {
                                         onChange={(e) => handleInputChange('email', e.target.value)}
                                         placeholder="company@example.com"
                                     />
-                                    {errors.email && (
-                                        <div className="text-danger mt-1" style={{fontSize: '12px'}}>
-                                            {errors.email}
-                                        </div>
-                                    )}
+                                    <ErrorDisplay errors={errors} fieldName="email" />
                                 </div>
                             </div>
 
@@ -1099,11 +994,7 @@ function EmpCompanyProfilePage() {
                                         onChange={(e) => handleInputChange('website', e.target.value)}
                                         placeholder="https://..."
                                     />
-                                    {errors.website && (
-                                        <div className="text-danger mt-1" style={{fontSize: '12px'}}>
-                                            {errors.website}
-                                        </div>
-                                    )}
+                                    <ErrorDisplay errors={errors} fieldName="website" />
                                 </div>
                             </div>
 
@@ -1117,11 +1008,7 @@ function EmpCompanyProfilePage() {
                                         onChange={(e) => handleInputChange('establishedSince', e.target.value)}
                                         placeholder="2020"
                                     />
-                                    {errors.establishedSince && (
-                                        <div className="text-danger mt-1" style={{fontSize: '12px'}}>
-                                            {errors.establishedSince}
-                                        </div>
-                                    )}
+                                    <ErrorDisplay errors={errors} fieldName="establishedSince" />
                                 </div>
                             </div>
 
@@ -1256,11 +1143,7 @@ function EmpCompanyProfilePage() {
                                         onChange={(e) => handleInputChange('corporateAddress', e.target.value)}
                                         placeholder="Enter corporate address"
                                     />
-                                    {errors.corporateAddress && (
-                                        <div className="text-danger mt-1" style={{fontSize: '12px'}}>
-                                            {errors.corporateAddress}
-                                        </div>
-                                    )}
+                                    <ErrorDisplay errors={errors} fieldName="corporateAddress" />
                                 </div>
                             </div>
 
@@ -1317,11 +1200,7 @@ function EmpCompanyProfilePage() {
                                         onChange={(e) => handleInputChange('officialEmail', e.target.value)}
                                         placeholder="email@company.com"
                                     />
-                                    {errors.officialEmail && (
-                                        <div className="text-danger mt-1" style={{fontSize: '12px'}}>
-                                            {errors.officialEmail}
-                                        </div>
-                                    )}
+                                    <ErrorDisplay errors={errors} fieldName="officialEmail" />
                                 </div>
                             </div>
 
@@ -1341,11 +1220,7 @@ function EmpCompanyProfilePage() {
                                             placeholder="9876543210"
                                         />
                                     </div>
-                                    {errors.officialMobile && (
-                                        <div className="text-danger mt-1" style={{fontSize: '12px'}}>
-                                            {errors.officialMobile}
-                                        </div>
-                                    )}
+                                    <ErrorDisplay errors={errors} fieldName="officialMobile" />
                                 </div>
                             </div>
 
@@ -1379,11 +1254,7 @@ function EmpCompanyProfilePage() {
                                         onChange={(e) => handleInputChange('cin', e.target.value)}
                                         placeholder="U12345AB1234ABC123456"
                                     />
-                                    {errors.cin && (
-                                        <div className="text-danger mt-1" style={{fontSize: '12px'}}>
-                                            {errors.cin}
-                                        </div>
-                                    )}
+                                    <ErrorDisplay errors={errors} fieldName="cin" />
                                 </div>
                             </div>
 
@@ -1397,11 +1268,7 @@ function EmpCompanyProfilePage() {
                                         onChange={(e) => handleInputChange('gstNumber', e.target.value)}
                                         placeholder="12ABCDE1234F1Z5"
                                     />
-                                    {errors.gstNumber && (
-                                        <div className="text-danger mt-1" style={{fontSize: '12px'}}>
-                                            {errors.gstNumber}
-                                        </div>
-                                    )}
+                                    <ErrorDisplay errors={errors} fieldName="gstNumber" />
                                 </div>
                             </div>
 
@@ -1435,11 +1302,7 @@ function EmpCompanyProfilePage() {
                                         onChange={(e) => handleInputChange('panNumber', e.target.value)}
                                         placeholder="ABCDE1234F"
                                     />
-                                    {errors.panNumber && (
-                                        <div className="text-danger mt-1" style={{fontSize: '12px'}}>
-                                            {errors.panNumber}
-                                        </div>
-                                    )}
+                                    <ErrorDisplay errors={errors} fieldName="panNumber" />
                                 </div>
                             </div>
 
@@ -1657,11 +1520,7 @@ function EmpCompanyProfilePage() {
                                         onChange={(e) => handleInputChange('contactFullName', e.target.value)}
                                         placeholder="Enter Full Name"
                                     />
-                                    {errors.contactFullName && (
-                                        <div className="text-danger mt-1" style={{fontSize: '12px'}}>
-                                            {errors.contactFullName}
-                                        </div>
-                                    )}
+                                    <ErrorDisplay errors={errors} fieldName="contactFullName" />
                                 </div>
                             </div>
 
@@ -1688,11 +1547,7 @@ function EmpCompanyProfilePage() {
                                         onChange={(e) => handleInputChange('contactLastName', e.target.value)}
                                         placeholder="Enter Last Name"
                                     />
-                                    {errors.contactLastName && (
-                                        <div className="text-danger mt-1" style={{fontSize: '12px'}}>
-                                            {errors.contactLastName}
-                                        </div>
-                                    )}
+                                    <ErrorDisplay errors={errors} fieldName="contactLastName" />
                                 </div>
                             </div>
 
@@ -1706,11 +1561,7 @@ function EmpCompanyProfilePage() {
                                         onChange={(e) => handleInputChange('contactDesignation', e.target.value)}
                                         placeholder="e.g., HR Manager, Recruitment Lead, Founder"
                                     />
-                                    {errors.contactDesignation && (
-                                        <div className="text-danger mt-1" style={{fontSize: '12px'}}>
-                                            {errors.contactDesignation}
-                                        </div>
-                                    )}
+                                    <ErrorDisplay errors={errors} fieldName="contactDesignation" />
                                 </div>
                             </div>
 
@@ -1724,11 +1575,7 @@ function EmpCompanyProfilePage() {
                                         onChange={(e) => handleInputChange('contactOfficialEmail', e.target.value)}
                                         placeholder="Enter official email"
                                     />
-                                    {errors.contactOfficialEmail && (
-                                        <div className="text-danger mt-1" style={{fontSize: '12px'}}>
-                                            {errors.contactOfficialEmail}
-                                        </div>
-                                    )}
+                                    <ErrorDisplay errors={errors} fieldName="contactOfficialEmail" />
                                 </div>
                             </div>
 
@@ -1748,11 +1595,7 @@ function EmpCompanyProfilePage() {
                                             placeholder="9876543210"
                                         />
                                     </div>
-                                    {errors.contactMobile && (
-                                        <div className="text-danger mt-1" style={{fontSize: '12px'}}>
-                                            {errors.contactMobile}
-                                        </div>
-                                    )}
+                                    <ErrorDisplay errors={errors} fieldName="contactMobile" />
                                 </div>
                             </div>
 
@@ -1799,11 +1642,7 @@ function EmpCompanyProfilePage() {
                                             placeholder="9876543210"
                                         />
                                     </div>
-                                    {errors.alternateContact && (
-                                        <div className="text-danger mt-1" style={{fontSize: '12px'}}>
-                                            {errors.alternateContact}
-                                        </div>
-                                    )}
+                                    <ErrorDisplay errors={errors} fieldName="alternateContact" />
                                 </div>
                             </div>
                         </div>
@@ -1820,17 +1659,32 @@ function EmpCompanyProfilePage() {
                             <div className="col-md-12">
                                 <div className="form-group">
                                     <label><Upload size={16} className="me-2" /> Upload Gallery Images (Max 10 images)</label>
-                                    <input
-                                        className="form-control"
-                                        type="file"
-                                        accept=".jpg,.jpeg,.png,.svg"
-                                        multiple
-                                        onChange={handleGalleryUpload}
-                                        disabled={formData.gallery?.length >= 10}
-                                    />
-                                    <p className="text-muted mt-2">
-                                        Upload up to 10 images (JPG, PNG, SVG). Max 2MB per image.
-                                    </p>
+                                    <div className="upload-gallery-container" style={{border: '2px dashed #ddd', borderRadius: '8px', padding: '20px', textAlign: 'center', backgroundColor: '#f8f9fa'}}>
+                                        <input
+                                            className="form-control"
+                                            type="file"
+                                            accept="image/jpeg,image/jpg,image/png,image/svg+xml,.jpg,.jpeg,.png,.svg"
+                                            multiple
+                                            onChange={handleGalleryUpload}
+                                            disabled={formData.gallery?.length >= 10}
+                                            style={{marginBottom: '10px'}}
+                                        />
+                                        <div className="upload-info">
+                                            <Images size={24} className="text-muted mb-2" />
+                                            <p className="text-muted mb-1">
+                                                <strong>Select multiple images at once</strong>
+                                            </p>
+                                            <p className="text-muted small">
+                                                Upload up to {10 - (formData.gallery?.length || 0)} more images (JPG, PNG, SVG). Max 2MB per image.
+                                            </p>
+                                            {formData.gallery?.length >= 10 && (
+                                                <p className="text-warning small">
+                                                    <i className="fas fa-exclamation-triangle me-1"></i>
+                                                    Maximum 10 images reached. Delete some images to upload more.
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             

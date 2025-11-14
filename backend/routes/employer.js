@@ -4,14 +4,16 @@ const router = express.Router();
 const employerController = require('../controllers/employerController');
 const employerPasswordController = require('../controllers/employerPasswordController');
 const { auth } = require('../middlewares/auth');
-const { upload } = require('../middlewares/upload');
+const { upload, uploadGallery } = require('../middlewares/upload');
 const handleValidationErrors = require('../middlewares/validation');
+const { mobileValidationRules } = require('../middlewares/phoneValidation');
 
 // Authentication Routes
 router.post('/register', [
   body('name').notEmpty().trim().withMessage('Name is required'),
   body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
-  body('companyName').notEmpty().trim().withMessage('Company name is required')
+  body('companyName').notEmpty().trim().withMessage('Company name is required'),
+  ...mobileValidationRules()
 ], handleValidationErrors, employerController.registerEmployer);
 
 router.post('/login', employerController.loginEmployer);
@@ -63,7 +65,7 @@ router.post('/profile/document', upload.single('document'), employerController.u
 router.post('/profile/authorization-letter', upload.single('document'), employerController.uploadAuthorizationLetter);
 router.delete('/profile/authorization-letter/:documentId', employerController.deleteAuthorizationLetter);
 router.put('/profile/update-authorization-companies', employerController.updateAuthorizationCompanies);
-router.post('/profile/gallery', upload.array('gallery', 10), employerController.uploadGallery);
+router.post('/profile/gallery', uploadGallery.array('gallery', 10), employerController.uploadGallery);
 router.delete('/profile/gallery/:imageId', employerController.deleteGalleryImage);
 
 // Job Management Routes
@@ -80,6 +82,12 @@ router.get('/jobs/:jobId', employerController.getJob);
 router.put('/jobs/:jobId', employerController.updateJob);
 router.delete('/jobs/:jobId', employerController.deleteJob);
 router.get('/jobs/:jobId/test-dates', employerController.testInterviewDates);
+router.post('/jobs/:jobId/schedule-round', [
+  body('roundKey').notEmpty().withMessage('Round key is required'),
+  body('roundType').notEmpty().withMessage('Round type is required'),
+  body('fromDate').isISO8601().withMessage('Valid from date is required'),
+  body('toDate').isISO8601().withMessage('Valid to date is required')
+], handleValidationErrors, employerController.scheduleInterviewRound);
 
 // Application Management Routes
 router.get('/applications', employerController.getEmployerApplications);
@@ -116,9 +124,28 @@ router.get('/notifications', employerController.getNotifications);
 router.patch('/notifications/:id/read', employerController.markNotificationAsRead);
 router.patch('/notifications/read-all', employerController.markAllNotificationsAsRead);
 
+// Interview Process Routes
+const interviewController = require('../controllers/interviewController');
+router.post('/applications/:applicationId/interview-process', interviewController.createOrUpdateInterviewProcess);
+router.get('/applications/:applicationId/interview-process', interviewController.getInterviewProcess);
+router.put('/applications/:applicationId/interview-process/stages/:stageIndex/status', interviewController.updateStageStatus);
+router.put('/applications/:applicationId/interview-process/stages/:stageIndex/schedule', [
+  body('fromDate').optional().isISO8601().withMessage('Valid from date is required'),
+  body('toDate').optional().isISO8601().withMessage('Valid to date is required')
+], handleValidationErrors, interviewController.scheduleInterviewStage);
+
 // Assessment Routes
 const assessmentController = require('../controllers/assessmentController');
-router.post('/assessments', assessmentController.createAssessment);
+router.post('/assessments', [
+  body('title').notEmpty().trim().withMessage('Assessment title is required'),
+  body('type').isIn(['Technical', 'Soft Skill', 'General']).withMessage('Invalid assessment type'),
+  body('timer').isInt({ min: 1 }).withMessage('Timer must be at least 1 minute'),
+  body('questions').isArray({ min: 1 }).withMessage('At least one question is required'),
+  body('questions.*.question').notEmpty().trim().withMessage('Question text is required'),
+  body('questions.*.options').isArray({ min: 2 }).withMessage('At least 2 options are required'),
+  body('questions.*.correctAnswer').isInt({ min: 0 }).withMessage('Correct answer must be specified'),
+  body('questions.*.marks').isInt({ min: 1 }).withMessage('Marks must be at least 1')
+], handleValidationErrors, assessmentController.createAssessment);
 router.get('/assessments', assessmentController.getAssessments);
 router.get('/assessments/:id', assessmentController.getAssessmentDetails);
 router.put('/assessments/:id', assessmentController.updateAssessment);

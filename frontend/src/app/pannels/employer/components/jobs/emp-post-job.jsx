@@ -6,6 +6,10 @@ import { holidaysApi } from "../../../../../utils/holidaysApi";
 import HolidayIndicator from "../../../../../components/HolidayIndicator";
 import { api } from "../../../../../utils/api";
 import InterviewDateTester from "../../../../../components/InterviewDateTester";
+import { ErrorDisplay, GlobalErrorDisplay } from "../../../../../components/ErrorDisplay";
+import { validateField, validateForm, displayError, safeApiCall, getErrorMessage } from "../../../../../utils/errorHandler";
+import showToast from "../../../../../utils/toastNotification";
+import "../../../../../components/ErrorDisplay.css";
 
 export default function EmpPostJob({ onNext }) {
 	const { id } = useParams();
@@ -70,9 +74,42 @@ export default function EmpPostJob({ onNext }) {
 	const [isMobile, setIsMobile] = useState(false);
 	const [availableAssessments, setAvailableAssessments] = useState([]);
 	const [selectedAssessment, setSelectedAssessment] = useState('');
+	const [errors, setErrors] = useState({});
+	const [globalErrors, setGlobalErrors] = useState([]);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [validationRules] = useState({
+		jobTitle: { required: true, minLength: 3 },
+		category: { required: true },
+		jobType: { required: true },
+		jobLocation: { required: true, minLength: 2 },
+		vacancies: { required: true, pattern: /^[1-9]\d*$/, patternMessage: 'Must be a positive number' },
+		applicationLimit: { required: true, pattern: /^[1-9]\d*$/, patternMessage: 'Must be a positive number' },
+		education: { required: true },
+		interviewRoundsCount: { required: true, pattern: /^[1-9]\d*$/, patternMessage: 'Must be a positive number' },
+		offerLetterDate: { required: true },
+		lastDateOfApplication: { required: true },
+		companyName: { required: true, minLength: 2 }, // For consultants
+		companyDescription: { required: true, minLength: 10 } // For consultants
+	});
 
 	/* Helpers */
-	const update = (patch) => setFormData((s) => ({ ...s, ...patch }));
+	const update = (patch) => {
+		setFormData((s) => ({ ...s, ...patch }));
+		// Clear global errors when user makes changes
+		if (globalErrors.length > 0) {
+			setGlobalErrors([]);
+		}
+		// Clear field-specific errors
+		Object.keys(patch).forEach(field => {
+			if (errors[field]) {
+				setErrors(prev => {
+					const newErrors = { ...prev };
+					delete newErrors[field];
+					return newErrors;
+				});
+			}
+		});
+	};
 
 	// Auto-save CTC to localStorage with debouncing
 	const autoSaveCTC = useCallback((ctcValue) => {
@@ -120,14 +157,19 @@ export default function EmpPostJob({ onNext }) {
 	const fetchAssessments = async () => {
 		try {
 			const token = localStorage.getItem('employerToken');
-			const response = await fetch('http://localhost:5000/api/employer/assessments', {
+			const data = await safeApiCall('http://localhost:5000/api/employer/assessments', {
 				headers: { 'Authorization': `Bearer ${token}` }
 			});
-			const data = await response.json();
 			if (data.success) {
 				setAvailableAssessments(data.assessments || []);
 			}
 		} catch (error) {
+			if (error.name === 'AuthError') {
+				showToast('Session expired. Please login again.', 'warning');
+				localStorage.removeItem('employerToken');
+				window.location.href = '/login';
+				return;
+			}
 			console.error('Failed to fetch assessments:', error);
 		}
 	};
@@ -135,10 +177,9 @@ export default function EmpPostJob({ onNext }) {
 	const fetchJobData = async () => {
 		try {
 			const token = localStorage.getItem('employerToken');
-			const response = await fetch(`http://localhost:5000/api/employer/jobs/${id}`, {
+			const data = await safeApiCall(`http://localhost:5000/api/employer/jobs/${id}`, {
 				headers: { 'Authorization': `Bearer ${token}` }
 			});
-			const data = await response.json();
 			if (data.success) {
 				const job = data.job;
 
@@ -226,17 +267,22 @@ export default function EmpPostJob({ onNext }) {
 				}
 			}
 		} catch (error) {
-			console.error('Failed to fetch job data:', error);
+			if (error.name === 'AuthError') {
+				showToast('Session expired. Please login again.', 'warning');
+				localStorage.removeItem('employerToken');
+				window.location.href = '/login';
+				return;
+			}
+			displayError(error, { useToast: true });
 		}
 	};
 
 	const fetchEmployerType = async () => {
 		try {
 			const token = localStorage.getItem('employerToken');
-			const response = await fetch('http://localhost:5000/api/employer/profile', {
+			const data = await safeApiCall('http://localhost:5000/api/employer/profile', {
 				headers: { 'Authorization': `Bearer ${token}` }
 			});
-			const data = await response.json();
 			
 			if (data.success && data.profile?.employerId) {
 				const empType = data.profile.employerId.employerType || 'company';
@@ -257,7 +303,13 @@ export default function EmpPostJob({ onNext }) {
 				}
 			}
 		} catch (error) {
-			
+			if (error.name === 'AuthError') {
+				showToast('Session expired. Please login again.', 'warning');
+				localStorage.removeItem('employerToken');
+				window.location.href = '/login';
+				return;
+			}
+			console.error('Failed to fetch employer type:', error);
 		}
 	};
 
@@ -316,14 +368,14 @@ export default function EmpPostJob({ onNext }) {
 		if (field === 'toDate' && value) {
 			const fromDate = formData.interviewRoundDetails[roundType]?.fromDate;
 			if (fromDate && new Date(value) < new Date(fromDate)) {
-				alert('To Date cannot be earlier than From Date');
+				showToast('To Date cannot be earlier than From Date', 'error');
 				return;
 			}
 		}
 		if (field === 'fromDate' && value) {
 			const toDate = formData.interviewRoundDetails[roundType]?.toDate;
 			if (toDate && new Date(value) > new Date(toDate)) {
-				alert('From Date cannot be later than To Date');
+				showToast('From Date cannot be later than To Date', 'error');
 				return;
 			}
 		}
@@ -352,7 +404,7 @@ export default function EmpPostJob({ onNext }) {
 		if ((field === 'fromDate' || field === 'toDate') && value) {
 			const holidayCheck = await holidaysApi.checkHoliday(value);
 			if (holidayCheck.success && holidayCheck.isHoliday) {
-				alert(`Note: ${value} is a public holiday (${holidayCheck.holidayInfo.name}). Consider selecting a different date.`);
+				showToast(`Note: ${value} is a public holiday (${holidayCheck.holidayInfo.name}). Consider selecting a different date.`, 'warning', 6000);
 			}
 		}
 	};
@@ -369,142 +421,115 @@ export default function EmpPostJob({ onNext }) {
 		}
 	};
 
+	const validateJobForm = () => {
+		const newErrors = {};
+		const errorMessages = [];
+
+		// Basic validation using validation rules
+		const basicErrors = validateForm(formData, validationRules);
+		Object.assign(newErrors, basicErrors);
+
+		// Custom validations
+		if (formData.experienceLevel === 'minimum') {
+			if (!formData.minExperience || parseInt(formData.minExperience) < 0) {
+				newErrors.minExperience = ['Please enter valid minimum experience'];
+			}
+			if (formData.maxExperience && parseInt(formData.maxExperience) < parseInt(formData.minExperience)) {
+				newErrors.maxExperience = ['Maximum experience cannot be less than minimum experience'];
+			}
+		}
+
+		// Validate Interview Round Details
+		const selectedRounds = formData.interviewRoundOrder
+			.filter(uniqueKey => formData.interviewRoundTypes[uniqueKey] !== 'assessment');
+
+		for (const uniqueKey of selectedRounds) {
+			const roundType = formData.interviewRoundTypes[uniqueKey];
+			const details = formData.interviewRoundDetails[uniqueKey];
+			const roundNames = {
+				technical: 'Technical Round',
+				nonTechnical: 'Non-Technical Round',
+				managerial: 'Managerial Round',
+				final: 'Final Round',
+				hr: 'HR Round'
+			};
+
+			const roundName = roundNames[roundType] || roundType;
+
+			if (!details?.description?.trim()) {
+				errorMessages.push(`Please enter description for ${roundName}`);
+			}
+			if (!details?.fromDate) {
+				errorMessages.push(`Please select From Date for ${roundName}`);
+			}
+			if (!details?.toDate) {
+				errorMessages.push(`Please select To Date for ${roundName}`);
+			}
+			if (!details?.time) {
+				errorMessages.push(`Please select Time for ${roundName}`);
+			}
+			if (details?.fromDate && details?.toDate && new Date(details.fromDate) > new Date(details.toDate)) {
+				errorMessages.push(`From Date cannot be after To Date for ${roundName}`);
+			}
+		}
+
+		// Validate Assessment if selected
+		const assessmentKey = formData.interviewRoundOrder.find(key => formData.interviewRoundTypes[key] === 'assessment');
+		if (assessmentKey) {
+			if (!selectedAssessment) {
+				errorMessages.push('Please select an Assessment');
+			}
+			const assessmentDetails = formData.interviewRoundDetails[assessmentKey];
+			if (!assessmentDetails?.fromDate) {
+				errorMessages.push('Please select From Date for Assessment');
+			}
+			if (!assessmentDetails?.toDate) {
+				errorMessages.push('Please select To Date for Assessment');
+			}
+			if (assessmentDetails?.fromDate && assessmentDetails?.toDate && new Date(assessmentDetails.fromDate) > new Date(assessmentDetails.toDate)) {
+				errorMessages.push('Assessment From Date cannot be after To Date');
+			}
+		}
+
+		// Validate consultant fields
+		if (employerType === 'consultant') {
+			if (!formData.companyName?.trim()) {
+				newErrors.companyName = ['Company name is required for consultants'];
+			}
+			if (!formData.companyDescription?.trim()) {
+				newErrors.companyDescription = ['Company description is required for consultants'];
+			}
+		}
+
+		setErrors(newErrors);
+		setGlobalErrors(errorMessages);
+
+		return Object.keys(newErrors).length === 0 && errorMessages.length === 0;
+	};
+
 	const submitNext = async () => {
+		if (isSubmitting) return;
+		
 		try {
 			const token = localStorage.getItem('employerToken');
 			if (!token) {
-				alert('Please login first');
+				showToast('Please login first', 'warning');
 				return;
 			}
 
-			// Validate required fields
-			if (!formData.jobTitle.trim()) {
-				alert('Please enter Job Title');
-				return;
-			}
-			if (!formData.category.trim()) {
-				alert('Please select Job Category');
-				return;
-			}
-			if (!formData.jobType.trim()) {
-				alert('Please select Job Type');
-				return;
-			}
-			if (!formData.jobLocation.trim()) {
-				alert('Please enter Job Location');
-				return;
-			}
-			if (!formData.vacancies || parseInt(formData.vacancies) <= 0) {
-				alert('Please enter valid Number of Vacancies');
-				return;
-			}
-			if (!formData.applicationLimit || parseInt(formData.applicationLimit) <= 0) {
-				alert('Please enter valid Application Limit');
-				return;
-			}
-			if (!formData.education.trim()) {
-				alert('Please select Required Educational Background');
-				return;
-			}
-			if (!formData.interviewRoundsCount || parseInt(formData.interviewRoundsCount) <= 0) {
-				alert('Please enter valid Number of Interview Rounds');
-				return;
-			}
-			if (!formData.offerLetterDate.trim()) {
-				alert('Please select Offer Letter Release Date');
-				return;
-			}
-			if (!formData.lastDateOfApplication.trim()) {
-				alert('Please select Last Date of Application');
+			// Validate form
+			if (!validateJobForm()) {
+				showToast('Please fix the validation errors before submitting', 'error');
+				// Scroll to first error
+				const firstErrorField = document.querySelector('.is-invalid');
+				if (firstErrorField) {
+					firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+					firstErrorField.focus();
+				}
 				return;
 			}
 
-
-			// Validate Experience Level
-			if (formData.experienceLevel === 'minimum') {
-				if (!formData.minExperience || parseInt(formData.minExperience) < 0) {
-					alert('Please enter valid Minimum Experience');
-					return;
-				}
-				if (formData.maxExperience && parseInt(formData.maxExperience) < parseInt(formData.minExperience)) {
-					alert('Maximum Experience cannot be less than Minimum Experience');
-					return;
-				}
-			}
-
-			// Validate Interview Round Details
-			const selectedRounds = formData.interviewRoundOrder
-				.filter(uniqueKey => formData.interviewRoundTypes[uniqueKey] !== 'assessment');
-
-			for (const uniqueKey of selectedRounds) {
-				const roundType = formData.interviewRoundTypes[uniqueKey];
-				const details = formData.interviewRoundDetails[uniqueKey];
-				const roundNames = {
-					technical: 'Technical Round',
-					nonTechnical: 'Non-Technical Round',
-					managerial: 'Managerial Round',
-					final: 'Final Round',
-					hr: 'HR Round'
-				};
-
-				const roundName = roundNames[roundType] || roundType;
-
-				if (!details?.description?.trim()) {
-					alert(`Please enter description for ${roundName}`);
-					return;
-				}
-				if (!details?.fromDate) {
-					alert(`Please select From Date for ${roundName}`);
-					return;
-				}
-				if (!details?.toDate) {
-					alert(`Please select To Date for ${roundName}`);
-					return;
-				}
-				if (!details?.time) {
-					alert(`Please select Time for ${roundName}`);
-					return;
-				}
-				// Validate date range
-				if (new Date(details.fromDate) > new Date(details.toDate)) {
-					alert(`From Date cannot be after To Date for ${roundName}`);
-					return;
-				}
-			}
-
-			// Validate Assessment if selected
-			const assessmentKey = formData.interviewRoundOrder.find(key => formData.interviewRoundTypes[key] === 'assessment');
-			if (assessmentKey) {
-				if (!selectedAssessment) {
-					alert('Please select an Assessment');
-					return;
-				}
-				const assessmentDetails = formData.interviewRoundDetails[assessmentKey];
-				if (!assessmentDetails?.fromDate) {
-					alert('Please select From Date for Assessment');
-					return;
-				}
-				if (!assessmentDetails?.toDate) {
-					alert('Please select To Date for Assessment');
-					return;
-				}
-				if (new Date(assessmentDetails.fromDate) > new Date(assessmentDetails.toDate)) {
-					alert('Assessment From Date cannot be after To Date');
-					return;
-				}
-			}
-
-			// Validate consultant fields
-			if (employerType === 'consultant') {
-				if (!formData.companyName.trim()) {
-					alert('Please enter Company Name (required for consultants)');
-					return;
-				}
-				if (!formData.companyDescription.trim()) {
-					alert('Please enter Company Description (required for consultants)');
-					return;
-				}
-			}
+			setIsSubmitting(true);
 
 			// Debug logging
 			
@@ -565,7 +590,7 @@ export default function EmpPostJob({ onNext }) {
 			
 			const method = isEditMode ? 'PUT' : 'POST';
 
-			const response = await fetch(url, {
+			const data = await safeApiCall(url, {
 				method: method,
 				headers: {
 					'Content-Type': 'application/json',
@@ -574,21 +599,28 @@ export default function EmpPostJob({ onNext }) {
 				body: JSON.stringify(jobData)
 			});
 
-			
-
-			if (response.ok) {
-				const data = await response.json();
+			if (data.success) {
 				// Clear saved CTC from localStorage after successful submission
 				localStorage.removeItem('draft_ctc');
-				alert(isEditMode ? 'Job updated successfully!' : 'Job posted successfully!');
-				window.location.href = '/employer/manage-jobs';
+				showToast(isEditMode ? 'Job updated successfully!' : 'Job posted successfully!', 'success');
+				setTimeout(() => {
+					window.location.href = '/employer/manage-jobs';
+				}, 1500);
 			} else {
-				const error = await response.json();
-				alert(error.message || `Failed to ${isEditMode ? 'update' : 'post'} job`);
+				showToast(data.message || `Failed to ${isEditMode ? 'update' : 'post'} job`, 'error');
 			}
 		} catch (error) {
+			if (error.name === 'AuthError') {
+				showToast('Session expired. Please login again.', 'warning');
+				localStorage.removeItem('employerToken');
+				window.location.href = '/login';
+				return;
+			}
 			
-			alert('Failed to post job. Please try again.');
+			const errorMessage = getErrorMessage(error, 'profile');
+			showToast(errorMessage, 'error');
+		} finally {
+			setIsSubmitting(false);
 		}
 	};
 
@@ -867,11 +899,16 @@ export default function EmpPostJob({ onNext }) {
 							Job Title / Designation *
 						</label>
 						<input
-							style={input}
+							style={{
+								...input,
+								borderColor: errors.jobTitle ? '#dc2626' : '#d1d5db'
+							}}
+							className={errors.jobTitle ? 'is-invalid' : ''}
 							placeholder="e.g., Senior Software Engineer"
 							value={formData.jobTitle}
 							onChange={(e) => update({ jobTitle: e.target.value })}
 						/>
+						<ErrorDisplay errors={errors} fieldName="jobTitle" />
 					</div>
 
 					<div>
@@ -880,7 +917,12 @@ export default function EmpPostJob({ onNext }) {
 							Job Category *
 						</label>
 						<select
-							style={{ ...input, cursor: 'pointer' }}
+							style={{ 
+								...input, 
+								cursor: 'pointer',
+								borderColor: errors.category ? '#dc2626' : '#d1d5db'
+							}}
+							className={errors.category ? 'is-invalid' : ''}
 							value={formData.category}
 							onChange={(e) => update({ category: e.target.value })}
 						>
@@ -898,6 +940,7 @@ export default function EmpPostJob({ onNext }) {
 							<option value="Education">Education</option>
 							<option value="Other">Other</option>
 						</select>
+						<ErrorDisplay errors={errors} fieldName="category" />
 					</div>
 
 					<div>
@@ -906,7 +949,12 @@ export default function EmpPostJob({ onNext }) {
 							Job Type *
 						</label>
 						<select
-							style={{ ...input, cursor: 'pointer' }}
+							style={{ 
+								...input, 
+								cursor: 'pointer',
+								borderColor: errors.jobType ? '#dc2626' : '#d1d5db'
+							}}
+							className={errors.jobType ? 'is-invalid' : ''}
 							value={formData.jobType}
 							onChange={(e) => update({ jobType: e.target.value })}
 						>
@@ -917,6 +965,7 @@ export default function EmpPostJob({ onNext }) {
 							<option>Work From Home</option>
 							<option>Contract</option>
 						</select>
+						<ErrorDisplay errors={errors} fieldName="jobType" />
 					</div>
 
 					{/* Row 2 */}
@@ -926,11 +975,16 @@ export default function EmpPostJob({ onNext }) {
 							Job Location *
 						</label>
 						<input
-							style={input}
+							style={{
+								...input,
+								borderColor: errors.jobLocation ? '#dc2626' : '#d1d5db'
+							}}
+							className={errors.jobLocation ? 'is-invalid' : ''}
 							placeholder="e.g., Bangalore, Mumbai, Remote"
 							value={formData.jobLocation}
 							onChange={(e) => update({ jobLocation: e.target.value })}
 						/>
+						<ErrorDisplay errors={errors} fieldName="jobLocation" />
 					</div>
 
 					{/* Compensation Section */}
@@ -990,13 +1044,18 @@ export default function EmpPostJob({ onNext }) {
 							Number of Vacancies *
 						</label>
 						<input
-							style={input}
+							style={{
+								...input,
+								borderColor: errors.vacancies ? '#dc2626' : '#d1d5db'
+							}}
+							className={errors.vacancies ? 'is-invalid' : ''}
 							type="number"
 							min="1"
 							placeholder="e.g., 5"
 							value={formData.vacancies}
 							onChange={(e) => update({ vacancies: e.target.value })}
 						/>
+						<ErrorDisplay errors={errors} fieldName="vacancies" />
 					</div>
 
 					<div>
@@ -1005,13 +1064,18 @@ export default function EmpPostJob({ onNext }) {
 							Application Limit *
 						</label>
 						<input
-							style={input}
+							style={{
+								...input,
+								borderColor: errors.applicationLimit ? '#dc2626' : '#d1d5db'
+							}}
+							className={errors.applicationLimit ? 'is-invalid' : ''}
 							type="number"
 							min="1"
 							placeholder="e.g., 100"
 							value={formData.applicationLimit}
 							onChange={(e) => update({ applicationLimit: e.target.value })}
 						/>
+						<ErrorDisplay errors={errors} fieldName="applicationLimit" />
 						<small style={{color: '#6b7280', fontSize: 12, marginTop: 4, display: 'block'}}>
 							Maximum number of applications to accept
 						</small>
@@ -1427,13 +1491,16 @@ export default function EmpPostJob({ onNext }) {
 						</div>
 					</div>
 
-					{/* Assessment Selection - Only show when Assessment is selected */}
+					{/* Assessment Selection and Scheduling - Show for each Assessment instance */}
 					{formData.interviewRoundOrder.some(key => formData.interviewRoundTypes[key] === 'assessment') && (
 						<>
 							<div style={fullRow}>
 								<label style={label}>
 									<i className="fa fa-clipboard-check" style={{marginRight: '8px', color: '#ff6b35'}}></i>
-									Select Assessment
+									Select Assessment (Global)
+									<span style={{fontSize: 12, color: '#6b7280', fontWeight: 'normal', marginLeft: 8}}>
+										(This will be used for all assessment rounds)
+									</span>
 								</label>
 								<select
 									style={{ ...input, cursor: 'pointer' }}
@@ -1448,121 +1515,139 @@ export default function EmpPostJob({ onNext }) {
 									))}
 								</select>
 							</div>
-							<div style={fullRow}>
-								<h4 style={{ 
-									margin: "16px 0 12px 0", 
-									fontSize: 16, 
-									color: "#ff6b35",
-									fontWeight: 600,
-									display: 'flex',
-									alignItems: 'center',
-									gap: 8
-								}}>
-									<span style={{
-										fontSize: 12,
-										fontWeight: 700,
-										color: '#fff',
-										background: '#ff6b35',
-										borderRadius: '50%',
-										width: '24px',
-										height: '24px',
-										display: 'flex',
-										alignItems: 'center',
-										justifyContent: 'center'
-									}}>
-										{formData.interviewRoundOrder.findIndex(key => formData.interviewRoundTypes[key] === 'assessment') + 1}
-									</span>
-									Stage {formData.interviewRoundOrder.findIndex(key => formData.interviewRoundTypes[key] === 'assessment') + 1}: Assessment Schedule
-									<div style={{display: 'flex', alignItems: 'center', gap: 8, marginLeft: 12}}>
-										<i 
-											className="fa fa-save"
-											style={{cursor: 'pointer', color: '#10b981', fontSize: 16}}
-											title="Save assessment schedule"
-											onClick={() => {
-												alert('Assessment schedule saved!');
-											}}
-										/>
-										<i 
-											className="fa fa-edit"
-											style={{cursor: 'pointer', color: '#3b82f6', fontSize: 16}}
-											title="Edit assessment schedule"
-											onClick={() => {
-												const assessmentKey = formData.interviewRoundOrder.find(key => formData.interviewRoundTypes[key] === 'assessment');
-												const assessmentSection = document.querySelector(`[data-assessment-key="${assessmentKey}"]`);
-												if (assessmentSection) {
-													assessmentSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-													assessmentSection.style.border = '3px solid #3b82f6';
-													setTimeout(() => {
-														assessmentSection.style.border = '1px solid #0ea5e9';
-													}, 2000);
-												}
-											}}
-										/>
-									</div>
-								</h4>
-								<div 
-									data-assessment-key={formData.interviewRoundOrder.find(key => formData.interviewRoundTypes[key] === 'assessment')}
-									style={{ 
-										display: 'grid', 
-										gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
-										gap: isMobile ? 8 : 12,
-										padding: 12,
-										border: '1px solid #0ea5e9',
-										borderRadius: 8,
-										background: '#f0f9ff',
-										transition: 'border 0.3s ease'
-									}}>
-									<div>
-										<label style={{...label, marginBottom: 4}}>
-											<i className="fa fa-calendar" style={{marginRight: 4, color: '#ff6b35'}}></i>
-											From Date
-										</label>
-										<input
-											style={{...input, fontSize: 13}}
-											type="date"
-											min={new Date().toISOString().split('T')[0]}
-											value={(() => {
-												const assessmentKey = formData.interviewRoundOrder.find(key => formData.interviewRoundTypes[key] === 'assessment');
-												return formData.interviewRoundDetails[assessmentKey]?.fromDate || '';
-											})()}
-											onChange={(e) => {
-												const assessmentKey = formData.interviewRoundOrder.find(key => formData.interviewRoundTypes[key] === 'assessment');
-												updateRoundDetails(assessmentKey, 'fromDate', e.target.value);
-											}}
-										/>
-										<HolidayIndicator date={(() => {
-											const assessmentKey = formData.interviewRoundOrder.find(key => formData.interviewRoundTypes[key] === 'assessment');
-											return formData.interviewRoundDetails[assessmentKey]?.fromDate;
-										})()} />
-									</div>
-									<div>
-										<label style={{...label, marginBottom: 4}}>
-											<i className="fa fa-calendar" style={{marginRight: 4, color: '#ff6b35'}}></i>
-											To Date
-										</label>
-										<input
-											style={{...input, fontSize: 13}}
-											type="date"
-											min={(() => {
-												const assessmentKey = formData.interviewRoundOrder.find(key => formData.interviewRoundTypes[key] === 'assessment');
-												return formData.interviewRoundDetails[assessmentKey]?.fromDate || new Date().toISOString().split('T')[0];
-											})()}
-											value={(() => {
-												const assessmentKey = formData.interviewRoundOrder.find(key => formData.interviewRoundTypes[key] === 'assessment');
-												return formData.interviewRoundDetails[assessmentKey]?.toDate || '';
-											})()}
-											onChange={(e) => {
-												const assessmentKey = formData.interviewRoundOrder.find(key => formData.interviewRoundTypes[key] === 'assessment');
-												updateRoundDetails(assessmentKey, 'toDate', e.target.value);
-											}}
-										/>
-										<HolidayIndicator date={(() => {
-											const assessmentKey = formData.interviewRoundOrder.find(key => formData.interviewRoundTypes[key] === 'assessment');
-											return formData.interviewRoundDetails[assessmentKey]?.toDate;
-										})()} />
-									</div>
-								</div>
-							</div>
+
+							{/* Individual Assessment Scheduling for each Assessment instance */}
+							{formData.interviewRoundOrder
+								.filter(key => formData.interviewRoundTypes[key] === 'assessment')
+								.map((assessmentKey, assessmentIndex) => {
+									const stageNumber = formData.interviewRoundOrder.indexOf(assessmentKey) + 1;
+									return (
+										<div key={assessmentKey} style={fullRow}>
+											<h4 style={{ 
+												margin: "16px 0 12px 0", 
+												fontSize: 16, 
+												color: "#ff6b35",
+												fontWeight: 600,
+												display: 'flex',
+												alignItems: 'center',
+												gap: 8
+											}}>
+												<span style={{
+													fontSize: 12,
+													fontWeight: 700,
+													color: '#fff',
+													background: '#ff6b35',
+													borderRadius: '50%',
+													width: '24px',
+													height: '24px',
+													display: 'flex',
+													alignItems: 'center',
+													justifyContent: 'center'
+												}}>
+													{stageNumber}
+												</span>
+												Stage {stageNumber}: Assessment Schedule {assessmentIndex + 1}
+												<div style={{display: 'flex', alignItems: 'center', gap: 8, marginLeft: 12}}>
+													<button
+														style={{
+															background: '#10b981',
+															color: '#fff',
+															border: 'none',
+															padding: '6px 12px',
+															borderRadius: 6,
+															cursor: 'pointer',
+															fontSize: 12,
+															fontWeight: 600,
+															display: 'flex',
+															alignItems: 'center',
+															gap: 4
+														}}
+														title="Schedule Assessment"
+														onClick={() => {
+															const assessmentDetails = formData.interviewRoundDetails[assessmentKey];
+															
+															if (!selectedAssessment) {
+																alert('Please select an assessment first');
+																return;
+															}
+															
+															if (!assessmentDetails?.fromDate || !assessmentDetails?.toDate) {
+																alert(`Please set both From Date and To Date for Assessment ${assessmentIndex + 1}`);
+																return;
+															}
+															
+															if (new Date(assessmentDetails.fromDate) > new Date(assessmentDetails.toDate)) {
+																alert(`Assessment ${assessmentIndex + 1} From Date cannot be after To Date`);
+																return;
+															}
+															
+															alert(`Assessment ${assessmentIndex + 1} scheduled successfully!\n\nAssessment: ${availableAssessments.find(a => a._id === selectedAssessment)?.title}\nFrom: ${new Date(assessmentDetails.fromDate).toLocaleDateString()}\nTo: ${new Date(assessmentDetails.toDate).toLocaleDateString()}`);
+														}}
+													>
+														<i className="fa fa-calendar-plus"></i>
+														Schedule
+													</button>
+													<i 
+														className="fa fa-edit"
+														style={{cursor: 'pointer', color: '#3b82f6', fontSize: 16}}
+														title="Edit assessment schedule"
+														onClick={() => {
+															const assessmentSection = document.querySelector(`[data-assessment-key="${assessmentKey}"]`);
+															if (assessmentSection) {
+																assessmentSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+																assessmentSection.style.border = '3px solid #3b82f6';
+																setTimeout(() => {
+																	assessmentSection.style.border = '1px solid #0ea5e9';
+																}, 2000);
+															}
+														}}
+													/>
+												</div>
+											</h4>
+											<div 
+												data-assessment-key={assessmentKey}
+												style={{ 
+													display: 'grid', 
+													gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+													gap: isMobile ? 8 : 12,
+													padding: 12,
+													border: '1px solid #0ea5e9',
+													borderRadius: 8,
+													background: '#f0f9ff',
+													transition: 'border 0.3s ease'
+												}}>
+												<div>
+													<label style={{...label, marginBottom: 4}}>
+														<i className="fa fa-calendar" style={{marginRight: 4, color: '#ff6b35'}}></i>
+														From Date
+													</label>
+													<input
+														style={{...input, fontSize: 13}}
+														type="date"
+														min={new Date().toISOString().split('T')[0]}
+														value={formData.interviewRoundDetails[assessmentKey]?.fromDate || ''}
+														onChange={(e) => updateRoundDetails(assessmentKey, 'fromDate', e.target.value)}
+													/>
+													<HolidayIndicator date={formData.interviewRoundDetails[assessmentKey]?.fromDate} />
+												</div>
+												<div>
+													<label style={{...label, marginBottom: 4}}>
+														<i className="fa fa-calendar" style={{marginRight: 4, color: '#ff6b35'}}></i>
+														To Date
+													</label>
+													<input
+														style={{...input, fontSize: 13}}
+														type="date"
+														min={formData.interviewRoundDetails[assessmentKey]?.fromDate || new Date().toISOString().split('T')[0]}
+														value={formData.interviewRoundDetails[assessmentKey]?.toDate || ''}
+														onChange={(e) => updateRoundDetails(assessmentKey, 'toDate', e.target.value)}
+													/>
+													<HolidayIndicator date={formData.interviewRoundDetails[assessmentKey]?.toDate} />
+												</div>
+											</div>
+										</div>
+									);
+								})}
 						</>
 					)}
 
@@ -1943,14 +2028,45 @@ export default function EmpPostJob({ onNext }) {
 													Stage {stageNumber}: {roundNames[roundType]}
 												</div>
 												<div style={{display: 'flex', alignItems: 'center', gap: 8}}>
-													<i 
-														className="fa fa-save"
-														style={{cursor: 'pointer', color: '#10b981', fontSize: 16}}
-														title={`Save ${roundNames[roundType]} details`}
-														onClick={() => {
-															alert(`${roundNames[roundType]} details saved!`);
+													<button
+														style={{
+															background: '#10b981',
+															color: '#fff',
+															border: 'none',
+															padding: '6px 12px',
+															borderRadius: 6,
+															cursor: 'pointer',
+															fontSize: 12,
+															fontWeight: 600,
+															display: 'flex',
+															alignItems: 'center',
+															gap: 4
 														}}
-													/>
+														title={`Schedule ${roundNames[roundType]}`}
+														onClick={() => {
+															const roundDetails = formData.interviewRoundDetails[uniqueKey];
+															
+															if (!roundDetails?.description?.trim()) {
+																alert(`Please enter description for ${roundNames[roundType]}`);
+																return;
+															}
+															
+															if (!roundDetails?.fromDate || !roundDetails?.toDate) {
+																alert(`Please set both From Date and To Date for ${roundNames[roundType]}`);
+																return;
+															}
+															
+															if (!roundDetails?.time) {
+																alert(`Please set time for ${roundNames[roundType]}`);
+																return;
+															}
+															
+															alert(`${roundNames[roundType]} scheduled successfully!\n\nFrom: ${new Date(roundDetails.fromDate).toLocaleDateString()}\nTo: ${new Date(roundDetails.toDate).toLocaleDateString()}\nTime: ${roundDetails.time}\nDescription: ${roundDetails.description}`);
+														}}
+													>
+														<i className="fa fa-calendar-plus"></i>
+														Schedule
+													</button>
 													<i 
 														className="fa fa-edit"
 														style={{cursor: 'pointer', color: '#3b82f6', fontSize: 16}}

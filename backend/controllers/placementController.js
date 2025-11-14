@@ -135,10 +135,14 @@ exports.createPassword = async (req, res) => {
     }
 
     placement.password = password;
-    placement.status = 'active';
+    // Keep status as 'pending' - admin approval still required
+    // placement.status remains 'pending' until admin approves
     await placement.save();
 
-    res.json({ success: true, message: 'Password created successfully' });
+    res.json({ 
+      success: true, 
+      message: 'Password created successfully. Please wait for admin approval before you can sign in.' 
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -250,7 +254,10 @@ exports.loginPlacement = async (req, res) => {
     }
 
     if (placement.status !== 'active') {
-      return res.status(403).json({ success: false, message: 'Account pending approval' });
+      return res.status(403).json({ 
+        success: false, 
+        message: 'Your account is pending admin approval. Please wait for approval before signing in.' 
+      });
     }
 
     const token = generateToken(placement._id, 'placement');
@@ -374,7 +381,7 @@ exports.processPlacementApproval = async (req, res) => {
     if (!jsonData || jsonData.length === 0) {
       return res.status(400).json({ 
         success: false, 
-        message: 'File contains no data rows. Please upload a file with student data.' 
+        message: 'Oops! Your file seems to be empty. Please make sure your Excel/CSV file contains student information and try uploading again.' 
       });
     }
     
@@ -388,7 +395,7 @@ exports.processPlacementApproval = async (req, res) => {
     if (!hasValidData) {
       return res.status(400).json({ 
         success: false, 
-        message: 'File contains only empty rows. Please upload a file with actual student data.' 
+        message: 'It looks like your file only contains headers without any student data. Please add student information to your file and upload again.' 
       });
     }
     
@@ -781,7 +788,7 @@ exports.processFileApproval = async (req, res) => {
     if (!jsonData || jsonData.length === 0) {
       return res.status(400).json({ 
         success: false, 
-        message: 'File contains no data rows. Please upload a file with student data.' 
+        message: 'Oops! Your file seems to be empty. Please make sure your Excel/CSV file contains student information and try uploading again.' 
       });
     }
     
@@ -795,7 +802,7 @@ exports.processFileApproval = async (req, res) => {
     if (!hasValidData) {
       return res.status(400).json({ 
         success: false, 
-        message: 'File contains only empty rows. Please upload a file with actual student data.' 
+        message: 'It looks like your file only contains headers without any student data. Please add student information to your file and upload again.' 
       });
     }
     

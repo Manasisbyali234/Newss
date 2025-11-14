@@ -47,12 +47,18 @@ function SupportPage() {
         if (!formData.subject.trim()) newErrors.subject = 'Subject is required';
         if (!formData.message.trim()) newErrors.message = 'Message is required';
         
-        // Validate file size (max 5MB per file)
+        // Validate file size (max 15MB per file)
         for (let file of files) {
-            if (file.size > 5 * 1024 * 1024) {
-                newErrors.files = 'Each file must be less than 5MB';
+            if (file.size > 15 * 1024 * 1024) {
+                newErrors.files = 'Each file must be less than 15MB';
                 break;
             }
+        }
+        
+        // Check total file size
+        const totalSize = files.reduce((sum, file) => sum + file.size, 0);
+        if (totalSize > 45 * 1024 * 1024) {
+            newErrors.files = 'Total file size exceeds 45MB';
         }
         
         setErrors(newErrors);
@@ -69,10 +75,29 @@ function SupportPage() {
 
     const handleFileChange = (e) => {
         const selectedFiles = Array.from(e.target.files);
+        
+        // Check file count
         if (selectedFiles.length > 3) {
             setErrors(prev => ({ ...prev, files: 'Maximum 3 files allowed' }));
             return;
         }
+        
+        // Check individual file sizes
+        const maxSize = 15 * 1024 * 1024; // 15MB
+        const oversizedFiles = selectedFiles.filter(file => file.size > maxSize);
+        if (oversizedFiles.length > 0) {
+            setErrors(prev => ({ ...prev, files: `File(s) too large: ${oversizedFiles.map(f => f.name).join(', ')}. Max 15MB per file.` }));
+            return;
+        }
+        
+        // Check total size
+        const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
+        const maxTotalSize = 45 * 1024 * 1024; // 45MB
+        if (totalSize > maxTotalSize) {
+            setErrors(prev => ({ ...prev, files: 'Total file size exceeds 45MB. Please select smaller files.' }));
+            return;
+        }
+        
         setFiles(selectedFiles);
         if (errors.files) {
             setErrors(prev => ({ ...prev, files: '' }));
@@ -111,6 +136,9 @@ function SupportPage() {
                     subject: '', category: 'general', priority: 'medium', message: ''
                 });
                 setFiles([]);
+                // Clear file input
+                const fileInput = document.querySelector('input[type="file"]');
+                if (fileInput) fileInput.value = '';
             } else {
                 const data = await response.json();
                 setErrors({ submit: data.message || 'Failed to submit support ticket' });
@@ -300,13 +328,26 @@ function SupportPage() {
                                                         type="file" 
                                                         className={`form-control ${errors.files ? 'is-invalid' : ''}`}
                                                         multiple 
-                                                        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt"
+                                                        accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.jpg,.jpeg,.png,.gif,.webp"
                                                         onChange={handleFileChange}
                                                     />
                                                     <small className="form-text text-muted">
-                                                        Optional: Attach up to 3 files (max 5MB each). Supported: PDF, DOC, DOCX, JPG, PNG, TXT
+                                                        Optional: Attach up to 3 files (max 15MB each). Supported: PDF, DOC, DOCX, XLS, XLSX, CSV, TXT, JPG, PNG, GIF, WEBP
                                                     </small>
                                                     {errors.files && <div className="invalid-feedback">{errors.files}</div>}
+                                                    {files.length > 0 && (
+                                                        <div className="mt-2">
+                                                            <strong>Selected files:</strong>
+                                                            <ul className="list-unstyled mt-1">
+                                                                {files.map((file, index) => (
+                                                                    <li key={index} className="text-muted small">
+                                                                        <i className="fa fa-file me-1"></i>
+                                                                        {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                             

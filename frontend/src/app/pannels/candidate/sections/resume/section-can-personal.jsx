@@ -115,6 +115,8 @@ function SectionCanPersonalDetail({ profile }) {
         setSameAsResidential(checked);
         if (checked) {
             setFormData(prev => ({ ...prev, permanentAddress: prev.residentialAddress }));
+        } else {
+            setFormData(prev => ({ ...prev, permanentAddress: '' }));
         }
     };
 

@@ -63,6 +63,26 @@ const upload = multer({
   }
 });
 
+// Special upload configuration for gallery with multiple files
+const uploadGallery = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (file.fieldname === 'gallery') {
+      if (file.mimetype.startsWith('image/')) {
+        cb(null, true);
+      } else {
+        cb(new Error('Only image files allowed for gallery'), false);
+      }
+    } else {
+      cb(new Error('Invalid field name for gallery upload'), false);
+    }
+  },
+  limits: { 
+    fileSize: 2 * 1024 * 1024, // 2MB limit per image for gallery
+    files: 10 // Allow up to 10 files for gallery
+  }
+});
+
 // Middleware to validate file content after upload
 const validateFileContent = (req, res, next) => {
   if (req.file && req.file.fieldname === 'studentData') {
@@ -78,6 +98,38 @@ const uploadMarksheet = multer({
   fileFilter,
   limits: { 
     files: 1 // Only allow 1 file at a time, no size limit
+  }
+});
+
+// Special upload configuration for support attachments with higher limit
+const uploadSupport = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    // Allow common file types for support attachments
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'text/csv',
+      'text/plain',
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/gif',
+      'image/webp'
+    ];
+    
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('File type not supported. Please upload PDF, DOC, DOCX, XLS, XLSX, CSV, TXT, or image files only.'), false);
+    }
+  },
+  limits: { 
+    fileSize: 15 * 1024 * 1024, // 15MB limit per file for support attachments
+    files: 3 // Allow up to 3 files
   }
 });
 
@@ -105,7 +157,7 @@ const validateExcelContent = (buffer, mimetype) => {
     
     // Check if file has actual data rows
     if (!jsonData || jsonData.length === 0) {
-      return { valid: false, message: 'File contains no data rows' };
+      return { valid: false, message: 'Your file appears to be empty. Please make sure it contains student information' };
     }
     
     // Check if all rows are empty
@@ -116,7 +168,7 @@ const validateExcelContent = (buffer, mimetype) => {
     });
     
     if (!hasValidData) {
-      return { valid: false, message: 'File contains only empty rows' };
+      return { valid: false, message: 'Your file only contains headers. Please add student data rows' };
     }
     
     return { valid: true, rowCount: jsonData.length };
@@ -125,4 +177,4 @@ const validateExcelContent = (buffer, mimetype) => {
   }
 };
 
-module.exports = { upload, uploadMarksheet, fileToBase64, validateFileContent, validateExcelContent };
+module.exports = { upload, uploadMarksheet, uploadSupport, uploadGallery, fileToBase64, validateFileContent, validateExcelContent };

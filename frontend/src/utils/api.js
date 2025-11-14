@@ -552,6 +552,37 @@ export const api = {
       body: JSON.stringify(statusData),
     }).then(handleApiResponse);
   },
+
+  // Employer Interview Process APIs
+  createEmployerInterviewProcess: (applicationId, processData) => {
+    return fetch(`${API_BASE_URL}/employer/applications/${applicationId}/interview-process`, {
+      method: 'POST',
+      headers: getAuthHeaders('employer'),
+      body: JSON.stringify(processData),
+    }).then(handleApiResponse);
+  },
+
+  getEmployerInterviewProcess: (applicationId) => {
+    return fetch(`${API_BASE_URL}/employer/applications/${applicationId}/interview-process`, {
+      headers: getAuthHeaders('employer'),
+    }).then(handleApiResponse);
+  },
+
+  updateEmployerStageStatus: (applicationId, stageIndex, statusData) => {
+    return fetch(`${API_BASE_URL}/employer/applications/${applicationId}/interview-process/stages/${stageIndex}/status`, {
+      method: 'PUT',
+      headers: getAuthHeaders('employer'),
+      body: JSON.stringify(statusData),
+    }).then(handleApiResponse);
+  },
+
+  scheduleEmployerInterviewStage: (applicationId, stageIndex, scheduleData) => {
+    return fetch(`${API_BASE_URL}/employer/applications/${applicationId}/interview-process/stages/${stageIndex}/schedule`, {
+      method: 'PUT',
+      headers: getAuthHeaders('employer'),
+      body: JSON.stringify(scheduleData),
+    }).then(handleApiResponse);
+  },
 };
 
 export default api;

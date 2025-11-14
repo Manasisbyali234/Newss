@@ -444,10 +444,6 @@ input[type="file"]:focus {
   transform: translateY(-1px);
 }
 
-.btn-success {
-  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-  border: none;
-}
 
 .btn-success:hover {
   box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
@@ -863,11 +859,7 @@ button.btn-danger:hover i.fas {
   overflow-x: hidden;
 }
 
-/* Better image handling */
-.emp-company-profile img {
-  max-width: 100%;
-  height: auto;
-}
+
 
 /* Mobile menu considerations */
 @media (max-width: 991px) {
@@ -907,3 +899,90 @@ button.btn-danger:hover i.fas {
     background: none !important;
     background-color: transparent !important;
 }
+
+/* Gallery Upload Container */
+.upload-gallery-container {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.upload-gallery-container:hover {
+  border-color: #ff6b35 !important;
+  background-color: #fff8f5 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.1);
+}
+
+.upload-gallery-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.upload-gallery-container:hover::before {
+  left: 100%;
+}
+
+.upload-info {
+  pointer-events: none;
+  z-index: 1;
+  position: relative;
+}
+
+.upload-info svg {
+  animation: float 2s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Gallery Preview */
+.gallery-preview {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.gallery-item {
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.gallery-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+}
+
+.gallery-item img {
+  transition: all 0.3s ease;
+}
+
+.gallery-item:hover img {
+  filter: brightness(1.1);
+}
+
+.gallery-item .btn-danger {
+  opacity: 0;
+  transition: all 0.3s ease;
+  background-color: rgba(220, 53, 69, 0.9) !important;
+  border: none !important;
+}
+
+.gallery-item:hover .btn-danger {
+  opacity: 1;
+  transform: scale(1.1);
+}
+

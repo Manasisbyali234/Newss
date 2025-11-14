@@ -1,0 +1,47 @@
+/* Emergency fix for ID column visibility */
+.table th:first-child,
+.table td:first-child,
+.emp-table th:first-child,
+.emp-table td:first-child {
+    display: table-cell !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    min-width: 80px !important;
+    width: 80px !important;
+    background-color: #ffffff !important;
+    border-right: 2px solid #dee2e6 !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 10 !important;
+}
+
+.table thead th:first-child,
+.emp-table thead th:first-child {
+    background-color: #f8f9fa !important;
+    font-weight: 600 !important;
+}
+
+/* Override any hiding CSS */
+.table th:nth-child(1),
+.table td:nth-child(1),
+.emp-table th:nth-child(1),
+.emp-table td:nth-child(1) {
+    display: table-cell !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Ensure table is responsive but ID column stays */
+.table-responsive {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+
+/* ID badge styling */
+.badge-primary {
+    background-color: #FF6A00 !important;
+    color: white !important;
+    font-size: 12px !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+}

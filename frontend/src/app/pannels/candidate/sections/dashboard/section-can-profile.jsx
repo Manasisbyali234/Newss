@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../../../../utils/api';
-import { calculateProfileCompletion } from '../../../../../utils/profileCompletion';
 
 function CompleteProfileCard() {
 	const [profileCompletion, setProfileCompletion] = useState(0);
+	const [missingSections, setMissingSections] = useState([]);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
@@ -26,14 +26,17 @@ function CompleteProfileCard() {
 	const fetchProfileCompletion = async () => {
 		try {
 			const response = await api.getCandidateProfile();
-			if (response.success && response.profile) {
-				const completion = calculateProfileCompletion(response.profile);
+			if (response.success) {
+				// Use backend-calculated profile completion
+				const completion = response.profileCompletion || 0;
+				const details = response.profileCompletionDetails || { missingSections: [] };
 				setProfileCompletion(completion);
+				setMissingSections(details.missingSections || []);
 				// Trigger notification refresh when completion changes
 				window.dispatchEvent(new CustomEvent('refreshNotifications'));
 			}
 		} catch (error) {
-			
+			console.error('Error fetching profile completion:', error);
 		} finally {
 			setLoading(false);
 		}
@@ -42,7 +45,12 @@ function CompleteProfileCard() {
 	if (loading) {
 		return (
 			<div className="bg-white p-4 rounded shadow-sm mb-4">
-				<div className="text-center">Loading profile...</div>
+				<div className="text-center">
+					<div className="d-flex align-items-center justify-content-center">
+						<i className="fa fa-spinner fa-spin me-2"></i>
+						Loading profile completion...
+					</div>
+				</div>
 			</div>
 		);
 	}
@@ -52,6 +60,12 @@ function CompleteProfileCard() {
 			<p className="text-muted mb-3" style={{ fontSize: "14px" }}>
 				A complete profile increases your chances of getting hired
 			</p>
+			{profileCompletion === 100 && (
+				<div className="alert alert-success py-2 mb-3" style={{ fontSize: "13px" }}>
+					<i className="fa fa-check-circle me-1"></i>
+					Congratulations! Your profile is 100% complete.
+				</div>
+			)}
 
 			{/* Profile Completion Label */}
 			<div className="d-flex justify-content-between align-items-center mb-1">
@@ -78,6 +92,23 @@ function CompleteProfileCard() {
 				/>
 			</div>
 
+			{/* Missing Sections */}
+			{missingSections.length > 0 && (
+				<div className="mt-3">
+					<small className="text-muted d-block mb-2">
+						<i className="fa fa-info-circle me-1"></i>
+						Missing sections:
+					</small>
+					<div className="d-flex flex-wrap gap-1">
+						{missingSections.map((section, index) => (
+							<span key={index} className="badge bg-light text-dark" style={{fontSize: '11px'}}>
+								{section}
+							</span>
+						))}
+					</div>
+				</div>
+			)}
+
 			{/* Action Buttons */}
 			<div className="mt-3 d-flex flex-wrap gap-2">
 				<button
@@ -101,7 +132,7 @@ function CompleteProfileCard() {
 					}}
 					onClick={() => (window.location.href = "/candidate/my-resume")}
 				>
-					Complete Resume
+					{profileCompletion === 100 ? 'View Resume' : 'Complete Resume'}
 				</button>
 			</div>
 		</div>

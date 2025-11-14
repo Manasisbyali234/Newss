@@ -17,8 +17,8 @@ export const validateCandidateProfile = (formData) => {
     
     if (!formData.phone?.trim()) {
         errors.phone = 'Mobile number is required';
-    } else if (!/^[6-9]\d{9}$/.test(formData.phone)) {
-        errors.phone = 'Mobile number must be 10 digits starting with 6-9';
+    } else if (!/^\d{7,15}$/.test(formData.phone.replace(/[\s\-\(\)\+]/g, ''))) {
+        errors.phone = 'Mobile number must be exactly 10 digits';
     }
     
     if (!formData.email?.trim()) {

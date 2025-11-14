@@ -831,6 +831,18 @@ exports.submitSupportTicket = async (req, res) => {
     let attachments = [];
     if (req.files && req.files.length > 0) {
       const { fileToBase64 } = require('../middlewares/upload');
+      
+      // Check total file size
+      const totalSize = req.files.reduce((sum, file) => sum + file.size, 0);
+      const maxTotalSize = 45 * 1024 * 1024; // 45MB total limit
+      
+      if (totalSize > maxTotalSize) {
+        return res.status(413).json({
+          success: false,
+          message: 'Total file size exceeds 45MB limit. Please reduce file sizes or upload fewer files.'
+        });
+      }
+      
       attachments = req.files.map(file => ({
         filename: file.originalname,
         originalName: file.originalname,
@@ -871,6 +883,29 @@ exports.submitSupportTicket = async (req, res) => {
     });
   } catch (error) {
     console.error('Error in submitSupportTicket:', error);
+    
+    // Handle specific multer errors
+    if (error.code === 'LIMIT_FILE_SIZE') {
+      return res.status(413).json({
+        success: false,
+        message: 'File size too large. Each file must be under 15MB.'
+      });
+    }
+    
+    if (error.code === 'LIMIT_FILE_COUNT') {
+      return res.status(413).json({
+        success: false,
+        message: 'Too many files. Maximum 3 files allowed.'
+      });
+    }
+    
+    if (error.message && error.message.includes('File type not supported')) {
+      return res.status(400).json({
+        success: false,
+        message: error.message
+      });
+    }
+    
     res.status(500).json({ success: false, message: error.message });
   }
 };

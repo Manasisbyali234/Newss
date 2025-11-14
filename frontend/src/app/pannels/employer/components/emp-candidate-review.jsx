@@ -2,6 +2,7 @@ import { ArrowLeft, Award, Briefcase, Calendar, Check, Download, Eye, FileText, 
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { loadScript } from "../../../../globals/constants";
+import InterviewProcessManager from "./InterviewProcessManager";
 
 
 function EmpCandidateReviewPage () {
@@ -663,6 +664,16 @@ function EmpCandidateReviewPage () {
 							</div>
 						</div>
 					)}
+
+					{/* Interview Process Manager */}
+					<div className="mb-4">
+						<InterviewProcessManager 
+							applicationId={applicationId}
+							onSave={(process) => {
+								console.log('Interview process saved:', process);
+							}}
+						/>
+					</div>
 
 					{/* Review & Actions */}
 					<div className="card border-0 shadow-sm" style={{borderRadius: '15px'}}>

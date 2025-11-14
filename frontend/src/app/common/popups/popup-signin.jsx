@@ -29,6 +29,36 @@ function SignInPopup() {
         setPlacementPassword('');
         setError('');
         setSuccess('');
+
+        // Clear messages when modal opens
+        const modal = document.getElementById('sign_up_popup2');
+        const handleModalShow = () => {
+            setError('');
+            setSuccess('');
+        };
+
+        // Clear messages when tabs change
+        const handleTabChange = () => {
+            setError('');
+            setSuccess('');
+        };
+
+        if (modal) {
+            modal.addEventListener('show.bs.modal', handleModalShow);
+            
+            // Add event listeners for tab changes
+            const tabButtons = modal.querySelectorAll('[data-bs-toggle="tab"]');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', handleTabChange);
+            });
+
+            return () => {
+                modal.removeEventListener('show.bs.modal', handleModalShow);
+                tabButtons.forEach(button => {
+                    button.removeEventListener('click', handleTabChange);
+                });
+            };
+        }
     }, []);
 
     const handleCandidateLogin = async (event) => {

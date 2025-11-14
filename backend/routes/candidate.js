@@ -5,11 +5,13 @@ const candidateController = require('../controllers/candidateController');
 const { auth } = require('../middlewares/auth');
 const { upload, uploadMarksheet } = require('../middlewares/upload');
 const handleValidationErrors = require('../middlewares/validation');
+const { mobileValidationRules } = require('../middlewares/phoneValidation');
 
 // Authentication Routes
 router.post('/register', [
   body('name').notEmpty().trim().withMessage('Name is required'),
-  body('email').isEmail().normalizeEmail().withMessage('Valid email is required')
+  body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
+  ...mobileValidationRules()
 ], handleValidationErrors, candidateController.registerCandidate);
 
 router.post('/login', [
@@ -96,8 +98,15 @@ router.put('/profile', upload.single('profilePicture'), (req, res, next) => {
       .withMessage('Last name can only contain letters and spaces'),
     body('phone')
       .optional()
-      .matches(/^[6-9]\d{9}$/)
-      .withMessage('Phone number must be a valid 10-digit Indian mobile number'),
+      .custom((value) => {
+        if (!value) return true;
+        const { validatePhoneNumber } = require('../utils/phoneValidation');
+        const validation = validatePhoneNumber(value);
+        if (!validation.isValid) {
+          throw new Error(validation.message);
+        }
+        return true;
+      }),
     body('email')
       .optional()
       .isEmail()

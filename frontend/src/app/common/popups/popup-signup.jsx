@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { pubRoute, publicUser } from '../../../globals/route-names';
+import { validatePhoneNumber, handlePhoneInputChange, validatePhoneOnBlur } from '../../../utils/phoneValidation';
 
 function SignUpPopup() {
     const [candidateData, setCandidateData] = useState({
@@ -34,6 +35,38 @@ function SignUpPopup() {
         setFieldErrors({});
         setError('');
         setSuccess('');
+
+        // Clear messages when modal opens
+        const modal = document.getElementById('sign_up_popup');
+        const handleModalShow = () => {
+            setError('');
+            setSuccess('');
+            setFieldErrors({});
+        };
+
+        // Clear messages when tabs change
+        const handleTabChange = () => {
+            setError('');
+            setSuccess('');
+            setFieldErrors({});
+        };
+
+        if (modal) {
+            modal.addEventListener('show.bs.modal', handleModalShow);
+            
+            // Add event listeners for tab changes
+            const tabButtons = modal.querySelectorAll('[data-bs-toggle="tab"]');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', handleTabChange);
+            });
+
+            return () => {
+                modal.removeEventListener('show.bs.modal', handleModalShow);
+                tabButtons.forEach(button => {
+                    button.removeEventListener('click', handleTabChange);
+                });
+            };
+        }
     }, []);
 
     // Validation functions
@@ -66,10 +99,9 @@ function SignUpPopup() {
 
             case 'mobile':
             case 'phone':
-                if (!value || !value.trim()) {
-                    errors[field] = 'Phone number is required';
-                } else if (!/^[6-9]\d{9}$/.test(value.trim())) {
-                    errors[field] = 'Please enter a valid 10-digit mobile number starting with 6-9';
+                const phoneValidation = validatePhoneNumber(value, true);
+                if (!phoneValidation.isValid) {
+                    errors[field] = phoneValidation.message;
                 } else {
                     delete errors[field];
                 }
@@ -118,24 +150,42 @@ function SignUpPopup() {
 
     const handleCandidateChange = (e) => {
         const { name, value } = e.target;
-        setCandidateData({ ...candidateData, [name]: value });
-
-        // Validate the field
-        validateField(name, value, 'candidate');
-
-
+        
+        if (name === 'mobile') {
+            const formattedValue = handlePhoneInputChange(value, 
+                (val) => setCandidateData(prev => ({ ...prev, [name]: val })), 
+                setFieldErrors, name);
+        } else {
+            setCandidateData({ ...candidateData, [name]: value });
+            // Validate the field
+            validateField(name, value, 'candidate');
+        }
     };
 
     const handleEmployerChange = (e) => {
         const { name, value } = e.target;
-        setEmployerData({ ...employerData, [name]: value });
-        validateField(name, value, 'employer');
+        
+        if (name === 'mobile') {
+            const formattedValue = handlePhoneInputChange(value, 
+                (val) => setEmployerData(prev => ({ ...prev, [name]: val })), 
+                setFieldErrors, name);
+        } else {
+            setEmployerData({ ...employerData, [name]: value });
+            validateField(name, value, 'employer');
+        }
     };
 
     const handlePlacementChange = (e) => {
         const { name, value } = e.target;
-        setPlacementData({ ...placementData, [name]: value });
-        validateField(name, value, 'placement');
+        
+        if (name === 'phone') {
+            const formattedValue = handlePhoneInputChange(value, 
+                (val) => setPlacementData(prev => ({ ...prev, [name]: val })), 
+                setFieldErrors, name);
+        } else {
+            setPlacementData({ ...placementData, [name]: value });
+            validateField(name, value, 'placement');
+        }
     };
 
     const handleCandidateSubmit = async (e) => {
@@ -434,7 +484,7 @@ function SignUpPopup() {
 																<a href={pubRoute(publicUser.pages.TERMS)} target="_blank" rel="noopener noreferrer">Terms and conditions</a>
 															</label>
 															<p style={{marginTop: "10px"}}>
-																Already registered? <a href="#sign_up_popup2" data-bs-target="#sign_up_popup2" data-bs-toggle="modal" data-bs-dismiss="modal" style={{textDecoration: "underline", cursor: "pointer", color: "#fd7e14"}}>Sign in</a>
+																Already registered? <a href="#sign_up_popup2" data-bs-target="#sign_up_popup2" data-bs-toggle="modal" data-bs-dismiss="modal" onClick={() => { setError(''); setSuccess(''); setFieldErrors({}); }} style={{textDecoration: "underline", cursor: "pointer", color: "#fd7e14"}}>Sign in</a>
 															</p>
 														</div>
 													</div>

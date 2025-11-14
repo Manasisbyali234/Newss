@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../../../../utils/api';
 import './admin-emp-manage-styles.css';
 
 function AdminPlacementOfficersApproved() {
+    const navigate = useNavigate();
     const [placements, setPlacements] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -96,7 +98,9 @@ function AdminPlacementOfficersApproved() {
                                             <td style={{textAlign: 'center'}}>
                                                 <button
                                                     className="action-btn btn-view"
-                                                    onClick={() => window.open(`/admin/placement-details/${placement._id}`, '_blank')}
+                                                    onClick={() => navigate(`/admin/placement-details/${placement._id}`, {
+                                                        state: { from: '/admin/admin-placement-approved' }
+                                                    })}
                                                 >
                                                     <i className="fa fa-eye"></i>
                                                     View

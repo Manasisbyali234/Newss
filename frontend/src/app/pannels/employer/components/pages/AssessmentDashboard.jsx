@@ -41,7 +41,16 @@ export default function AssessmentDashboard() {
 			}
 		} catch (error) {
 			console.error('Error creating assessment:', error);
-			alert('Failed to create assessment');
+			
+			// Show specific error message from server
+			let errorMessage = 'Failed to create assessment';
+			if (error.response?.data?.message) {
+				errorMessage = error.response.data.message;
+			} else if (error.response?.data?.errors && error.response.data.errors.length > 0) {
+				errorMessage = error.response.data.errors[0].msg;
+			}
+			
+			alert(errorMessage);
 		}
 	};
 

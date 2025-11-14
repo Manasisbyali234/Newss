@@ -122,13 +122,13 @@ function LoginPage() {
 
     return (
         <>
-            <div className="min-vh-100 d-flex align-items-center" style={{background: 'radial-gradient(ellipse at center, white 40%, #FFE5CC 100%)'}}>
+            <div className="min-vh-100 d-flex align-items-center" style={{background: 'transparent'}}>
                 <div className="container">
                     <div className="row justify-content-center">
                         <div className="col-lg-11 col-xl-10">
                             <div className="row g-0">
                                     <div className="col-md-6 position-relative">
-                                        <div className="h-100 d-flex align-items-center justify-content-center" style={{background: 'white', minHeight: '600px'}}>
+                                        <div className="h-100 d-flex align-items-center justify-content-center" style={{background: 'transparent', minHeight: '600px'}}>
                                             <JobZImage src="images/login-image.svg" alt="" style={{width: '95%', maxWidth: '400px'}} />
                                         </div>
                                     </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-
+import { validatePhoneNumber } from '../../../../../utils/phoneValidation';
 import CountryCodeSelector from '../../../../../components/CountryCodeSelector';
 
 function ContactUsPage() {
@@ -24,10 +24,12 @@ function ContactUsPage() {
         } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
             newErrors.email = 'Email is invalid';
         }
-        if (!formData.phone.trim()) {
-            newErrors.phone = 'Phone is required';
-        } else if (!/^\d{7,15}$/.test(formData.phone.replace(/\s/g, ''))) {
-            newErrors.phone = 'Phone number must be 7-15 digits';
+        if (formData.phone.trim()) {
+            const fullPhone = `${formData.phoneCountryCode}${formData.phone.trim()}`;
+            const phoneValidation = validatePhoneNumber(fullPhone);
+            if (!phoneValidation.isValid) {
+                newErrors.phone = phoneValidation.message;
+            }
         }
         if (!formData.message.trim()) newErrors.message = 'Message is required';
         

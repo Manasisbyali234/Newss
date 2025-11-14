@@ -236,7 +236,47 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 	};
 
 	const handleSubmit = () => {
-		if (!title.trim()) return alert("Please enter an assessment title");
+		// Validate title
+		if (!title.trim()) {
+			alert("Please enter an assessment title");
+			return;
+		}
+		
+		// Validate time limit
+		if (!timeLimit || timeLimit < 1) {
+			alert("Please enter a valid time limit (at least 1 minute)");
+			return;
+		}
+		
+		// Validate questions
+		if (questions.length === 0) {
+			alert("Please add at least one question");
+			return;
+		}
+		
+		// Validate each question
+		for (let i = 0; i < questions.length; i++) {
+			const question = questions[i];
+			
+			if (!question.question.trim()) {
+				alert(`Please enter text for Question ${i + 1}`);
+				return;
+			}
+			
+			// Check if all options are filled
+			for (let j = 0; j < question.options.length; j++) {
+				if (!question.options[j].trim()) {
+					alert(`Please fill Option ${String.fromCharCode(65 + j)} for Question ${i + 1}`);
+					return;
+				}
+			}
+			
+			if (!question.marks || question.marks < 1) {
+				alert(`Please enter valid marks for Question ${i + 1} (at least 1)`);
+				return;
+			}
+		}
+		
 		onCreate({
 			title,
 			type,
@@ -279,7 +319,7 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 					<div className="row mb-3">
 						<div className="col-6">
 							<label className="form-label small text-muted mb-1">
-								Assessment Title
+								Assessment Title <span className="text-danger">*</span>
 							</label>
 							<input
 								type="text"
@@ -287,14 +327,16 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 								placeholder="e.g., JavaScript Fundamentals"
 								value={title}
 								onChange={(e) => setTitle(e.target.value)}
+								required
 							/>
 						</div>
 						<div className="col-3">
-							<label className="form-label small text-muted mb-1">Type</label>
+							<label className="form-label small text-muted mb-1">Type <span className="text-danger">*</span></label>
 							<select
 								className="form-select"
 								value={type}
 								onChange={(e) => setType(e.target.value)}
+								required
 							>
 								<option value="Technical">Technical</option>
 								<option value="Soft Skill">Soft Skill</option>
@@ -303,13 +345,15 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 						</div>
 						<div className="col-3">
 							<label className="form-label small text-muted mb-1">
-								Time Limit (min)
+								Time Limit (min) <span className="text-danger">*</span>
 							</label>
 							<input
 								type="number"
 								className="form-control"
 								value={timeLimit}
 								onChange={(e) => setTimeLimit(e.target.value)}
+								min="1"
+								required
 							/>
 						</div>
 					</div>
@@ -338,7 +382,7 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 							style={{ background: "#f9fafb" }}
 						>
 							<label className="form-label small text-muted mb-1">
-								Question {qIndex + 1}
+								Question {qIndex + 1} <span className="text-danger">*</span>
 							</label>
 							<input
 								type="text"
@@ -348,6 +392,7 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 								onChange={(e) =>
 									handleQuestionChange(qIndex, "question", e.target.value)
 								}
+								required
 							/>
 							<div className="row">
 								{q.options.map((opt, optIndex) => (
@@ -369,18 +414,19 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 											className="form-control"
 											placeholder={`Option ${String.fromCharCode(
 												65 + optIndex
-											)}`}
+											)} *`}
 											value={opt}
 											onChange={(e) =>
 												handleOptionChange(qIndex, optIndex, e.target.value)
 											}
+											required
 										/>
 									</div>
 								))}
 							</div>
 							<div className="mt-2">
 								<label className="form-label small text-muted mb-1">
-									Marks
+									Marks <span className="text-danger">*</span>
 								</label>
 								<input
 									type="number"
@@ -390,6 +436,8 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 									onChange={(e) =>
 										handleQuestionChange(qIndex, "marks", e.target.value)
 									}
+									min="1"
+									required
 								/>
 							</div>
 						</div>

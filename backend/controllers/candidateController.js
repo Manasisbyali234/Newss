@@ -107,10 +107,15 @@ exports.getProfile = async (req, res) => {
       .populate('candidateId', 'name email phone');
     
     if (!profile) {
-      return res.json({ success: true, profile: null });
+      return res.json({ success: true, profile: null, profileCompletion: 0 });
     }
 
     const profileData = profile.toObject({ getters: true });
+    
+    // Calculate profile completion
+    const { calculateProfileCompletion, calculateProfileCompletionWithDetails } = require('../utils/profileCompletion');
+    const profileCompletion = calculateProfileCompletion(profileData);
+    const profileCompletionDetails = calculateProfileCompletionWithDetails(profileData);
 
     res.json({
       success: true,
@@ -118,7 +123,9 @@ exports.getProfile = async (req, res) => {
         ...profileData,
         resumeFileName: profileData.resumeFileName || null,
         resumeMimeType: profileData.resumeMimeType || null,
-      }
+      },
+      profileCompletion,
+      profileCompletionDetails
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -208,9 +215,12 @@ exports.updateProfile = async (req, res) => {
     ).populate('candidateId', 'name email phone');
     
     // Calculate profile completion and create notification
+    let completionPercentage = 0;
+    let profileCompletionDetails = { missingSections: [] };
     try {
-      const { calculateProfileCompletion } = require('../utils/profileCompletion');
-      const completionPercentage = calculateProfileCompletion(profile);
+      const { calculateProfileCompletion, calculateProfileCompletionWithDetails } = require('../utils/profileCompletion');
+      completionPercentage = calculateProfileCompletion(profile);
+      profileCompletionDetails = calculateProfileCompletionWithDetails(profile);
       
       // Create notification for significant completion milestones
       if (completionPercentage === 100 || completionPercentage >= 50) {
@@ -221,7 +231,7 @@ exports.updateProfile = async (req, res) => {
     }
     
     // Removed console debug line for security;
-    res.json({ success: true, profile });
+    res.json({ success: true, profile, profileCompletion: completionPercentage, profileCompletionDetails });
   } catch (error) {
     console.error('Profile update error:', error);
     res.status(500).json({ success: false, message: error.message });
@@ -259,9 +269,12 @@ exports.uploadResume = async (req, res) => {
     );
 
     // Calculate profile completion and create notification
+    let completionPercentage = 0;
+    let profileCompletionDetails = { missingSections: [] };
     try {
-      const { calculateProfileCompletion } = require('../utils/profileCompletion');
-      const completionPercentage = calculateProfileCompletion(profile);
+      const { calculateProfileCompletion, calculateProfileCompletionWithDetails } = require('../utils/profileCompletion');
+      completionPercentage = calculateProfileCompletion(profile);
+      profileCompletionDetails = calculateProfileCompletionWithDetails(profile);
       
       if (completionPercentage === 100 || completionPercentage >= 50) {
         await createProfileCompletionNotification(req.user._id, completionPercentage);
@@ -270,7 +283,7 @@ exports.uploadResume = async (req, res) => {
       console.error('Profile completion notification error:', notifError);
     }
 
-    res.json({ success: true, resume: resumeBase64, profile });
+    res.json({ success: true, resume: resumeBase64, profile, profileCompletion: completionPercentage, profileCompletionDetails });
   } catch (error) {
     console.error('Resume upload error:', error);
     if (error.code === 'LIMIT_FILE_SIZE') {
@@ -830,6 +843,16 @@ exports.getDashboard = async (req, res) => {
       .sort({ createdAt: -1 })
       .limit(5);
     
+    // Get profile and calculate completion
+    const profile = await CandidateProfile.findOne({ candidateId });
+    let profileCompletion = 0;
+    let profileCompletionDetails = { missingSections: [] };
+    if (profile) {
+      const { calculateProfileCompletion, calculateProfileCompletionWithDetails } = require('../utils/profileCompletion');
+      profileCompletion = calculateProfileCompletion(profile);
+      profileCompletionDetails = calculateProfileCompletionWithDetails(profile);
+    }
+    
     res.json({
       success: true,
       stats: { applied, inProgress, shortlisted },
@@ -837,7 +860,9 @@ exports.getDashboard = async (req, res) => {
       candidate: { 
         name: req.user.name,
         credits: req.user.credits || 0
-      }
+      },
+      profileCompletion,
+      profileCompletionDetails
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -856,6 +881,16 @@ exports.getDashboardStats = async (req, res) => {
       .select('name email credits registrationMethod placementId course')
       .populate('placementId', 'name collegeName');
     
+    // Get profile and calculate completion
+    const profile = await CandidateProfile.findOne({ candidateId });
+    let profileCompletion = 0;
+    let profileCompletionDetails = { missingSections: [] };
+    if (profile) {
+      const { calculateProfileCompletion, calculateProfileCompletionWithDetails } = require('../utils/profileCompletion');
+      profileCompletion = calculateProfileCompletion(profile);
+      profileCompletionDetails = calculateProfileCompletionWithDetails(profile);
+    }
+    
     res.json({
       success: true,
       stats: { applied, inProgress, shortlisted },
@@ -867,7 +902,9 @@ exports.getDashboardStats = async (req, res) => {
           name: candidate.placementId.name,
           collegeName: candidate.placementId.collegeName
         } : null
-      }
+      },
+      profileCompletion,
+      profileCompletionDetails
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

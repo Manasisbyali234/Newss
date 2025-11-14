@@ -733,15 +733,6 @@ function PlacementDashboard() {
                                 </small>
                                 <div className="d-flex" style={{gap: '8px'}}>
                                     <a 
-                                        href="/assets/student-data-template.csv" 
-                                        download="student-data-template.csv"
-                                         className="btn btn-sm btn-light"
-                                        style={{fontSize: '0.8rem', border: '1px solid #dee2e6'}}
-                                    >
-                                        <i className="fa fa-download mr-1"></i>
-                                        Template
-                                    </a>
-                                    <a 
                                         href="/assets/sample-student-data.csv" 
                                         download="sample-student-data.csv"
                                         className="btn btn-sm btn-light"

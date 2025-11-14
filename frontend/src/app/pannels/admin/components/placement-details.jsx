@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { api } from '../../../../utils/api';
 import { useWebSocket } from '../../../../contexts/WebSocketContext';
 import './placement-details.css';
+import '../../../../table-id-fix.css';
 
 function PlacementDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const { joinAdminRoom } = useWebSocket();
     const [placement, setPlacement] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -227,9 +229,11 @@ function PlacementDetails() {
             
             const data = await response.json();
             if (response.ok && data.success) {
+                console.log('Student data received:', data.students);
+                console.log('First student sample:', data.students?.[0]);
                 setStudentData(data.students || []);
             } else {
-                
+                console.error('Failed to load student data:', data);
                 setStudentData([]);
             }
         } catch (error) {
@@ -461,11 +465,22 @@ function PlacementDetails() {
                     </h2>
                     <button 
                         className="btn btn-outline-secondary"
-                        onClick={() => navigate('/admin/admin-placement-manage')}
+                        onClick={() => {
+                            // Check if we came from approved section or use browser history
+                            const referrer = location.state?.from || document.referrer;
+                            if (referrer && referrer.includes('admin-placement-approved')) {
+                                navigate('/admin/admin-placement-approved');
+                            } else if (referrer && referrer.includes('admin-placement-rejected')) {
+                                navigate('/admin/admin-placement-rejected');
+                            } else {
+                                // Default to all submissions (manage) or go back in history
+                                navigate(-1);
+                            }
+                        }}
                         style={{borderRadius: '8px'}}
                     >
                         <i className="fa fa-arrow-left mr-2"></i>
-                        Back to List
+                        Back
                     </button>
                 </div>
             </div>
@@ -1003,24 +1018,18 @@ function PlacementDetails() {
                             </button>
                         </h5>
                         <div className="d-flex flex-wrap gap-2 mb-3">
-                            <button
-                                className="btn btn-success"
-                                onClick={handleApprove}
-                                disabled={placement.status === 'approved'}
-                                style={{borderRadius: '8px'}}
-                            >
-                                <i className="fa fa-check mr-1"></i>
-                                Approve Officer
-                            </button>
-                            <button
-                                className="btn btn-danger"
-                                onClick={handleReject}
-                                disabled={placement.status === 'rejected'}
-                                style={{borderRadius: '8px'}}
-                            >
-                                <i className="fa fa-times mr-1"></i>
-                                Reject Officer
-                            </button>
+                            {placement.status !== 'rejected' && (
+                                <button
+                                    className="btn btn-success"
+                                    onClick={handleApprove}
+                                    disabled={placement.status === 'approved'}
+                                    style={{borderRadius: '8px'}}
+                                >
+                                    <i className="fa fa-check mr-1"></i>
+                                    Approve Officer
+                                </button>
+                            )}
+
                             {placement.fileHistory && placement.fileHistory.filter(f => f.status !== 'rejected').length > 1 && (
                                 <button
                                     className="btn btn-warning"
@@ -1106,24 +1115,26 @@ function PlacementDetails() {
                     </div>
                 ) : studentData.length > 0 ? (
                     <div className="table-responsive">
-                        <table className="emp-table">
-                            <thead>
+                        <table className="table table-striped" style={{minWidth: '800px'}}>
+                            <thead className="thead-light">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>College</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Course</th>
-                                    <th>Password</th>
-                                    <th>Credits</th>
+                                    <th style={{minWidth: '80px', width: '80px'}}>ID</th>
+                                    <th style={{minWidth: '150px'}}>Name</th>
+                                    <th style={{minWidth: '150px'}}>College</th>
+                                    <th style={{minWidth: '200px'}}>Email</th>
+                                    <th style={{minWidth: '120px'}}>Phone</th>
+                                    <th style={{minWidth: '120px'}}>Course</th>
+                                    <th style={{minWidth: '100px'}}>Password</th>
+                                    <th style={{minWidth: '80px'}}>Credits</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {studentData.map((student, index) => (
                                     <tr key={index}>
-                                        <td>
-                                            <span className="badge badge-light">{student.id || (index + 1)}</span>
+                                        <td style={{minWidth: '80px', width: '80px', fontWeight: 'bold', backgroundColor: '#f8f9fa'}}>
+                                            <span className="badge badge-primary" style={{fontSize: '12px', padding: '4px 8px', display: 'inline-block'}}>
+                                                {student.id || student.ID || student.candidateId || (index + 1)}
+                                            </span>
                                         </td>
                                         <td>
                                             <div className="d-flex align-items-center">

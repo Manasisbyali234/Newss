@@ -1432,3 +1432,104 @@ exports.testInterviewDates = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+exports.scheduleInterviewRound = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const { roundKey, roundType, description, fromDate, toDate, time, assessmentId } = req.body;
+    
+    // Find the job
+    const job = await Job.findOne({ _id: jobId, employerId: req.user._id });
+    if (!job) {
+      return res.status(404).json({ success: false, message: 'Job not found' });
+    }
+    
+    // Validate required fields
+    if (!roundKey || !roundType) {
+      return res.status(400).json({ success: false, message: 'Round key and type are required' });
+    }
+    
+    if (!fromDate || !toDate) {
+      return res.status(400).json({ success: false, message: 'From date and to date are required' });
+    }
+    
+    // Validate date range
+    if (new Date(fromDate) > new Date(toDate)) {
+      return res.status(400).json({ success: false, message: 'From date cannot be after to date' });
+    }
+    
+    // For non-assessment rounds, require description and time
+    if (roundType !== 'assessment') {
+      if (!description?.trim()) {
+        return res.status(400).json({ success: false, message: 'Description is required for interview rounds' });
+      }
+      if (!time) {
+        return res.status(400).json({ success: false, message: 'Time is required for interview rounds' });
+      }
+    }
+    
+    // For assessment rounds, require assessment ID
+    if (roundType === 'assessment' && !assessmentId) {
+      return res.status(400).json({ success: false, message: 'Assessment ID is required for assessment rounds' });
+    }
+    
+    // Update the job with the scheduled round details
+    const updateData = {
+      [`interviewRoundDetails.${roundKey}`]: {
+        description: description || '',
+        fromDate: new Date(fromDate),
+        toDate: new Date(toDate),
+        time: time || ''
+      },
+      interviewScheduled: true
+    };
+    
+    // If it's an assessment round, also update assessment fields
+    if (roundType === 'assessment') {
+      updateData.assessmentId = assessmentId;
+      updateData.assessmentStartDate = new Date(fromDate);
+      updateData.assessmentEndDate = new Date(toDate);
+    }
+    
+    const updatedJob = await Job.findOneAndUpdate(
+      { _id: jobId, employerId: req.user._id },
+      updateData,
+      { new: true }
+    );
+    
+    // Create notification for candidates about the scheduled interview/assessment
+    try {
+      const { createNotification } = require('./notificationController');
+      const roundNames = {
+        technical: 'Technical Round',
+        nonTechnical: 'Non-Technical Round',
+        managerial: 'Managerial Round',
+        final: 'Final Round',
+        hr: 'HR Round',
+        assessment: 'Assessment'
+      };
+      
+      const roundName = roundNames[roundType] || roundType;
+      
+      await createNotification({
+        title: `${roundName} Scheduled`,
+        message: `${roundName} has been scheduled for ${job.title} position from ${new Date(fromDate).toLocaleDateString()} to ${new Date(toDate).toLocaleDateString()}`,
+        type: 'interview_scheduled',
+        role: 'candidate',
+        relatedId: job._id,
+        createdBy: req.user._id
+      });
+    } catch (notifError) {
+      console.error('Notification creation failed:', notifError);
+    }
+    
+    res.json({ 
+      success: true, 
+      message: `${roundType === 'assessment' ? 'Assessment' : 'Interview round'} scheduled successfully`,
+      job: updatedJob
+    });
+  } catch (error) {
+    console.error('Schedule interview round error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

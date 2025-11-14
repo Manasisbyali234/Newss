@@ -7,6 +7,7 @@ import ApplyJobPopup from "../../../../common/popups/popup-apply-job";
 import SectionShareProfile from "../../sections/common/section-share-profile";
 import SectionJobsSidebar2 from "../../sections/jobs/sidebar/section-jobs-sidebar2";
 import "./job-detail.css";
+import "../../../../../job-detail-spacing.css";
 
 function JobDetail1Page() {
     const { id, param1 } = useParams();
@@ -346,20 +347,20 @@ function JobDetail1Page() {
 											<div className="row">
 												<div className="col-md-6">
 													<div className="detail-item" style={{marginBottom: '15px'}}>
-														<h5 style={{display: 'inline'}}><i className="feather-briefcase" style={{marginRight: '8px'}}></i>Job Type: </h5>
+														<h5 style={{display: 'inline'}}><i className="feather-briefcase" style={{marginRight: '8px'}}></i>Job Type:&nbsp;</h5>
 														<span>{job.jobType}</span>
 													</div>
 												</div>
 												<div className="col-md-6">
 													<div className="detail-item" style={{marginBottom: '15px'}}>
-														<h5 style={{display: 'inline'}}><i className="feather-check-circle" style={{marginRight: '8px'}}></i>Backlogs Allowed: </h5>
+														<h5 style={{display: 'inline'}}><i className="feather-check-circle" style={{marginRight: '8px'}}></i>Backlogs Allowed:&nbsp;</h5>
 														<span className={`badge ${job.backlogsAllowed ? 'badge-success' : 'badge-danger'}`}>{job.backlogsAllowed ? 'Yes' : 'No'}</span>
 													</div>
 												</div>
 												{job.lastDateOfApplication && (
 													<div className="col-md-6">
 														<div className="detail-item" style={{marginBottom: '15px'}}>
-															<h5 style={{display: 'inline'}}><i className="feather-calendar" style={{marginRight: '8px'}}></i>Last Date to Apply: </h5>
+															<h5 style={{display: 'inline'}}><i className="feather-calendar" style={{marginRight: '8px'}}></i>Last Date to Apply:&nbsp;</h5>
 															<span style={{color: '#dc3545', fontWeight: '600'}}>{new Date(job.lastDateOfApplication).toLocaleDateString()}</span>
 														</div>
 													</div>
@@ -367,7 +368,7 @@ function JobDetail1Page() {
 												{job.employerProfile?.website && (
 													<div className="col-md-6">
 														<div className="detail-item" style={{marginBottom: '15px'}}>
-															<h5 style={{display: 'inline'}}><i className="feather-globe" style={{marginRight: '8px'}}></i>Website: </h5>
+															<h5 style={{display: 'inline'}}><i className="feather-globe" style={{marginRight: '8px'}}></i>Website:&nbsp;</h5>
 															<a href={job.employerProfile.website} target="_blank" rel="noopener noreferrer">{job.employerProfile.website}</a>
 														</div>
 													</div>

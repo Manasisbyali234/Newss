@@ -175,6 +175,42 @@
     max-width: 90%;
 }
 
+/* Ensure ID column is always visible */
+.table th:first-child,
+.table td:first-child {
+    position: sticky;
+    left: 0;
+    background-color: #ffffff;
+    z-index: 10;
+    border-right: 2px solid #dee2e6;
+}
+
+.table thead th:first-child {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+/* Student Records table specific styling */
+.table-responsive {
+    max-height: 600px;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.table-striped tbody tr:hover {
+    background-color: rgba(255, 106, 0, 0.1);
+}
+
+/* ID column badge styling */
+.badge-primary {
+    background-color: #FF6A00 !important;
+    color: white !important;
+}
+
 .timeline {
     position: relative;
 }
@@ -228,4 +264,42 @@
     .modal-xl {
         max-width: 95%;
     }
+}
+
+/* Mobile responsive table */
+@media (max-width: 768px) {
+    .table th:first-child,
+    .table td:first-child {
+        position: sticky;
+        left: 0;
+        min-width: 60px !important;
+        width: 60px !important;
+        background-color: #ffffff;
+        z-index: 10;
+        border-right: 2px solid #dee2e6;
+    }
+    
+    .table thead th:first-child {
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
+    
+    .table-responsive {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+    }
+}
+
+/* Ensure table doesn't break layout */
+.modern-card .table-responsive {
+    margin: 0 -1rem;
+    padding: 0 1rem;
+}
+
+/* Force ID column visibility */
+.table th:first-child,
+.table td:first-child {
+    display: table-cell !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }

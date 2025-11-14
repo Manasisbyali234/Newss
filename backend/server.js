@@ -146,9 +146,32 @@ app.use((error, req, res, next) => {
   if (error.type === 'entity.too.large') {
     return res.status(413).json({
       success: false,
-      message: 'Request too large. Please upload files individually and try saving again.'
+      message: 'Request too large. Please upload smaller files or reduce the number of attachments.'
     });
   }
+  
+  // Handle multer errors
+  if (error.code === 'LIMIT_FILE_SIZE') {
+    return res.status(413).json({
+      success: false,
+      message: 'File size too large. Each file must be under 15MB.'
+    });
+  }
+  
+  if (error.code === 'LIMIT_FILE_COUNT') {
+    return res.status(413).json({
+      success: false,
+      message: 'Too many files. Maximum 3 files allowed.'
+    });
+  }
+  
+  if (error.message && error.message.includes('File type not supported')) {
+    return res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
+  
   next(error);
 });
 

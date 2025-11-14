@@ -5,14 +5,15 @@ const placementController = require('../controllers/placementController');
 const handleValidationErrors = require('../middlewares/validation');
 const { upload } = require('../middlewares/upload');
 const { auth } = require('../middlewares/auth');
+const { requiredPhoneValidationRules, phoneValidationRules } = require('../middlewares/phoneValidation');
 
 // Registration route without file upload
 router.post('/register', [
   body('name').notEmpty().withMessage('Name is required'),
   body('email').isEmail().withMessage('Valid email is required'),
-  body('phone').notEmpty().withMessage('Phone number is required'),
   body('collegeName').notEmpty().withMessage('College name is required'),
-  body('password').optional().isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
+  body('password').optional().isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  ...requiredPhoneValidationRules()
 ], handleValidationErrors, placementController.registerPlacement);
 
 router.post('/create-password', [
@@ -112,8 +113,8 @@ router.put('/profile', auth(['placement']), [
   body('name').optional().notEmpty().withMessage('Name cannot be empty'),
   body('firstName').optional().notEmpty().withMessage('First name cannot be empty'),
   body('lastName').optional().notEmpty().withMessage('Last name cannot be empty'),
-  body('phone').optional().notEmpty().withMessage('Phone cannot be empty'),
-  body('collegeName').optional().notEmpty().withMessage('College name cannot be empty')
+  body('collegeName').optional().notEmpty().withMessage('College name cannot be empty'),
+  ...phoneValidationRules()
 ], handleValidationErrors, placementController.updateProfile);
 
 module.exports = router;

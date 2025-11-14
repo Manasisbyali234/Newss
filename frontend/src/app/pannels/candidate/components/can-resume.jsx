@@ -9,6 +9,7 @@ import SectionCanKeySkills from "../sections/resume/section-can-keyskills";
 import SectionCanPersonalDetail from "../sections/resume/section-can-personal";
 import SectionCanProfileSummary from "../sections/resume/section-can-profile-summary";
 import SectionCanProjects from "../sections/resume/section-can-projects";
+import SectionCanResumeHeadline from "../sections/resume/section-can-resume-headline";
 
 
 import { loadScript } from "../../../../globals/constants";
@@ -108,6 +109,10 @@ function CanMyResumePage() {
 						) : (
 							<div className="row">
 								<div className="col-12">
+									<div className="panel panel-default mb-4">
+										<SectionCanResumeHeadline profile={profile} />
+									</div>
+
 									<div className="panel panel-default mb-4">
 										<SectionCanProfileSummary profile={profile} />
 									</div>
