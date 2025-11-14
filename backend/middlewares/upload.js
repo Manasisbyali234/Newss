@@ -1,0 +1,128 @@
+const multer = require('multer');
+
+// Store files in memory for Base64 conversion
+const storage = multer.memoryStorage();
+
+const fileFilter = (req, file, cb) => {
+  if (file.fieldname === 'resume') {
+    if (file.mimetype === 'application/pdf' || file.mimetype.includes('document')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only PDF and DOC files allowed for resume'), false);
+    }
+  } else if (file.fieldname === 'document') {
+    if (file.mimetype === 'application/pdf' || file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only PDF and image files allowed for documents'), false);
+    }
+  } else if (file.fieldname === 'studentData') {
+    const validTypes = [
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'text/csv',
+      'application/csv'
+    ];
+    
+    if (validTypes.includes(file.mimetype)) {
+      // Basic size check for empty files
+      if (file.size === 0) {
+        cb(new Error('File is empty. Please upload a file with student data.'), false);
+        return;
+      }
+      if (file.size < 50) {
+        cb(new Error('File appears to be too small to contain valid student data.'), false);
+        return;
+      }
+      cb(null, true);
+    } else {
+      cb(new Error('Only Excel (.xls, .xlsx) and CSV files are allowed for student data'), false);
+    }
+  } else if (file.fieldname === 'marksheet') {
+    if (file.mimetype === 'application/pdf' || file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only PDF and image files allowed for marksheet'), false);
+    }
+  } else {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files allowed'), false);
+    }
+  }
+};
+
+// Create different upload configurations for different file types
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { 
+    fileSize: 5 * 1024 * 1024, // 5MB limit for general uploads
+    files: 1 // Only allow 1 file at a time
+  }
+});
+
+// Middleware to validate file content after upload
+const validateFileContent = (req, res, next) => {
+  if (req.file && req.file.fieldname === 'studentData') {
+    // Additional validation will be done in the controller
+    // This is just a placeholder for any pre-processing
+  }
+  next();
+};
+
+// Special upload configuration for marksheet with no size limit
+const uploadMarksheet = multer({
+  storage,
+  fileFilter,
+  limits: { 
+    files: 1 // Only allow 1 file at a time, no size limit
+  }
+});
+
+// Helper function to convert file to Base64
+const fileToBase64 = (file) => {
+  return `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+};
+
+// Helper function to validate Excel/CSV content
+const validateExcelContent = (buffer, mimetype) => {
+  try {
+    const XLSX = require('xlsx');
+    let workbook;
+    
+    if (mimetype.includes('csv')) {
+      const csvData = buffer.toString('utf8');
+      workbook = XLSX.read(csvData, { type: 'string' });
+    } else {
+      workbook = XLSX.read(buffer, { type: 'buffer' });
+    }
+    
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+    
+    // Check if file has actual data rows
+    if (!jsonData || jsonData.length === 0) {
+      return { valid: false, message: 'File contains no data rows' };
+    }
+    
+    // Check if all rows are empty
+    const hasValidData = jsonData.some(row => {
+      return Object.values(row).some(value => 
+        value !== null && value !== undefined && String(value).trim() !== ''
+      );
+    });
+    
+    if (!hasValidData) {
+      return { valid: false, message: 'File contains only empty rows' };
+    }
+    
+    return { valid: true, rowCount: jsonData.length };
+  } catch (error) {
+    return { valid: false, message: 'Invalid file format or corrupted file' };
+  }
+};
+
+module.exports = { upload, uploadMarksheet, fileToBase64, validateFileContent, validateExcelContent };

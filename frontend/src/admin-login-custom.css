@@ -1,0 +1,10 @@
+/* Custom CSS to reduce spacing on admin-login page */
+.twm-login-reg {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+}
+
+.twm-login-reg-inner {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+}

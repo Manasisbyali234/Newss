@@ -1,0 +1,276 @@
+/* ============================================================================
+ * GLOBAL FONT AWESOME & ICON COLOR - ALL ICONS DARK ORANGE (#fd7e14)
+ * ============================================================================
+ * 
+ * This file ensures ALL Font Awesome icons, Feather icons, and other icon
+ * libraries in the entire application display in Dark Orange color.
+ * 
+ * Dark Orange: #fd7e14
+ * 
+ * EXCEPTIONS:
+ * - Icons inside buttons, links with button styling, CTA elements use WHITE
+ *   for proper contrast and readability
+ * 
+ * ============================================================================ */
+
+/* ============================================================================
+ * SECTION 1: UNIVERSAL ICON STYLING - DARK ORANGE FOR ALL ICONS
+ * ============================================================================ */
+
+/* All generic icons - Dark Orange default */
+i,
+svg.icon,
+.icon,
+[class^="icon-"],
+[class*=" icon-"] {
+  color: #fd7e14 !important;
+  fill: #fd7e14 !important;
+  stroke: #fd7e14 !important;
+}
+
+/* ============================================================================
+ * SECTION 2: FONT AWESOME ICONS - ALL VARIANTS
+ * ============================================================================ */
+
+/* Font Awesome v5/v6+ - All classes with 'fa' prefix */
+[class^="fa-"],
+[class*=" fa-"],
+.fa,
+i.fa,
+span.fa {
+  color: #fd7e14 !important;
+  fill: #fd7e14 !important;
+  stroke: #fd7e14 !important;
+}
+
+/* Font Awesome solid, regular, light, brand, duotone */
+.fas,
+.far,
+.fal,
+.fab,
+.fad,
+i.fas,
+i.far,
+i.fal,
+i.fab,
+i.fad,
+span.fas,
+span.far,
+span.fal,
+span.fab,
+span.fad {
+  color: #fd7e14 !important;
+  fill: #fd7e14 !important;
+  stroke: #fd7e14 !important;
+}
+
+/* Explicit Font Awesome icons by name pattern */
+.fa-bars,
+.fa-paper-plane,
+.fa-address-card,
+.fa-border-all,
+.fa-file-alt,
+.fa-map-marker-alt,
+.fa-dollar-sign,
+.fa-search,
+.fa-user,
+.fa-log-in,
+.fa-heart,
+.fa-star,
+.fa-check,
+.fa-times,
+.fa-plus,
+.fa-minus,
+.fa-edit,
+.fa-trash,
+.fa-download,
+.fa-upload,
+.fa-link,
+.fa-share,
+.fa-bookmark,
+.fa-bell,
+.fa-envelope,
+.fa-phone,
+.fa-map-pin,
+.fa-briefcase,
+.fa-clock,
+.fa-calendar,
+.fa-filter,
+.fa-sort,
+.fa-eye,
+.fa-eye-slash,
+.fa-lock,
+.fa-unlock,
+.fa-home,
+.fa-building,
+.fa-industry,
+.fa-graduation-cap,
+.fa-certificate,
+.fa-award,
+.fa-trophy,
+.fa-exclamation,
+.fa-info,
+.fa-question,
+.fa-cog,
+.fa-sliders-h,
+.fa-arrow-right,
+.fa-arrow-left,
+.fa-arrow-up,
+.fa-arrow-down,
+.fa-chevron-right,
+.fa-chevron-left,
+.fa-chevron-up,
+.fa-chevron-down,
+.fa-menu,
+.fa-ellipsis-h,
+.fa-ellipsis-v {
+  color: #fd7e14 !important;
+  fill: #fd7e14 !important;
+  stroke: #fd7e14 !important;
+}
+
+/* ============================================================================
+ * SECTION 3: FEATHER ICONS - ALL VARIANTS
+ * ============================================================================ */
+
+/* Feather icons - all types */
+[class^="feather-"],
+[class*=" feather-"],
+.feather,
+i.feather,
+svg.feather {
+  color: #fd7e14 !important;
+  fill: #fd7e14 !important;
+  stroke: #fd7e14 !important;
+}
+
+/* Specific feather icon names */
+.feather-map-pin,
+.feather-briefcase,
+.feather-clock,
+.feather-dollar-sign,
+.feather-users,
+.feather-user,
+.feather-search,
+.feather-log-in,
+.feather-heart,
+.feather-star,
+.feather-check,
+.feather-x,
+.feather-plus,
+.feather-minus,
+.feather-edit,
+.feather-trash,
+.feather-download,
+.feather-upload,
+.feather-link,
+.feather-share,
+.feather-bookmark,
+.feather-bell,
+.feather-mail,
+.feather-phone,
+.feather-home,
+.feather-settings,
+.feather-filter,
+.feather-eye,
+.feather-lock,
+.feather-unlock {
+  color: #fd7e14 !important;
+  fill: #fd7e14 !important;
+  stroke: #fd7e14 !important;
+}
+
+/* ============================================================================
+ * SECTION 4: BUTTON & CTA ICON EXCEPTIONS - DARK ORANGE FOR ALL ICONS
+ * ============================================================================ */
+
+/* Primary buttons - orange icons */
+.btn-primary i,
+.btn-primary [class^="fa"],
+.btn-primary [class^="feather"],
+.btn-primary svg {
+  color: #fd7e14 !important;
+  fill: #fd7e14 !important;
+  stroke: #fd7e14 !important;
+}
+
+/* Secondary/Outline buttons - orange icons */
+.btn-secondary i,
+.btn-outline-primary i,
+.btn-outline-primary [class^="fa"],
+.btn-outline-primary [class^="feather"],
+.btn-outline-secondary i,
+.btn-outline-secondary [class^="fa"],
+.btn-outline-secondary [class^="feather"],
+.btn.site-button i,
+.site-button [class^="fa"],
+.site-button [class^="feather"] {
+  color: #fd7e14 !important;
+  fill: #fd7e14 !important;
+  stroke: #fd7e14 !important;
+}
+
+/* Navigation buttons */
+.btn i,
+button i,
+.btn [class^="fa"],
+.btn [class^="feather"],
+button [class^="fa"],
+button [class^="feather"],
+a.btn i,
+a.btn [class^="fa"],
+a.btn [class^="feather"],
+a.site-button i,
+a.site-button [class^="fa"],
+a.site-button [class^="feather"] {
+  color: #fd7e14 !important;
+  fill: #fd7e14 !important;
+  stroke: #fd7e14 !important;
+}
+
+/* Specific button classes - orange icons */
+.apply-now-btn i,
+.apply-now-btn [class^="fa"],
+.search-btn i,
+.search-btn [class^="fa"],
+.hero-cta i,
+.hero-cta [class^="fa"],
+.twm-nav-sign-up i,
+.twm-nav-sign-up [class^="fa"],
+.twm-nav-post-a-job i,
+.twm-nav-post-a-job [class^="fa"],
+.circle-line-btn i,
+.circle-line-btn [class^="fa"],
+.btn-apply i,
+.btn-view i,
+.action-btn i,
+.action-btn [class^="fa"],
+.primary-button i,
+.primary-button [class^="fa"],
+.secondary-button i,
+.secondary-button [class^="fa"],
+.cta-button i,
+.cta-button [class^="fa"] {
+  color: #fd7e14 !important;
+  fill: #fd7e14 !important;
+  stroke: #fd7e14 !important;
+}
+
+/* ============================================================================
+ * SECTION 5: DARK MODE OVERRIDE - ENSURE LIGHT MODE ONLY
+ * ============================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  i,
+  [class^="fa"],
+  [class*=" fa"],
+  [class^="feather"],
+  [class*=" feather"],
+  svg.icon,
+  .icon,
+  [class^="icon-"] {
+    color: #fd7e14 !important;
+    fill: #fd7e14 !important;
+    stroke: #fd7e14 !important;
+  }
+}

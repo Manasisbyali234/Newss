@@ -1,0 +1,102 @@
+/* Header Responsive Styles - Hide duplicates on desktop */
+
+/* Active navbar link styles */
+.nav-link-custom.active {
+  color: #ff6b35 !important;
+  font-weight: 600 !important;
+}
+
+.twm-side-navigation-menu .nav a.active {
+  color: #ff6b35 !important;
+  font-weight: 600 !important;
+}
+
+/* Hover effect for navbar links */
+.nav-link-custom:hover {
+  color: #ff6b35 !important;
+  transition: color 0.3s ease;
+}
+
+.twm-side-navigation-menu .nav a:hover {
+  color: #ff6b35 !important;
+  transition: color 0.3s ease;
+}
+
+/* Desktop view - hide hamburger and mobile elements */
+@media (min-width: 992px) {
+  /* Hide hamburger menu button */
+  .vnav-btn,
+  .twm-side-navigation-menu {
+    display: none !important;
+  }
+
+  /* Hide mobile auth section inside nav */
+  .mobile-auth-section {
+    display: none !important;
+  }
+
+  /* Show desktop navigation */
+  .header-nav.navbar-collapse {
+    display: flex !important;
+  }
+
+  /* Show desktop auth buttons */
+  .extra-nav.header-2-nav {
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+  }
+
+  /* Align user dashboard link properly */
+  .extra-nav.header-2-nav .extra-cell {
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .extra-nav.header-2-nav .extra-cell:first-child {
+    margin-left: 80px !important;
+  }
+
+  .employer-nav-menu,
+  .dashboard-link {
+    display: flex !important;
+    align-items: center !important;
+  }
+}
+
+/* Mobile view - hide desktop auth, show hamburger */
+@media (max-width: 991px) {
+  /* Hide desktop auth buttons */
+  .extra-nav.header-2-nav .extra-cell:first-child {
+    display: none !important;
+  }
+
+  /* Show hamburger button */
+  .extra-nav.header-2-nav .extra-cell:last-child {
+    display: flex !important;
+  }
+
+  /* Hide desktop navigation */
+  .header-nav.navbar-collapse {
+    display: none !important;
+  }
+
+  /* Show mobile menu when active */
+  .twm-side-navigation-menu.active {
+    display: block !important;
+  }
+
+  /* Mobile auth in sidebar */
+  .twm-side-navigation-menu .header-nav-btn-section {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .twm-side-navigation-menu .twm-nav-sign-up,
+  .twm-side-navigation-menu .twm-nav-post-a-job {
+    width: 100%;
+    text-align: center;
+  }
+}

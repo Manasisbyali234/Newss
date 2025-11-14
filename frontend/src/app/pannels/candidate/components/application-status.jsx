@@ -1,0 +1,1096 @@
+// Route: /candidate/status
+
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { loadScript } from "../../../../globals/constants";
+import { api } from "../../../../utils/api";
+import showToast from "../../../../utils/toastNotification";
+import { pubRoute, publicUser } from "../../../../globals/route-names";
+import CanPostedJobs from "./can-posted-jobs";
+import PopupInterviewRoundDetails from "../../../common/popups/popup-interview-round-details";
+import "./status-styles.css";
+
+// Add CSS for hover effect and highlighting
+const styles = `
+.hover-primary:hover {
+	color: #0d6efd !important;
+	cursor: pointer;
+}
+
+.highlight-shortlisted {
+	animation: highlightPulse 2s ease-in-out 3;
+	box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+}
+
+.highlight-company-position {
+	animation: highlightCompanyPosition 3s ease-in-out 3;
+	box-shadow: 0 0 20px rgba(255, 107, 53, 0.4);
+	border: 2px solid #ff6b35 !important;
+}
+
+@keyframes highlightPulse {
+	0% { background-color: #e8f5e9; }
+	50% { background-color: #c8e6c9; }
+	100% { background-color: #e8f5e9; }
+}
+
+@keyframes highlightCompanyPosition {
+	0% { background-color: #fff3e0; }
+	50% { background-color: #ffe0b3; }
+	100% { background-color: #fff3e0; }
+}
+`;
+
+// Inject styles
+if (typeof document !== 'undefined') {
+	const styleSheet = document.createElement('style');
+	styleSheet.type = 'text/css';
+	styleSheet.innerText = styles;
+	document.head.appendChild(styleSheet);
+}
+
+function CanStatusPage() {
+	const navigate = useNavigate();
+	const [applications, setApplications] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [activeTab, setActiveTab] = useState('applications');
+	const [highlightShortlisted, setHighlightShortlisted] = useState(false);
+	const [highlightCompanyPosition, setHighlightCompanyPosition] = useState(false);
+	const [showRoundDetails, setShowRoundDetails] = useState(false);
+	const [selectedRoundDetails, setSelectedRoundDetails] = useState(null);
+	const [selectedRoundType, setSelectedRoundType] = useState(null);
+	const [selectedAssessmentId, setSelectedAssessmentId] = useState(null);
+	const [showAllDetails, setShowAllDetails] = useState(false);
+	const [selectedApplication, setSelectedApplication] = useState(null);
+
+	const getAssessmentWindowInfo = (job) => {
+		const now = new Date();
+		const startRaw = job?.assessmentStartDate ? new Date(job.assessmentStartDate) : null;
+		const endRaw = job?.assessmentEndDate ? new Date(job.assessmentEndDate) : null;
+		const isValid = (date) => date instanceof Date && !isNaN(date.getTime());
+		const startDate = isValid(startRaw) ? startRaw : null;
+		const endDate = isValid(endRaw) ? endRaw : null;
+		const isBeforeStart = startDate ? now < startDate : false;
+		const isAfterEnd = endDate ? now > endDate : false;
+		return {
+			isBeforeStart,
+			isAfterEnd,
+			isWithinWindow: !(isBeforeStart || isAfterEnd),
+			startDate,
+			endDate
+		};
+	};
+
+	useEffect(() => {
+		loadScript("js/custom.js");
+		fetchApplications();
+		
+		// Check if we should highlight shortlisted applications
+		const shouldHighlight = sessionStorage.getItem('highlightShortlisted');
+		if (shouldHighlight === 'true') {
+			setHighlightShortlisted(true);
+			// Clear the flag after 5 seconds
+			setTimeout(() => {
+				setHighlightShortlisted(false);
+				sessionStorage.removeItem('highlightShortlisted');
+			}, 5000);
+		}
+		
+		// Check if we should highlight company and position columns
+		const shouldHighlightCP = sessionStorage.getItem('highlightCompanyPosition');
+		if (shouldHighlightCP === 'true') {
+			setHighlightCompanyPosition(true);
+			// Clear the flag after 5 seconds
+			setTimeout(() => {
+				setHighlightCompanyPosition(false);
+				sessionStorage.removeItem('highlightCompanyPosition');
+			}, 5000);
+		}
+		
+		// Set up polling to refresh data every 30 seconds
+		const interval = setInterval(() => {
+			fetchApplications();
+		}, 30000);
+		
+		return () => clearInterval(interval);
+	}, []);
+
+	const fetchApplications = async () => {
+		setLoading(true);
+		try {
+			const response = await api.getCandidateApplicationsWithInterviews();
+			if (response.success) {
+				const apps = response.applications || response.data || [];
+				console.log('Applications received:', apps);
+				if (apps.length > 0) {
+					console.log('First application job data:', apps[0].jobId);
+					console.log('Assessment ID:', apps[0].jobId?.assessmentId);
+					console.log('Interview Round Types:', apps[0].jobId?.interviewRoundTypes);
+					// Log all applications with assessment info
+					apps.forEach((app, idx) => {
+						console.log(`App ${idx + 1} - Job: ${app.jobId?.title}, Has Assessment: ${!!app.jobId?.assessmentId}, Assessment ID: ${app.jobId?.assessmentId}`);
+					});
+				}
+				setApplications(apps);
+			}
+		} catch (error) {
+			console.error('Error fetching applications with interviews:', error);
+			// Fallback to regular applications if new endpoint fails
+			try {
+				console.log('Falling back to regular applications endpoint');
+				const fallbackResponse = await api.getCandidateApplications();
+				if (fallbackResponse.success) {
+					const apps = fallbackResponse.applications || fallbackResponse.data || [];
+					console.log('Fallback applications received:', apps);
+					setApplications(apps);
+				}
+			} catch (fallbackError) {
+				console.error('Fallback also failed:', fallbackError);
+			}
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const getInterviewRounds = (job) => {
+		// Check if job has interviewRoundOrder (new format)
+		if (job?.interviewRoundOrder && job.interviewRoundOrder.length > 0) {
+			const rounds = [];
+			
+			// Map unique keys to round names
+			job.interviewRoundOrder.forEach(uniqueKey => {
+				const roundType = job.interviewRoundTypes?.[uniqueKey];
+				if (roundType) {
+					const roundNames = {
+						technical: 'Technical',
+						nonTechnical: 'Non-Technical',
+						managerial: 'Managerial',
+						final: 'Final',
+						hr: 'HR',
+						assessment: 'Assessment'
+					};
+					rounds.push({
+						name: roundNames[roundType] || roundType,
+						uniqueKey: uniqueKey,
+						roundType: roundType
+					});
+				}
+			});
+			
+			if (rounds.length > 0) return rounds;
+		}
+		
+		// Fallback to old format
+		if (job?.interviewRoundTypes) {
+			const rounds = [];
+			const roundTypes = job.interviewRoundTypes;
+
+			// If assessment is assigned, always show it first
+			if (job.assessmentId) {
+				rounds.push({ name: 'Assessment', uniqueKey: 'assessment', roundType: 'assessment' });
+			}
+
+			// Show other rounds
+			if (roundTypes.technical && !job.assessmentId) {
+				rounds.push({ name: 'Technical', uniqueKey: 'technical', roundType: 'technical' });
+			}
+			if (roundTypes.hr) rounds.push({ name: 'HR', uniqueKey: 'hr', roundType: 'hr' });
+			if (roundTypes.managerial) rounds.push({ name: 'Managerial', uniqueKey: 'managerial', roundType: 'managerial' });
+			if (roundTypes.nonTechnical) rounds.push({ name: 'Non-Technical', uniqueKey: 'nonTechnical', roundType: 'nonTechnical' });
+			if (roundTypes.final) rounds.push({ name: 'Final', uniqueKey: 'final', roundType: 'final' });
+
+			if (rounds.length > 0) return rounds;
+		}
+
+		// Default rounds for testing
+		return [{ name: 'Technical', uniqueKey: 'technical', roundType: 'technical' }, { name: 'HR', uniqueKey: 'hr', roundType: 'hr' }, { name: 'Final', uniqueKey: 'final', roundType: 'final' }];
+	};
+
+	const getRoundStatus = (application, roundIndex, roundName) => {
+		// Check assessment status for Assessment rounds
+		if (roundName === 'Assessment' && application.assessmentStatus) {
+			switch (application.assessmentStatus) {
+				case 'completed':
+					return { text: 'Completed', class: 'bg-success bg-opacity-10 text-success border border-success', feedback: '' };
+				case 'in_progress':
+					return { text: 'In Progress', class: 'bg-warning bg-opacity-10 text-warning border border-warning', feedback: '' };
+				case 'available':
+					return { text: 'Available', class: 'bg-info bg-opacity-10 text-info border border-info', feedback: '' };
+				case 'expired':
+					return { text: 'Expired', class: 'bg-danger bg-opacity-10 text-danger border border-danger', feedback: '' };
+				default:
+					return { text: 'Pending', class: 'bg-secondary bg-opacity-10 text-secondary border border-secondary', feedback: '' };
+			}
+		}
+
+		// Check if there are actual interview rounds data from employer review
+		if (application.interviewRounds && application.interviewRounds.length > 0) {
+			const round = application.interviewRounds.find(r => r.round === roundIndex + 1);
+			if (round) {
+				switch (round.status) {
+					case 'passed':
+						return { 
+							text: 'Passed', 
+							class: 'bg-success bg-opacity-10 text-success border border-success',
+							feedback: round.feedback || ''
+						};
+					case 'failed':
+						return { 
+							text: 'Failed', 
+							class: 'bg-danger bg-opacity-10 text-danger border border-danger',
+							feedback: round.feedback || ''
+						};
+					case 'pending':
+					default:
+						return { 
+							text: 'Scheduled', 
+							class: 'bg-info bg-opacity-10 text-info border border-info',
+							feedback: round.feedback || ''
+						};
+				}
+			}
+		}
+		
+		// Enhanced status logic based on application status
+		const status = application.status;
+		
+		// For pending status, check if candidate is selected for process
+		if (status === 'pending' && application.isSelectedForProcess) {
+			return { text: 'Scheduled', class: 'bg-info bg-opacity-10 text-info border border-info', feedback: '' };
+		}
+		
+		if (status === 'shortlisted') {
+			return { text: 'Scheduled', class: 'bg-info bg-opacity-10 text-info border border-info', feedback: '' };
+		} else if (status === 'interviewed') {
+			return { text: 'Completed', class: 'bg-success bg-opacity-10 text-success border border-success', feedback: '' };
+		} else if (status === 'hired') {
+			return { text: 'Completed', class: 'bg-success bg-opacity-10 text-success border border-success', feedback: '' };
+		} else if (status === 'rejected') {
+			return { text: 'Rejected', class: 'bg-danger bg-opacity-10 text-danger border border-danger', feedback: '' };
+		} else if (status === 'pending') {
+			return { text: 'Under Review', class: 'bg-warning bg-opacity-10 text-warning border border-warning', feedback: '' };
+		}
+		
+		return { text: 'Submitted', class: 'bg-secondary bg-opacity-10 text-secondary border border-secondary', feedback: '' };
+	};
+
+	const handleViewRoundDetails = (roundType, roundDetails, assessmentId = null) => {
+		setSelectedRoundType(roundType);
+		setSelectedRoundDetails(roundDetails);
+		setSelectedAssessmentId(assessmentId);
+		setShowRoundDetails(true);
+	};
+
+	const handleViewAllDetails = (application) => {
+		setSelectedApplication(application);
+		setShowAllDetails(true);
+	};
+
+	const handleStartAssessment = (application) => {
+		const job = application.jobId;
+		const windowInfo = getAssessmentWindowInfo(job);
+		if (!windowInfo.isWithinWindow) {
+			if (windowInfo.isBeforeStart) {
+				const startLabel = windowInfo.startDate ? windowInfo.startDate.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : null;
+				showToast(startLabel ? `Assessment opens on ${startLabel}` : 'Assessment is not yet available', 'warning');
+				return;
+			}
+			showToast('Assessment window has ended', 'error');
+			return;
+		}
+		const assessmentId = job?.assessmentId;
+		const jobId = job?._id || job;
+		const applicationId = application._id;
+		if (assessmentId && jobId && applicationId) {
+			const sessionPayload = { assessmentId, jobId, applicationId };
+			try {
+				sessionStorage.setItem('candidateCurrentAssessment', JSON.stringify(sessionPayload));
+			} catch (err) {}
+			const params = new URLSearchParams();
+			Object.entries(sessionPayload).forEach(([key, value]) => {
+				if (value) {
+					params.set(key, value);
+				}
+			});
+			navigate(`/candidate/start-tech-assessment?${params.toString()}`, {
+				state: sessionPayload
+			});
+		}
+	};
+
+	const getAssessmentButton = (application) => {
+		const assessmentStatus = application.assessmentStatus || 'not_required';
+		const job = application.jobId;
+		const hasAssessment = job?.assessmentId;
+
+		// If no assessment is assigned to the job, show default view details
+		if (!hasAssessment) {
+			return (
+				<button
+					className="btn btn-sm"
+					style={{
+						fontSize: '10px',
+						padding: '4px 8px',
+						backgroundColor: 'transparent',
+						border: '1px solid #ff6b35',
+						color: '#ff6b35',
+						whiteSpace: 'nowrap',
+						display: 'flex',
+						alignItems: 'center',
+						gap: '4px',
+						minWidth: '120px',
+						justifyContent: 'flex-start'
+					}}
+					onClick={() => handleViewRoundDetails('Assessment', null, job?.assessmentId)}
+					title="View Assessment Details"
+				>
+					<i className="fa fa-eye" style={{color: '#ff6b35', width: '14px'}}></i>
+					<span>View Details</span>
+				</button>
+			);
+		}
+
+		const windowInfo = getAssessmentWindowInfo(job);
+
+		const formatDate = (dateString) => {
+			if (!dateString) return null;
+			return new Date(dateString).toLocaleDateString('en-US', {
+				day: '2-digit',
+				month: 'short',
+				year: 'numeric'
+			});
+		};
+
+		const startDate = formatDate(job?.assessmentStartDate);
+		const endDate = formatDate(job?.assessmentEndDate);
+		const dateDisplay = startDate && endDate ? `${startDate} - ${endDate}` :
+						   startDate ? `From ${startDate}` :
+						   endDate ? `Until ${endDate}` : null;
+
+		switch (assessmentStatus) {
+			case 'available': {
+				const isDisabled = !windowInfo.isWithinWindow;
+				const label = windowInfo.isBeforeStart ? 'Opens Soon' : windowInfo.isAfterEnd ? 'Closed' : 'Start Assessment';
+				const buttonStyle = {
+					fontSize: '10px',
+					padding: '4px 8px',
+					backgroundColor: isDisabled ? '#6c757d' : '#28a745',
+					border: `1px solid ${isDisabled ? '#6c757d' : '#28a745'}`,
+					color: 'white',
+					whiteSpace: 'nowrap',
+					display: 'flex',
+					alignItems: 'center',
+					gap: '4px',
+					width: '100%',
+					justifyContent: 'flex-start',
+					cursor: isDisabled ? 'not-allowed' : 'pointer'
+				};
+				return (
+					<div style={{display: 'flex', flexDirection: 'column', gap: '2px', minWidth: '120px'}}>
+						<button
+							className="btn btn-sm"
+							style={buttonStyle}
+							onClick={() => handleStartAssessment(application)}
+							title="Start Assessment"
+							disabled={isDisabled}
+						>
+							<i className="fa fa-play" style={{color: 'white', width: '14px'}}></i>
+							<span>{label}</span>
+						</button>
+						{dateDisplay && (
+							<small style={{fontSize: '8px', color: '#666', textAlign: 'center'}}>
+								{dateDisplay}
+							</small>
+						)}
+					</div>
+				);
+			}
+			case 'in_progress': {
+				const isDisabled = windowInfo.isAfterEnd;
+				const buttonStyle = {
+					fontSize: '10px',
+					padding: '4px 8px',
+					backgroundColor: isDisabled ? '#6c757d' : '#ffc107',
+					border: `1px solid ${isDisabled ? '#6c757d' : '#ffc107'}`,
+					color: isDisabled ? 'white' : '#212529',
+					whiteSpace: 'nowrap',
+					display: 'flex',
+					alignItems: 'center',
+					gap: '4px',
+					width: '100%',
+					justifyContent: 'flex-start',
+					cursor: isDisabled ? 'not-allowed' : 'pointer'
+				};
+				return (
+					<div style={{display: 'flex', flexDirection: 'column', gap: '2px', minWidth: '120px'}}>
+						<button
+							className="btn btn-sm"
+							style={buttonStyle}
+							onClick={() => handleStartAssessment(application)}
+							title="Continue Assessment"
+							disabled={isDisabled}
+						>
+							<i className="fa fa-clock-o" style={{color: isDisabled ? 'white' : '#212529', width: '14px'}}></i>
+							<span>{isDisabled ? 'Closed' : 'Continue'}</span>
+						</button>
+						{dateDisplay && (
+							<small style={{fontSize: '8px', color: '#666', textAlign: 'center'}}>
+								{dateDisplay}
+							</small>
+						)}
+					</div>
+				);
+			}
+			case 'completed':
+				return (
+					<div style={{display: 'flex', flexDirection: 'column', gap: '2px', minWidth: '120px'}}>
+						<button
+							className="btn btn-sm"
+							style={{
+								fontSize: '10px',
+								padding: '4px 8px',
+								backgroundColor: '#17a2b8',
+								border: '1px solid #17a2b8',
+								color: 'white',
+								whiteSpace: 'nowrap',
+								display: 'flex',
+								alignItems: 'center',
+								gap: '4px',
+								width: '100%',
+								justifyContent: 'flex-start'
+							}}
+							onClick={() => navigate('/candidate/assessment-result', {
+								state: {
+									attemptId: application.assessmentAttemptId,
+									assessmentId: job?.assessmentId,
+									applicationId: application._id
+								}
+							})}
+							title="View Assessment Results"
+						>
+							<i className="fa fa-trophy" style={{color: 'white', width: '14px'}}></i>
+							<span>Results</span>
+						</button>
+						{dateDisplay && (
+							<small style={{fontSize: '8px', color: '#666', textAlign: 'center'}}>
+								{dateDisplay}
+							</small>
+						)}
+					</div>
+				);
+			default: {
+				const isDisabled = !windowInfo.isWithinWindow;
+				const label = windowInfo.isBeforeStart ? 'Opens Soon' : windowInfo.isAfterEnd ? 'Closed' : 'Start Assessment';
+				const buttonStyle = {
+					fontSize: '10px',
+					padding: '4px 8px',
+					backgroundColor: isDisabled ? '#6c757d' : '#28a745',
+					border: `1px solid ${isDisabled ? '#6c757d' : '#28a745'}`,
+					color: 'white',
+					whiteSpace: 'nowrap',
+					display: 'flex',
+					alignItems: 'center',
+					gap: '4px',
+					width: '100%',
+					justifyContent: 'flex-start',
+					cursor: isDisabled ? 'not-allowed' : 'pointer'
+				};
+				return (
+					<div style={{display: 'flex', flexDirection: 'column', gap: '2px', minWidth: '120px'}}>
+						<button
+							className="btn btn-sm"
+							style={buttonStyle}
+							onClick={() => handleStartAssessment(application)}
+							title="Start Assessment"
+							disabled={isDisabled}
+						>
+							<i className="fa fa-play" style={{color: 'white', width: '14px'}}></i>
+							<span>{label}</span>
+						</button>
+						{dateDisplay && (
+							<small style={{fontSize: '8px', color: '#666', textAlign: 'center'}}>
+								{dateDisplay}
+							</small>
+						)}
+					</div>
+				);
+			}
+		}
+	};
+
+	return (
+		<>
+			<div className="twm-right-section-panel site-bg-gray">
+				{/* Status Page Header */}
+				<div style={{ padding: '2rem 2rem 0 2rem' }}>
+					<div style={{ background: 'white', borderRadius: '12px', padding: '2rem', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', marginBottom: '2rem' }}>
+						<div style={{ textAlign: 'center' }}>
+							<h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111827', margin: '0 0 0.5rem 0' }}>
+								<i className="fa fa-clipboard-list me-2" style={{color: '#f97316'}}></i>
+								Application Status
+							</h2>
+							<p style={{ color: '#6b7280', margin: 0 }}>
+								Track your job applications and interview progress
+							</p>
+						</div>
+					</div>
+				</div>
+
+				{/* Status Content */}
+				<div style={{ padding: '0 2rem 2rem 2rem' }}>
+
+
+
+					{/* Highlight notification */}
+					{highlightShortlisted && (
+						<div className="alert alert-success alert-dismissible fade show mb-3" role="alert">
+							<i className="fa fa-star me-2"></i>
+							<strong>Shortlisted Applications Highlighted!</strong> Your shortlisted applications are highlighted below.
+						</div>
+					)}
+					
+					{highlightCompanyPosition && (
+						<div className="alert alert-info alert-dismissible fade show mb-3" role="alert">
+							<i className="fa fa-building me-2"></i>
+							<strong>Company & Position Columns Highlighted!</strong> View your applied companies and positions below.
+						</div>
+					)}
+
+					{/* Refresh Controls */}
+					<div className="d-flex justify-content-between align-items-center mb-3">
+						<div className="d-flex align-items-center">
+							<i className="fa fa-clock-o me-2" style={{color: '#ff6b35'}}></i>
+							<small className="text-muted">Updates automatically every 30 seconds</small>
+						</div>
+						<button 
+							className="btn btn-sm btn-outline-primary refresh-btn"
+							onClick={fetchApplications}
+							disabled={loading}
+							style={{backgroundColor: 'transparent'}}
+						>
+							<i className="fa fa-refresh me-1" />
+							{loading ? 'Refreshing...' : 'Refresh Now'}
+						</button>
+					</div>
+			
+					<div className="twm-pro-view-chart-wrap">
+						<div className="col-lg-12 col-md-12 mb-4">
+							<div className="card card-shadow border-0">
+								<div className="card-body p-0">
+									<div className="table-responsive" style={{overflowX: 'auto'}}>
+								<table className="table table-hover mb-0">
+									<thead style={{backgroundColor: '#f8f9fa'}}>
+										<tr>
+											<th className="border-0 px-4 py-3 fw-semibold" style={{color: '#232323'}}>
+												<i className="fa fa-calendar me-2" style={{color: '#ff6b35'}}></i>
+												Applied Date
+											</th>
+											<th className={`border-0 px-4 py-3 fw-semibold ${highlightCompanyPosition ? 'highlight-company-position' : ''}`} style={{color: '#232323', transition: 'all 0.3s ease'}}>
+												<i className="fa fa-building me-2" style={{color: '#ff6b35'}}></i>
+												Company
+											</th>
+											<th className={`border-0 px-4 py-3 fw-semibold ${highlightCompanyPosition ? 'highlight-company-position' : ''}`} style={{color: '#232323', transition: 'all 0.3s ease'}}>
+												<i className="fa fa-briefcase me-2" style={{color: '#ff6b35'}}></i>
+												Position
+											</th>
+											<th className="border-0 px-4 py-3 fw-semibold" style={{color: '#232323'}}>
+												<i className="fa fa-tasks me-2" style={{color: '#ff6b35'}}></i>
+												Interview Progress
+											</th>
+											<th className="border-0 px-4 py-3 fw-semibold" style={{color: '#232323'}}>
+												<i className="fa fa-flag me-2" style={{color: '#ff6b35'}}></i>
+												Status
+											</th>
+											<th className="border-0 px-4 py-3 fw-semibold text-center" style={{color: '#232323'}}>
+												<i className="fa fa-eye me-2" style={{color: '#ff6b35'}}></i>
+												View Details
+											</th>
+										</tr>
+									</thead>
+
+									<tbody>
+										{loading ? (
+											<tr>
+												<td colSpan="6" className="text-center py-5">
+													<div className="d-flex flex-column align-items-center">
+														<i className="fa fa-spinner fa-spin fa-3x mb-3" style={{color: '#ff6b35'}}></i>
+														<p className="text-muted mb-0">Loading your applications...</p>
+													</div>
+												</td>
+											</tr>
+										) : applications.length === 0 ? (
+											<tr>
+												<td colSpan="6" className="text-center py-5">
+													<div className="d-flex flex-column align-items-center">
+														<i className="fa fa-search fa-3x mb-3" style={{color: '#ff6b35'}}></i>
+														<h5 style={{color: '#232323'}}>No Applications Yet</h5>
+														<p className="text-muted mb-3">Start applying to jobs to see your application status here</p>
+														<button className="btn btn-outline-primary" onClick={() => navigate(pubRoute(publicUser.jobs.GRID))} style={{backgroundColor: 'transparent'}}>
+															<i className="fa fa-search me-2"></i>
+															Browse Jobs
+														</button>
+													</div>
+												</td>
+											</tr>
+										) : (
+											applications.map((app, index) => {
+												const interviewRounds = getInterviewRounds(app.jobId);
+												const isShortlisted = app.status === 'shortlisted';
+												const shouldHighlightRow = highlightShortlisted && isShortlisted;
+												return (
+													<tr 
+														key={index} 
+														className={`border-bottom ${shouldHighlightRow ? 'highlight-shortlisted' : ''}`}
+														style={{
+															backgroundColor: shouldHighlightRow ? '#e8f5e9' : 'transparent',
+															transition: 'background-color 0.3s ease',
+															border: shouldHighlightRow ? '2px solid #4caf50' : 'none'
+														}}
+													>
+														<td className="px-4 py-3">
+															<span className="text-dark fw-medium">
+																{new Date(app.createdAt || app.appliedAt).toLocaleDateString('en-US', {
+																	day: '2-digit',
+																	month: 'short',
+																	year: 'numeric'
+																})}
+															</span>
+														</td>
+														<td className={`px-4 py-3 ${highlightCompanyPosition ? 'highlight-company-position' : ''}`} style={{transition: 'all 0.3s ease'}}>
+															<div className="d-flex align-items-center">
+																<div className="me-3">
+																	<div className="rounded-circle d-flex align-items-center justify-content-center" style={{width: '45px', height: '45px', backgroundColor: '#fff3e0', border: '2px solid #ff6b35'}}>
+																		<i className="fa fa-building" style={{color: '#ff6b35', fontSize: '18px'}}></i>
+																	</div>
+																</div>
+																<div>
+																	<a href={`/emp-detail/${app.employerId?._id}`} className="text-decoration-none">
+																		<h6 className="mb-1 fw-semibold text-dark hover-primary">
+																			{app.employerId?.companyName || 'Company Name Not Available'}
+																		</h6>
+																	</a>
+																	<small className="text-muted">
+																		<i className="fas fa-map-marker-alt me-1"></i>
+																		{app.jobId?.location || 'Location Not Available'}
+																	</small>
+																</div>
+															</div>
+														</td>
+														<td className={`px-4 py-3 ${highlightCompanyPosition ? 'highlight-company-position' : ''}`} style={{transition: 'all 0.3s ease'}}>
+															<span className="fw-medium text-dark">
+																{app.jobId?.title || 'Position Not Available'}
+															</span>
+														</td>
+														<td className="px-4 py-3">
+															<div className="interview-progress-wrapper">
+																{interviewRounds.length > 0 ? (
+																	interviewRounds.map((round, roundIndex) => {
+																		// Get interview details for this round
+																		const roundName = typeof round === 'string' ? round : round.name;
+																		const roundStatus = getRoundStatus(app, roundIndex, roundName);
+																		const uniqueKey = typeof round === 'string' ? round.toLowerCase() : round.uniqueKey;
+																		
+																		// Try to find round details with multiple possible keys
+																		let roundDetails = null;
+																		if (app.jobId?.interviewRoundDetails) {
+																			// First try the uniqueKey
+																			roundDetails = app.jobId.interviewRoundDetails[uniqueKey];
+																			
+																			// If not found, try to find by round type in any key
+																			if (!roundDetails) {
+																				const roundType = typeof round === 'object' ? round.roundType : round.toLowerCase();
+																				for (const [key, details] of Object.entries(app.jobId.interviewRoundDetails)) {
+																					if (key.includes(roundType) && details && (details.description || details.fromDate || details.toDate)) {
+																						roundDetails = details;
+																						break;
+																					}
+																				}
+																			}
+																		};
+																		const formatDate = (dateStr) => {
+																			if (!dateStr) return null;
+																			try {
+																				return new Date(dateStr).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'});
+																			} catch (error) {
+																				console.error('Date formatting error:', error, 'for date:', dateStr);
+																				return null;
+																			}
+																		};
+																		// For Assessment, use job-level dates
+																		let startDate, endDate, dateDisplay;
+																		console.log('=== DATE DEBUG ===');
+																		console.log('Job ID:', app.jobId?._id);
+																		console.log('Assessment fields:', {
+																			assessmentId: app.jobId?.assessmentId,
+																			assessmentStartDate: app.jobId?.assessmentStartDate,
+																			assessmentEndDate: app.jobId?.assessmentEndDate
+																		});
+																		console.log('All job fields:', Object.keys(app.jobId || {}));
+																		
+																		if (roundName === 'Assessment') {
+																			// Try multiple possible field names for assessment dates
+																			startDate = formatDate(app.jobId?.assessmentStartDate || roundDetails?.fromDate);
+																			endDate = formatDate(app.jobId?.assessmentEndDate || roundDetails?.toDate);
+																		} else {
+																			startDate = formatDate(roundDetails?.fromDate || roundDetails?.date);
+																			endDate = formatDate(roundDetails?.toDate);
+																		}
+																		
+																		dateDisplay = startDate && endDate ? `${startDate} - ${endDate}` : 
+																						  startDate ? `From: ${startDate}` : 
+																						  endDate ? `Until: ${endDate}` : null;
+																		
+																		console.log('Formatted dates:', {startDate, endDate, dateDisplay});
+																		return (
+																			<div key={roundIndex} className="interview-round-item" style={{minWidth: '100px', padding: '4px'}}>
+																				<div className="round-name" style={{fontSize: '12px', fontWeight: '600', marginBottom: '4px'}}>{roundName}</div>
+																				<div style={{display: 'flex', flexDirection: 'column', gap: '3px', alignItems: 'center'}}>
+																					<span className={`badge ${roundStatus.class}`} style={{fontSize: '10px', padding: '3px 8px', minWidth: '70px', textAlign: 'center'}}>
+																						{roundStatus?.text || 'Pending'}
+																					</span>
+																					{dateDisplay && (
+																						<div style={{fontSize: '9px', color: '#666', textAlign: 'center', padding: '2px 4px', backgroundColor: '#f8f9fa', borderRadius: '3px', marginTop: '2px'}}>
+																							{dateDisplay}
+																						</div>
+																					)}
+																					{!dateDisplay && (
+																						<div style={{fontSize: '9px', color: '#999', textAlign: 'center', padding: '2px 4px', backgroundColor: '#f8f9fa', borderRadius: '3px', marginTop: '2px'}}>
+																							Dates TBD
+																						</div>
+																					)}
+
+
+																				</div>
+																			</div>
+																		);
+																	})
+																) : (
+																	<span className="text-muted fst-italic">No rounds specified</span>
+																)}
+															</div>
+														</td>
+														<td className="px-4 py-3">
+															<span className={
+																(app.status === 'pending' && app.isSelectedForProcess) ? 'badge bg-info bg-opacity-10 text-info border border-info' :
+																app.status === 'pending' ? 'badge bg-warning bg-opacity-10 text-warning border border-warning' :
+																app.status === 'shortlisted' ? 'badge bg-info bg-opacity-10 text-info border border-info' :
+																app.status === 'interviewed' ? 'badge bg-primary bg-opacity-10 text-primary border border-primary' :
+																app.status === 'hired' ? 'badge bg-success bg-opacity-10 text-success border border-success' :
+																app.status === 'rejected' ? 'badge bg-danger bg-opacity-10 text-danger border border-danger' : 'badge bg-secondary bg-opacity-10 text-secondary border border-secondary'
+															} style={{fontSize: '12px', padding: '6px 12px'}}>
+																{(app.status === 'pending' && app.isSelectedForProcess) ? 'Shortlisted' : app.status?.charAt(0).toUpperCase() + app.status?.slice(1) || 'Pending'}
+															</span>
+														</td>
+														<td className="px-4 py-3 text-center">
+															<button
+																className="btn btn-sm"
+																style={{
+																	width: '40px',
+																	height: '40px',
+																	borderRadius: '50%',
+																	backgroundColor: '#fff3e0',
+																	border: '2px solid #ff6b35',
+																	display: 'flex',
+																	alignItems: 'center',
+																	justifyContent: 'center',
+																	padding: '0',
+																	transition: 'all 0.3s ease'
+																}}
+																onClick={() => handleViewAllDetails(app)}
+																title="View all interview process details"
+																onMouseEnter={(e) => {
+																	e.currentTarget.style.backgroundColor = '#ff6b35';
+																	e.currentTarget.querySelector('i').style.color = 'white';
+																}}
+																onMouseLeave={(e) => {
+																	e.currentTarget.style.backgroundColor = '#fff3e0';
+																	e.currentTarget.querySelector('i').style.color = '#ff6b35';
+																}}
+															>
+																<i className="fa fa-eye" style={{color: '#ff6b35', fontSize: '18px', transition: 'color 0.3s ease'}}></i>
+															</button>
+														</td>
+													</tr>
+												);
+											})
+										)}
+
+									</tbody>
+								</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			{/* Interview Round Details Popup */}
+			<PopupInterviewRoundDetails
+				isOpen={showRoundDetails}
+				onClose={() => setShowRoundDetails(false)}
+				roundDetails={selectedRoundDetails}
+				roundType={selectedRoundType}
+				assessmentId={selectedAssessmentId}
+			/>
+
+			{/* All Interview Details Modal */}
+			{showAllDetails && selectedApplication && (
+				<div className="modal fade show" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)'}} onClick={() => setShowAllDetails(false)}>
+					<div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" onClick={(e) => e.stopPropagation()}>
+						<div className="modal-content" style={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 40px rgba(0,0,0,0.2)'}}>
+							<div className="modal-header" style={{backgroundColor: '#f5f5f5', color: '#000', borderRadius: '12px 12px 0 0'}}>
+								<h5 className="modal-title">
+									<i className="fa fa-clipboard-list me-2"></i>
+									Interview Process Details
+								</h5>
+								<button type="button" className="btn-close" onClick={() => setShowAllDetails(false)}></button>
+							</div>
+							<div className="modal-body" style={{padding: '30px'}}>
+								{/* Job Information */}
+								<div className="mb-4 p-3" style={{backgroundColor: '#f8f9fa', borderRadius: '8px', border: '1px solid #e0e0e0'}}>
+									<h6 className="mb-3" style={{color: '#232323', fontWeight: '600'}}>
+										<i className="fa fa-briefcase me-2" style={{color: '#ff6b35'}}></i>
+										Job Information
+									</h6>
+									<div className="row">
+										<div className="col-md-6 mb-2">
+											<strong>Company:</strong> {selectedApplication.employerId?.companyName || 'N/A'}
+										</div>
+										<div className="col-md-6 mb-2">
+											<strong>Position:</strong> {selectedApplication.jobId?.title || 'N/A'}
+										</div>
+										<div className="col-md-6 mb-2">
+											<strong>Location:</strong> {selectedApplication.jobId?.location || 'N/A'}
+										</div>
+										<div className="col-md-6 mb-2">
+											<strong>Applied Date:</strong> {new Date(selectedApplication.createdAt || selectedApplication.appliedAt).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}
+										</div>
+										<div className="col-md-12 mb-2">
+											<strong>Status:</strong> 
+											<span className={
+												selectedApplication.status === 'pending' ? 'badge bg-warning ms-2' :
+												selectedApplication.status === 'shortlisted' ? 'badge bg-info ms-2' :
+												selectedApplication.status === 'interviewed' ? 'badge bg-primary ms-2' :
+												selectedApplication.status === 'hired' ? 'badge bg-success ms-2' :
+												selectedApplication.status === 'rejected' ? 'badge bg-danger ms-2' : 'badge bg-secondary ms-2'
+											}>
+												{selectedApplication.status?.charAt(0).toUpperCase() + selectedApplication.status?.slice(1) || 'Pending'}
+											</span>
+										</div>
+									</div>
+								</div>
+
+								{/* Interview Rounds */}
+								<div className="mb-3">
+									<h6 className="mb-3" style={{color: '#232323', fontWeight: '600'}}>
+										<i className="fa fa-tasks me-2" style={{color: '#ff6b35'}}></i>
+										Interview Rounds
+									</h6>
+									{getInterviewRounds(selectedApplication.jobId).map((round, roundIndex) => {
+										const roundName = typeof round === 'string' ? round : round.name;
+										const roundStatus = getRoundStatus(selectedApplication, roundIndex, roundName);
+										const uniqueKey = typeof round === 'string' ? round.toLowerCase() : round.uniqueKey;
+										
+										// Debug: Log the data structure
+										console.log('Round:', roundName, 'UniqueKey:', uniqueKey);
+										console.log('Job interviewRoundDetails:', selectedApplication.jobId?.interviewRoundDetails);
+										
+										// Try to find round details - check all possible keys
+										let roundDetails = null;
+										if (selectedApplication.jobId?.interviewRoundDetails) {
+											const allDetails = selectedApplication.jobId.interviewRoundDetails;
+											
+											// Try direct key match first
+											roundDetails = allDetails[uniqueKey];
+											
+											// If not found, search through all keys
+											if (!roundDetails) {
+												const roundType = (typeof round === 'object' ? round.roundType : round.toLowerCase()).replace(/[^a-z]/gi, '');
+												for (const [key, details] of Object.entries(allDetails)) {
+													const cleanKey = key.replace(/[^a-z]/gi, '').toLowerCase();
+													if (cleanKey.includes(roundType.toLowerCase()) && details) {
+														roundDetails = details;
+														console.log('Found details for', roundName, 'in key:', key, details);
+														break;
+													}
+												}
+											}
+										}
+										
+										const assessmentId = selectedApplication.jobId?.assessmentId;
+
+										return (
+											<div key={roundIndex} className="mb-3 p-3" style={{backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e0e0e0'}}>
+												<div className="d-flex justify-content-between align-items-center mb-2">
+													<h6 className="mb-0" style={{color: '#232323', fontWeight: '600'}}>
+														<i className="fa fa-circle me-2" style={{color: '#ff6b35', fontSize: '8px'}}></i>
+														{roundName}
+													</h6>
+													<span className={`badge ${roundStatus.class}`} style={{fontSize: '10px', padding: '3px 8px', minWidth: '70px', textAlign: 'center'}}>
+														{roundStatus.text}
+													</span>
+												</div>
+												
+												{/* Assessment Details */}
+												{roundName === 'Assessment' && assessmentId && (
+													<div className="mt-2">
+														{/* Assessment Description */}
+														{roundDetails && roundDetails.description && (
+															<div className="mb-3 p-2" style={{backgroundColor: '#f8f9fa', borderRadius: '6px', border: '1px solid #e9ecef'}}>
+																<small className="text-muted d-block mb-1"><i className="fa fa-clipboard-check me-1" style={{color: '#ff6b35'}}></i><strong>Assessment Description:</strong></small>
+																<div style={{fontSize: '14px', lineHeight: '1.5', color: '#495057'}}>{roundDetails.description}</div>
+															</div>
+														)}
+														
+														{/* Assessment Period */}
+														{(selectedApplication.jobId?.assessmentStartDate || selectedApplication.jobId?.assessmentEndDate) && (
+															<div className="mb-2">
+																<small className="text-muted"><i className="fa fa-calendar me-1"></i>Assessment Period:</small>
+																<div>
+																	{selectedApplication.jobId?.assessmentStartDate && (
+																		<span><strong>From:</strong> {new Date(selectedApplication.jobId.assessmentStartDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}</span>
+																	)}
+																	{selectedApplication.jobId?.assessmentStartDate && selectedApplication.jobId?.assessmentEndDate && <span className="mx-2">-</span>}
+																	{selectedApplication.jobId?.assessmentEndDate && (
+																		<span><strong>To:</strong> {new Date(selectedApplication.jobId.assessmentEndDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}</span>
+																	)}
+																</div>
+															</div>
+														)}
+														
+														<div className="mb-2">
+															<small className="text-muted">Assessment Status:</small>
+															<div className="mt-1">
+																{getAssessmentButton(selectedApplication)}
+															</div>
+														</div>
+													</div>
+												)}
+
+												{/* Round Details - Always show if we have any details */}
+												{roundName !== 'Assessment' && (
+													<div className="mt-2">
+														{/* Description - Show first and prominently */}
+														{roundDetails?.description && (
+															<div className="mb-3 p-2" style={{backgroundColor: '#f8f9fa', borderRadius: '6px', border: '1px solid #e9ecef'}}>
+																<small className="text-muted d-block mb-1"><i className="fa fa-info-circle me-1" style={{color: '#ff6b35'}}></i><strong>Interview Process Description:</strong></small>
+																<div style={{fontSize: '14px', lineHeight: '1.5', color: '#495057'}}>{roundDetails.description}</div>
+															</div>
+														)}
+														
+														{/* Date Range - Show fromDate to toDate */}
+														{roundDetails && (roundDetails.fromDate || roundDetails.toDate) && (
+															<div className="mb-2">
+																<small className="text-muted"><i className="fa fa-calendar me-1"></i>Interview Period:</small>
+																<div>
+																	{roundDetails.fromDate && (
+																		<span><strong>From:</strong> {new Date(roundDetails.fromDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}</span>
+																	)}
+																	{roundDetails.fromDate && roundDetails.toDate && <span className="mx-2">-</span>}
+																	{roundDetails.toDate && (
+																		<span><strong>To:</strong> {new Date(roundDetails.toDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}</span>
+																	)}
+																	{roundDetails.time && (
+																		<div className="mt-1"><strong>Time:</strong> {roundDetails.time}</div>
+																	)}
+																</div>
+															</div>
+														)}
+														
+														{/* Fallback for old date field */}
+														{roundDetails && !roundDetails.fromDate && !roundDetails.toDate && roundDetails.date && (
+															<div className="mb-2">
+																<small className="text-muted"><i className="fa fa-calendar me-1"></i>Date:</small>
+																<div>{new Date(roundDetails.date).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'})}</div>
+															</div>
+														)}
+														
+														{roundDetails?.location && (
+															<div className="mb-2">
+																<small className="text-muted"><i className="fa fa-map-marker me-1"></i>Location:</small>
+																<div>{roundDetails.location}</div>
+															</div>
+														)}
+														{roundDetails?.interviewerName && (
+															<div className="mb-2">
+																<small className="text-muted"><i className="fa fa-user me-1"></i>Interviewer:</small>
+																<div>{roundDetails.interviewerName}</div>
+															</div>
+														)}
+														
+														{/* Show interview details or fallback message */}
+														{(() => {
+															let details = null;
+															if (selectedApplication.jobId?.interviewRoundDetails) {
+																const allDetails = selectedApplication.jobId.interviewRoundDetails;
+																const searchTerm = roundName.toLowerCase().replace(/[^a-z]/g, '');
+																for (const [key, value] of Object.entries(allDetails)) {
+																	if (value && key.toLowerCase().includes(searchTerm)) {
+																		details = value;
+																		break;
+																	}
+																}
+															}
+															return (
+																<>
+																	{details?.description && (
+																		<div className="mb-3 p-2" style={{backgroundColor: '#f8f9fa', borderRadius: '6px', border: '1px solid #e9ecef'}}>
+																			<small className="text-muted d-block mb-1"><i className="fa fa-info-circle me-1" style={{color: '#ff6b35'}}></i><strong>Interview Process Description:</strong></small>
+																			<div style={{fontSize: '14px', lineHeight: '1.5', color: '#495057'}}>{details.description}</div>
+																		</div>
+																	)}
+																	{details && (details.fromDate || details.toDate) && (
+																		<div className="mb-2">
+																			<small className="text-muted"><i className="fa fa-calendar me-1"></i>Interview Period:</small>
+																			<div>
+																				{details.fromDate && (
+																					<span><strong>From:</strong> {new Date(details.fromDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}</span>
+																				)}
+																				{details.fromDate && details.toDate && <span className="mx-2">-</span>}
+																				{details.toDate && (
+																					<span><strong>To:</strong> {new Date(details.toDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}</span>
+																				)}
+																				{details.time && (
+																					<div className="mt-1"><strong>Time:</strong> {details.time}</div>
+																				)}
+																			</div>
+																		</div>
+																	)}
+																	{!details && (
+																		<div className="mb-2 p-2" style={{backgroundColor: '#fff3cd', borderRadius: '6px', border: '1px solid #ffeaa7'}}>
+																			<small className="text-muted"><i className="fa fa-info-circle me-1"></i>Interview details will be updated by the employer soon.</small>
+																		</div>
+																	)}
+																</>
+															);
+														})()}
+													</div>
+												)}
+
+												{/* Feedback */}
+												{roundStatus.feedback && (
+													<div className="mt-2 p-2" style={{backgroundColor: '#f8f9fa', borderRadius: '6px'}}>
+														<small className="text-muted"><i className="fa fa-comment me-1"></i>Feedback:</small>
+														<div className="mt-1">{roundStatus.feedback}</div>
+													</div>
+												)}
+											</div>
+										);
+									})}
+								</div>
+							</div>
+							<div className="modal-footer" style={{borderTop: '1px solid #e0e0e0'}}>
+								<button type="button" className="btn btn-secondary" onClick={() => setShowAllDetails(false)}>
+									Close
+								</button>
+							</div>
+						</div>
+					</div>
+					</div>
+				)}
+			</>
+		);
+}
+
+export default CanStatusPage;

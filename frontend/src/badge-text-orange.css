@@ -1,0 +1,12 @@
+/* Badge Text Orange Override */
+div[style*="background: #fff5f2"] span,
+div[style*="background: #e7f3ff"] span,
+div[style*="border: 2px solid #ff6b35"] span,
+div[style*="border: 1px solid #b3d9ff"] span {
+  color: #ff6b35 !important;
+}
+
+/* Specific override for interview round badges */
+div[style*="display: inline-flex"][style*="borderRadius: 20"] span:not([style*="cursor: pointer"]) {
+  color: #ff6b35 !important;
+}

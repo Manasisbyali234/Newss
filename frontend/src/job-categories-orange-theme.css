@@ -1,0 +1,61 @@
+/* Job Categories Orange Theme - White Cards with Orange Background */
+
+/* Main job categories section background */
+.twm-job-categories-area2 {
+  background-color: transparent !important;
+}
+
+/* Keep job category cards white */
+.job-categories-block-2 {
+  background-color: #fff !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Icon styling - make icons orange */
+.job-categories-block-2 .twm-media [class*=flaticon-] {
+  color: #fd7e14 !important;
+}
+
+/* Icon background circle */
+.job-categories-block-2 .twm-media:after {
+  background-color: rgba(253, 126, 20, 0.1) !important;
+}
+
+/* Job count styling */
+.job-categories-block-2 .twm-content .twm-jobs-available {
+  background-color: #f0f6fe !important;
+  color: #1967d2 !important;
+}
+
+/* Category name styling */
+.job-categories-block-2 .twm-content a {
+  color: #17171d !important;
+}
+
+/* Hover effects */
+.job-categories-block-2:hover {
+  background-color: #fff !important;
+  transform: translateY(-5px);
+  transition: all 0.3s ease;
+  box-shadow: none !important;
+}
+
+.job-categories-block-2:hover .twm-media [class*=flaticon-] {
+  color: #fd7e14 !important;
+  transform: scale(1.1);
+}
+
+.job-categories-block-2:hover .twm-media:after {
+  background-color: rgba(253, 126, 20, 0.2) !important;
+  transform: translateX(-50%) translateY(-50%) scale(1.2);
+}
+
+.job-categories-block-2:hover .twm-content a {
+  color: #fd7e14 !important;
+}
+
+.job-categories-block-2:hover .twm-content .twm-jobs-available {
+  background-color: #fd7e14 !important;
+  color: #fff !important;
+}

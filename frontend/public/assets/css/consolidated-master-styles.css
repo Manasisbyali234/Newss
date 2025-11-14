@@ -1,0 +1,177 @@
+/**
+ * ============================================================================
+ * CONSOLIDATED MASTER STYLES - All-in-One CSS File
+ * ============================================================================
+ * 
+ * This file consolidates all CSS styling for the Jobzz application to prevent
+ * cascade and specificity conflicts. Originally split into 11+ separate files:
+ * - global-styles.css
+ * - notification-animations.css
+ * - mobile-responsive.css
+ * - employer-mobile-responsive.css
+ * - index16-mobile-fix.css
+ * - logo-fix.css
+ * - mobile-card-scrolling.css
+ * - force-light-mode.css
+ * - dark-screen-fix.css
+ * - fix-dark-mode.css (if needed)
+ * - orange-preserve.css
+ * - ux-improvements.css
+ * 
+ * Organization:
+ * 1. Color Scheme & Light Mode Force
+ * 2. Base/Global Styles
+ * 3. Modal & Backdrop Styles
+ * 4. Form Controls & Inputs
+ * 5. Button Styles
+ * 6. Animations & Transitions
+ * 7. Card & Container Styles
+ * 8. Navigation & Logo Styles
+ * 9. Mobile Responsive (General)
+ * 10. Mobile Responsive (Employer Dashboard)
+ * 11. Mobile Responsive (Index16)
+ * 12. Scrolling & Overflow Handling
+ * ============================================================================
+ */
+
+/* Import DM Serif Display Font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap');
+
+/* ============================================================================
+ * SECTION 1: COLOR SCHEME & LIGHT MODE FORCE
+ * ============================================================================ */
+
+:root {
+  color-scheme: light only !important;
+  /* Font Family */
+  --font-family: "DM Serif Display", serif;
+  /* Primary Colors */
+  --color-primary-orange: #fd7e14;
+  --color-primary-orange-dark: #e8690a;
+  --color-primary-orange-darker: #d1570a;
+  --color-primary-orange-light: #FF6A00;
+  --color-blue-primary: #2563eb;
+  --color-blue-dark: #1e40af;
+  --color-bg-white: #ffffff;
+  --color-text-dark: #000000;
+  --color-text-gray: #000000;
+  --color-border-light: #d1d5db;
+  --color-bg-light: #f9fafb;
+  --color-bg-lighter: #f8fafc;
+}
+
+html {
+  color-scheme: light only !important;
+}
+
+body {
+  color-scheme: light only !important;
+}
+
+/* Override dark mode media queries */
+@media (prefers-color-scheme: dark) {
+  :root,
+  html,
+  body,
+  #root {
+    background-color: #ffffff !important;
+    color-scheme: light only !important;
+  }
+
+  .container,
+  .container-fluid,
+  .panel,
+  .card,
+  .modal-content,
+  .dropdown-menu {
+    background-color: #ffffff !important;
+  }
+
+  input,
+  select,
+  textarea,
+  .form-control,
+  .form-select {
+    background-color: #ffffff !important;
+    color: #212529 !important;
+    border: 1px solid #ced4da !important;
+  }
+
+  .text-dark {
+    color: #212529 !important;
+  }
+
+  .text-muted {
+    color: #6c757d !important;
+  }
+
+  .text-primary {
+    color: #0d6efd !important;
+  }
+
+  .site-text-primary {
+    color: #FF6A00 !important;
+  }
+
+  .btn-primary {
+    background-color: #0d6efd !important;
+    color: #ffffff !important;
+    border-color: #0d6efd !important;
+  }
+
+  .site-button,
+  button.site-button {
+    background-color: #fd7e14 !important;
+    color: #ffffff !important;
+    border-color: #fd7e14 !important;
+  }
+
+  .nav-pills {
+    background-color: #f8f9fa !important;
+  }
+
+  .nav-pills .nav-link.active {
+    background-color: #0d6efd !important;
+    color: #ffffff !important;
+  }
+
+  .nav-pills .nav-link {
+    color: #6c757d !important;
+  }
+
+  .alert-danger {
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+    border-color: #f5c6cb !important;
+  }
+}
+
+* {
+  color-scheme: light only !important;
+}
+
+/* Minimal CSS - only essential fixes */
+html, body, #root {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Fix modal backdrop */
+.modal-backdrop {
+  display: none !important;
+}
+
+.modal {
+  background: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Basic button styling */
+button, .btn, .site-button {
+  background-color: rgba(255, 122, 0, 0.08) !important;
+  color: #FF7A00 !important;
+  border: 1px solid #FF7A00 !important;
+}
+
+button:hover, .btn:hover, .site-button:hover {
+  background-color: #FFF3E5 !important;
+}

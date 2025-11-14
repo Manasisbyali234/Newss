@@ -1,0 +1,1434 @@
+const jwt = require('jsonwebtoken');
+const Employer = require('../models/Employer');
+const EmployerProfile = require('../models/EmployerProfile');
+const Job = require('../models/Job');
+const Application = require('../models/Application');
+const Message = require('../models/Message');
+const Subscription = require('../models/Subscription');
+const { sendWelcomeEmail } = require('../utils/emailService');
+const { cacheInvalidation } = require('../utils/cacheInvalidation');
+
+const generateToken = (id, role) => {
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
+};
+
+// Authentication Controllers
+exports.registerEmployer = async (req, res) => {
+  try {
+    console.log('=== EMPLOYER REGISTRATION ===');
+    console.log('Request body:', JSON.stringify(req.body, null, 2));
+    const { name, email, password, phone, companyName, employerCategory, employerType, sendWelcomeEmail: shouldSendEmail } = req.body;
+
+    const existingEmployer = await Employer.findOne({ email });
+    if (existingEmployer) {
+      return res.status(400).json({ success: false, message: 'Email already registered' });
+    }
+
+    const finalEmployerType = employerType || (employerCategory === 'consultancy' ? 'consultant' : 'company');
+
+    // Create employer without password - they will create it via email link
+    const employer = await Employer.create({ 
+      name, 
+      email, 
+      phone, 
+      companyName,
+      employerType: finalEmployerType
+    });
+    
+    await EmployerProfile.create({ 
+      employerId: employer._id,
+      employerCategory: employerCategory || finalEmployerType,
+      companyName: companyName,
+      email: email,
+      phone: phone,
+      description: 'We are a dynamic company focused on delivering excellent services and creating opportunities for talented professionals.',
+      location: 'Bangalore, India'
+    });
+    
+    await Subscription.create({ employerId: employer._id });
+
+    // Send welcome email with password creation link
+    try {
+      await sendWelcomeEmail(email, companyName, 'employer');
+      console.log('Welcome email sent to:', email);
+    } catch (emailError) {
+      console.error('Welcome email failed:', emailError);
+      return res.status(500).json({ success: false, message: 'Failed to send welcome email. Please try again.' });
+    }
+
+    res.status(201).json({
+      success: true,
+      message: 'Registration successful! Please check your email to create your password.'
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.loginEmployer = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    // Validate input
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: 'Email and password are required' });
+    }
+    
+    // Removed console debug line for security
+
+    const employer = await Employer.findOne({ email });
+    if (!employer) {
+      // Removed console debug line for security
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+
+    const isPasswordValid = await employer.comparePassword(password);
+    if (!isPasswordValid) {
+      // Removed console debug line for security;
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+
+    if (employer.status !== 'active') {
+      // Removed console debug line for security;
+      return res.status(401).json({ success: false, message: 'Account is inactive' });
+    }
+
+    const token = generateToken(employer._id, 'employer');
+    // Removed console debug line for security;
+
+    res.json({
+      success: true,
+      token,
+      employer: {
+        id: employer._id,
+        name: employer.name,
+        email: employer.email,
+        companyName: employer.companyName,
+        employerType: employer.employerType
+      }
+    });
+  } catch (error) {
+    console.error('Employer login error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Profile Controllers
+exports.getProfile = async (req, res) => {
+  try {
+    const profile = await EmployerProfile.findOne({ employerId: req.user._id })
+      .populate('employerId', 'name email phone companyName isApproved');
+    
+    if (!profile) {
+      return res.json({ success: true, profile: null });
+    }
+
+    res.json({ success: true, profile });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.updateProfile = async (req, res) => {
+  try {
+    // Log request size for debugging
+    const requestSize = JSON.stringify(req.body).length;
+    // Removed console debug line for security;
+    
+    // Remove employerCategory from update data to prevent modification
+    const updateData = { ...req.body };
+    delete updateData.employerCategory;
+    
+    // Explicitly preserve text fields that should be saved
+    // Use $set operator to ensure fields are actually updated
+    const textFieldsToPreserve = ['whyJoinUs', 'googleMapsEmbed', 'description', 'location'];
+    const setOperations = {};
+    
+    textFieldsToPreserve.forEach(field => {
+      if (req.body[field] !== undefined) {
+        setOperations[field] = req.body[field];
+      }
+    });
+    
+    // Remove any Base64 data that should not be in profile updates
+    // (these should be uploaded via separate endpoints)
+    const fieldsToExclude = ['logo', 'coverImage', 'panCardImage', 'cinImage', 'gstImage', 'certificateOfIncorporation', 'companyIdCardPicture', 'authorizationLetters', 'gallery'];
+    fieldsToExclude.forEach(field => {
+      if (updateData[field] && typeof updateData[field] === 'string' && updateData[field].startsWith('data:')) {
+        console.log(`Excluding Base64 field: ${field}`);
+        delete updateData[field];
+      }
+    });
+    
+    // Merge the text field set operations into updateData to ensure they're saved
+    Object.assign(updateData, setOperations);
+    
+    // Force include whyJoinUs and googleMapsEmbed even if empty strings
+    if (req.body.hasOwnProperty('whyJoinUs')) {
+      updateData.whyJoinUs = req.body.whyJoinUs || '';
+    }
+    if (req.body.hasOwnProperty('googleMapsEmbed')) {
+      updateData.googleMapsEmbed = req.body.googleMapsEmbed || '';
+    }
+    
+    // Ensure description and location always have default values if empty
+    if (req.body.hasOwnProperty('description')) {
+      updateData.description = req.body.description || 'We are a dynamic company focused on delivering excellent services and creating opportunities for talented professionals.';
+    }
+    if (req.body.hasOwnProperty('location')) {
+      updateData.location = req.body.location || 'Bangalore, India';
+    }
+
+    // Verify that text fields are included in updateData
+    console.log('Profile update - description:', updateData.description?.substring(0, 50));
+    console.log('Profile update - location:', updateData.location?.substring(0, 50));
+    console.log('Profile update - whyJoinUs:', updateData.whyJoinUs?.substring(0, 50));
+    console.log('Profile update - googleMapsEmbed:', updateData.googleMapsEmbed?.substring(0, 50));
+    console.log('Profile update - all updateData keys:', Object.keys(updateData));
+
+    const profile = await EmployerProfile.findOneAndUpdate(
+      { employerId: req.user._id },
+      updateData,
+      { new: true, upsert: true, runValidators: false }
+    ).populate('employerId', 'name email phone companyName');
+
+    // Verify fields were saved to database
+    console.log('Saved profile - whyJoinUs:', profile.whyJoinUs?.substring(0, 50));
+    console.log('Saved profile - googleMapsEmbed:', profile.googleMapsEmbed?.substring(0, 50));
+    console.log('Saved profile - location:', profile.location?.substring(0, 50));
+
+    // Check if profile is now complete and notify admin for approval
+    try {
+      const { createNotification } = require('./notificationController');
+      const requiredFields = ['companyName', 'description', 'location', 'phone', 'email'];
+      const isProfileComplete = requiredFields.every(field => profile[field]);
+      
+      if (isProfileComplete && !req.user.isApproved) {
+        // Profile is complete but not yet approved - notify admin
+        await createNotification({
+          title: 'Company Profile Ready for Review',
+          message: `${profile.companyName || 'A company'} has completed their profile and is ready for admin approval to post jobs.`,
+          type: 'profile_submitted',
+          role: 'admin',
+          relatedId: profile._id,
+          createdBy: req.user._id
+        });
+      } else {
+        // Regular profile update notification
+        await createNotification({
+          title: 'Company Profile Updated',
+          message: `${profile.companyName || 'A company'} has updated their profile`,
+          type: 'profile_updated',
+          role: 'admin',
+          relatedId: profile._id,
+          createdBy: req.user._id
+        });
+      }
+    } catch (notifError) {
+      console.error('Notification creation failed:', notifError);
+    }
+
+    res.json({ success: true, profile });
+  } catch (error) {
+    console.error('Profile update error:', error);
+    if (error.type === 'entity.too.large') {
+      res.status(413).json({ success: false, message: 'Request too large. Please upload files individually and try again.' });
+    } else {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+};
+
+exports.uploadLogo = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
+
+    const { fileToBase64 } = require('../middlewares/upload');
+    const logoBase64 = fileToBase64(req.file);
+
+    const profile = await EmployerProfile.findOneAndUpdate(
+      { employerId: req.user._id },
+      { logo: logoBase64 },
+      { new: true, upsert: true }
+    );
+
+    res.json({ success: true, logo: logoBase64, profile });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.uploadCover = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
+
+    const { fileToBase64 } = require('../middlewares/upload');
+    const coverBase64 = fileToBase64(req.file);
+
+    const profile = await EmployerProfile.findOneAndUpdate(
+      { employerId: req.user._id },
+      { coverImage: coverBase64 },
+      { new: true, upsert: true }
+    );
+
+    res.json({ success: true, coverImage: coverBase64, profile });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.uploadDocument = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
+
+    const { fileToBase64 } = require('../middlewares/upload');
+    const { fieldName } = req.body;
+    const documentBase64 = fileToBase64(req.file);
+    const updateData = { [fieldName]: documentBase64 };
+
+    const profile = await EmployerProfile.findOneAndUpdate(
+      { employerId: req.user._id },
+      updateData,
+      { new: true, upsert: true }
+    );
+
+    res.json({ success: true, filePath: documentBase64, profile });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.uploadAuthorizationLetter = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
+
+    const { fileToBase64 } = require('../middlewares/upload');
+    const documentBase64 = fileToBase64(req.file);
+    
+    const newDocument = {
+      fileName: req.file.originalname,
+      fileData: documentBase64,
+      uploadedAt: new Date(),
+      companyName: req.body.companyName || ''
+    };
+
+    const profile = await EmployerProfile.findOneAndUpdate(
+      { employerId: req.user._id },
+      { $push: { authorizationLetters: newDocument } },
+      { new: true, upsert: true }
+    );
+
+    res.json({ success: true, document: newDocument, profile });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.deleteAuthorizationLetter = async (req, res) => {
+  try {
+    const { documentId } = req.params;
+    
+    const profile = await EmployerProfile.findOneAndUpdate(
+      { employerId: req.user._id },
+      { $pull: { authorizationLetters: { _id: documentId } } },
+      { new: true }
+    );
+
+    if (!profile) {
+      return res.status(404).json({ success: false, message: 'Profile not found' });
+    }
+
+    res.json({ success: true, message: 'Authorization letter deleted successfully', profile });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.updateAuthorizationCompanies = async (req, res) => {
+  try {
+    const { authorizationLetters } = req.body;
+    
+    const profile = await EmployerProfile.findOneAndUpdate(
+      { employerId: req.user._id },
+      { authorizationLetters },
+      { new: true }
+    );
+
+    if (!profile) {
+      return res.status(404).json({ success: false, message: 'Profile not found' });
+    }
+
+    res.json({ success: true, message: 'Authorization company names updated successfully', profile });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.uploadGallery = async (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ success: false, message: 'No files uploaded' });
+    }
+
+    const { fileToBase64 } = require('../middlewares/upload');
+    const profile = await EmployerProfile.findOne({ employerId: req.user._id });
+    const currentGallery = profile?.gallery || [];
+
+    if (currentGallery.length + req.files.length > 10) {
+      return res.status(400).json({ 
+        success: false, 
+        message: `Cannot upload ${req.files.length} images. Maximum 10 images allowed. Current: ${currentGallery.length}` 
+      });
+    }
+
+    const newImages = req.files.map(file => ({
+      url: fileToBase64(file),
+      fileName: file.originalname,
+      uploadedAt: new Date()
+    }));
+
+    const updatedProfile = await EmployerProfile.findOneAndUpdate(
+      { employerId: req.user._id },
+      { $push: { gallery: { $each: newImages } } },
+      { new: true, upsert: true }
+    );
+
+    res.json({ success: true, gallery: updatedProfile.gallery });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.deleteGalleryImage = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+    
+    const profile = await EmployerProfile.findOneAndUpdate(
+      { employerId: req.user._id },
+      { $pull: { gallery: { _id: imageId } } },
+      { new: true }
+    );
+
+    if (!profile) {
+      return res.status(404).json({ success: false, message: 'Profile not found' });
+    }
+
+    res.json({ success: true, message: 'Gallery image deleted successfully', gallery: profile.gallery });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Job Management Controllers
+exports.createJob = async (req, res) => {
+  try {
+    // Check if company profile is complete
+    const profile = await EmployerProfile.findOne({ employerId: req.user._id });
+    
+    if (!profile) {
+      return res.status(403).json({ 
+        success: false, 
+        message: 'Please complete your company profile before posting jobs.',
+        requiresProfile: true
+      });
+    }
+
+    // Check required profile fields - be more flexible with validation
+    const requiredFields = ['companyName', 'description', 'location', 'phone', 'email'];
+    const missingFields = requiredFields.filter(field => {
+      const value = profile[field];
+      return !value || (typeof value === 'string' && value.trim() === '');
+    });
+    
+    // Log for debugging
+    console.log('Profile validation check:', {
+      companyName: profile.companyName,
+      description: profile.description,
+      location: profile.location,
+      phone: profile.phone,
+      email: profile.email,
+      missingFields
+    });
+    
+    if (missingFields.length > 0) {
+      return res.status(403).json({ 
+        success: false, 
+        message: `Please complete your company profile. Missing fields: ${missingFields.join(', ')}`,
+        requiresProfile: true,
+        missingFields
+      });
+    }
+
+    // Check if employer is approved by admin
+    if (!req.user.isApproved) {
+      return res.status(403).json({ 
+        success: false, 
+        message: 'Your company profile is under review. Admin approval is required before you can post jobs. Please wait for approval.',
+        requiresApproval: true
+      });
+    }
+
+    const jobData = { ...req.body, employerId: req.user._id, status: 'active' };
+    
+    // Map assignedAssessment to assessmentId
+    if (jobData.assignedAssessment) {
+      jobData.assessmentId = jobData.assignedAssessment;
+      delete jobData.assignedAssessment;
+    }
+    
+    // Handle nested assessment object from frontend
+    if (jobData.assessment && jobData.assessment.assessmentId) {
+      jobData.assessmentId = jobData.assessment.assessmentId;
+      if (jobData.assessment.fromDate) jobData.assessmentStartDate = jobData.assessment.fromDate;
+      if (jobData.assessment.toDate) jobData.assessmentEndDate = jobData.assessment.toDate;
+      delete jobData.assessment;
+    }
+
+    // If assessment is selected, automatically enable technical interview round
+    if (jobData.assessmentId) {
+      if (!jobData.interviewRoundTypes) {
+        jobData.interviewRoundTypes = {
+          technical: false,
+          managerial: false,
+          nonTechnical: false,
+          final: false,
+          hr: false
+        };
+      }
+      jobData.interviewRoundTypes.technical = true;
+      // Set interview rounds count if not set
+      if (!jobData.interviewRoundsCount || jobData.interviewRoundsCount < 1) {
+        jobData.interviewRoundsCount = 1;
+      }
+    }
+
+    // Remove assessment from interviewRoundTypes (it's stored separately in assessmentId)
+    if (jobData.interviewRoundTypes && jobData.interviewRoundTypes.assessment) {
+      delete jobData.interviewRoundTypes.assessment;
+    }
+    
+    // Ensure interviewRoundOrder is properly handled
+    if (!jobData.interviewRoundOrder) {
+      jobData.interviewRoundOrder = [];
+    }
+    
+    // Process and validate interview round details dates
+    if (jobData.interviewRoundDetails) {
+      Object.keys(jobData.interviewRoundDetails).forEach(roundKey => {
+        const roundDetails = jobData.interviewRoundDetails[roundKey];
+        if (roundDetails) {
+          // Convert date strings to Date objects for proper storage
+          if (roundDetails.fromDate && typeof roundDetails.fromDate === 'string') {
+            roundDetails.fromDate = new Date(roundDetails.fromDate);
+          }
+          if (roundDetails.toDate && typeof roundDetails.toDate === 'string') {
+            roundDetails.toDate = new Date(roundDetails.toDate);
+          }
+          
+          // Validate date range
+          if (roundDetails.fromDate && roundDetails.toDate && 
+              roundDetails.fromDate > roundDetails.toDate) {
+            throw new Error(`Invalid date range for ${roundKey}: From Date cannot be after To Date`);
+          }
+        }
+      });
+    }
+    
+    // Parse CTC from string format to proper structure
+    if (jobData.ctc && typeof jobData.ctc === 'string') {
+      const ctcStr = jobData.ctc.trim();
+      const rangeMatch = ctcStr.match(/(\d+(?:\.\d+)?)\s*[-–—]\s*(\d+(?:\.\d+)?)/i);
+      if (rangeMatch) {
+        jobData.ctc = {
+          min: parseFloat(rangeMatch[1]) * 100000,
+          max: parseFloat(rangeMatch[2]) * 100000
+        };
+      } else {
+        const singleValue = parseFloat(ctcStr.replace(/[^\d.]/g, ''));
+        if (singleValue && singleValue > 0) {
+          jobData.ctc = {
+            min: singleValue * 100000,
+            max: singleValue * 100000
+          };
+        }
+      }
+    }
+    
+    if (jobData.netSalary && typeof jobData.netSalary === 'string') {
+      const netMatch = jobData.netSalary.match(/(\d+(?:,\d+)*)\s*(?:-|to)?\s*(\d+(?:,\d+)*)?/i);
+      if (netMatch) {
+        jobData.netSalary = {
+          min: parseInt(netMatch[1].replace(/,/g, '')),
+          max: parseInt((netMatch[2] || netMatch[1]).replace(/,/g, ''))
+        };
+      }
+    }
+    
+    console.log('Creating job with data:', JSON.stringify(jobData, null, 2)); // Debug log
+    console.log('Company fields:', {
+      companyLogo: jobData.companyLogo ? 'Present' : 'Missing',
+      companyName: jobData.companyName,
+      companyDescription: jobData.companyDescription ? 'Present' : 'Missing',
+      category: jobData.category
+    });
+    console.log('Parsed CTC:', jobData.ctc);
+    console.log('Parsed Net Salary:', jobData.netSalary);
+    
+    // Check if interview rounds are scheduled
+    const hasScheduledRounds = jobData.interviewRoundDetails && 
+      Object.values(jobData.interviewRoundDetails).some(round => 
+        round && (round.date || round.fromDate) && round.time && round.description
+      );
+    
+    console.log('Interview rounds scheduled check:', {
+      hasScheduledRounds,
+      interviewRoundDetails: jobData.interviewRoundDetails
+    });
+    
+    if (hasScheduledRounds) {
+      jobData.interviewScheduled = true;
+    }
+    
+    const job = await Job.create(jobData);
+    console.log('Job created:', JSON.stringify(job, null, 2));
+
+    // If job has assessment, update existing applications to set assessmentStatus to 'available'
+    if (job.assessmentId) {
+      try {
+        await Application.updateMany(
+          { jobId: job._id },
+          { assessmentStatus: 'available' }
+        );
+        console.log('Updated existing applications with assessment status');
+      } catch (updateError) {
+        console.error('Error updating existing applications:', updateError);
+        // Don't fail job creation if this update fails
+      }
+    }
+
+    // Clear job-related caches immediately
+    cacheInvalidation.clearJobCaches();
+
+    // Create notification for all candidates when job is posted
+    try {
+      const { createNotification } = require('./notificationController');
+      await createNotification({
+        title: 'New Job Posted',
+        message: `New ${job.title} position available at ${req.user.companyName}`,
+        type: 'job_posted',
+        role: 'candidate',
+        relatedId: job._id,
+        createdBy: req.user._id
+      });
+      
+      // Create interview scheduled notification if rounds are scheduled
+      if (hasScheduledRounds) {
+        await createNotification({
+          title: 'Interview Rounds Scheduled',
+          message: `Interview rounds have been scheduled for ${job.title} position at ${req.user.companyName}`,
+          type: 'interview_scheduled',
+          role: 'candidate',
+          relatedId: job._id,
+          createdBy: req.user._id
+        });
+      }
+    } catch (notifError) {
+      console.error('Notification creation failed:', notifError);
+    }
+
+    res.status(201).json({ success: true, job });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.updateJob = async (req, res) => {
+  try {
+    console.log('Update job request body:', req.body);
+    console.log('Job ID:', req.params.jobId);
+    
+    const oldJob = await Job.findOne({ _id: req.params.jobId, employerId: req.user._id });
+    if (!oldJob) {
+      return res.status(404).json({ success: false, message: 'Job not found' });
+    }
+    
+    // Parse CTC from string format to proper structure
+    if (req.body.ctc && typeof req.body.ctc === 'string') {
+      const ctcStr = req.body.ctc.trim();
+      const rangeMatch = ctcStr.match(/(\d+(?:\.\d+)?)\s*[-–—]\s*(\d+(?:\.\d+)?)/i);
+      if (rangeMatch) {
+        req.body.ctc = {
+          min: parseFloat(rangeMatch[1]) * 100000,
+          max: parseFloat(rangeMatch[2]) * 100000
+        };
+      } else {
+        const singleValue = parseFloat(ctcStr.replace(/[^\d.]/g, ''));
+        if (singleValue && singleValue > 0) {
+          req.body.ctc = {
+            min: singleValue * 100000,
+            max: singleValue * 100000
+          };
+        }
+      }
+    }
+    
+    if (req.body.netSalary && typeof req.body.netSalary === 'string') {
+      const netMatch = req.body.netSalary.match(/(\d+(?:,\d+)*)\s*(?:-|to)?\s*(\d+(?:,\d+)*)?/i);
+      if (netMatch) {
+        req.body.netSalary = {
+          min: parseInt(netMatch[1].replace(/,/g, '')),
+          max: parseInt((netMatch[2] || netMatch[1]).replace(/,/g, ''))
+        };
+      }
+    }
+    
+    // Check if interview rounds are being scheduled/updated
+    const hasScheduledRounds = req.body.interviewRoundDetails && 
+      Object.values(req.body.interviewRoundDetails).some(round => 
+        round && (round.date || round.fromDate) && round.time && round.description
+      );
+    
+    console.log('Update job - Interview rounds scheduled check:', {
+      hasScheduledRounds,
+      interviewRoundDetails: req.body.interviewRoundDetails
+    });
+    
+    const wasScheduled = oldJob.interviewScheduled;
+    
+    if (hasScheduledRounds) {
+      req.body.interviewScheduled = true;
+    }
+    
+    // Map assignedAssessment to assessmentId
+    if (req.body.assignedAssessment) {
+      req.body.assessmentId = req.body.assignedAssessment;
+      delete req.body.assignedAssessment;
+    }
+    
+    // Handle nested assessment object from frontend
+    if (req.body.assessment && req.body.assessment.assessmentId) {
+      req.body.assessmentId = req.body.assessment.assessmentId;
+      if (req.body.assessment.fromDate) req.body.assessmentStartDate = req.body.assessment.fromDate;
+      if (req.body.assessment.toDate) req.body.assessmentEndDate = req.body.assessment.toDate;
+      delete req.body.assessment;
+    }
+    
+    // Remove assessment from interviewRoundTypes (it's stored separately in assessmentId)
+    if (req.body.interviewRoundTypes && req.body.interviewRoundTypes.assessment) {
+      delete req.body.interviewRoundTypes.assessment;
+    }
+    
+    // Ensure interviewRoundOrder is included in the update
+    if (req.body.interviewRoundOrder) {
+      // Keep the interview round order as provided from frontend
+    }
+    
+    // Ensure interviewRoundDetails is properly set
+    if (req.body.interviewRoundDetails) {
+      // Process and validate interview round details dates
+      Object.keys(req.body.interviewRoundDetails).forEach(key => {
+        const round = req.body.interviewRoundDetails[key];
+        if (!round || (!round.description && !round.fromDate && !round.toDate && !round.time)) {
+          delete req.body.interviewRoundDetails[key];
+        } else {
+          // Convert date strings to Date objects for proper storage
+          if (round.fromDate && typeof round.fromDate === 'string') {
+            round.fromDate = new Date(round.fromDate);
+          }
+          if (round.toDate && typeof round.toDate === 'string') {
+            round.toDate = new Date(round.toDate);
+          }
+          
+          // Validate date range
+          if (round.fromDate && round.toDate && round.fromDate > round.toDate) {
+            throw new Error(`Invalid date range for ${key}: From Date cannot be after To Date`);
+          }
+        }
+      });
+    }
+    
+    const job = await Job.findOneAndUpdate(
+      { _id: req.params.jobId, employerId: req.user._id },
+      req.body,
+      { new: true, runValidators: false }
+    );
+
+    // If assessment was added to the job, update existing applications
+    if (!oldJob.assessmentId && job.assessmentId) {
+      try {
+        await Application.updateMany(
+          { jobId: job._id },
+          { assessmentStatus: 'available' }
+        );
+        console.log('Updated existing applications with assessment status after job update');
+      } catch (updateError) {
+        console.error('Error updating existing applications after job update:', updateError);
+      }
+    }
+
+    // Clear job-related caches immediately
+    cacheInvalidation.clearJobCaches();
+    // Also clear candidate application caches to ensure they see updated job data
+    cacheInvalidation.clearCandidateApplicationCaches();
+
+    // Create notification if interview rounds are newly scheduled or updated
+    if (hasScheduledRounds && !wasScheduled) {
+      try {
+        const { createNotification } = require('./notificationController');
+        await createNotification({
+          title: 'Interview Rounds Scheduled',
+          message: `Interview rounds have been scheduled for ${job.title} position at ${req.user.companyName}`,
+          type: 'interview_scheduled',
+          role: 'candidate',
+          relatedId: job._id,
+          createdBy: req.user._id
+        });
+      } catch (notifError) {
+        console.error('Notification creation failed:', notifError);
+      }
+    } else if (hasScheduledRounds && wasScheduled) {
+      try {
+        const { createNotification } = require('./notificationController');
+        await createNotification({
+          title: 'Interview Schedule Updated',
+          message: `Interview schedule has been updated for ${job.title} position at ${req.user.companyName}`,
+          type: 'interview_updated',
+          role: 'candidate',
+          relatedId: job._id,
+          createdBy: req.user._id
+        });
+      } catch (notifError) {
+        console.error('Notification creation failed:', notifError);
+      }
+    }
+
+    console.log('Updated job:', job);
+    res.json({ success: true, job });
+  } catch (error) {
+    console.log('Update job error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.deleteJob = async (req, res) => {
+  try {
+    const job = await Job.findOneAndDelete({ 
+      _id: req.params.jobId, 
+      employerId: req.user._id 
+    });
+    
+    if (!job) {
+      return res.status(404).json({ success: false, message: 'Job not found' });
+    }
+
+    // Clear job-related caches immediately
+    cacheInvalidation.clearJobCaches();
+
+    res.json({ success: true, message: 'Job deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getEmployerJobs = async (req, res) => {
+  try {
+    const jobs = await Job.find({ employerId: req.user._id })
+      .sort({ createdAt: -1 });
+    res.json({ success: true, jobs });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getRecentJobs = async (req, res) => {
+  try {
+    const jobs = await Job.find({ employerId: req.user._id })
+      .sort({ createdAt: -1 })
+      .limit(5);
+    res.json({ success: true, jobs });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getJob = async (req, res) => {
+  try {
+    const job = await Job.findOne({ _id: req.params.jobId, employerId: req.user._id });
+    if (!job) {
+      return res.status(404).json({ success: false, message: 'Job not found' });
+    }
+    res.json({ success: true, job });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Application Management Controllers
+exports.reviewApplication = async (req, res) => {
+  try {
+    const application = await Application.findOne({
+      _id: req.params.applicationId,
+      employerId: req.user._id
+    })
+    .populate('candidateId', 'name email phone')
+    .populate('jobId', 'title');
+
+    if (!application) {
+      return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+
+    res.json({ success: true, application });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.updateApplicationStatus = async (req, res) => {
+  try {
+    const { status, notes } = req.body;
+    
+    const application = await Application.findOneAndUpdate(
+      { _id: req.params.applicationId, employerId: req.user._id },
+      { 
+        status,
+        $push: {
+          statusHistory: {
+            status,
+            changedBy: req.user._id,
+            changedByModel: 'Employer',
+            notes
+          }
+        }
+      },
+      { new: true }
+    ).populate('candidateId', 'name email')
+    .populate('jobId', 'title');
+
+    if (!application) {
+      return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+
+    try {
+      const { createNotification } = require('./notificationController');
+      const statusLabels = {
+        pending: 'Pending',
+        shortlisted: 'Shortlisted',
+        interviewed: 'Interviewed',
+        hired: 'Hired',
+        rejected: 'Rejected'
+      };
+      const statusLabel = statusLabels[status] || status;
+      const trimmedNotes = typeof notes === 'string' ? notes.trim() : '';
+      const jobTitle = application.jobId?.title || 'the position';
+      const candidateName = application.candidateId?.name || 'Candidate';
+
+      if (application.candidateId?._id) {
+        let candidateMessage = `Your application for ${jobTitle} is now ${statusLabel}.`;
+        if (trimmedNotes) {
+          candidateMessage += ` Employer note: ${trimmedNotes}`;
+        }
+        await createNotification({
+          title: 'Application Status Updated',
+          message: candidateMessage,
+          type: 'application_status_updated',
+          role: 'candidate',
+          relatedId: application._id,
+          candidateId: application.candidateId._id,
+          createdBy: req.user._id
+        });
+      }
+
+      let employerMessage = `${candidateName}'s application for ${jobTitle} is now ${statusLabel}.`;
+      if (trimmedNotes) {
+        employerMessage += ` Notes: ${trimmedNotes}`;
+      }
+      await createNotification({
+        title: 'Application Status Updated',
+        message: employerMessage,
+        type: 'application_status_updated',
+        role: 'employer',
+        relatedId: application._id,
+        createdBy: req.user._id
+      });
+    } catch (notificationError) {
+      console.error('Application status notification failed:', notificationError);
+    }
+
+    res.json({ success: true, application });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Message Controllers
+exports.sendMessage = async (req, res) => {
+  try {
+    const { receiverId, message } = req.body;
+    const conversationId = [req.user._id, receiverId].sort().join('-');
+    
+    const newMessage = await Message.create({
+      senderId: req.user._id,
+      senderModel: 'Employer',
+      receiverId,
+      receiverModel: 'Candidate',
+      message,
+      conversationId
+    });
+
+    res.status(201).json({ success: true, message: newMessage });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getMessages = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    
+    const messages = await Message.find({ conversationId })
+      .populate('senderId', 'name companyName')
+      .populate('receiverId', 'name')
+      .sort({ createdAt: 1 });
+
+    res.json({ success: true, messages });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Subscription Management Controllers
+exports.createSubscription = async (req, res) => {
+  try {
+    const { plan, paymentData } = req.body;
+    
+    const subscription = await Subscription.findOneAndUpdate(
+      { employerId: req.user._id },
+      { 
+        plan,
+        $push: { paymentHistory: paymentData }
+      },
+      { new: true, upsert: true }
+    );
+
+    res.json({ success: true, subscription });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getSubscription = async (req, res) => {
+  try {
+    const subscription = await Subscription.findOne({ employerId: req.user._id });
+    res.json({ success: true, subscription });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.updateSubscription = async (req, res) => {
+  try {
+    const subscription = await Subscription.findOneAndUpdate(
+      { employerId: req.user._id },
+      req.body,
+      { new: true }
+    );
+
+    res.json({ success: true, subscription });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getDashboardStats = async (req, res) => {
+  try {
+    const employerId = req.user._id;
+    
+    const totalJobs = await Job.countDocuments({ employerId });
+    const activeJobs = await Job.countDocuments({ employerId, status: 'active' });
+    const totalApplications = await Application.countDocuments({ employerId });
+    const shortlisted = await Application.countDocuments({ employerId, status: 'shortlisted' });
+    
+    res.json({
+      success: true,
+      stats: { totalJobs, activeJobs, totalApplications, shortlisted },
+      employer: { companyName: req.user.companyName }
+    });
+  } catch (error) {
+    console.error('Dashboard stats error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getEmployerApplications = async (req, res) => {
+  try {
+    const CandidateProfile = require('../models/CandidateProfile');
+    const { companyName } = req.query; // Filter by company name for consultants
+    
+    let query = { employerId: req.user._id };
+    
+    // If companyName filter is provided (for consultants)
+    if (companyName && companyName.trim() !== '') {
+      const jobs = await Job.find({ 
+        employerId: req.user._id, 
+        companyName: new RegExp(companyName, 'i') 
+      }).select('_id');
+      const jobIds = jobs.map(job => job._id);
+      query.jobId = { $in: jobIds };
+    }
+    
+    const applications = await Application.find(query)
+      .populate('candidateId', 'name email phone')
+      .populate('jobId', 'title location companyName')
+      .sort({ createdAt: -1 });
+
+    // Add profile pictures to applications
+    const applicationsWithProfiles = await Promise.all(
+      applications.map(async (application) => {
+        const candidateProfile = await CandidateProfile.findOne({ candidateId: application.candidateId._id });
+        return {
+          ...application.toObject(),
+          candidateId: {
+            ...application.candidateId.toObject(),
+            profilePicture: candidateProfile?.profilePicture
+          }
+        };
+      })
+    );
+
+    res.json({ success: true, applications: applicationsWithProfiles });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getJobApplications = async (req, res) => {
+  try {
+    const CandidateProfile = require('../models/CandidateProfile');
+    const { jobId } = req.params;
+    
+    // Verify job belongs to employer
+    const job = await Job.findOne({ _id: jobId, employerId: req.user._id });
+    if (!job) {
+      return res.status(404).json({ success: false, message: 'Job not found' });
+    }
+    
+    const applications = await Application.find({ jobId, employerId: req.user._id })
+      .populate('candidateId', 'name email phone')
+      .populate('jobId', 'title location companyName')
+      .sort({ createdAt: -1 });
+
+    // Add profile pictures to applications
+    const applicationsWithProfiles = await Promise.all(
+      applications.map(async (application) => {
+        const candidateProfile = await CandidateProfile.findOne({ candidateId: application.candidateId._id });
+        return {
+          ...application.toObject(),
+          candidateId: {
+            ...application.candidateId.toObject(),
+            profilePicture: candidateProfile?.profilePicture
+          }
+        };
+      })
+    );
+
+    res.json({ success: true, applications: applicationsWithProfiles, job });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getApplicationDetails = async (req, res) => {
+  try {
+    const { applicationId } = req.params;
+    const CandidateProfile = require('../models/CandidateProfile');
+    const AssessmentAttempt = require('../models/AssessmentAttempt');
+    
+    const application = await Application.findOne({
+      _id: applicationId,
+      employerId: req.user._id
+    })
+    .populate('candidateId', 'name email phone')
+    .populate('jobId', 'title location interviewRoundsCount interviewRoundTypes interviewRoundOrder interviewRoundDetails assessmentId');
+
+    if (!application) {
+      return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+
+    // Get candidate profile data
+    const candidateProfile = await CandidateProfile.findOne({ candidateId: application.candidateId._id });
+    
+    // Get assessment attempt details if job has assessment
+    let assessmentAttempt = null;
+    if (application.jobId?.assessmentId) {
+      assessmentAttempt = await AssessmentAttempt.findOne({
+        candidateId: application.candidateId._id,
+        assessmentId: application.jobId.assessmentId
+      }).populate('assessmentId', 'title timer totalQuestions passingPercentage');
+    }
+    
+    // Merge candidate and profile data
+    const candidateData = {
+      ...application.candidateId.toObject(),
+      ...candidateProfile?.toObject()
+    };
+
+    const responseApplication = {
+      ...application.toObject(),
+      candidateId: candidateData,
+      assessmentAttempt: assessmentAttempt,
+      jobId: {
+        ...application.jobId.toObject(),
+        assessmentId: application.jobId.assessmentId
+      }
+    };
+
+    res.json({ success: true, application: responseApplication });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getConsultantCompanies = async (req, res) => {
+  try {
+    const companies = await Job.distinct('companyName', { 
+      employerId: req.user._id,
+      companyName: { $exists: true, $ne: null, $ne: '' }
+    });
+    
+    res.json({ success: true, companies });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.saveInterviewReview = async (req, res) => {
+  try {
+    const { applicationId } = req.params;
+    const { interviewRounds, remarks, isSelected } = req.body;
+    
+    const application = await Application.findOneAndUpdate(
+      { _id: applicationId, employerId: req.user._id },
+      { 
+        interviewRounds,
+        employerRemarks: remarks,
+        isSelectedForProcess: isSelected,
+        reviewedAt: new Date()
+      },
+      { new: true }
+    ).populate('candidateId', 'name email')
+    .populate('jobId', 'title');
+    
+    if (!application) {
+      return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+    
+    res.json({ success: true, message: 'Interview review saved successfully', application });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getProfileCompletion = async (req, res) => {
+  try {
+    const profile = await EmployerProfile.findOne({ employerId: req.user._id });
+    const employer = await Employer.findById(req.user._id);
+    
+    if (!profile) {
+      return res.json({ 
+        success: true, 
+        completion: 0, 
+        missingFields: ['All profile fields'],
+        isApproved: employer?.isApproved || false,
+        canPostJobs: false,
+        message: 'Please complete your company profile to post jobs.'
+      });
+    }
+    
+    // Required fields for profile completion - same logic as createJob
+    const requiredFields = ['companyName', 'description', 'location', 'phone', 'email'];
+    const completedFields = requiredFields.filter(field => {
+      const value = profile[field];
+      return value && (typeof value !== 'string' || value.trim() !== '');
+    });
+    const completion = Math.round((completedFields.length / requiredFields.length) * 100);
+    const missingFields = requiredFields.filter(field => {
+      const value = profile[field];
+      return !value || (typeof value === 'string' && value.trim() === '');
+    });
+    
+    // Log for debugging
+    console.log('Profile completion check:', {
+      companyName: profile.companyName,
+      description: profile.description,
+      location: profile.location,
+      phone: profile.phone,
+      email: profile.email,
+      completedFields: completedFields.length,
+      missingFields
+    });
+    
+    const isProfileComplete = missingFields.length === 0;
+    const isApproved = employer?.isApproved || false;
+    const canPostJobs = isProfileComplete && isApproved;
+    
+    let message = '';
+    if (!isProfileComplete) {
+      message = 'Please complete your company profile to submit for admin approval.';
+    } else if (!isApproved) {
+      message = 'Your profile is complete and under admin review. You can post jobs once approved.';
+    } else {
+      message = 'Your profile is approved. You can now post jobs!';
+    }
+    
+    res.json({ 
+      success: true, 
+      completion, 
+      missingFields,
+      isProfileComplete,
+      isApproved,
+      canPostJobs,
+      message
+    });
+  } catch (error) {
+    console.error('Profile completion error:', error);
+    res.json({ 
+      success: true, 
+      completion: 0, 
+      missingFields: ['Profile data'],
+      isApproved: false,
+      canPostJobs: false,
+      message: 'Error loading profile status.'
+    });
+  }
+};
+
+exports.getRecentActivity = async (req, res) => {
+  try {
+    const activities = [];
+    
+    // Recent applications
+    const recentApplications = await Application.find({ employerId: req.user._id })
+      .populate('jobId', 'title')
+      .sort({ createdAt: -1 })
+      .limit(3);
+    
+    recentApplications.forEach(app => {
+      activities.push({
+        type: 'application',
+        title: 'New application received',
+        description: `Application for ${app.jobId?.title || 'Unknown Job'}`,
+        time: app.createdAt,
+        icon: '👤'
+      });
+    });
+    
+    // Recent job posts
+    const recentJobs = await Job.find({ employerId: req.user._id })
+      .sort({ createdAt: -1 })
+      .limit(2);
+    
+    recentJobs.forEach(job => {
+      activities.push({
+        type: 'job',
+        title: 'Job post created',
+        description: `${job.title} position posted`,
+        time: job.createdAt,
+        icon: '💼'
+      });
+    });
+    
+    // Sort by time and limit to 5
+    activities.sort((a, b) => new Date(b.time) - new Date(a.time));
+    const limitedActivities = activities.slice(0, 5);
+    
+    res.json({ success: true, activities: limitedActivities });
+  } catch (error) {
+    res.json({ success: true, activities: [] });
+  }
+};
+
+// Notification Controllers
+exports.getNotifications = async (req, res) => {
+  try {
+    const { getNotificationsByRole } = require('./notificationController');
+    req.params.role = 'employer';
+    return getNotificationsByRole(req, res);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.markNotificationAsRead = async (req, res) => {
+  try {
+    const { markAsRead } = require('./notificationController');
+    return markAsRead(req, res);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.markAllNotificationsAsRead = async (req, res) => {
+  try {
+    const { markAllAsRead } = require('./notificationController');
+    req.params.role = 'employer';
+    return markAllAsRead(req, res);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Test endpoint to verify interview date persistence
+exports.testInterviewDates = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    
+    // Find the job and return its interview round details
+    const job = await Job.findOne({ _id: jobId, employerId: req.user._id });
+    
+    if (!job) {
+      return res.status(404).json({ success: false, message: 'Job not found' });
+    }
+    
+    // Return detailed information about the stored dates
+    const dateInfo = {};
+    if (job.interviewRoundDetails) {
+      Object.keys(job.interviewRoundDetails).forEach(roundKey => {
+        const round = job.interviewRoundDetails[roundKey];
+        dateInfo[roundKey] = {
+          description: round.description,
+          fromDate: {
+            value: round.fromDate,
+            type: typeof round.fromDate,
+            isDate: round.fromDate instanceof Date,
+            formatted: round.fromDate ? new Date(round.fromDate).toISOString().split('T')[0] : null
+          },
+          toDate: {
+            value: round.toDate,
+            type: typeof round.toDate,
+            isDate: round.toDate instanceof Date,
+            formatted: round.toDate ? new Date(round.toDate).toISOString().split('T')[0] : null
+          },
+          time: round.time
+        };
+      });
+    }
+    
+    res.json({ 
+      success: true, 
+      jobId: job._id,
+      jobTitle: job.title,
+      interviewRoundOrder: job.interviewRoundOrder,
+      dateInfo 
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
