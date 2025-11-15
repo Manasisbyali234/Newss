@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 const CountryCodeSelector = ({ value, onChange, className = "" }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [width, setWidth] = useState(120);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -13,6 +14,15 @@ const CountryCodeSelector = ({ value, onChange, className = "" }) => {
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth < 768 ? 80 : 120);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const countryCodes = [
@@ -231,7 +241,7 @@ const CountryCodeSelector = ({ value, onChange, className = "" }) => {
   const selectedCountry = countryCodes.find(c => c.code === value) || countryCodes[40];
 
   return (
-    <div ref={dropdownRef} style={{ position: 'relative', width: '120px', height: '57px' }}>
+    <div ref={dropdownRef} style={{ position: 'relative', width: `${width}px`, height: '57px' }}>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}

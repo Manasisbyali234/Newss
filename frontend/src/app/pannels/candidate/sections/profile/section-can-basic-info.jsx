@@ -35,6 +35,7 @@ function SectionCandicateBasicInfo() {
     const [notification, setNotification] = useState(null);
     const [locationDropdownOpen, setLocationDropdownOpen] = useState(false);
     const [locationSearch, setLocationSearch] = useState('');
+    const [phonePaddingLeft, setPhonePaddingLeft] = useState(130);
     const locationDropdownRef = useRef(null);
 
     useEffect(() => {
@@ -56,6 +57,15 @@ function SectionCandicateBasicInfo() {
         };
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setPhonePaddingLeft(window.innerWidth < 768 ? 90 : 130);
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     const fetchProfile = async () => {
@@ -501,7 +511,7 @@ function SectionCandicateBasicInfo() {
                                     placeholder="Enter mobile number"
                                     maxLength="15"
                                     required
-                                    style={{ paddingLeft: '130px', height: '57px', borderRadius: '0.375rem' }}
+                                    style={{ paddingLeft: `${phonePaddingLeft}px`, height: '57px', borderRadius: '0.375rem' }}
                                 />
                             </div>
                             {errors.phone && <div className="invalid-feedback d-block">{errors.phone}</div>}
