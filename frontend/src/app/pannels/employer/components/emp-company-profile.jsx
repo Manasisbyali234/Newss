@@ -907,17 +907,20 @@ function EmpCompanyProfilePage() {
                             <div className="col-xl-4 col-lg-12 col-md-12">
                                 <div className="form-group">
                                     <label className="required-field"><Phone size={16} className="me-2" /> Phone</label>
-                                    <div className="input-group">
-                                        <CountryCodeSelector
-                                            value={formData.phoneCountryCode}
-                                            onChange={(value) => handleInputChange('phoneCountryCode', value)}
-                                        />
+                                    <div style={{position: 'relative'}}>
+                                        <div style={{position: 'absolute', left: '0', top: '0', bottom: '0', zIndex: 10}}>
+                                            <CountryCodeSelector
+                                                value={formData.phoneCountryCode}
+                                                onChange={(value) => handleInputChange('phoneCountryCode', value)}
+                                            />
+                                        </div>
                                         <input
                                             className={`form-control ${errors.phone ? 'is-invalid' : ''}`}
                                             type="text"
                                             value={formData.phone}
                                             onChange={(e) => handleInputChange('phone', e.target.value)}
                                             placeholder="9087654321"
+                                            style={{ paddingLeft: '130px', height: '57px' }}
                                         />
                                     </div>
                                     <ErrorDisplay errors={errors} fieldName="phone" />
@@ -1161,17 +1164,20 @@ function EmpCompanyProfilePage() {
                             <div className="col-md-6">
                                 <div className="form-group">
                                     <label><Phone size={16} className="me-2" /> Official Mobile Number</label>
-                                    <div className="input-group">
-                                        <CountryCodeSelector
-                                            value={formData.officialMobileCountryCode}
-                                            onChange={(value) => handleInputChange('officialMobileCountryCode', value)}
-                                        />
+                                    <div style={{position: 'relative'}}>
+                                        <div style={{position: 'absolute', left: '0', top: '0', bottom: '0', zIndex: 10}}>
+                                            <CountryCodeSelector
+                                                value={formData.officialMobileCountryCode}
+                                                onChange={(value) => handleInputChange('officialMobileCountryCode', value)}
+                                            />
+                                        </div>
                                         <input
                                             className={`form-control ${errors.officialMobile ? 'is-invalid' : ''}`}
                                             type="text"
                                             value={formData.officialMobile}
                                             onChange={(e) => handleInputChange('officialMobile', e.target.value)}
                                             placeholder="9876543210"
+                                            style={{ paddingLeft: '130px', height: '57px' }}
                                         />
                                     </div>
                                     <ErrorDisplay errors={errors} fieldName="officialMobile" />
@@ -1536,17 +1542,20 @@ function EmpCompanyProfilePage() {
                             <div className="col-lg-4 col-md-6">
                                 <div className="form-group">
                                     <label className="required-field"><Phone size={16} className="me-2" /> Mobile Number</label>
-                                    <div className="input-group">
-                                        <CountryCodeSelector
-                                            value={formData.contactMobileCountryCode}
-                                            onChange={(value) => handleInputChange('contactMobileCountryCode', value)}
-                                        />
+                                    <div style={{position: 'relative'}}>
+                                        <div style={{position: 'absolute', left: '0', top: '0', bottom: '0', zIndex: 10}}>
+                                            <CountryCodeSelector
+                                                value={formData.contactMobileCountryCode}
+                                                onChange={(value) => handleInputChange('contactMobileCountryCode', value)}
+                                            />
+                                        </div>
                                         <input
                                             className={`form-control ${errors.contactMobile ? 'is-invalid' : ''}`}
                                             type="tel"
                                             value={formData.contactMobile}
                                             onChange={(e) => handleInputChange('contactMobile', e.target.value)}
                                             placeholder="9876543210"
+                                            style={{ paddingLeft: '130px', height: '57px' }}
                                         />
                                     </div>
                                     <ErrorDisplay errors={errors} fieldName="contactMobile" />
@@ -1583,17 +1592,20 @@ function EmpCompanyProfilePage() {
                             <div className="col-lg-4 col-md-6">
                                 <div className="form-group">
                                     <label><Phone size={16} className="me-2" /> Alternate Contact (Optional)</label>
-                                    <div className="input-group">
-                                        <CountryCodeSelector
-                                            value={formData.alternateContactCountryCode}
-                                            onChange={(value) => handleInputChange('alternateContactCountryCode', value)}
-                                        />
+                                    <div style={{position: 'relative'}}>
+                                        <div style={{position: 'absolute', left: '0', top: '0', bottom: '0', zIndex: 10}}>
+                                            <CountryCodeSelector
+                                                value={formData.alternateContactCountryCode}
+                                                onChange={(value) => handleInputChange('alternateContactCountryCode', value)}
+                                            />
+                                        </div>
                                         <input
                                             className={`form-control ${errors.alternateContact ? 'is-invalid' : ''}`}
                                             type="tel"
                                             value={formData.alternateContact}
                                             onChange={(e) => handleInputChange('alternateContact', e.target.value)}
                                             placeholder="9876543210"
+                                            style={{ paddingLeft: '130px', height: '57px' }}
                                         />
                                     </div>
                                     <ErrorDisplay errors={errors} fieldName="alternateContact" />

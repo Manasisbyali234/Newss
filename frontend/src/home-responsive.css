@@ -1350,3 +1350,104 @@
     font-size: 14px;
   }
 }
+
+/* Mobile Categories Layout */
+@media (max-width: 767px) {
+  .desktop-categories {
+    display: none;
+  }
+
+  .mobile-categories {
+    display: block;
+  }
+
+  .mobile-categories-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 0 15px;
+  }
+
+  .mobile-category-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .mobile-category-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  .mobile-category-item .twm-media {
+    margin-right: 15px;
+    flex-shrink: 0;
+  }
+
+  .mobile-category-item .twm-media div {
+    font-size: 24px;
+    color: #1967d2;
+  }
+
+  .mobile-category-item .twm-content {
+    flex: 1;
+  }
+
+  .mobile-category-item .twm-jobs-available {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
+  }
+
+  .mobile-category-item .twm-content a {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    text-decoration: none;
+    display: block;
+  }
+
+  .mobile-category-item .twm-content a:hover {
+    color: #1967d2;
+  }
+}
+
+@media (min-width: 768px) {
+  .desktop-categories {
+    display: block;
+  }
+
+  .mobile-categories {
+    display: none;
+  }
+}
+
+/* Mobile Checkbox Styling */
+@media (max-width: 767px) {
+  .form-check-input {
+    width: 16px !important;
+    height: 16px !important;
+    margin-top: 0.2em;
+    border: 1px solid #ced4da !important;
+    border-radius: 3px !important;
+  }
+
+  .form-check-input:checked {
+    background-color: #fd7e14 !important;
+    border-color: #fd7e14 !important;
+  }
+
+  .form-check-label {
+    font-size: 14px !important;
+    margin-left: 8px;
+    line-height: 1.4;
+  }
+
+  .form-check {
+    margin-bottom: 8px;
+  }
+}

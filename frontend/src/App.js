@@ -14,6 +14,8 @@ import "./ux-improvements.css";
 import "./remove-button-arrows.css";
 import "./hero-location-fix.css";
 import "./remove-shadows.css";
+import "./header-responsive.css";
+import "./home-responsive.css";
 
 function App() {
 

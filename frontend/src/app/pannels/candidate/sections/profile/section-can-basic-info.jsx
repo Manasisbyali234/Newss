@@ -479,16 +479,18 @@ function SectionCandicateBasicInfo() {
                         </div>
                         <div className="col-md-4 mb-3">
                             <label className="form-label"><i className="fa fa-phone me-2" style={{color: '#ff6b35'}}></i>Mobile Number *</label>
-                            <div className="input-group">
-                                <CountryCodeSelector
-                                    value={formData.phoneCountryCode}
-                                    onChange={(value) => {
-                                        setFormData(prev => ({ ...prev, phoneCountryCode: value }));
-                                        if (touched.phone) {
-                                            validateField('phone', formData.phone);
-                                        }
-                                    }}
-                                />
+                            <div style={{position: 'relative'}}>
+                                <div style={{position: 'absolute', left: '0', top: '0', bottom: '0', zIndex: 10}}>
+                                    <CountryCodeSelector
+                                        value={formData.phoneCountryCode}
+                                        onChange={(value) => {
+                                            setFormData(prev => ({ ...prev, phoneCountryCode: value }));
+                                            if (touched.phone) {
+                                                validateField('phone', formData.phone);
+                                            }
+                                        }}
+                                    />
+                                </div>
                                 <input
                                     className={`form-control ${errors.phone ? 'is-invalid' : ''}`}
                                     type="tel"
@@ -499,10 +501,10 @@ function SectionCandicateBasicInfo() {
                                     placeholder="Enter mobile number"
                                     maxLength="15"
                                     required
-                                    style={{ borderRadius: '0 0.375rem 0.375rem 0' }}
+                                    style={{ paddingLeft: '130px', height: '57px', borderRadius: '0.375rem' }}
                                 />
                             </div>
-                            {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
+                            {errors.phone && <div className="invalid-feedback d-block">{errors.phone}</div>}
                             <small className="text-muted">Enter 7-15 digit mobile number</small>
                         </div>
                         <div className="col-md-4 mb-3">

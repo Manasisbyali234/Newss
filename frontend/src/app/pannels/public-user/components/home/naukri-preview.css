@@ -65,6 +65,54 @@
   .nk-search-btn { height: 44px; }
 }
 
+/* Category Card Base Styles */
+.category-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+  min-height: 120px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.category-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+}
+
+.category-text-title {
+  font-weight: 700;
+  font-size: 18px;
+  color: #17171d;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.category-text-sub {
+  font-size: 14px;
+  color: #667085;
+  font-weight: 500;
+}
+
+.plus-badge {
+  font-size: 32px;
+  color: #fd7e14;
+  font-weight: 700;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
 /* Index16 Job Categories Orange Theme - Consolidated Styles */
 /* Job categories section background */
 .twm-job-categories-hpage-6-area {
@@ -72,7 +120,16 @@
   padding: 40px 0 !important;
 }
 
-/* Grid alignment - Center the category cards */
+/* Carousel container - let owl-carousel handle the layout */
+.job-categories-carousel {
+  width: 100% !important;
+}
+
+.job-categories-carousel .item {
+  display: flex !important;
+  justify-content: center !important;
+}
+
 .twm-job-cat-hpage-6-wrap .job-cat-block-hpage-6-section {
   display: flex;
   justify-content: center;
@@ -256,6 +313,103 @@
   
   .h-page-16-hdr .is-fixed .main-bar.color-fill {
     background-color: #fff !important;
+  }
+
+  /* Category cards responsive - carousel handles layout */
+  .twm-job-categories-hpage-6-area {
+    padding: 30px 0 !important;
+  }
+
+  .section-head {
+    margin-bottom: 28px !important;
+  }
+
+  .section-head h2 {
+    font-size: 1.6rem !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Carousel items responsive */
+  .job-categories-carousel .item {
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .category-card {
+    padding: 20px 16px !important;
+    min-height: 110px !important;
+  }
+
+  .category-text-title {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+  }
+
+  .category-text-sub {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+  }
+
+  .plus-badge {
+    font-size: 28px !important;
+    font-weight: 700 !important;
+  }
+
+  .job-categories-btn {
+    margin-top: 20px !important;
+  }
+
+  .job-categories-btn .site-button {
+    width: auto !important;
+    display: inline-block !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .twm-job-categories-hpage-6-area {
+    padding: 24px 0 !important;
+  }
+
+  .section-head h2 {
+    font-size: 1.3rem !important;
+    margin-bottom: 18px !important;
+  }
+
+  /* Mobile carousel items */
+  .job-categories-carousel .item {
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .category-card {
+    padding: 18px 16px !important;
+    min-height: 100px !important;
+  }
+
+  .category-text-title {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    margin-bottom: 4px !important;
+  }
+
+  .category-text-sub {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+  }
+
+  .plus-badge {
+    font-size: 28px !important;
+    font-weight: 700 !important;
+  }
+
+  .job-categories-btn {
+    margin-top: 16px !important;
+  }
+
+  .job-categories-btn .site-button {
+    width: 100% !important;
+    padding: 0.6rem 1.2rem !important;
+    font-size: 14px !important;
   }
 }
 

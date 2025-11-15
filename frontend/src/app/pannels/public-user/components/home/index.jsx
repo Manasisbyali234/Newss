@@ -527,7 +527,8 @@ function Home1Page() {
                         </div>
                     </div>
                     <div className="twm-job-categories-section">
-                        <div className="job-categories-style1 m-b30">
+                        {/* Desktop Carousel */}
+                        <div className="job-categories-style1 m-b30 desktop-categories">
                             <div className="owl-carousel job-categories-carousel owl-btn-left-bottom">
                                 {categories.map((category, index) => (
                                     <div key={index} className="item">
@@ -544,6 +545,24 @@ function Home1Page() {
                                 ))}
                             </div>
                         </div>
+
+                        {/* Mobile Vertical Layout */}
+                        <div className="job-categories-style1 m-b30 mobile-categories">
+                            <div className="mobile-categories-grid">
+                                {categories.map((category, index) => (
+                                    <div key={index} className="job-categories-block mobile-category-item">
+                                        <div className="twm-media">
+                                            <div className={category.icon} />
+                                        </div>
+                                        <div className="twm-content">
+                                            <div className="twm-jobs-available">{category.count}+ Posted new jobs</div>
+                                            <NavLink to={`${publicUser.jobs.GRID}?category=${category.name}`}>{category.name}</NavLink>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
                         <div className="text-right job-categories-btn">
                             <NavLink to={publicUser.jobs.GRID} className=" site-button">View All</NavLink>
                         </div>

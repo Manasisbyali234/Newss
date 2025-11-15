@@ -175,3 +175,54 @@ button, .btn, .site-button {
 button:hover, .btn:hover, .site-button:hover {
   background-color: #FFF3E5 !important;
 }
+
+/* ============================================================================
+ * CHECKBOX SIZE CONSISTENCY - Mobile/Desktop Uniformity
+ * ============================================================================ */
+
+/* Force consistent checkbox size across all devices */
+input[type="checkbox"],
+.form-check-input[type="checkbox"] {
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  min-height: 16px !important;
+  max-width: 16px !important;
+  max-height: 16px !important;
+  transform: scale(1) !important;
+  -webkit-transform: scale(1) !important;
+  -moz-transform: scale(1) !important;
+  -ms-transform: scale(1) !important;
+  zoom: 1 !important;
+  font-size: 16px !important;
+  -webkit-appearance: checkbox !important;
+  -moz-appearance: checkbox !important;
+  appearance: checkbox !important;
+}
+
+/* Ensure checkbox size remains consistent on mobile */
+@media (max-width: 768px) {
+  input[type="checkbox"],
+  .form-check-input[type="checkbox"] {
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px !important;
+    min-height: 16px !important;
+    max-width: 16px !important;
+    max-height: 16px !important;
+    transform: scale(1) !important;
+    -webkit-transform: scale(1) !important;
+    zoom: 1 !important;
+  }
+}
+
+/* Prevent any browser zoom or scaling from affecting checkbox size */
+@media screen and (max-width: 767px) {
+  input[type="checkbox"],
+  .form-check-input[type="checkbox"] {
+    -webkit-text-size-adjust: none !important;
+    -webkit-transform: scale(1) !important;
+    transform: scale(1) !important;
+    zoom: 1 !important;
+  }
+}

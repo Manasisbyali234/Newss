@@ -17,6 +17,25 @@ const SectionJobsGrid = memo(({ filters, onTotalChange }) => {
     const [isFirstLoad, setIsFirstLoad] = useState(true);
     const abortControllerRef = useRef(null);
     const debounceTimerRef = useRef(null);
+    const [appliedJobs, setAppliedJobs] = useState(new Set());
+
+    const fetchAppliedJobs = useCallback(async () => {
+        const token = localStorage.getItem('candidateToken');
+        if (!token) return;
+        
+        try {
+            const response = await fetch('http://localhost:5000/api/candidate/applications', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await response.json();
+            if (data.success && data.applications) {
+                const appliedJobIds = new Set(data.applications.map(app => app.jobId?._id || app.jobId));
+                setAppliedJobs(appliedJobIds);
+            }
+        } catch (error) {
+            console.error('Error fetching applied jobs:', error);
+        }
+    }, []);
 
     const fetchJobs = useCallback(async () => {
         if (!filters) return;
@@ -111,6 +130,7 @@ const SectionJobsGrid = memo(({ filters, onTotalChange }) => {
     }, [filters, onTotalChange, currentPage]);
 
     useEffect(() => {
+        fetchAppliedJobs();
         fetchJobs();
         
         // Cleanup on unmount
@@ -122,7 +142,7 @@ const SectionJobsGrid = memo(({ filters, onTotalChange }) => {
                 clearTimeout(debounceTimerRef.current);
             }
         };
-    }, [fetchJobs]);
+    }, [fetchJobs, fetchAppliedJobs]);
 
 
 
@@ -254,15 +274,25 @@ const SectionJobsGrid = memo(({ filters, onTotalChange }) => {
                                 {job.postedBy || (job.employerId?.employerType === "consultant" ? "Consultancy" : "Company")}
                             </div>
                         </div>
-                        <button
-                            className="apply-now-btn"
-                            onClick={handleApplyClick}
-                            style={{padding: '10px 20px', backgroundColor: '#1976d2', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.2s'}}
-                            onMouseEnter={(e) => e.target.style.backgroundColor = '#1565c0'}
-                            onMouseLeave={(e) => e.target.style.backgroundColor = '#1976d2'}
-                        >
-                            Apply Now
-                        </button>
+                        {appliedJobs.has(job._id) ? (
+                            <button
+                                className="apply-now-btn"
+                                disabled
+                                style={{padding: '10px 20px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: '500', cursor: 'not-allowed'}}
+                            >
+                                Already Applied
+                            </button>
+                        ) : (
+                            <button
+                                className="apply-now-btn"
+                                onClick={handleApplyClick}
+                                style={{padding: '10px 20px', backgroundColor: '#1976d2', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.2s'}}
+                                onMouseEnter={(e) => e.target.style.backgroundColor = '#1565c0'}
+                                onMouseLeave={(e) => e.target.style.backgroundColor = '#1976d2'}
+                            >
+                                Apply Now
+                            </button>
+                        )}
                     </div>
                 </div>
             </Col>

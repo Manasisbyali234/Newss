@@ -254,9 +254,7 @@ function JobDetail1Page() {
 																/ {new Date(job.createdAt).toLocaleDateString()}
 															</span>
 														</h4>
-														{job.companyName && (
-															<p className="twm-job-company"><strong>Company: {job.companyName}</strong></p>
-														)}
+														<p className="twm-job-company"><strong>Company: {job.companyName || job.employerId?.companyName || 'Not specified'}</strong></p>
 														<p className="twm-job-address"><i className="feather-map-pin" />{job.location}</p>
 														
 														{((typeof job.salary === 'string' || typeof job.salary === 'number') || job.minSalary || job.maxSalary) && (

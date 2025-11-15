@@ -1,6 +1,20 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 const CountryCodeSelector = ({ value, onChange, className = "" }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const countryCodes = [
     { code: '+1', country: 'US', flag: '🇺🇸' },
     { code: '+7', country: 'RU', flag: '🇷🇺' },
@@ -209,29 +223,101 @@ const CountryCodeSelector = ({ value, onChange, className = "" }) => {
     { code: '+998', country: 'UZ', flag: '🇺🇿' }
   ];
 
+  const filteredCodes = countryCodes.filter(country => 
+    country.code.includes(searchTerm) || 
+    country.country.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const selectedCountry = countryCodes.find(c => c.code === value) || countryCodes[40];
+
   return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className={`form-select ${className}`}
-      style={{
-        backgroundColor: '#ffe2b6',
-        color: '#232323',
-        border: '1px solid #fd7e14',
-        minWidth: '70px',
-        maxWidth: '90px',
-        height: '57px',
-        padding: '0.75rem 1rem',
-        boxSizing: 'border-box',
-        borderRadius: '0.375rem 0 0 0.375rem'
-      }}
-    >
-      {countryCodes.map((country) => (
-        <option key={country.code} value={country.code}>
-          {country.flag} {country.code}
-        </option>
-      ))}
-    </select>
+    <div ref={dropdownRef} style={{ position: 'relative', width: '120px', height: '57px' }}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={className}
+        style={{
+          backgroundColor: 'transparent',
+          color: '#232323',
+          border: 'none',
+          width: '100%',
+          height: '100%',
+          padding: '0.75rem 0.5rem',
+          fontSize: '16px',
+          fontWeight: '500',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '4px',
+          borderRight: '1px solid #dee2e6'
+        }}
+      >
+        <span style={{ fontSize: '18px' }}>{selectedCountry.flag} {selectedCountry.code}</span>
+        <span style={{ fontSize: '10px' }}>▼</span>
+      </button>
+      
+      {isOpen && (
+        <div style={{
+          position: 'absolute',
+          top: '100%',
+          left: 0,
+          right: 0,
+          backgroundColor: 'white',
+          border: '1px solid #fd7e14',
+          borderRadius: '0.375rem',
+          marginTop: '4px',
+          maxHeight: '300px',
+          overflowY: 'auto',
+          zIndex: 1000,
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }}>
+          <input
+            type="text"
+            placeholder="Search country..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '10px',
+              border: 'none',
+              borderBottom: '1px solid #ddd',
+              fontSize: '14px',
+              outline: 'none'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          />
+          <div style={{ maxHeight: '250px', overflowY: 'auto' }}>
+            {filteredCodes.map((country) => (
+              <div
+                key={country.code}
+                onClick={() => {
+                  onChange(country.code);
+                  setIsOpen(false);
+                  setSearchTerm('');
+                }}
+                style={{
+                  padding: '10px 12px',
+                  cursor: 'pointer',
+                  fontSize: '15px',
+                  backgroundColor: value === country.code ? '#ffe2b6' : 'white',
+                  borderBottom: '1px solid #f0f0f0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fff5e6'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = value === country.code ? '#ffe2b6' : 'white'}
+              >
+                <span style={{ fontSize: '18px' }}>{country.flag}</span>
+                <span style={{ fontWeight: '500' }}>{country.code}</span>
+                <span style={{ fontSize: '13px', color: '#666' }}>({country.country})</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
