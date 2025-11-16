@@ -240,6 +240,29 @@
     }
     
     .card-apply-btn {
-        width: 100%;
+        /* Maintain consistent button size across devices */
     }
+}
+
+/* JobCard apply button styling for consistency */
+.btn-apply {
+    background-color: #fd7e14 !important;
+    color: white !important;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none !important;
+    text-align: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-apply:hover {
+    background-color: #e8690b !important;
+    color: white !important;
+    text-decoration: none !important;
+    transform: translateY(-1px);
 }

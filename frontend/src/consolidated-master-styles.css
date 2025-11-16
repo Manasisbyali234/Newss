@@ -441,17 +441,7 @@ button,
   white-space: nowrap !important;
 }
 
-/* Mobile: restore normal button size */
-@media (max-width: 767px) {
-  button,
-  .btn,
-  .site-button,
-  .ant-btn {
-    font-size: 16px !important;
-    padding: 10px 20px !important;
-    max-width: none !important;
-  }
-}
+
 
 button:focus,
 button:focus-visible,

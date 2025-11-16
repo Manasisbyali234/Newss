@@ -165,16 +165,7 @@ html, body, #root {
   background: rgba(0, 0, 0, 0.5) !important;
 }
 
-/* Basic button styling */
-button, .btn, .site-button {
-  background-color: rgba(255, 122, 0, 0.08) !important;
-  color: #FF7A00 !important;
-  border: 1px solid #FF7A00 !important;
-}
 
-button:hover, .btn:hover, .site-button:hover {
-  background-color: #FFF3E5 !important;
-}
 
 /* ============================================================================
  * CHECKBOX SIZE CONSISTENCY - Mobile/Desktop Uniformity

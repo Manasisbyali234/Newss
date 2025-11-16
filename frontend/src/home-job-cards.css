@@ -248,6 +248,6 @@
     }
     
     .card-apply-btn {
-        width: 100%;
+        /* Maintain consistent button size across devices */
     }
 }

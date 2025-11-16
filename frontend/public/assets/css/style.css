@@ -25241,25 +25241,7 @@ h1, h2, h3, h4, h5, h6 {
 
 
 
-.apply-now-button {
-	background-color:#f56523;
-	color: #fff;
-	border: none;
-	border-radius: 5px;
-	padding: 6px 16px;
-	font-weight: 500;
-  margin-left: 110px;
-	text-decoration: none;
-	display: inline-block;
- 
-	transition: background-color 0.2s ease;
-}
 
-.apply-now-button:hover {
-	background-color: #e96c00;
-	color: #fff;
-	text-decoration: none;
-}
 #sidebar-admin-wraper{
   background: #ffffff !important;
 }

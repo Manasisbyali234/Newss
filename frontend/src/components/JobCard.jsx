@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { isAuthenticated, redirectToLogin } from '../utils/auth';
+import '../job-card-buttons.css';
 
 const JobCard = ({ job }) => {
     const navigate = useNavigate();
