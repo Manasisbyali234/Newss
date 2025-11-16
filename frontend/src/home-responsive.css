@@ -609,7 +609,7 @@
     padding: 8px 16px;
     font-size: 13px;
     flex-shrink: 0;
-    width: auto;
+    width: 100%;
   }
 
   /* Recruiters Section Grid */
@@ -954,7 +954,7 @@
     padding: 8px 16px;
     font-size: 13px;
     flex-shrink: 0;
-    width: auto;
+    width: 100%;
   }
 
   /* Recruiters Section */
