@@ -23,7 +23,6 @@ input:focus:not(:focus-visible) {
 }
 
 /* ===== Better Button Feedback ===== */
-.apply-now-btn,
 .circle-line-btn {
     transition: all 0.3s ease;
     user-select: none;
@@ -110,7 +109,6 @@ html {
         min-width: 44px;
     }
 
-    .apply-now-btn,
     .site-button,
     .circle-line-btn {
         min-height: 48px;
@@ -343,8 +341,7 @@ code {
 /* ===== Improved Mobile Responsiveness ===== */
 @media (max-width: 576px) {
     button,
-    .site-button,
-    .apply-now-btn {
+    .site-button {
         width: 100%;
         max-width: 100%;
     }

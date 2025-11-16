@@ -199,28 +199,7 @@
   color: #374151;
 }
 
-/* Apply Button */
-.apply-now-btn {
-  background: #fd7e14;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
 
-.apply-now-btn:hover {
-  background: #ff8c2a;
-  transform: translateY(-1px);
-}
-
-.apply-now-btn:active {
-  transform: translateY(0);
-}
 
 /* Responsive Design - Maintain Desktop Layout */
 @media (max-width: 768px) {
