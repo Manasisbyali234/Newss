@@ -47,9 +47,19 @@ exports.getJobs = async (req, res) => {
     if (location) query.location = { $regex: location, $options: 'i' };
 
     if (employmentType) {
-      query.jobType = employmentType;
-    } else if (jobType) {
-      query.jobType = Array.isArray(jobType) ? { $in: jobType } : jobType;
+      if (Array.isArray(employmentType) && employmentType.length > 0) {
+        query.typeOfEmployment = { $in: employmentType };
+      } else if (typeof employmentType === 'string' && employmentType !== '') {
+        query.typeOfEmployment = employmentType;
+      }
+    }
+    
+    if (jobType) {
+      if (Array.isArray(jobType) && jobType.length > 0) {
+        query.jobType = { $in: jobType };
+      } else if (typeof jobType === 'string' && jobType !== '') {
+        query.jobType = jobType;
+      }
     }
     
     const searchTerms = [search, keyword, jobTitle].filter(Boolean);
@@ -62,7 +72,13 @@ exports.getJobs = async (req, res) => {
       ];
     }
     
-    if (category) query.category = { $regex: category, $options: 'i' };
+    if (category) {
+      if (Array.isArray(category) && category.length > 0) {
+        query.category = { $in: category };
+      } else if (typeof category === 'string' && category !== '') {
+        query.category = { $regex: category, $options: 'i' };
+      }
+    }
     if (skills) {
       const skillsArray = Array.isArray(skills) ? skills : [skills];
       query.requiredSkills = { $in: skillsArray.map(skill => new RegExp(skill, 'i')) };
@@ -514,27 +530,49 @@ exports.getEmployers = async (req, res) => {
     }
 
     if (industryFilter) {
-      const industryRegex = createRegex(industryFilter);
-      matchConditions.push({
-        $or: [
-          { 'profile.industrySector': industryRegex },
-          { 'profile.industry': industryRegex }
-        ]
-      });
+      if (Array.isArray(industryFilter) && industryFilter.length > 0) {
+        matchConditions.push({
+          $or: [
+            { 'profile.industrySector': { $in: industryFilter } },
+            { 'profile.industry': { $in: industryFilter } }
+          ]
+        });
+      } else if (typeof industryFilter === 'string' && industryFilter !== '') {
+        const industryRegex = createRegex(industryFilter);
+        matchConditions.push({
+          $or: [
+            { 'profile.industrySector': industryRegex },
+            { 'profile.industry': industryRegex }
+          ]
+        });
+      }
     }
 
     if (teamSizeFilter) {
-      const teamSizeRegex = createRegex(teamSizeFilter);
-      matchConditions.push({
-        $or: [
-          { 'profile.teamSize': teamSizeRegex },
-          { 'profile.companySize': teamSizeRegex }
-        ]
-      });
+      if (Array.isArray(teamSizeFilter) && teamSizeFilter.length > 0) {
+        matchConditions.push({
+          $or: [
+            { 'profile.teamSize': { $in: teamSizeFilter } },
+            { 'profile.companySize': { $in: teamSizeFilter } }
+          ]
+        });
+      } else if (typeof teamSizeFilter === 'string' && teamSizeFilter !== '') {
+        const teamSizeRegex = createRegex(teamSizeFilter);
+        matchConditions.push({
+          $or: [
+            { 'profile.teamSize': teamSizeRegex },
+            { 'profile.companySize': teamSizeRegex }
+          ]
+        });
+      }
     }
 
     if (companyTypeFilter) {
-      matchConditions.push({ 'profile.companyType': createRegex(companyTypeFilter) });
+      if (Array.isArray(companyTypeFilter) && companyTypeFilter.length > 0) {
+        matchConditions.push({ 'profile.companyType': { $in: companyTypeFilter } });
+      } else if (typeof companyTypeFilter === 'string' && companyTypeFilter !== '') {
+        matchConditions.push({ 'profile.companyType': createRegex(companyTypeFilter) });
+      }
     }
 
     if (establishedSinceFilter) {

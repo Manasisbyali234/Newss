@@ -175,20 +175,9 @@
     max-width: 90%;
 }
 
-/* Ensure ID column is always visible */
-.table th:first-child,
-.table td:first-child {
-    position: sticky;
-    left: 0;
-    background-color: #ffffff;
-    z-index: 10;
-    border-right: 2px solid #dee2e6;
-}
 
-.table thead th:first-child {
-    background-color: #f8f9fa;
-    font-weight: 600;
-}
+
+
 
 /* Student Records table specific styling */
 .table-responsive {
@@ -268,21 +257,7 @@
 
 /* Mobile responsive table */
 @media (max-width: 768px) {
-    .table th:first-child,
-    .table td:first-child {
-        position: sticky;
-        left: 0;
-        min-width: 60px !important;
-        width: 60px !important;
-        background-color: #ffffff;
-        z-index: 10;
-        border-right: 2px solid #dee2e6;
-    }
-    
-    .table thead th:first-child {
-        background-color: #f8f9fa;
-        font-weight: 600;
-    }
+
     
     .table-responsive {
         border: 1px solid #dee2e6;

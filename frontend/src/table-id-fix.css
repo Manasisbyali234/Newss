@@ -2,24 +2,18 @@
 .table th:first-child,
 .table td:first-child,
 .emp-table th:first-child,
-.emp-table td:first-child {
+.emp-table td:first-child,
+.tickets-table th:first-child,
+.tickets-table td:first-child,
+table th:first-child,
+table td:first-child {
     display: table-cell !important;
     visibility: visible !important;
     opacity: 1 !important;
-    min-width: 80px !important;
-    width: 80px !important;
-    background-color: #ffffff !important;
-    border-right: 2px solid #dee2e6 !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 10 !important;
+    border-right: none !important;
 }
 
-.table thead th:first-child,
-.emp-table thead th:first-child {
-    background-color: #f8f9fa !important;
-    font-weight: 600 !important;
-}
+
 
 /* Override any hiding CSS */
 .table th:nth-child(1),

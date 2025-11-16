@@ -59,15 +59,6 @@ function SectionCandicateBasicInfo() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    useEffect(() => {
-        const handleResize = () => {
-            setPhonePaddingLeft(window.innerWidth < 768 ? 90 : 130);
-        };
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
     const fetchProfile = async () => {
         try {
             const token = localStorage.getItem('candidateToken');
@@ -511,7 +502,7 @@ function SectionCandicateBasicInfo() {
                                     placeholder="Enter mobile number"
                                     maxLength="15"
                                     required
-                                    style={{ paddingLeft: `${phonePaddingLeft}px`, height: '57px', borderRadius: '0.375rem' }}
+                                    style={{ paddingLeft: '130px', height: '57px', borderRadius: '0.375rem' }}
                                 />
                             </div>
                             {errors.phone && <div className="invalid-feedback d-block">{errors.phone}</div>}

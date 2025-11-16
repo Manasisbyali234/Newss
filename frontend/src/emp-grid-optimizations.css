@@ -330,6 +330,25 @@
   color: #6c757d;
 }
 
+/* Checkbox alignment fixes */
+.twm-sidebar-ele-filter .form-check {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.twm-sidebar-ele-filter .form-check-input {
+  margin-top: 0;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.twm-sidebar-ele-filter .form-check-label {
+  margin-bottom: 0;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
 /* Print styles */
 @media print {
   .emp-grid-page {

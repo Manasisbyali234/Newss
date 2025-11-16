@@ -1,0 +1,35 @@
+/* Mobile Categories Fix - Force all cards to display */
+@media (max-width: 767px) {
+  .mobile-categories {
+    display: block !important;
+    width: 100% !important;
+  }
+  
+  .mobile-categories-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+  
+  .mobile-categories-grid > div {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .job-categories-block.mobile-category-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    padding: 16px 12px !important;
+    background: #fff !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    min-height: 120px !important;
+  }
+  
+  .desktop-categories {
+    display: none !important;
+  }
+}

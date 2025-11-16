@@ -161,9 +161,18 @@
     letter-spacing: 0.3px;
     text-align: center;
     box-shadow: 0 2px 4px rgba(253, 195, 96, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 10;
+}
+
+.candidates-table thead th:first-child {
+    background: #FDC360 !important;
+    font-weight: 600 !important;
+    position: static !important;
+    left: auto !important;
+}
+
+.candidates-table tbody td:first-child {
+    position: static !important;
+    left: auto !important;
 }
 
 .candidates-table thead th i {

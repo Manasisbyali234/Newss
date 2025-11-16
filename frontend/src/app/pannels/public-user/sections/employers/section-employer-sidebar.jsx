@@ -8,9 +8,9 @@ function SectionEmployerSidebar({ onFilterChange }) {
     const [filters, setFilters] = useState({
         keyword: '',
         location: '',
-        industry: '',
-        teamSize: '',
-        companyType: '',
+        industry: [],
+        teamSize: [],
+        companyType: [],
         establishedSince: ''
     });
 
@@ -117,13 +117,11 @@ function SectionEmployerSidebar({ onFilterChange }) {
                             <li>
                                 <div className="form-check">
                                     <input 
-                                        type="radio" 
+                                        type="checkbox" 
                                         className="form-check-input" 
                                         id="allIndustry"
-                                        name="industry"
-                                        value=""
-                                        checked={filters.industry === ''}
-                                        onChange={(e) => setFilters({...filters, industry: e.target.value})}
+                                        checked={!filters.industry || filters.industry.length === 0}
+                                        onChange={() => setFilters({...filters, industry: []})}
                                     />
                                     <label className="form-check-label" htmlFor="allIndustry">All Industries</label>
                                 </div>
@@ -132,13 +130,18 @@ function SectionEmployerSidebar({ onFilterChange }) {
                                 <li key={industry}>
                                     <div className="form-check">
                                         <input 
-                                            type="radio" 
+                                            type="checkbox" 
                                             className="form-check-input" 
                                             id={`industry${index}`}
-                                            name="industry"
                                             value={industry}
-                                            checked={filters.industry === industry}
-                                            onChange={(e) => setFilters({...filters, industry: e.target.value})}
+                                            checked={filters.industry.includes(industry)}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setFilters({...filters, industry: [...filters.industry, industry]});
+                                                } else {
+                                                    setFilters({...filters, industry: filters.industry.filter(i => i !== industry)});
+                                                }
+                                            }}
                                         />
                                         <label className="form-check-label" htmlFor={`industry${index}`}>
                                             {industry}
@@ -155,13 +158,11 @@ function SectionEmployerSidebar({ onFilterChange }) {
                             <li>
                                 <div className="form-check">
                                     <input 
-                                        type="radio" 
+                                        type="checkbox" 
                                         className="form-check-input" 
                                         id="allTeamSize"
-                                        name="teamSize"
-                                        value=""
-                                        checked={filters.teamSize === ''}
-                                        onChange={(e) => setFilters({...filters, teamSize: e.target.value})}
+                                        checked={!filters.teamSize || filters.teamSize.length === 0}
+                                        onChange={() => setFilters({...filters, teamSize: []})}
                                     />
                                     <label className="form-check-label" htmlFor="allTeamSize">All Sizes</label>
                                 </div>
@@ -170,13 +171,18 @@ function SectionEmployerSidebar({ onFilterChange }) {
                                 <li key={`teamsize-${size}`}>
                                     <div className="form-check">
                                         <input 
-                                            type="radio" 
+                                            type="checkbox" 
                                             className="form-check-input" 
                                             id={`teamSize-${size}`}
-                                            name="teamSize"
                                             value={size}
-                                            checked={filters.teamSize === size}
-                                            onChange={(e) => setFilters({...filters, teamSize: e.target.value})}
+                                            checked={filters.teamSize.includes(size)}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setFilters({...filters, teamSize: [...filters.teamSize, size]});
+                                                } else {
+                                                    setFilters({...filters, teamSize: filters.teamSize.filter(s => s !== size)});
+                                                }
+                                            }}
                                         />
                                         <label className="form-check-label" htmlFor={`teamSize-${size}`}>
                                             {size}
@@ -193,13 +199,11 @@ function SectionEmployerSidebar({ onFilterChange }) {
                             <li>
                                 <div className="form-check">
                                     <input 
-                                        type="radio" 
+                                        type="checkbox" 
                                         className="form-check-input" 
                                         id="allCompanyType"
-                                        name="companyType"
-                                        value=""
-                                        checked={filters.companyType === ''}
-                                        onChange={(e) => setFilters({...filters, companyType: e.target.value})}
+                                        checked={!filters.companyType || filters.companyType.length === 0}
+                                        onChange={() => setFilters({...filters, companyType: []})}
                                     />
                                     <label className="form-check-label" htmlFor="allCompanyType">All Types</label>
                                 </div>
@@ -208,13 +212,18 @@ function SectionEmployerSidebar({ onFilterChange }) {
                                 <li key={type}>
                                     <div className="form-check">
                                         <input 
-                                            type="radio" 
+                                            type="checkbox" 
                                             className="form-check-input" 
                                             id={`companyType${index}`}
-                                            name="companyType"
                                             value={type}
-                                            checked={filters.companyType === type}
-                                            onChange={(e) => setFilters({...filters, companyType: e.target.value})}
+                                            checked={filters.companyType.includes(type)}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setFilters({...filters, companyType: [...filters.companyType, type]});
+                                                } else {
+                                                    setFilters({...filters, companyType: filters.companyType.filter(t => t !== type)});
+                                                }
+                                            }}
                                         />
                                         <label className="form-check-label" htmlFor={`companyType${index}`}>
                                             {type}
@@ -246,9 +255,9 @@ function SectionEmployerSidebar({ onFilterChange }) {
                             onClick={() => setFilters({
                                 keyword: '',
                                 location: '',
-                                industry: '',
-                                teamSize: '',
-                                companyType: '',
+                                industry: [],
+                                teamSize: [],
+                                companyType: [],
                                 establishedSince: ''
                             })}
                         >

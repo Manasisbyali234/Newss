@@ -5,6 +5,7 @@ import SectionSideAdvert from "./section-side-advert";
 import { useState, useEffect } from "react";
 import "../../../../../../custom-tags.css";
 import "../../../../../../remove-tag-hover.css";
+import "../../../../../../circular-checkbox.css";
 
 function SectionJobsSidebar1 ({ onFilterChange }) {
     const [jobTypes, setJobTypes] = useState([]);
@@ -17,10 +18,10 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
         keyword: '',
         location: '',
         jobType: [],
-        employmentType: '',
+        employmentType: [],
         jobTitle: '',
         skills: [],
-        category: ''
+        category: []
     });
 
     const skillCategories = [
@@ -271,11 +272,9 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                                 <li style={{marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                                     <div className="form-check" style={{margin: 0}}>
                                         <input 
-                                            type="radio" 
+                                            type="checkbox" 
                                             className="form-check-input" 
                                             id="jobTypeAll"
-                                            name="jobType"
-                                            value=""
                                             checked={!filters.jobType || filters.jobType.length === 0}
                                             onChange={() => setFilters({...filters, jobType: []})}
                                             style={{marginRight: '8px'}}
@@ -289,13 +288,18 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                                     <li key={type} style={{marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                                         <div className="form-check" style={{margin: 0}}>
                                             <input 
-                                                type="radio" 
+                                                type="checkbox" 
                                                 className="form-check-input" 
                                                 id={`jobType${index}`}
-                                                name="jobType"
                                                 value={type}
                                                 checked={filters.jobType.includes(type)}
-                                                onChange={() => setFilters({...filters, jobType: [type]})}
+                                                onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        setFilters({...filters, jobType: [...filters.jobType, type]});
+                                                    } else {
+                                                        setFilters({...filters, jobType: filters.jobType.filter(t => t !== type)});
+                                                    }
+                                                }}
                                                 style={{marginRight: '8px'}}
                                             />
                                             <label className="form-check-label" htmlFor={`jobType${index}`} style={{fontSize: '14px', color: '#333', fontWeight: filters.jobType.includes(type) ? '600' : 'normal'}}>
@@ -316,14 +320,11 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                                 <li style={{marginBottom: '10px'}}>
                                     <div className="form-check" style={{margin: 0}}>
                                         <input 
-                                            type="radio" 
+                                            type="checkbox" 
                                             className="form-check-input" 
                                             id="skillAll"
-                                            name="skills"
-                                            value=""
                                             checked={!filters.skills || filters.skills.length === 0}
                                             onChange={() => setFilters({...filters, skills: []})}
-                                            style={{marginRight: '8px'}}
                                         />
                                         <label className="form-check-label" htmlFor="skillAll" style={{fontSize: '14px', color: '#333', fontWeight: (!filters.skills || filters.skills.length === 0) ? '600' : 'normal'}}>
                                             All Skills
@@ -334,14 +335,18 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                                     <li key={skill} style={{marginBottom: '10px'}}>
                                         <div className="form-check" style={{margin: 0}}>
                                             <input 
-                                                type="radio" 
+                                                type="checkbox" 
                                                 className="form-check-input" 
                                                 id={`skill${index}`}
-                                                name="skills"
                                                 value={skill}
                                                 checked={filters.skills.includes(skill)}
-                                                onChange={() => setFilters({...filters, skills: [skill]})}
-                                                style={{marginRight: '8px'}}
+                                                onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        setFilters({...filters, skills: [...filters.skills, skill]});
+                                                    } else {
+                                                        setFilters({...filters, skills: filters.skills.filter(s => s !== skill)});
+                                                    }
+                                                }}
                                             />
                                             <label className="form-check-label" htmlFor={`skill${index}`} style={{fontSize: '14px', color: '#333', fontWeight: filters.skills.includes(skill) ? '600' : 'normal'}}>
                                                 {skill}
@@ -353,68 +358,121 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                         </div>
 
                         <div className="twm-sidebar-ele-filter">
-                            <h4 className="section-head-small mb-4">Type of employment</h4>
-                            <ul>
-                                <li>
-                                    <div className="form-check">
+                            <h4 className="section-head-small mb-4">Type of Employment</h4>
+                            <ul style={{listStyle: 'none', padding: 0}}>
+                                <li style={{marginBottom: '10px'}}>
+                                    <div className="form-check" style={{margin: 0}}>
                                         <input 
-                                            type="radio" 
+                                            type="checkbox" 
                                             className="form-check-input" 
                                             id="AllEmployment" 
-                                            name="employmentType"
-                                            value=""
-                                            checked={filters.employmentType === ''}
-                                            onChange={(e) => setFilters({...filters, employmentType: e.target.value})}
+                                            checked={!filters.employmentType || filters.employmentType.length === 0}
+                                            onChange={() => setFilters({...filters, employmentType: []})}
+                                            style={{marginRight: '8px'}}
                                         />
-                                        <label className="form-check-label" htmlFor="AllEmployment">All Types</label>
+                                        <label className="form-check-label" htmlFor="AllEmployment" style={{fontSize: '14px', color: '#333', fontWeight: (!filters.employmentType || filters.employmentType.length === 0) ? '600' : 'normal'}}>All Types</label>
                                     </div>
                                 </li>
-                                <li>
-                                    <div className="form-check">
+                                <li style={{marginBottom: '10px'}}>
+                                    <div className="form-check" style={{margin: 0}}>
                                         <input 
-                                            type="radio" 
+                                            type="checkbox" 
+                                            className="form-check-input" 
+                                            id="Permanent1" 
+                                            value="permanent"
+                                            checked={filters.employmentType.includes('permanent')}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setFilters({...filters, employmentType: [...filters.employmentType, 'permanent']});
+                                                } else {
+                                                    setFilters({...filters, employmentType: filters.employmentType.filter(t => t !== 'permanent')});
+                                                }
+                                            }}
+                                            style={{marginRight: '8px'}}
+                                        />
+                                        <label className="form-check-label" htmlFor="Permanent1" style={{fontSize: '14px', color: '#333', fontWeight: filters.employmentType.includes('permanent') ? '600' : 'normal'}}>Permanent</label>
+                                    </div>
+                                </li>
+                                <li style={{marginBottom: '10px'}}>
+                                    <div className="form-check" style={{margin: 0}}>
+                                        <input 
+                                            type="checkbox" 
+                                            className="form-check-input" 
+                                            id="Temporary1" 
+                                            value="temporary"
+                                            checked={filters.employmentType.includes('temporary')}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setFilters({...filters, employmentType: [...filters.employmentType, 'temporary']});
+                                                } else {
+                                                    setFilters({...filters, employmentType: filters.employmentType.filter(t => t !== 'temporary')});
+                                                }
+                                            }}
+                                            style={{marginRight: '8px'}}
+                                        />
+                                        <label className="form-check-label" htmlFor="Temporary1" style={{fontSize: '14px', color: '#333', fontWeight: filters.employmentType.includes('temporary') ? '600' : 'normal'}}>Temporary</label>
+                                    </div>
+                                </li>
+                                <li style={{marginBottom: '10px'}}>
+                                    <div className="form-check" style={{margin: 0}}>
+                                        <input 
+                                            type="checkbox" 
                                             className="form-check-input" 
                                             id="Freelance1" 
-                                            name="employmentType"
                                             value="freelance"
-                                            checked={filters.employmentType === 'freelance'}
-                                            onChange={(e) => setFilters({...filters, employmentType: e.target.value})}
+                                            checked={filters.employmentType.includes('freelance')}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setFilters({...filters, employmentType: [...filters.employmentType, 'freelance']});
+                                                } else {
+                                                    setFilters({...filters, employmentType: filters.employmentType.filter(t => t !== 'freelance')});
+                                                }
+                                            }}
+                                            style={{marginRight: '8px'}}
                                         />
-                                        <label className="form-check-label" htmlFor="Freelance1">Freelance</label>
+                                        <label className="form-check-label" htmlFor="Freelance1" style={{fontSize: '14px', color: '#333', fontWeight: filters.employmentType.includes('freelance') ? '600' : 'normal'}}>Freelance</label>
                                     </div>
                                 </li>
-
-                                <li>
-                                    <div className="form-check">
+                                <li style={{marginBottom: '10px'}}>
+                                    <div className="form-check" style={{margin: 0}}>
                                         <input 
-                                            type="radio" 
+                                            type="checkbox" 
                                             className="form-check-input" 
-                                            id="FullTime1" 
-                                            name="employmentType"
-                                            value="full-time"
-                                            checked={filters.employmentType === 'full-time'}
-                                            onChange={(e) => setFilters({...filters, employmentType: e.target.value})}
+                                            id="Consultant1" 
+                                            value="consultant"
+                                            checked={filters.employmentType.includes('consultant')}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setFilters({...filters, employmentType: [...filters.employmentType, 'consultant']});
+                                                } else {
+                                                    setFilters({...filters, employmentType: filters.employmentType.filter(t => t !== 'consultant')});
+                                                }
+                                            }}
+                                            style={{marginRight: '8px'}}
                                         />
-                                        <label className="form-check-label" htmlFor="FullTime1">Full Time</label>
+                                        <label className="form-check-label" htmlFor="Consultant1" style={{fontSize: '14px', color: '#333', fontWeight: filters.employmentType.includes('consultant') ? '600' : 'normal'}}>Consultant</label>
                                     </div>
                                 </li>
-
-                                <li>
-                                    <div className="form-check">
+                                <li style={{marginBottom: '10px'}}>
+                                    <div className="form-check" style={{margin: 0}}>
                                         <input 
-                                            type="radio" 
+                                            type="checkbox" 
                                             className="form-check-input" 
-                                            id="Intership1" 
-                                            name="employmentType"
-                                            value="internship"
-                                            checked={filters.employmentType === 'internship'}
-                                            onChange={(e) => setFilters({...filters, employmentType: e.target.value})}
+                                            id="Trainee1" 
+                                            value="trainee"
+                                            checked={filters.employmentType.includes('trainee')}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setFilters({...filters, employmentType: [...filters.employmentType, 'trainee']});
+                                                } else {
+                                                    setFilters({...filters, employmentType: filters.employmentType.filter(t => t !== 'trainee')});
+                                                }
+                                            }}
+                                            style={{marginRight: '8px'}}
                                         />
-                                        <label className="form-check-label" htmlFor="Intership1">Internship</label>
+                                        <label className="form-check-label" htmlFor="Trainee1" style={{fontSize: '14px', color: '#333', fontWeight: filters.employmentType.includes('trainee') ? '600' : 'normal'}}>Trainee</label>
                                     </div>
                                 </li>
-
-
                             </ul>
                         </div>
                         
@@ -424,16 +482,14 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                                 <li style={{marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                                     <div className="form-check" style={{margin: 0}}>
                                         <input 
-                                            type="radio" 
+                                            type="checkbox" 
                                             className="form-check-input" 
                                             id="categoryAll"
-                                            name="category"
-                                            value=""
-                                            checked={filters.category === ''}
-                                            onChange={(e) => setFilters({...filters, category: e.target.value})}
+                                            checked={!filters.category || filters.category.length === 0}
+                                            onChange={() => setFilters({...filters, category: []})}
                                             style={{marginRight: '8px'}}
                                         />
-                                        <label className="form-check-label" htmlFor="categoryAll" style={{fontSize: '14px', color: '#333', fontWeight: filters.category === '' ? '600' : 'normal'}}>
+                                        <label className="form-check-label" htmlFor="categoryAll" style={{fontSize: '14px', color: '#333', fontWeight: (!filters.category || filters.category.length === 0) ? '600' : 'normal'}}>
                                             All Categories
                                         </label>
                                     </div>
@@ -442,16 +498,21 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                                     <li key={category} style={{marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                                         <div className="form-check" style={{margin: 0}}>
                                             <input 
-                                                type="radio" 
+                                                type="checkbox" 
                                                 className="form-check-input" 
                                                 id={`category${index}`}
-                                                name="category"
                                                 value={category}
-                                                checked={filters.category === category}
-                                                onChange={(e) => setFilters({...filters, category: e.target.value})}
+                                                checked={filters.category.includes(category)}
+                                                onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        setFilters({...filters, category: [...filters.category, category]});
+                                                    } else {
+                                                        setFilters({...filters, category: filters.category.filter(c => c !== category)});
+                                                    }
+                                                }}
                                                 style={{marginRight: '8px'}}
                                             />
-                                            <label className="form-check-label" htmlFor={`category${index}`} style={{fontSize: '14px', color: '#333', fontWeight: filters.category === category ? '600' : 'normal'}}>
+                                            <label className="form-check-label" htmlFor={`category${index}`} style={{fontSize: '14px', color: '#333', fontWeight: filters.category.includes(category) ? '600' : 'normal'}}>
                                                 {category}
                                             </label>
                                         </div>
@@ -474,10 +535,10 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                                         keyword: '',
                                         location: '',
                                         jobType: [],
-                                        employmentType: '',
+                                        employmentType: [],
                                         jobTitle: '',
                                         skills: [],
-                                        category: ''
+                                        category: []
                                     });
                                     setShowLocationSuggestions(false);
                                 }}

@@ -11,6 +11,7 @@ const jobSchema = new mongoose.Schema({
   companyName: { type: String }, // Company name (only for consultants)
   companyDescription: { type: String }, // Company description (only for consultants)
   category: { type: String }, // Job category (IT, Sales, Marketing, etc.)
+  typeOfEmployment: { type: String, enum: ['permanent', 'temporary', 'freelance', 'consultant', 'trainee'] }, // Type of employment
   salary: {
     min: { type: Number },
     max: { type: Number },

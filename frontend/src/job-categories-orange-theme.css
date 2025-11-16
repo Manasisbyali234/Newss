@@ -5,11 +5,18 @@
   background-color: transparent !important;
 }
 
-/* Keep job category cards white */
+/* Keep job category cards white with consistent sizing */
 .job-categories-block-2 {
   background-color: #fff !important;
   border: none !important;
   box-shadow: none !important;
+  height: 180px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+  padding: 20px !important;
 }
 
 /* Icon styling - make icons orange */

@@ -202,8 +202,12 @@ function Home1Page() {
             // Fallback categories
             setCategories([
                 {name: 'IT', count: 5, icon: 'flaticon-coding'},
-                {name: 'Design', count: 2, icon: 'flaticon-computer'},
-                {name: 'Marketing', count: 1, icon: 'flaticon-user'}
+                {name: 'Sales', count: 4, icon: 'flaticon-user'},
+                {name: 'Marketing', count: 3, icon: 'flaticon-bars'},
+                {name: 'Finance', count: 2, icon: 'flaticon-money'},
+                {name: 'HR', count: 3, icon: 'flaticon-hr'},
+                {name: 'Operations', count: 2, icon: 'flaticon-dashboard'},
+                {name: 'Design', count: 1, icon: 'flaticon-computer'}
             ]);
         }
     };
@@ -211,11 +215,13 @@ function Home1Page() {
     const getCategoryIcon = (category) => {
         const icons = {
             'IT': 'flaticon-coding',
-            'Design': 'flaticon-computer',
-            'Marketing': 'flaticon-user',
-            'Content': 'flaticon-note',
-            'Finance': 'flaticon-bars',
+            'Sales': 'flaticon-user',
+            'Marketing': 'flaticon-bars',
+            'Finance': 'flaticon-money',
             'HR': 'flaticon-hr',
+            'Operations': 'flaticon-settings',
+            'Design': 'flaticon-computer',
+            'Content': 'flaticon-note',
             'Healthcare': 'flaticon-healthcare',
             'Other': 'flaticon-dashboard'
         };

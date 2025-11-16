@@ -52,15 +52,22 @@ export const forceLightMode = () => {
   // Apply immediately
   forceStyles();
 
-  // Watch for any changes and reapply
-  const observer = new MutationObserver(() => {
-    forceStyles();
-  });
-
-  observer.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['style', 'class']
-  });
+  // Use RAF for periodic checks instead of MutationObserver to avoid React conflicts
+  let rafId;
+  const checkAndApply = () => {
+    const docStyle = getComputedStyle(document.documentElement);
+    const bodyStyle = getComputedStyle(document.body);
+    
+    if (docStyle.colorScheme !== 'light only' || 
+        docStyle.backgroundColor !== 'rgb(255, 255, 255)' ||
+        bodyStyle.backgroundColor !== 'rgb(255, 255, 255)') {
+      forceStyles();
+    }
+    
+    rafId = requestAnimationFrame(checkAndApply);
+  };
+  
+  rafId = requestAnimationFrame(checkAndApply);
 
   // Override CSS.supports for dark mode queries
   if (window.CSS && window.CSS.supports) {
@@ -74,7 +81,9 @@ export const forceLightMode = () => {
   }
 
   return () => {
-    observer.disconnect();
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+    }
   };
 };
 

@@ -16,6 +16,7 @@ import "./hero-location-fix.css";
 import "./remove-shadows.css";
 import "./header-responsive.css";
 import "./home-responsive.css";
+import "./mobile-categories-fix.css";
 
 function App() {
 

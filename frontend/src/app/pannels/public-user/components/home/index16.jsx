@@ -397,62 +397,52 @@ function Home16Page() {
                     <h2 className="wt-title">Choose a Relevant Category</h2>
                 </div>
                 <Container className="py-2" style={{background: 'transparent', backgroundColor: 'transparent'}}>
-                    <div className="owl-carousel job-categories-carousel owl-btn-left-bottom" style={{marginBottom: '30px', background: 'transparent'}}>
-                        <div className="item">
-                            <NavLink to="/job-grid?category=IT" style={{textDecoration: 'none'}}>
-                                <div className="category-card">
-                                    <div>
-                                        <div className="category-text-title">Programming</div>
-                                        <div className="category-text-sub">{categories[0]?.count || 0} Jobs</div>
-                                    </div>
-                                    <div className="plus-badge">+</div>
+                    <div className="category-cards-container">
+                        <NavLink to="/job-grid?category=IT" style={{textDecoration: 'none'}}>
+                            <div className="category-card">
+                                <div>
+                                    <div className="category-text-title">Programming</div>
+                                    <div className="category-text-sub">{categories[0]?.count || 0} Jobs</div>
                                 </div>
-                            </NavLink>
-                        </div>
-                        <div className="item">
-                            <NavLink to="/job-grid?category=Content" style={{textDecoration: 'none'}}>
-                                <div className="category-card">
-                                    <div>
-                                        <div className="category-text-title">Content Writer</div>
-                                        <div className="category-text-sub">{categories[1]?.count || 0} Jobs</div>
-                                    </div>
-                                    <div className="plus-badge">+</div>
+                                <div className="plus-badge">+</div>
+                            </div>
+                        </NavLink>
+                        <NavLink to="/job-grid?category=Content" style={{textDecoration: 'none'}}>
+                            <div className="category-card">
+                                <div>
+                                    <div className="category-text-title">Content Writer</div>
+                                    <div className="category-text-sub">{categories[1]?.count || 0} Jobs</div>
                                 </div>
-                            </NavLink>
-                        </div>
-                        <div className="item">
-                            <NavLink to="/job-grid?category=Sales" style={{textDecoration: 'none'}}>
-                                <div className="category-card">
-                                    <div>
-                                        <div className="category-text-title">Sales & Marketing</div>
-                                        <div className="category-text-sub">{categories[2]?.count || 0} Jobs</div>
-                                    </div>
-                                    <div className="plus-badge">+</div>
+                                <div className="plus-badge">+</div>
+                            </div>
+                        </NavLink>
+                        <NavLink to="/job-grid?category=Sales" style={{textDecoration: 'none'}}>
+                            <div className="category-card">
+                                <div>
+                                    <div className="category-text-title">Sales & Marketing</div>
+                                    <div className="category-text-sub">{categories[2]?.count || 0} Jobs</div>
                                 </div>
-                            </NavLink>
-                        </div>
-                        <div className="item">
-                            <NavLink to="/job-grid?category=Healthcare" style={{textDecoration: 'none'}}>
-                                <div className="category-card">
-                                    <div>
-                                        <div className="category-text-title">Healthcare</div>
-                                        <div className="category-text-sub">{categories[3]?.count || 0} Jobs</div>
-                                    </div>
-                                    <div className="plus-badge">+</div>
+                                <div className="plus-badge">+</div>
+                            </div>
+                        </NavLink>
+                        <NavLink to="/job-grid?category=Healthcare" style={{textDecoration: 'none'}}>
+                            <div className="category-card">
+                                <div>
+                                    <div className="category-text-title">Healthcare</div>
+                                    <div className="category-text-sub">{categories[3]?.count || 0} Jobs</div>
                                 </div>
-                            </NavLink>
-                        </div>
-                        <div className="item">
-                            <NavLink to="/job-grid?category=HR" style={{textDecoration: 'none'}}>
-                                <div className="category-card">
-                                    <div>
-                                        <div className="category-text-title">Human Resources</div>
-                                        <div className="category-text-sub">{categories[4]?.count || 0} Jobs</div>
-                                    </div>
-                                    <div className="plus-badge">+</div>
+                                <div className="plus-badge">+</div>
+                            </div>
+                        </NavLink>
+                        <NavLink to="/job-grid?category=HR" style={{textDecoration: 'none'}}>
+                            <div className="category-card">
+                                <div>
+                                    <div className="category-text-title">Human Resources</div>
+                                    <div className="category-text-sub">{categories[4]?.count || 0} Jobs</div>
                                 </div>
-                            </NavLink>
-                        </div>
+                                <div className="plus-badge">+</div>
+                            </div>
+                        </NavLink>
                     </div>
                     <div className="text-center job-categories-btn">
                         <NavLink to="/job-grid" className="site-button" style={{padding: '0.5rem 1rem', fontSize: '14px', display: 'inline-flex', width: 'auto', whiteSpace: 'nowrap'}}>
@@ -702,7 +692,7 @@ function Home16Page() {
                                             </div>
                                         </li>
                                     ) : recruiters.length > 0 ? (
-                                        recruiters.slice(0, 12).map((recruiter, index) => {
+                                        recruiters.slice(0, 8).map((recruiter, index) => {
                                             const generateCompanyLogo = (companyName) => {
                                                 const colors = [
                                                     "#007bff",

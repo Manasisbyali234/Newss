@@ -66,7 +66,9 @@ export default function EmpPostJob({ onNext }) {
 		companyLogo: "",
 		companyName: "",
 		companyDescription: "",
-		category: ""
+		category: "",
+		// Type of Employment
+		typeOfEmployment: ""
 	});
 
 	const [employerType, setEmployerType] = useState('company');
@@ -81,6 +83,7 @@ export default function EmpPostJob({ onNext }) {
 		jobTitle: { required: true, minLength: 3 },
 		category: { required: true },
 		jobType: { required: true },
+		typeOfEmployment: { required: true },
 		jobLocation: { required: true, minLength: 2 },
 		vacancies: { required: true, pattern: /^[1-9]\d*$/, patternMessage: 'Must be a positive number' },
 		applicationLimit: { required: true, pattern: /^[1-9]\d*$/, patternMessage: 'Must be a positive number' },
@@ -238,7 +241,8 @@ export default function EmpPostJob({ onNext }) {
 					companyLogo: job.companyLogo || '',
 					companyName: job.companyName || '',
 					companyDescription: job.companyDescription || '',
-					category: job.category || ''
+					category: job.category || '',
+					typeOfEmployment: job.typeOfEmployment || ''
 				});
 
 				// Set selected assessment
@@ -559,6 +563,7 @@ export default function EmpPostJob({ onNext }) {
 				lastDateOfApplication: formData.lastDateOfApplication || null,
 				transportation: formData.transportation,
 				category: formData.category,
+				typeOfEmployment: formData.typeOfEmployment,
 				companyLogo: formData.companyLogo,
 				companyName: formData.companyName,
 				companyDescription: formData.companyDescription
@@ -960,6 +965,47 @@ export default function EmpPostJob({ onNext }) {
 							<option>Contract</option>
 						</select>
 						<ErrorDisplay errors={errors} fieldName="jobType" />
+					</div>
+
+					<div>
+						<label style={label}>
+							<i className="fa fa-briefcase" style={{marginRight: '8px', color: '#ff6b35'}}></i>
+							Type of Employment *
+						</label>
+						<div style={{
+							display: 'grid',
+							gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+							gap: 8,
+							padding: 12,
+							border: '1px solid #d1d5db',
+							borderRadius: 8,
+							background: '#fff'
+						}}>
+							{['Permanent', 'Temporary', 'Freelance', 'Consultant', 'Trainee'].map(empType => (
+								<label key={empType} style={{
+									display: 'flex',
+									alignItems: 'center',
+									gap: 6,
+									cursor: 'pointer',
+									fontSize: 13,
+									padding: '6px 8px',
+									borderRadius: 4,
+									transition: 'background 0.2s',
+									background: formData.typeOfEmployment === empType ? '#fff5f2' : 'transparent'
+								}}>
+									<input
+										type="radio"
+										name="typeOfEmployment"
+										value={empType}
+										checked={formData.typeOfEmployment === empType}
+										onChange={(e) => update({ typeOfEmployment: e.target.value })}
+										style={{cursor: 'pointer'}}
+									/>
+									<span>{empType}</span>
+								</label>
+							))}
+						</div>
+						<ErrorDisplay errors={errors} fieldName="typeOfEmployment" />
 					</div>
 
 					{/* Row 2 */}
