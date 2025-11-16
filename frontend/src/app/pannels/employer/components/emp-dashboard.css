@@ -200,6 +200,22 @@
   }
 }
 
+/* Stats Cards Mobile Responsive Fix */
+@media (max-width: 991px) {
+  .emp-dashboard .col-xl-4.col-lg-4.col-md-12 {
+    flex: 0 0 50% !important;
+    max-width: 50% !important;
+  }
+}
+
+@media (max-width: 575px) {
+  .emp-dashboard .col-xl-4.col-lg-4.col-md-12 {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    margin-bottom: -3.5rem !important;
+  }
+}
+
 /* Mobile Responsive Enhancements */
 @media (max-width: 767px) {
   .emp-dashboard .row {

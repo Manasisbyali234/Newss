@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import JobZImage from "../../../common/jobz-img";
 import { loadScript } from "../../../../globals/constants";
 import { useNavigate, useParams } from "react-router-dom";
+import "./emp-job-review.css";
 
 function EmpJobReviewPage() {
     const navigate = useNavigate();

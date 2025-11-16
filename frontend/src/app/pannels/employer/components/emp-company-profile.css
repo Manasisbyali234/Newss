@@ -830,6 +830,77 @@ button.btn-danger:hover i.fas {
     background: transparent !important;
 }
 
+/* Country Code Selector Mobile Fix */
+@media (max-width: 767px) {
+  .emp-company-profile {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100vw !important;
+    max-width: 100% !important;
+  }
+  
+  .emp-company-profile > div {
+    padding: 0.5rem !important;
+  }
+  
+  .panel {
+    margin: 0 !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .form-group div[style*="position: relative"] {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 0.5rem !important;
+    overflow: visible !important;
+  }
+  
+  .form-group div[style*="position: absolute"] {
+    position: relative !important;
+    width: 120px !important;
+    flex-shrink: 0 !important;
+    overflow: visible !important;
+  }
+  
+  .form-group input[style*="paddingLeft: 130px"] {
+    padding-left: 15px !important;
+    height: auto !important;
+    flex: 1 !important;
+  }
+  
+  .panel-body {
+    overflow: visible !important;
+  }
+  
+  .country-dropdown,
+  .dropdown-menu {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    z-index: 9999 !important;
+    width: 120px !important;
+    max-height: 200px !important;
+    overflow-y: auto !important;
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+  }
+  
+  input[type="radio"] {
+    transform: scale(0.6) !important;
+    width: 12px !important;
+    height: 12px !important;
+    margin-right: 4px !important;
+    vertical-align: middle !important;
+  }
+  
+  label {
+    display: flex !important;
+    align-items: center !important;
+    line-height: 1.2 !important;
+  }
+}
+
 /* Mobile Touch Optimizations */
 @media (hover: none) and (pointer: coarse) {
   .panel:hover,
