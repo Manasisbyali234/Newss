@@ -2,39 +2,39 @@
 /* Scoped to prevent overriding other elements */
 
 /* Main job categories section background - Higher specificity */
-.section-full.twm-job-categories-area2,
-.twm-job-categories-area2.section-full,
-.twm-job-categories-area2 {
+.section-full.twm-job-categories-hpage-6-area,
+.twm-job-categories-hpage-6-area.section-full,
+.twm-job-categories-hpage-6-area {
   background-color: transparent !important;
   background: transparent !important;
 }
 
 /* Force horizontal layout */
-.twm-job-categories-area2 .row {
+.twm-job-categories-hpage-6-area .row {
   display: flex !important;
   flex-wrap: wrap !important;
 }
 
-.twm-job-categories-area2 .col-lg-3,
-.twm-job-categories-area2 .col-md-6 {
+.twm-job-categories-hpage-6-area .col-lg-3,
+.twm-job-categories-hpage-6-area .col-md-6 {
   display: block !important;
   flex: 0 0 auto !important;
 }
 
 @media (min-width: 992px) {
-  .twm-job-categories-area2 .col-lg-3 {
+  .twm-job-categories-hpage-6-area .col-lg-3 {
     width: 25% !important;
   }
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
-  .twm-job-categories-area2 .col-md-6 {
+  .twm-job-categories-hpage-6-area .col-md-6 {
     width: 50% !important;
   }
 }
 
 /* Prevent global link overrides */
-.twm-job-categories-area2 a:not(.job-categories-block-2 a):not(.job-categories-block-2 span) {
+.twm-job-categories-hpage-6-area a:not(.job-categories-block-2 a):not(.job-categories-block-2 span) {
   color: inherit !important;
   text-decoration: inherit !important;
 }

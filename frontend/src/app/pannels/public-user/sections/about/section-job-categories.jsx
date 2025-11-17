@@ -94,7 +94,7 @@ function SectionJobCategories() {
 
     return (
         <>
-            <div className="section-full p-t120 p-b90 site-bg-gray twm-job-categories-area2">
+            <div className="section-full p-t120 p-b90 site-bg-gray twm-job-categories-hpage-6-area">
                 {/* title="" START*/}
                 <div className="section-head center wt-small-separator-outer">
                     <div className="wt-small-separator site-text-primary">
