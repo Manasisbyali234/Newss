@@ -1,8 +1,15 @@
 /* Job Categories Orange Theme - White Cards with Orange Background */
+/* Scoped to prevent overriding other elements */
 
 /* Main job categories section background */
 .twm-job-categories-area2 {
   background-color: transparent !important;
+}
+
+/* Prevent global link overrides */
+.twm-job-categories-area2 a:not(.job-categories-block-2 a):not(.job-categories-block-2 span) {
+  color: inherit !important;
+  text-decoration: inherit !important;
 }
 
 /* Keep job category cards white with consistent sizing */
@@ -36,8 +43,10 @@
 }
 
 /* Category name styling */
-.job-categories-block-2 .twm-content a {
+.job-categories-block-2 .twm-content a,
+.job-categories-block-2 .twm-content span {
   color: #17171d !important;
+  text-decoration: none !important;
 }
 
 /* Hover effects */
@@ -58,8 +67,10 @@
   transform: translateX(-50%) translateY(-50%) scale(1.2);
 }
 
-.job-categories-block-2:hover .twm-content a {
+.job-categories-block-2:hover .twm-content a,
+.job-categories-block-2:hover .twm-content span {
   color: #fd7e14 !important;
+  text-decoration: none !important;
 }
 
 .job-categories-block-2:hover .twm-content .twm-jobs-available {

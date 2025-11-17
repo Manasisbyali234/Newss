@@ -157,35 +157,33 @@ function ContactUsPage() {
                                                 </div>
                                                 <div className="col-lg-6 col-md-6">
                                                     <div className="form-group mb-3">
-                                                        <div style={{display: 'flex', height: '50px', border: '2px solid #e9ecef', borderRadius: '8px', overflow: 'hidden'}}>
-                                                            <CountryCodeSelector
-                                                                value={formData.phoneCountryCode}
-                                                                onChange={(value) => {
-                                                                    setFormData(prev => ({ ...prev, phoneCountryCode: value }));
-                                                                    if (errors.phone) {
-                                                                        setErrors(prev => ({ ...prev, phone: '' }));
-                                                                    }
-                                                                }}
-                                                            />
-                                                            <input
-                                                                name="phone"
-                                                                type="tel"
-                                                                className={`${errors.phone ? 'is-invalid' : ''}`}
-                                                                placeholder="Phone"
-                                                                value={formData.phone}
-                                                                onChange={handleChange}
-                                                                maxLength="15"
-                                                                style={{ 
-                                                                    border: 'none',
-                                                                    outline: 'none',
-                                                                    flex: 1,
-                                                                    height: '100%',
-                                                                    padding: '12px',
-                                                                    fontSize: '14px',
-                                                                    backgroundColor: 'transparent'
-                                                                }}
-                                                            />
-                                                        </div>
+                                                        <select 
+                                                            name="phoneCountryCode"
+                                                            className="form-control"
+                                                            value={formData.phoneCountryCode}
+                                                            onChange={handleChange}
+                                                        >
+                                                            <option value="+91">+91 (India)</option>
+                                                            <option value="+1">+1 (USA/Canada)</option>
+                                                            <option value="+44">+44 (UK)</option>
+                                                            <option value="+61">+61 (Australia)</option>
+                                                            <option value="+33">+33 (France)</option>
+                                                            <option value="+49">+49 (Germany)</option>
+                                                            <option value="+81">+81 (Japan)</option>
+                                                            <option value="+86">+86 (China)</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div className="col-lg-6 col-md-6">
+                                                    <div className="form-group mb-3">
+                                                        <input 
+                                                            name="phone" 
+                                                            type="tel" 
+                                                            className={`form-control ${errors.phone ? 'is-invalid' : ''}`}
+                                                            placeholder="Phone Number" 
+                                                            value={formData.phone}
+                                                            onChange={handleChange}
+                                                        />
                                                         {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}
                                                     </div>
                                                 </div>

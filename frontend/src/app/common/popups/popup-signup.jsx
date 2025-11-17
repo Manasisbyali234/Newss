@@ -202,7 +202,7 @@ function SignUpPopup() {
         setError('');
         
         try {
-            const response = await fetch('http://localhost:5000/api/candidate/register', {
+            const response = await fetch('/api/candidate/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -248,7 +248,7 @@ function SignUpPopup() {
         setError('');
         
         try {
-            const response = await fetch('http://localhost:5000/api/employer/register', {
+            const response = await fetch('/api/employer/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -297,7 +297,7 @@ function SignUpPopup() {
         setError('');
         
         try {
-            const response = await fetch('http://localhost:5000/api/placement/register', {
+            const response = await fetch('/api/placement/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
