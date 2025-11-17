@@ -349,7 +349,7 @@
 
 
 
-.category-card {
+.hero-body .category-card {
   background: white;
   border-radius: 10px;
   padding: 1rem 0.875rem; /* smaller */
@@ -362,7 +362,7 @@
   text-align: center;
 }
 
-.category-card:hover {
+.hero-body .category-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
 }

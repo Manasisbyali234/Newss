@@ -24,9 +24,15 @@
     align-items: center !important;
     padding: 16px 12px !important;
     background: #fff !important;
-    border-radius: 8px !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    border-radius: 18px !important;
+    box-shadow: 0px 4px 18px rgba(0,0,0,0.06) !important;
     min-height: 120px !important;
+    transition: all 0.25s ease !important;
+  }
+
+  .job-categories-block.mobile-category-item:hover {
+    box-shadow: 0px 8px 22px rgba(0,0,0,0.12) !important;
+    transform: translateY(-3px) !important;
   }
   
   .desktop-categories {
