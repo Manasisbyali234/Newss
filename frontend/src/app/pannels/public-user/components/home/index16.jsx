@@ -406,7 +406,6 @@ function Home16Page() {
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
-                                minWidth: '240px',
                                 boxShadow: '0px 4px 18px rgba(0,0,0,0.06)',
                                 cursor: 'pointer',
                                 transition: 'all 0.25s ease'
@@ -450,7 +449,6 @@ function Home16Page() {
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
-                                minWidth: '240px',
                                 boxShadow: '0px 4px 18px rgba(0,0,0,0.06)',
                                 cursor: 'pointer',
                                 transition: 'all 0.25s ease'
@@ -494,7 +492,6 @@ function Home16Page() {
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
-                                minWidth: '240px',
                                 boxShadow: '0px 4px 18px rgba(0,0,0,0.06)',
                                 cursor: 'pointer',
                                 transition: 'all 0.25s ease'
@@ -538,7 +535,6 @@ function Home16Page() {
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
-                                minWidth: '240px',
                                 boxShadow: '0px 4px 18px rgba(0,0,0,0.06)',
                                 cursor: 'pointer',
                                 transition: 'all 0.25s ease'
@@ -582,7 +578,6 @@ function Home16Page() {
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
-                                minWidth: '240px',
                                 boxShadow: '0px 4px 18px rgba(0,0,0,0.06)',
                                 cursor: 'pointer',
                                 transition: 'all 0.25s ease'
