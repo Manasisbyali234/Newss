@@ -293,6 +293,48 @@ exports.uploadResume = async (req, res) => {
   }
 };
 
+exports.deleteResume = async (req, res) => {
+  try {
+    const profile = await CandidateProfile.findOneAndUpdate(
+      { candidateId: req.user._id },
+      {
+        $unset: {
+          resume: 1,
+          resumeFileName: 1,
+          resumeMimeType: 1
+        }
+      },
+      { new: true }
+    );
+
+    if (!profile) {
+      return res.status(404).json({ success: false, message: 'Profile not found' });
+    }
+
+    // Calculate updated profile completion
+    let completionPercentage = 0;
+    let profileCompletionDetails = { missingSections: [] };
+    try {
+      const { calculateProfileCompletion, calculateProfileCompletionWithDetails } = require('../utils/profileCompletion');
+      completionPercentage = calculateProfileCompletion(profile);
+      profileCompletionDetails = calculateProfileCompletionWithDetails(profile);
+    } catch (error) {
+      console.error('Profile completion calculation error:', error);
+    }
+
+    res.json({ 
+      success: true, 
+      message: 'Resume deleted successfully',
+      profile, 
+      profileCompletion: completionPercentage, 
+      profileCompletionDetails 
+    });
+  } catch (error) {
+    console.error('Resume delete error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 exports.uploadMarksheet = async (req, res) => {
   try {
     if (!req.file) {

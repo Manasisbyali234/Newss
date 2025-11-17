@@ -28,6 +28,7 @@ const employerProfileSchema = new mongoose.Schema({
   branchLocations: { type: String },
   pincode: { type: String },
   city: { type: String },
+  state: { type: String },
   officialEmail: { type: String },
   officialMobile: { type: String },
   companyType: { type: String },

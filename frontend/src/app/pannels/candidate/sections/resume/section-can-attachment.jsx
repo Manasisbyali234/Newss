@@ -4,6 +4,7 @@ import showToast from "../../../../../utils/toastNotification";
 
 function SectionCanAttachment({ profile }) {
     const [uploading, setUploading] = useState(false);
+    const [deleting, setDeleting] = useState(false);
     const [resumeFile, setResumeFile] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
 
@@ -16,6 +17,13 @@ function SectionCanAttachment({ profile }) {
     }, [profile?.resumeFileName]);
 
     const handleFileSelect = (e) => {
+        // Prevent file selection if resume already exists
+        if (resumeFile) {
+            showToast('Please delete your current resume before uploading a new one.', 'warning', 4000);
+            e.target.value = ''; // Clear the input
+            return;
+        }
+
         const file = e.target.files[0];
         if (file) {
             // Check file size (5MB limit to match backend)
@@ -72,6 +80,42 @@ function SectionCanAttachment({ profile }) {
         }
     };
 
+    const handleDelete = async () => {
+        if (!resumeFile) {
+            showToast('No resume to delete', 'warning', 4000);
+            return;
+        }
+
+        if (!window.confirm('Are you sure you want to delete your current resume? This action cannot be undone.')) {
+            return;
+        }
+
+        setDeleting(true);
+        try {
+            const response = await api.deleteResume();
+            if (response.success) {
+                showToast('Resume deleted successfully!', 'success', 4000);
+                setResumeFile(null);
+                setSelectedFile(null);
+                // Clear the file input
+                const fileInput = document.querySelector('input[type="file"]');
+                if (fileInput) fileInput.value = '';
+                window.dispatchEvent(new CustomEvent('profileUpdated'));
+            } else {
+                showToast(`Failed to delete resume: ${response.message || 'Unknown error'}`, 'error', 4000);
+            }
+        } catch (error) {
+            console.error('Resume delete error:', error);
+            let errorMessage = 'Failed to delete resume';
+            if (error.message) {
+                errorMessage += `: ${error.message}`;
+            }
+            showToast(errorMessage, 'error', 4000);
+        } finally {
+            setDeleting(false);
+        }
+    };
+
     return (
         <>
             <div className="panel-heading wt-panel-heading p-a20 panel-heading-with-btn ">
@@ -94,12 +138,12 @@ function SectionCanAttachment({ profile }) {
                                     type="file" 
                                     accept=".pdf,.doc,.docx" 
                                     onChange={handleFileSelect}
-                                    disabled={uploading}
+                                    disabled={uploading || deleting || resumeFile}
                                     className="form-control"
                                     style={{opacity: 0, position: 'absolute', zIndex: 2}}
                                 />
-                                <div className="form-control d-flex align-items-center" style={{cursor: 'pointer', color: '#6c757d'}}>
-                                    {resumeFile ? `Current: ${resumeFile}` : 'No file chosen'}
+                                <div className="form-control d-flex align-items-center" style={{cursor: resumeFile ? 'not-allowed' : 'pointer', color: resumeFile ? '#dc3545' : '#6c757d', backgroundColor: resumeFile ? '#f8f9fa' : 'white'}}>
+                                    {resumeFile ? `Current: ${resumeFile} (Delete to upload new)` : selectedFile ? selectedFile.name : 'No file chosen'}
                                 </div>
                             </div>
                         </div>
@@ -109,26 +153,50 @@ function SectionCanAttachment({ profile }) {
                                 Selected: {selectedFile.name}
                             </p>
                         )}
-                        <button 
-                            type="button" 
-                            className="btn btn-outline-primary mb-3"
-                            onClick={handleSubmit}
-                            disabled={uploading || !selectedFile}
-                            style={{backgroundColor: 'transparent'}}
-                        >
-                            <i className="fa fa-upload me-1"></i>
-                            {uploading ? 'Uploading...' : 'Submit Resume'}
-                        </button>
+                        <div className="d-flex gap-2 mb-3">
+                            <button 
+                                type="button" 
+                                className="btn btn-outline-primary"
+                                onClick={handleSubmit}
+                                disabled={uploading || !selectedFile || deleting}
+                                style={{backgroundColor: 'transparent'}}
+                            >
+                                <i className="fa fa-upload me-1"></i>
+                                {uploading ? 'Uploading...' : 'Submit Resume'}
+                            </button>
+                            {resumeFile && (
+                                <button 
+                                    type="button" 
+                                    className="btn btn-outline-danger"
+                                    onClick={handleDelete}
+                                    disabled={deleting || uploading}
+                                    style={{backgroundColor: 'transparent'}}
+                                >
+                                    <i className="fa fa-trash me-1"></i>
+                                    {deleting ? 'Deleting...' : 'Delete Resume'}
+                                </button>
+                            )}
+                        </div>
                         {resumeFile && (
-                            <p className="text-success">
-                                <i className="fa fa-check-circle me-1"></i>
-                                Current resume: <span style={{color: '#28a745', fontWeight: 'bold'}}>{resumeFile}</span>
-                            </p>
+                            <div className="alert alert-success d-flex justify-content-between align-items-center" style={{padding: '8px 12px'}}>
+                                <span>
+                                    <i className="fa fa-check-circle me-1"></i>
+                                    Current resume: <span style={{fontWeight: 'bold'}}>{resumeFile}</span>
+                                </span>
+                            </div>
                         )}
-                        <p className="text-muted small">
-                            <i className="fa fa-info-circle me-1"></i>
-                            Upload Resume File size max 5 MB (PDF, DOC, DOCX only)
-                        </p>
+                        <div className="text-muted small">
+                            <p className="mb-1">
+                                <i className="fa fa-info-circle me-1"></i>
+                                Upload Resume File size max 5 MB (PDF, DOC, DOCX only)
+                            </p>
+                            {resumeFile && (
+                                <p className="mb-0 text-warning">
+                                    <i className="fa fa-exclamation-triangle me-1"></i>
+                                    To update your resume, first delete the current one, then upload a new file.
+                                </p>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

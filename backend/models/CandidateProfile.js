@@ -7,6 +7,7 @@ const candidateProfileSchema = new mongoose.Schema({
   lastName: { type: String },
   dateOfBirth: { type: Date },
   location: { type: String },
+  stateCode: { type: String },
   pincode: { type: String },
   bio: { type: String },
   resume: { type: String }, // Base64 encoded document

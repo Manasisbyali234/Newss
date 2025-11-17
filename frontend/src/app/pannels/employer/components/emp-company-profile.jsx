@@ -32,6 +32,7 @@ function EmpCompanyProfilePage() {
         branchLocations: '',
         pincode: '',
         city: '',
+        state: '',
         officialEmail: '',
         officialMobile: '',
         officialMobileCountryCode: '+91',
@@ -249,8 +250,15 @@ function EmpCompanyProfilePage() {
             
             if (data && data[0]?.Status === 'Success' && data[0]?.PostOffice?.length > 0) {
                 const city = data[0].PostOffice[0].District;
-                setFormData(prev => ({ ...prev, city }));
-                showToast(`City auto-filled: ${city}`, 'success', 2000);
+                const state = data[0].PostOffice[0].State;
+                setFormData(prev => ({ 
+                    ...prev, 
+                    city, 
+                    // Only auto-fill state if it's not already selected
+                    state: prev.state || state 
+                }));
+                const message = formData.state ? `City auto-filled: ${city}` : `City and State auto-filled: ${city}, ${state}`;
+                showToast(message, 'success', 2000);
             } else {
                 setFormData(prev => ({ ...prev, city: '' }));
                 showToast('Invalid pincode or city not found', 'warning');
@@ -730,15 +738,6 @@ function EmpCompanyProfilePage() {
             console.log('Full googleMapsEmbed:', profileData.googleMapsEmbed);
             console.log('All profile data keys:', Object.keys(profileData));
             
-            const response = await fetch('http://localhost:5000/api/employer/profile', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(profileData)
-            });
-
             const data = await safeApiCall('http://localhost:5000/api/employer/profile', {
                 method: 'PUT',
                 headers: {
@@ -1140,10 +1139,57 @@ function EmpCompanyProfilePage() {
                                         type="text"
                                         value={formData.city}
                                         onChange={(e) => handleInputChange('city', e.target.value)}
-                                        placeholder="City (auto-filled from pincode)"
-                                        readOnly
-                                        style={{backgroundColor: '#f8f9fa'}}
+                                        placeholder="Enter city or auto-fill from pincode"
                                     />
+                                </div>
+                            </div>
+
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label><MapPin size={16} className="me-2" /> State</label>
+                                    <select 
+                                        className="form-control"
+                                        value={formData.state}
+                                        onChange={(e) => handleInputChange('state', e.target.value)}
+                                    >
+                                        <option value="">Select State</option>
+                                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                        <option value="Assam">Assam</option>
+                                        <option value="Bihar">Bihar</option>
+                                        <option value="Chhattisgarh">Chhattisgarh</option>
+                                        <option value="Goa">Goa</option>
+                                        <option value="Gujarat">Gujarat</option>
+                                        <option value="Haryana">Haryana</option>
+                                        <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                        <option value="Jharkhand">Jharkhand</option>
+                                        <option value="Karnataka">Karnataka</option>
+                                        <option value="Kerala">Kerala</option>
+                                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                        <option value="Maharashtra">Maharashtra</option>
+                                        <option value="Manipur">Manipur</option>
+                                        <option value="Meghalaya">Meghalaya</option>
+                                        <option value="Mizoram">Mizoram</option>
+                                        <option value="Nagaland">Nagaland</option>
+                                        <option value="Odisha">Odisha</option>
+                                        <option value="Punjab">Punjab</option>
+                                        <option value="Rajasthan">Rajasthan</option>
+                                        <option value="Sikkim">Sikkim</option>
+                                        <option value="Tamil Nadu">Tamil Nadu</option>
+                                        <option value="Telangana">Telangana</option>
+                                        <option value="Tripura">Tripura</option>
+                                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                        <option value="Uttarakhand">Uttarakhand</option>
+                                        <option value="West Bengal">West Bengal</option>
+                                        <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                                        <option value="Chandigarh">Chandigarh</option>
+                                        <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+                                        <option value="Delhi">Delhi</option>
+                                        <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                        <option value="Ladakh">Ladakh</option>
+                                        <option value="Lakshadweep">Lakshadweep</option>
+                                        <option value="Puducherry">Puducherry</option>
+                                    </select>
                                 </div>
                             </div>
 

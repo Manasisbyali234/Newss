@@ -235,6 +235,15 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 		]);
 	};
 
+	const removeQuestion = (index) => {
+		if (questions.length > 1) {
+			const updated = questions.filter((_, i) => i !== index);
+			setQuestions(updated);
+		} else {
+			alert("Assessment must have at least one question");
+		}
+	};
+
 	const handleSubmit = () => {
 		// Validate title
 		if (!title.trim()) {
@@ -381,9 +390,20 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 							className="border rounded-3 p-3 mb-3"
 							style={{ background: "#f9fafb" }}
 						>
-							<label className="form-label small text-muted mb-1">
-								Question {qIndex + 1} <span className="text-danger">*</span>
-							</label>
+							<div className="d-flex justify-content-between align-items-center mb-2">
+								<label className="form-label small text-muted mb-0">
+									Question {qIndex + 1} <span className="text-danger">*</span>
+								</label>
+								<button
+									type="button"
+									className="btn btn-sm btn-outline-danger"
+									onClick={() => removeQuestion(qIndex)}
+									title="Remove Question"
+									style={{ fontSize: "12px", padding: "2px 6px" }}
+								>
+									❌
+								</button>
+							</div>
 							<input
 								type="text"
 								className="form-control mb-3"

@@ -10,7 +10,7 @@ function SectionJobsSidebar2 ({ _config, job }) {
 				<div className="side-bar mb-4">
 					<div className="twm-s-info2-wrap mb-5">
 						<div className="twm-s-info2">
-							<h4 className="section-head-small mb-4">Job Information</h4>
+							<h4 className="section-head-small mb-4" style={{fontSize: '22px', fontWeight: 'bold'}}>Job Information</h4>
 							
 							<ul className="twm-job-hilites">
 								{/* <li>
@@ -41,19 +41,11 @@ function SectionJobsSidebar2 ({ _config, job }) {
 									<div className="twm-s-info-inner">
 										<i className="fas fa-calendar-alt" />
 										<span className="twm-title">Application Last Date</span>
-										<div className="twm-s-info-discription">August 30, 2025</div>
+										<div className="twm-s-info-discription" style={{fontWeight: 'bold', color: 'red'}}>August 30, 2025</div>
 									</div>
 								</li>
 
-								<li>
-									<div className="twm-s-info-inner">
-										<i className="fas fa-map-marker-alt" />
-										<span className="twm-title">Location</span>
-										<div className="twm-s-info-discription">
-											{job?.location || 'Not specified'}
-										</div>
-									</div>
-								</li>
+
 
 								<li>
 									<div className="twm-s-info-inner">
@@ -103,7 +95,7 @@ function SectionJobsSidebar2 ({ _config, job }) {
 					</div>
 
 					<div className="widget tw-sidebar-tags-wrap">
-						<h4 className="section-head-small mb-4">Job Skills</h4>
+						<h4 className="section-head-small mb-4" style={{fontWeight: 'bold'}}>Job Skills</h4>
 						<div className="tagcloud">
 							{job?.requiredSkills && job.requiredSkills.length > 0 ? (
 								job.requiredSkills.map((skill, index) => (

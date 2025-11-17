@@ -897,16 +897,62 @@ export default function EmpPostJob({ onNext }) {
 							<i className="fa fa-briefcase" style={{marginRight: '8px', color: '#ff6b35'}}></i>
 							Job Title / Designation *
 						</label>
-						<input
-							style={{
-								...input,
-								borderColor: errors.jobTitle ? '#dc2626' : '#d1d5db'
-							}}
-							className={errors.jobTitle ? 'is-invalid' : ''}
-							placeholder="e.g., Senior Software Engineer"
-							value={formData.jobTitle}
-							onChange={(e) => update({ jobTitle: e.target.value })}
-						/>
+						<div style={{position: 'relative'}}>
+							<input
+								style={{
+									...input,
+									borderColor: errors.jobTitle ? '#dc2626' : '#d1d5db',
+									paddingRight: '40px'
+								}}
+								className={errors.jobTitle ? 'is-invalid' : ''}
+								placeholder="Type job title or select from dropdown"
+								value={formData.jobTitle}
+								onChange={(e) => update({ jobTitle: e.target.value })}
+								list="jobTitleOptions"
+							/>
+							<datalist id="jobTitleOptions">
+								<option value="Software Engineer" />
+								<option value="Senior Software Engineer" />
+								<option value="Frontend Developer" />
+								<option value="Backend Developer" />
+								<option value="Full Stack Developer" />
+								<option value="Data Scientist" />
+								<option value="Data Analyst" />
+								<option value="Product Manager" />
+								<option value="Project Manager" />
+								<option value="Business Analyst" />
+								<option value="UI/UX Designer" />
+								<option value="Graphic Designer" />
+								<option value="Marketing Manager" />
+								<option value="Sales Manager" />
+								<option value="Sales Executive" />
+								<option value="HR Manager" />
+								<option value="HR Executive" />
+								<option value="Finance Manager" />
+								<option value="Accountant" />
+								<option value="Content Writer" />
+								<option value="Digital Marketing Specialist" />
+								<option value="Customer Support Executive" />
+								<option value="Operations Manager" />
+								<option value="Quality Assurance Engineer" />
+								<option value="DevOps Engineer" />
+								<option value="System Administrator" />
+								<option value="Network Administrator" />
+								<option value="Telecaller" />
+							</datalist>
+							<i className="fa fa-chevron-down" style={{
+								position: 'absolute',
+								right: '12px',
+								top: '50%',
+								transform: 'translateY(-50%)',
+								color: '#9ca3af',
+								pointerEvents: 'none',
+								fontSize: '12px'
+							}}></i>
+						</div>
+						<small style={{color: '#6b7280', fontSize: 12, marginTop: 4, display: 'block'}}>
+							Type any job title or click the dropdown arrow to select from common options
+						</small>
 						<ErrorDisplay errors={errors} fieldName="jobTitle" />
 					</div>
 

@@ -7,12 +7,53 @@ function SectionCanPersonalDetail({ profile }) {
         dateOfBirth: '',
         gender: '',
         location: '',
+        stateCode: '',
+        pincode: '',
         fatherName: '',
         motherName: '',
         residentialAddress: '',
         permanentAddress: '',
         correspondenceAddress: ''
     });
+    
+    const indianStateCodes = [
+        { code: 'AP', name: 'Andhra Pradesh' },
+        { code: 'AR', name: 'Arunachal Pradesh' },
+        { code: 'AS', name: 'Assam' },
+        { code: 'BR', name: 'Bihar' },
+        { code: 'CG', name: 'Chhattisgarh' },
+        { code: 'GA', name: 'Goa' },
+        { code: 'GJ', name: 'Gujarat' },
+        { code: 'HR', name: 'Haryana' },
+        { code: 'HP', name: 'Himachal Pradesh' },
+        { code: 'JH', name: 'Jharkhand' },
+        { code: 'KA', name: 'Karnataka' },
+        { code: 'KL', name: 'Kerala' },
+        { code: 'MP', name: 'Madhya Pradesh' },
+        { code: 'MH', name: 'Maharashtra' },
+        { code: 'MN', name: 'Manipur' },
+        { code: 'ML', name: 'Meghalaya' },
+        { code: 'MZ', name: 'Mizoram' },
+        { code: 'NL', name: 'Nagaland' },
+        { code: 'OD', name: 'Odisha' },
+        { code: 'PB', name: 'Punjab' },
+        { code: 'RJ', name: 'Rajasthan' },
+        { code: 'SK', name: 'Sikkim' },
+        { code: 'TN', name: 'Tamil Nadu' },
+        { code: 'TS', name: 'Telangana' },
+        { code: 'TR', name: 'Tripura' },
+        { code: 'UP', name: 'Uttar Pradesh' },
+        { code: 'UK', name: 'Uttarakhand' },
+        { code: 'WB', name: 'West Bengal' },
+        { code: 'AN', name: 'Andaman and Nicobar Islands' },
+        { code: 'CH', name: 'Chandigarh' },
+        { code: 'DH', name: 'Dadra and Nagar Haveli and Daman and Diu' },
+        { code: 'DL', name: 'Delhi' },
+        { code: 'JK', name: 'Jammu and Kashmir' },
+        { code: 'LA', name: 'Ladakh' },
+        { code: 'LD', name: 'Lakshadweep' },
+        { code: 'PY', name: 'Puducherry' }
+    ];
     
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
@@ -24,6 +65,8 @@ function SectionCanPersonalDetail({ profile }) {
                 dateOfBirth: profile.dateOfBirth || '',
                 gender: profile.gender || '',
                 location: profile.location || '',
+                stateCode: profile.stateCode || '',
+                pincode: profile.pincode || '',
                 fatherName: profile.fatherName || '',
                 motherName: profile.motherName || '',
                 residentialAddress: profile.residentialAddress || '',
@@ -96,8 +139,29 @@ function SectionCanPersonalDetail({ profile }) {
         return Object.keys(newErrors).length === 0;
     };
 
+    const fetchLocationByPincode = async (pincode) => {
+        if (pincode.length === 6) {
+            try {
+                const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+                const data = await response.json();
+                if (data[0].Status === 'Success' && data[0].PostOffice.length > 0) {
+                    const postOffice = data[0].PostOffice[0];
+                    const location = `${postOffice.Name}, ${postOffice.District}, ${postOffice.State}`;
+                    setFormData(prev => ({ ...prev, location }));
+                }
+            } catch (error) {
+                console.error('Error fetching location:', error);
+            }
+        }
+    };
+
     const handleInputChange = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }));
+        
+        // If pincode changes, fetch location
+        if (field === 'pincode') {
+            fetchLocationByPincode(value);
+        }
         
         // If residential address changes and checkbox is checked, update permanent address
         if (field === 'residentialAddress' && sameAsResidential) {
@@ -126,6 +190,8 @@ function SectionCanPersonalDetail({ profile }) {
                 dateOfBirth: formData.dateOfBirth,
                 gender: formData.gender,
                 location: formData.location,
+                stateCode: formData.stateCode,
+                pincode: formData.pincode,
                 fatherName: formData.fatherName,
                 motherName: formData.motherName,
                 residentialAddress: formData.residentialAddress,
@@ -145,6 +211,8 @@ function SectionCanPersonalDetail({ profile }) {
                 dateOfBirth: formData.dateOfBirth,
                 gender: formData.gender,
                 location: formData.location,
+                stateCode: formData.stateCode,
+                pincode: formData.pincode,
                 fatherName: formData.fatherName.trim(),
                 motherName: formData.motherName.trim(),
                 residentialAddress: formData.residentialAddress.trim(),
@@ -207,7 +275,47 @@ function SectionCanPersonalDetail({ profile }) {
                                     <option value="">Select Gender</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
+                                    <option value="prefer_not_to_say">Prefer not to say</option>
                                 </select>
+                            </div>
+
+                            <div className="col-md-6">
+                                <label><i className="fa fa-map me-1"></i> State Code</label>
+                                <select 
+                                    className="form-control"
+                                    value={formData.stateCode}
+                                    onChange={(e) => handleInputChange('stateCode', e.target.value)}
+                                >
+                                    <option value="">Select State Code</option>
+                                    {indianStateCodes.map((state, index) => (
+                                        <option key={index} value={state.code}>{state.code} - {state.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="col-md-6">
+                                <label><i className="fa fa-map-pin me-1"></i> Pincode</label>
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    placeholder="Enter 6-digit pincode"
+                                    value={formData.pincode}
+                                    onChange={(e) => handleInputChange('pincode', e.target.value)}
+                                    maxLength="6"
+                                    pattern="[0-9]{6}"
+                                />
+                            </div>
+
+                            <div className="col-md-6">
+                                <label><i className="fa fa-map-marker me-1"></i> Location</label>
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    placeholder="Location will be auto-filled"
+                                    value={formData.location}
+                                    onChange={(e) => handleInputChange('location', e.target.value)}
+                                    readOnly
+                                />
                             </div>
 
                             <div className="col-md-6">

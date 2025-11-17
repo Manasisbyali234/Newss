@@ -4,9 +4,9 @@ import showToast from '../../../../../utils/toastNotification';
 
 function SectionCanEducation({ profile, onUpdate }) {
     const [educationData, setEducationData] = useState({
-        tenth: { schoolName: '', specialization: '', location: '', passoutYear: '', percentage: '', cgpa: '', grade: '', marksheet: null, marksheetBase64: null },
-        diploma: { schoolName: '', specialization: '', location: '', passoutYear: '', percentage: '', cgpa: '', grade: '', marksheet: null, marksheetBase64: null },
-        degree: { schoolName: '', specialization: '', location: '', passoutYear: '', percentage: '', cgpa: '', grade: '', marksheet: null, marksheetBase64: null }
+        tenth: { schoolName: '', location: '', passoutYear: '', percentage: '', cgpa: '', grade: '', marksheet: null, marksheetBase64: null },
+        diploma: { schoolName: '', location: '', passoutYear: '', percentage: '', cgpa: '', grade: '', marksheet: null, marksheetBase64: null },
+        degree: { schoolName: '', location: '', passoutYear: '', percentage: '', cgpa: '', grade: '', marksheet: null, marksheetBase64: null }
     });
     const [additionalRows, setAdditionalRows] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -29,7 +29,6 @@ function SectionCanEducation({ profile, onUpdate }) {
                 if (newData[key]) {
                     newData[key] = {
                         schoolName: edu.degreeName || '',
-                        specialization: edu.specialization || '',
                         location: edu.collegeName || '',
                         passoutYear: edu.passYear || '',
                         percentage: edu.percentage || '',
@@ -87,11 +86,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                     }
                 }
                 break;
-            case 'specialization':
-                if (value && value.trim().length > 100) {
-                    error = 'Specialization cannot exceed 100 characters';
-                }
-                break;
+
             case 'location':
                 if (value && value.trim()) {
                     if (value.trim().length < 2) {
@@ -192,7 +187,6 @@ function SectionCanEducation({ profile, onUpdate }) {
             id: Date.now(),
             educationType: 'Degree',
             schoolName: '',
-            specialization: '',
             location: '',
             passoutYear: '',
             percentage: '',
@@ -288,7 +282,6 @@ function SectionCanEducation({ profile, onUpdate }) {
                 
                 educationDataToSend = {
                     degreeName: educationData[level].schoolName,
-                    specialization: educationData[level].specialization,
                     collegeName: educationData[level].location,
                     passYear: educationData[level].passoutYear,
                     percentage: educationData[level].percentage,
@@ -361,12 +354,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                 });
             }
 
-            // Validate specialization (optional but length check)
-            if (educationData[level].specialization && educationData[level].specialization.trim().length > 100) {
-                if (!validateEducationField(level, 'specialization', educationData[level].specialization)) {
-                    hasErrors = true;
-                }
-            }
+
 
             // Validate percentage if provided
             if (educationData[level].percentage && !validateEducationField(level, 'percentage', educationData[level].percentage)) {
@@ -395,11 +383,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                 setAdditionalErrors(updatedAdditionalErrors);
             }
 
-            if (row.specialization && row.specialization.trim().length > 100) {
-                if (!validateEducationField('additional', 'specialization', row.specialization, index)) {
-                    hasErrors = true;
-                }
-            }
+
 
             if (row.percentage && !validateEducationField('additional', 'percentage', row.percentage, index)) {
                 hasErrors = true;
@@ -495,7 +479,6 @@ function SectionCanEducation({ profile, onUpdate }) {
             const educationArray = [
                 {
                     degreeName: educationData.tenth.schoolName?.trim(),
-                    specialization: educationData.tenth.specialization?.trim(),
                     collegeName: educationData.tenth.location?.trim(),
                     passYear: educationData.tenth.passoutYear,
                     percentage: educationData.tenth.percentage,
@@ -505,7 +488,6 @@ function SectionCanEducation({ profile, onUpdate }) {
                 },
                 {
                     degreeName: educationData.diploma.schoolName?.trim(),
-                    specialization: educationData.diploma.specialization?.trim(),
                     collegeName: educationData.diploma.location?.trim(),
                     passYear: educationData.diploma.passoutYear,
                     percentage: educationData.diploma.percentage,
@@ -515,7 +497,6 @@ function SectionCanEducation({ profile, onUpdate }) {
                 },
                 {
                     degreeName: educationData.degree.schoolName?.trim(),
-                    specialization: educationData.degree.specialization?.trim(),
                     collegeName: educationData.degree.location?.trim(),
                     passYear: educationData.degree.passoutYear,
                     percentage: educationData.degree.percentage,
@@ -525,7 +506,6 @@ function SectionCanEducation({ profile, onUpdate }) {
                 },
                 ...additionalRows.map(row => ({
                     degreeName: row.schoolName?.trim(),
-                    specialization: row.specialization?.trim(),
                     collegeName: row.location?.trim(),
                     passYear: row.passoutYear,
                     percentage: row.percentage,
@@ -564,22 +544,20 @@ function SectionCanEducation({ profile, onUpdate }) {
                     <div className="table-responsive">
                         <table className="table table-bordered">
                             <colgroup>
-                                <col style={{width: '10%'}} />
-                                <col style={{width: '13%'}} />
+                                <col style={{width: '12%'}} />
+                                <col style={{width: '15%'}} />
+                                <col style={{width: '12%'}} />
                                 <col style={{width: '12%'}} />
                                 <col style={{width: '10%'}} />
-                                <col style={{width: '10%'}} />
-                                <col style={{width: '9%'}} />
-                                <col style={{width: '7%'}} />
-                                <col style={{width: '7%'}} />
-                                <col style={{width: '14%'}} />
+                                <col style={{width: '8%'}} />
+                                <col style={{width: '8%'}} />
+                                <col style={{width: '15%'}} />
                                 <col style={{width: '8%'}} />
                             </colgroup>
                             <thead className="table-light">
                                 <tr>
                                     <th>Education Level</th>
                                     <th>School/College Name</th>
-                                    <th>Specialization</th>
                                     <th>Location</th>
                                     <th>Passout Year</th>
                                     <th>Percentage</th>
@@ -604,18 +582,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                                         />
                                         {errors.schoolName && <div className="invalid-feedback d-block" style={{fontSize: '10px'}}>{errors.schoolName}</div>}
                                     </td>
-                                    <td>
-                                        <input
-                                            className={`form-control ${errors.specialization ? 'is-invalid' : ''}`}
-                                            name="specialization"
-                                            type="text"
-                                            value={educationData.tenth.specialization}
-                                            onChange={(e) => handleInputChange(e, 'tenth')}
-                                            disabled={!editMode.tenth}
-                                            style={{height: '30px', width: '100%', fontSize: '12px', padding: '4px 8px'}}
-                                        />
-                                        {errors.specialization && <div className="invalid-feedback d-block" style={{fontSize: '10px'}}>{errors.specialization}</div>}
-                                    </td>
+
                                     <td>
                                         <input
                                             className={`form-control ${errors.location ? 'is-invalid' : ''}`}
@@ -712,17 +679,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                                             style={{height: '30px', width: '100%', fontSize: '12px', padding: '4px 8px'}}
                                         />
                                     </td>
-                                    <td>
-                                        <input 
-                                            className="form-control"
-                                            name="specialization" 
-                                            type="text" 
-                                            value={educationData.diploma.specialization}
-                                            onChange={(e) => handleInputChange(e, 'diploma')}
-                                            disabled={!editMode.diploma}
-                                            style={{height: '30px', width: '100%', fontSize: '12px', padding: '4px 8px'}}
-                                        />
-                                    </td>
+
                                     <td>
                                         <input 
                                             className="form-control"
@@ -816,17 +773,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                                             style={{height: '30px', width: '100%', fontSize: '12px', padding: '4px 8px'}}
                                         />
                                     </td>
-                                    <td>
-                                        <input 
-                                            className="form-control"
-                                            name="specialization" 
-                                            type="text" 
-                                            value={educationData.degree.specialization}
-                                            onChange={(e) => handleInputChange(e, 'degree')}
-                                            disabled={!editMode.degree}
-                                            style={{height: '30px', width: '100%', fontSize: '12px', padding: '4px 8px'}}
-                                        />
-                                    </td>
+
                                     <td>
                                         <input 
                                             className="form-control"
@@ -932,17 +879,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                                                 style={{height: '30px', width: '100%', fontSize: '12px', padding: '4px 8px'}}
                                             />
                                         </td>
-                                        <td>
-                                            <input 
-                                                className="form-control"
-                                                name="specialization" 
-                                                type="text" 
-                                                value={row.specialization}
-                                                onChange={(e) => handleInputChange(e, null, index)}
-                                                disabled={!additionalEditMode[index]}
-                                                style={{height: '30px', width: '100%', fontSize: '12px', padding: '4px 8px'}}
-                                            />
-                                        </td>
+
                                         <td>
                                             <input 
                                                 className="form-control"
