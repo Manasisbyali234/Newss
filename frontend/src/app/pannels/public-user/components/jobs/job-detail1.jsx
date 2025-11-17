@@ -282,29 +282,48 @@ function JobDetail1Page() {
 											</div>
 										</div>
 
-										{job.companyDescription && (
-											<>
-												<h4 className="twm-s-title">About Company:</h4>
-												<p>{job.companyDescription}</p>
-											</>
-										)}
 
-										{job.employerProfile && (
-											<>
-												{job.employerProfile.whyJoinUs && (
-													<>
-														<h4 className="twm-s-title">Why Join Us:</h4>
-														<p>{job.employerProfile.whyJoinUs}</p>
-													</>
-												)}
 
-												{job.employerProfile.location && (
-													<>
-														<h4 className="twm-s-title">Location:</h4>
-														<p><i className="feather-map-pin" style={{marginRight: '8px'}}></i>{job.employerProfile.location}</p>
-													</>
-												)}
-											</>
+										{/* Job Description Section */}
+										<div className="job-section" style={{marginBottom: '40px', padding: '25px', backgroundColor: '#f8f9fa', borderRadius: '12px', border: '1px solid #e9ecef'}}>
+											<h4 className="twm-s-title" style={{color: '#2c3e50', marginBottom: '20px', fontSize: '24px', fontWeight: '600'}}>
+												<i className="feather-file-text" style={{marginRight: '10px', color: '#3498db'}}></i>
+												Job Description
+											</h4>
+											<div style={{lineHeight: '1.8', fontSize: '16px', color: '#495057'}}>
+												{job.description}
+											</div>
+										</div>
+
+										{/* Location Section */}
+										<div className="job-section" style={{marginBottom: '40px', padding: '25px', backgroundColor: '#f8f9fa', borderRadius: '12px', border: '1px solid #e9ecef'}}>
+											<h4 className="twm-s-title" style={{color: '#2c3e50', marginBottom: '20px', fontSize: '24px', fontWeight: '600'}}>
+												<i className="feather-map-pin" style={{marginRight: '10px', color: '#e74c3c'}}></i>
+												Location
+											</h4>
+											<div style={{fontSize: '18px', color: '#495057', fontWeight: '500'}}>
+												<i className="feather-navigation" style={{marginRight: '8px', color: '#e74c3c'}}></i>
+												{job.location}
+											</div>
+											{job.employerProfile?.location && job.employerProfile.location !== job.location && (
+												<div style={{marginTop: '10px', fontSize: '16px', color: '#6c757d'}}>
+													<i className="feather-building" style={{marginRight: '8px'}}></i>
+													Company Location: {job.employerProfile.location}
+												</div>
+											)}
+										</div>
+
+										{/* Why Join Us Section */}
+										{(job.employerProfile?.whyJoinUs || job.companyDescription) && (
+											<div className="job-section" style={{marginBottom: '40px', padding: '25px', backgroundColor: '#f8f9fa', borderRadius: '12px', border: '1px solid #e9ecef'}}>
+												<h4 className="twm-s-title" style={{color: '#2c3e50', marginBottom: '20px', fontSize: '24px', fontWeight: '600'}}>
+													<i className="feather-star" style={{marginRight: '10px', color: '#f39c12'}}></i>
+													Why Join Us
+												</h4>
+												<div style={{lineHeight: '1.8', fontSize: '16px', color: '#495057'}}>
+													{job.employerProfile?.whyJoinUs || job.companyDescription}
+												</div>
+											</div>
 										)}
 
 										{job.postedBy === 'Consultant' && job.employerProfile && (
@@ -336,8 +355,6 @@ function JobDetail1Page() {
 												</div>
 											</>
 										)}
-										<h4 className="twm-s-title">Job Description:</h4>
-										<p>{job.description}</p>
 
 
 										

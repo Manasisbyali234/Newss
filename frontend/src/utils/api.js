@@ -160,6 +160,13 @@ export const api = {
     }).then((res) => res.json());
   },
 
+  deleteResume: () => {
+    return fetch(`${API_BASE_URL}/candidate/delete-resume`, {
+      method: 'DELETE',
+      headers: getAuthHeaders('candidate'),
+    }).then((res) => res.json());
+  },
+
   uploadIdCard: (formData) => {
     const token = localStorage.getItem('candidateToken');
     return fetch(`${API_BASE_URL}/candidate/upload-idcard`, {

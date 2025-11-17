@@ -23,6 +23,7 @@ function SectionCandicateBasicInfo() {
         phoneCountryCode: '+91',
         email: '',
         location: '',
+        stateCode: '',
         pincode: '',
         profilePicture: null
     });
@@ -109,6 +110,7 @@ function SectionCandicateBasicInfo() {
                     phoneCountryCode: countryCode,
                     email: candidate.email || '',
                     location: profile.location || '',
+                    stateCode: profile.stateCode || '',
                     pincode: profile.pincode || '',
                     profilePicture: null
                 });
@@ -323,6 +325,7 @@ function SectionCandicateBasicInfo() {
             submitData.append('phone', `${formData.phoneCountryCode}${formData.phone.trim()}`);
             submitData.append('email', formData.email.trim());
             submitData.append('location', formData.location.trim());
+            submitData.append('stateCode', formData.stateCode.trim());
             submitData.append('pincode', formData.pincode.trim());
             if (formData.profilePicture) {
                 submitData.append('profilePicture', formData.profilePicture);
@@ -582,6 +585,53 @@ function SectionCandicateBasicInfo() {
                                 )}
                             </div>
                             {errors.location && <div className="invalid-feedback">{errors.location}</div>}
+                        </div>
+                        <div className="col-md-4 mb-3">
+                            <label className="form-label"><i className="fa fa-map me-2" style={{color: '#ff6b35'}}></i>State Code</label>
+                            <select 
+                                className="form-control"
+                                name="stateCode"
+                                value={formData.stateCode}
+                                onChange={handleInputChange}
+                            >
+                                <option value="">Select State Code</option>
+                                <option value="AP">AP - Andhra Pradesh</option>
+                                <option value="AR">AR - Arunachal Pradesh</option>
+                                <option value="AS">AS - Assam</option>
+                                <option value="BR">BR - Bihar</option>
+                                <option value="CG">CG - Chhattisgarh</option>
+                                <option value="GA">GA - Goa</option>
+                                <option value="GJ">GJ - Gujarat</option>
+                                <option value="HR">HR - Haryana</option>
+                                <option value="HP">HP - Himachal Pradesh</option>
+                                <option value="JH">JH - Jharkhand</option>
+                                <option value="KA">KA - Karnataka</option>
+                                <option value="KL">KL - Kerala</option>
+                                <option value="MP">MP - Madhya Pradesh</option>
+                                <option value="MH">MH - Maharashtra</option>
+                                <option value="MN">MN - Manipur</option>
+                                <option value="ML">ML - Meghalaya</option>
+                                <option value="MZ">MZ - Mizoram</option>
+                                <option value="NL">NL - Nagaland</option>
+                                <option value="OD">OD - Odisha</option>
+                                <option value="PB">PB - Punjab</option>
+                                <option value="RJ">RJ - Rajasthan</option>
+                                <option value="SK">SK - Sikkim</option>
+                                <option value="TN">TN - Tamil Nadu</option>
+                                <option value="TS">TS - Telangana</option>
+                                <option value="TR">TR - Tripura</option>
+                                <option value="UP">UP - Uttar Pradesh</option>
+                                <option value="UK">UK - Uttarakhand</option>
+                                <option value="WB">WB - West Bengal</option>
+                                <option value="AN">AN - Andaman and Nicobar Islands</option>
+                                <option value="CH">CH - Chandigarh</option>
+                                <option value="DH">DH - Dadra and Nagar Haveli and Daman and Diu</option>
+                                <option value="DL">DL - Delhi</option>
+                                <option value="JK">JK - Jammu and Kashmir</option>
+                                <option value="LA">LA - Ladakh</option>
+                                <option value="LD">LD - Lakshadweep</option>
+                                <option value="PY">PY - Puducherry</option>
+                            </select>
                         </div>
                         <div className="col-md-4 mb-3">
                             <label className="form-label"><i className="fa fa-map-pin me-2" style={{color: '#ff6b35'}}></i>Pincode *</label>

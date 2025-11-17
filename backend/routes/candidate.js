@@ -69,7 +69,7 @@ router.put('/profile', upload.single('profilePicture'), (req, res, next) => {
   const isEmploymentOnly = req.body.employment && Object.keys(req.body).length <= 2; // employment + totalExperience
   
   // Skip validation for personal details updates (contains multiple fields)
-  const personalDetailsFields = ['dateOfBirth', 'gender', 'location', 'fatherName', 'motherName', 'residentialAddress', 'permanentAddress', 'correspondenceAddress', 'education', 'employment', 'totalExperience'];
+  const personalDetailsFields = ['dateOfBirth', 'gender', 'location', 'stateCode', 'pincode', 'fatherName', 'motherName', 'residentialAddress', 'permanentAddress', 'correspondenceAddress', 'education', 'employment', 'totalExperience'];
   const hasPersonalDetailsFields = personalDetailsFields.some(field => field in req.body);
   
   if (isResumeHeadlineOnly || isProfileSummaryOnly || isSkillsOnly || isEmploymentOnly || hasPersonalDetailsFields) {
@@ -118,6 +118,12 @@ router.put('/profile', upload.single('profilePicture'), (req, res, next) => {
       .withMessage('Location cannot exceed 100 characters')
       .matches(/^[a-zA-Z0-9\s,.-]*$/)
       .withMessage('Location contains invalid characters'),
+    body('stateCode')
+      .optional()
+      .isLength({ max: 3 })
+      .withMessage('State code cannot exceed 3 characters')
+      .matches(/^[A-Z]*$/)
+      .withMessage('State code can only contain uppercase letters'),
     body('pincode')
       .optional()
       .matches(/^\d{6}$/)
@@ -177,6 +183,7 @@ router.put('/profile', upload.single('profilePicture'), (req, res, next) => {
 router.post('/upload-resume', upload.single('resume'), [
   // File validation will be handled in the controller
 ], candidateController.uploadResume);
+router.delete('/delete-resume', candidateController.deleteResume);
 router.post('/upload-marksheet', uploadMarksheet.single('marksheet'), [
   // File validation will be handled in the controller
 ], candidateController.uploadMarksheet);
