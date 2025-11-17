@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { publicUser } from "../../../../../globals/route-names";
 import { useState, useEffect } from "react";
-import "../../../../../job-categories-orange-theme.css";
+
 
 // Category Roles Modal Component
 function CategoryRolesModal({ category, roles, isOpen, onClose }) {
