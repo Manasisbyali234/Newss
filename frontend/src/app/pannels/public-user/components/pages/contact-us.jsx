@@ -157,7 +157,7 @@ function ContactUsPage() {
                                                 </div>
                                                 <div className="col-lg-6 col-md-6">
                                                     <div className="form-group mb-3">
-                                                        <div className="input-group">
+                                                        <div style={{display: 'flex', height: '50px', border: '2px solid #e9ecef', borderRadius: '8px', overflow: 'hidden'}}>
                                                             <CountryCodeSelector
                                                                 value={formData.phoneCountryCode}
                                                                 onChange={(value) => {
@@ -170,12 +170,20 @@ function ContactUsPage() {
                                                             <input
                                                                 name="phone"
                                                                 type="tel"
-                                                                className={`form-control ${errors.phone ? 'is-invalid' : ''}`}
+                                                                className={`${errors.phone ? 'is-invalid' : ''}`}
                                                                 placeholder="Phone"
                                                                 value={formData.phone}
                                                                 onChange={handleChange}
                                                                 maxLength="15"
-                                                                style={{ borderRadius: '0 0.375rem 0.375rem 0' }}
+                                                                style={{ 
+                                                                    border: 'none',
+                                                                    outline: 'none',
+                                                                    flex: 1,
+                                                                    height: '100%',
+                                                                    padding: '12px',
+                                                                    fontSize: '14px',
+                                                                    backgroundColor: 'transparent'
+                                                                }}
                                                             />
                                                         </div>
                                                         {errors.phone && <div className="invalid-feedback">{errors.phone}</div>}

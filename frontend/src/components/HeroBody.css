@@ -256,15 +256,16 @@
 
 .location-icon {
   position: absolute;
-  left: 0.75rem;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
   color: #9E9E9E;
-  z-index: 1;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .location-select {
-  padding-left: 3rem;
+  padding-left: 40px;
   box-sizing: border-box;
 }
 
@@ -935,6 +936,31 @@
     max-height: 220px;
   }
 }
+/* Mobile-specific location icon fixes */
+@media (max-width: 768px) {
+  .location-icon {
+    left: 12px !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+  }
+  
+  .location-select {
+    padding-left: 40px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .location-icon {
+    left: 12px !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+  }
+  
+  .location-select {
+    padding-left: 40px !important;
+  }
+}
+
 /* Force animation to work */
 .categories-track {
   animation-name: scroll-categories !important;

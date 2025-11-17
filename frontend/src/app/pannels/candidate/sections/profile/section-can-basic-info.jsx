@@ -502,7 +502,7 @@ function SectionCandicateBasicInfo() {
                                     placeholder="Enter mobile number"
                                     maxLength="15"
                                     required
-                                    style={{ paddingLeft: '130px', height: '57px', borderRadius: '0.375rem' }}
+                                    style={{ paddingLeft: '130px', height: '50px', borderRadius: '0 8px 8px 0', borderLeft: 'none' }}
                                 />
                             </div>
                             {errors.phone && <div className="invalid-feedback d-block">{errors.phone}</div>}

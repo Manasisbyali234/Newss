@@ -399,48 +399,223 @@ function Home16Page() {
                 <Container className="py-2" style={{background: 'transparent', backgroundColor: 'transparent'}}>
                     <div className="category-cards-container">
                         <NavLink to="/job-grid?category=IT" style={{textDecoration: 'none'}}>
-                            <div className="category-card">
+                            <div className="category-card" style={{
+                                background: '#ffffff',
+                                borderRadius: '18px',
+                                padding: '16px 22px',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                minWidth: '240px',
+                                boxShadow: '0px 4px 18px rgba(0,0,0,0.06)',
+                                cursor: 'pointer',
+                                transition: 'all 0.25s ease'
+                            }} onMouseEnter={(e) => {
+                                e.currentTarget.style.boxShadow = '0px 8px 22px rgba(0,0,0,0.12)';
+                                e.currentTarget.style.transform = 'translateY(-3px)';
+                            }} onMouseLeave={(e) => {
+                                e.currentTarget.style.boxShadow = '0px 4px 18px rgba(0,0,0,0.06)';
+                                e.currentTarget.style.transform = 'translateY(0px)';
+                            }}>
                                 <div>
-                                    <div className="category-text-title">Programming</div>
-                                    <div className="category-text-sub">{categories[0]?.count || 0} Jobs</div>
+                                    <div className="category-text-title" style={{
+                                        fontSize: '17px',
+                                        fontWeight: '600',
+                                        color: '#333'
+                                    }}>Programming</div>
+                                    <div className="category-text-sub" style={{
+                                        fontSize: '13px',
+                                        color: '#A0A7B0',
+                                        marginTop: '3px'
+                                    }}>{categories[0]?.count || 0} Jobs</div>
                                 </div>
-                                <div className="plus-badge">+</div>
+                                <div className="plus-badge" style={{
+                                    background: 'rgba(255, 153, 0, 0.12)',
+                                    borderRadius: '50%',
+                                    width: '28px',
+                                    height: '28px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: '#FF9D00',
+                                    fontSize: '18px'
+                                }}>+</div>
                             </div>
                         </NavLink>
                         <NavLink to="/job-grid?category=Content" style={{textDecoration: 'none'}}>
-                            <div className="category-card">
+                            <div className="category-card" style={{
+                                background: '#ffffff',
+                                borderRadius: '18px',
+                                padding: '16px 22px',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                minWidth: '240px',
+                                boxShadow: '0px 4px 18px rgba(0,0,0,0.06)',
+                                cursor: 'pointer',
+                                transition: 'all 0.25s ease'
+                            }} onMouseEnter={(e) => {
+                                e.currentTarget.style.boxShadow = '0px 8px 22px rgba(0,0,0,0.12)';
+                                e.currentTarget.style.transform = 'translateY(-3px)';
+                            }} onMouseLeave={(e) => {
+                                e.currentTarget.style.boxShadow = '0px 4px 18px rgba(0,0,0,0.06)';
+                                e.currentTarget.style.transform = 'translateY(0px)';
+                            }}>
                                 <div>
-                                    <div className="category-text-title">Content Writer</div>
-                                    <div className="category-text-sub">{categories[1]?.count || 0} Jobs</div>
+                                    <div className="category-text-title" style={{
+                                        fontSize: '17px',
+                                        fontWeight: '600',
+                                        color: '#333'
+                                    }}>Content Writer</div>
+                                    <div className="category-text-sub" style={{
+                                        fontSize: '13px',
+                                        color: '#A0A7B0',
+                                        marginTop: '3px'
+                                    }}>{categories[1]?.count || 0} Jobs</div>
                                 </div>
-                                <div className="plus-badge">+</div>
+                                <div className="plus-badge" style={{
+                                    background: 'rgba(255, 153, 0, 0.12)',
+                                    borderRadius: '50%',
+                                    width: '28px',
+                                    height: '28px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: '#FF9D00',
+                                    fontSize: '18px'
+                                }}>+</div>
                             </div>
                         </NavLink>
                         <NavLink to="/job-grid?category=Sales" style={{textDecoration: 'none'}}>
-                            <div className="category-card">
+                            <div className="category-card" style={{
+                                background: '#ffffff',
+                                borderRadius: '18px',
+                                padding: '16px 22px',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                minWidth: '240px',
+                                boxShadow: '0px 4px 18px rgba(0,0,0,0.06)',
+                                cursor: 'pointer',
+                                transition: 'all 0.25s ease'
+                            }} onMouseEnter={(e) => {
+                                e.currentTarget.style.boxShadow = '0px 8px 22px rgba(0,0,0,0.12)';
+                                e.currentTarget.style.transform = 'translateY(-3px)';
+                            }} onMouseLeave={(e) => {
+                                e.currentTarget.style.boxShadow = '0px 4px 18px rgba(0,0,0,0.06)';
+                                e.currentTarget.style.transform = 'translateY(0px)';
+                            }}>
                                 <div>
-                                    <div className="category-text-title">Sales & Marketing</div>
-                                    <div className="category-text-sub">{categories[2]?.count || 0} Jobs</div>
+                                    <div className="category-text-title" style={{
+                                        fontSize: '17px',
+                                        fontWeight: '600',
+                                        color: '#333'
+                                    }}>Sales & Marketing</div>
+                                    <div className="category-text-sub" style={{
+                                        fontSize: '13px',
+                                        color: '#A0A7B0',
+                                        marginTop: '3px'
+                                    }}>{categories[2]?.count || 0} Jobs</div>
                                 </div>
-                                <div className="plus-badge">+</div>
+                                <div className="plus-badge" style={{
+                                    background: 'rgba(255, 153, 0, 0.12)',
+                                    borderRadius: '50%',
+                                    width: '28px',
+                                    height: '28px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: '#FF9D00',
+                                    fontSize: '18px'
+                                }}>+</div>
                             </div>
                         </NavLink>
                         <NavLink to="/job-grid?category=Healthcare" style={{textDecoration: 'none'}}>
-                            <div className="category-card">
+                            <div className="category-card" style={{
+                                background: '#ffffff',
+                                borderRadius: '18px',
+                                padding: '16px 22px',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                minWidth: '240px',
+                                boxShadow: '0px 4px 18px rgba(0,0,0,0.06)',
+                                cursor: 'pointer',
+                                transition: 'all 0.25s ease'
+                            }} onMouseEnter={(e) => {
+                                e.currentTarget.style.boxShadow = '0px 8px 22px rgba(0,0,0,0.12)';
+                                e.currentTarget.style.transform = 'translateY(-3px)';
+                            }} onMouseLeave={(e) => {
+                                e.currentTarget.style.boxShadow = '0px 4px 18px rgba(0,0,0,0.06)';
+                                e.currentTarget.style.transform = 'translateY(0px)';
+                            }}>
                                 <div>
-                                    <div className="category-text-title">Healthcare</div>
-                                    <div className="category-text-sub">{categories[3]?.count || 0} Jobs</div>
+                                    <div className="category-text-title" style={{
+                                        fontSize: '17px',
+                                        fontWeight: '600',
+                                        color: '#333'
+                                    }}>Healthcare</div>
+                                    <div className="category-text-sub" style={{
+                                        fontSize: '13px',
+                                        color: '#A0A7B0',
+                                        marginTop: '3px'
+                                    }}>{categories[3]?.count || 0} Jobs</div>
                                 </div>
-                                <div className="plus-badge">+</div>
+                                <div className="plus-badge" style={{
+                                    background: 'rgba(255, 153, 0, 0.12)',
+                                    borderRadius: '50%',
+                                    width: '28px',
+                                    height: '28px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: '#FF9D00',
+                                    fontSize: '18px'
+                                }}>+</div>
                             </div>
                         </NavLink>
                         <NavLink to="/job-grid?category=HR" style={{textDecoration: 'none'}}>
-                            <div className="category-card">
+                            <div className="category-card" style={{
+                                background: '#ffffff',
+                                borderRadius: '18px',
+                                padding: '16px 22px',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                minWidth: '240px',
+                                boxShadow: '0px 4px 18px rgba(0,0,0,0.06)',
+                                cursor: 'pointer',
+                                transition: 'all 0.25s ease'
+                            }} onMouseEnter={(e) => {
+                                e.currentTarget.style.boxShadow = '0px 8px 22px rgba(0,0,0,0.12)';
+                                e.currentTarget.style.transform = 'translateY(-3px)';
+                            }} onMouseLeave={(e) => {
+                                e.currentTarget.style.boxShadow = '0px 4px 18px rgba(0,0,0,0.06)';
+                                e.currentTarget.style.transform = 'translateY(0px)';
+                            }}>
                                 <div>
-                                    <div className="category-text-title">Human Resources</div>
-                                    <div className="category-text-sub">{categories[4]?.count || 0} Jobs</div>
+                                    <div className="category-text-title" style={{
+                                        fontSize: '17px',
+                                        fontWeight: '600',
+                                        color: '#333'
+                                    }}>Human Resources</div>
+                                    <div className="category-text-sub" style={{
+                                        fontSize: '13px',
+                                        color: '#A0A7B0',
+                                        marginTop: '3px'
+                                    }}>{categories[4]?.count || 0} Jobs</div>
                                 </div>
-                                <div className="plus-badge">+</div>
+                                <div className="plus-badge" style={{
+                                    background: 'rgba(255, 153, 0, 0.12)',
+                                    borderRadius: '50%',
+                                    width: '28px',
+                                    height: '28px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: '#FF9D00',
+                                    fontSize: '18px'
+                                }}>+</div>
                             </div>
                         </NavLink>
                     </div>

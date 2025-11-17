@@ -180,6 +180,18 @@ label {
     .panel-tittle {
         font-size: 18px;
     }
+    
+    /* Fix country code overlapping on mobile */
+    input[name="phone"] {
+        padding-left: 110px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Additional mobile fixes for smaller screens */
+    input[name="phone"] {
+        padding-left: 100px !important;
+    }
 }
 
 /* Loading state */

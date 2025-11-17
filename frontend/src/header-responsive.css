@@ -76,6 +76,38 @@
     display: flex !important;
   }
 
+  /* Ensure hamburger menu is always visible */
+  .vnav-btn {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border-radius: 6px !important;
+    padding: 8px 12px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease !important;
+  }
+
+  .vnav-btn:hover {
+    background: rgba(255, 255, 255, 1) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .vnav-btn .fa-bars {
+    color: #333333 !important;
+    font-size: 18px !important;
+  }
+
+  /* Force hamburger menu visibility */
+  .site-header .extra-nav .extra-cell:last-child {
+    display: flex !important;
+    position: relative !important;
+    z-index: 10000 !important;
+  }
+
+  .site-header .vnav-btn {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
   /* Hide desktop navigation */
   .header-nav.navbar-collapse {
     display: none !important;

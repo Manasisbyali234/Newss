@@ -231,7 +231,7 @@ const CountryCodeSelector = ({ value, onChange, className = "" }) => {
   const selectedCountry = countryCodes.find(c => c.code === value) || countryCodes[40];
 
   return (
-    <div ref={dropdownRef} style={{ position: 'relative', width: '120px', height: '57px' }}>
+    <div ref={dropdownRef} style={{ position: 'relative', width: '120px', height: '50px', flexShrink: 0 }}>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -242,15 +242,15 @@ const CountryCodeSelector = ({ value, onChange, className = "" }) => {
           border: 'none',
           width: '100%',
           height: '100%',
-          padding: '0.75rem 0.5rem',
-          fontSize: '16px',
+          padding: '12px 8px',
+          fontSize: '14px',
           fontWeight: '500',
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '4px',
-          borderRight: '1px solid #dee2e6'
+          gap: '2px',
+          transition: 'all 0.3s ease'
         }}
       >
         <span style={{ fontSize: '18px' }}>{selectedCountry.flag} {selectedCountry.code}</span>

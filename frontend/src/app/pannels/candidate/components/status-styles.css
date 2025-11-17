@@ -8,7 +8,6 @@
 
 /* Complete Table Rewrite */
 .table {
-    table-layout: fixed;
     width: 100%;
     margin-bottom: 0;
     border-collapse: separate;
@@ -227,12 +226,12 @@
 .table-responsive {
     border-radius: 8px;
     overflow-x: auto;
-    overflow-y: scroll !important;
-    max-height: 400px !important;
-    height: 400px;
+    overflow-y: auto;
+    max-height: 70vh;
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     border: 1px solid #e9ecef;
-    scrollbar-width: auto;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
 }
 
 .card-shadow {
@@ -266,12 +265,47 @@
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
+    .twm-right-section-panel {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .twm-right-section-panel > div:first-child {
+        padding: 1rem 0.5rem 0 0.5rem !important;
+    }
+    
+    .twm-right-section-panel > div:last-child {
+        padding: 0 0.5rem 1rem 0.5rem !important;
+    }
+    
     .table-responsive {
         -webkit-overflow-scrolling: touch;
+        max-height: 60vh;
+        overflow-x: auto !important;
+        overflow-y: auto;
+        width: 100vw;
+        margin-left: -0.5rem;
+        margin-right: -0.5rem;
     }
     
     .card-shadow .card-body {
-        min-width: 1000px;
+        min-width: 1500px;
+        overflow-x: auto;
+    }
+    
+    .table {
+        min-width: 1500px;
+        width: auto;
+    }
+    
+    .table thead th {
+        white-space: nowrap;
+        min-width: auto;
+    }
+    
+    .table tbody td {
+        white-space: nowrap;
+        min-width: auto;
     }
     
     .table thead th {
@@ -294,6 +328,27 @@
     
     .interview-progress-wrapper {
         gap: 4px;
+    }
+    
+    /* Fix icon alignment on mobile */
+    .rounded-circle {
+        width: 35px !important;
+        height: 35px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    .rounded-circle i {
+        font-size: 14px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Ensure proper spacing */
+    .table tbody td:nth-child(2) .d-flex {
+        align-items: center !important;
+        gap: 8px !important;
     }
 }
 

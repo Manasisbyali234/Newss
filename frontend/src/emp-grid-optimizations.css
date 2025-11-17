@@ -5,15 +5,11 @@
   transform: translateZ(0);
 }
 
-/* Sticky sidebar */
+/* Fixed sidebar */
 .emp-grid-page .rightSidebar {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 20px;
+  position: static;
   align-self: flex-start;
   height: fit-content;
-  max-height: calc(100vh - 40px);
-  overflow-y: auto;
 }
 
 /* Employer Card Optimizations */
