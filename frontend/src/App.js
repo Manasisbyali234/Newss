@@ -9,15 +9,9 @@ import "aos/dist/aos.css";
 import forceLightMode from "./utils/forceLightMode";
 // CONSOLIDATED MASTER STYLES - All CSS in one file to eliminate cascade conflicts
 import "./consolidated-master-styles.css";
-import "./global-icon-color.css";
-import "./ux-improvements.css";
-import "./remove-button-arrows.css";
-import "./hero-location-fix.css";
-import "./remove-shadows.css";
-import "./header-responsive.css";
-import "./home-responsive.css";
-
-// Removed global import of job-categories-orange-theme.css - now imported locally in components that need it
+import "./home-job-cards.css";
+// CARD STYLES PRESERVATION - Ensures card styles remain intact after hosting
+import "./card-styles-preserve.css";
 
 function App() {
 

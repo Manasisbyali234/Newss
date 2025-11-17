@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { publicUser } from "../../../../../globals/route-names";
 import { useState, useEffect } from "react";
+import "../../../../../job-categories-consolidated.css";
 
 
 // Category Roles Modal Component
@@ -46,14 +47,11 @@ function SectionJobCategories() {
     const [categoryCounts, setCategoryCounts] = useState({});
 
     const categories = [
-        { name: 'IT', icon: 'flaticon-coding' },
-        { name: 'Sales', icon: 'flaticon-user' },
-        { name: 'Marketing', icon: 'flaticon-bars' },
-        { name: 'Finance', icon: 'flaticon-dashboard' },
-        { name: 'HR', icon: 'flaticon-customer-support' },
-        { name: 'Operations', icon: 'flaticon-project-management' },
-        { name: 'Design', icon: 'flaticon-computer' },
-        { name: 'Healthcare', icon: 'flaticon-note' }
+        { name: 'Programming', icon: 'flaticon-coding' },
+        { name: 'Content Writer', icon: 'flaticon-note' },
+        { name: 'Sales & Marketing', icon: 'flaticon-bars' },
+        { name: 'Healthcare', icon: 'flaticon-customer-support' },
+        { name: 'Human Resources', icon: 'flaticon-user' }
     ];
 
     useEffect(() => {
