@@ -382,25 +382,27 @@ function SectionCandidateOverview() {
 								className="panel-body wt-panel-body dashboard-card-2" 
 								style={{ 
 									backgroundColor: card.bg,
-									cursor: card.clickable ? 'pointer' : 'default'
+									cursor: card.clickable ? 'pointer' : 'default',
+									padding: '1.5rem',
+									textAlign: 'center'
 								}}
 								onClick={card.clickable ? card.onClick : undefined}
 							>
-								<div className="d-flex align-items-center" style={{ display: "flex", justifyContent: "flex-end" }}>
-									<div className={`wt-card-icon-2 me-3 fs-2 ${card.color}`} style={{ lineHeight: "1" }}>
+								<div className="icon-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '0.75rem' }}>
+									<div className={`fs-2 ${card.color}`} style={{ flexShrink: 0, lineHeight: 1 }}>
 										<i className={card.icon} />
 									</div>
-									<div>
-										<div className={`counter fw-bold fs-4 ${card.color}`}>
-											<CountUp end={card.count} duration={2} />
-										</div>
-										<h5 className="mb-0 mt-1">{card.label}</h5>
-										{card.label.includes('Excel') && candidate.placement?.collegeName && (
-											<small className="text-muted d-block" style={{ fontSize: '0.75rem' }}>
-												From: {candidate.placement.collegeName}
-											</small>
-										)}
+									<div className={`counter fw-bold fs-3 ${card.color}`} style={{ lineHeight: 1 }}>
+										<CountUp end={card.count} duration={2} />
 									</div>
+								</div>
+								<div>
+									<h5 className="mb-0" style={{ fontSize: '0.95rem', fontWeight: '600' }}>{card.label}</h5>
+									{card.label.includes('Excel') && candidate.placement?.collegeName && (
+										<small className="text-muted d-block" style={{ fontSize: '0.75rem', marginTop: '0.25rem' }}>
+											From: {candidate.placement.collegeName}
+										</small>
+									)}
 								</div>
 							</div>
 						</div>

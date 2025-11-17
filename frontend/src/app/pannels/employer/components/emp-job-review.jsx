@@ -41,7 +41,7 @@ function EmpJobReviewPage() {
     if (!jobDetails) return <div>Job not found</div>;
 
     return (
-        <>
+        <div className="emp-job-review-page">
             <div className="panel panel-default site-bg-white p-3">
                 <div className="panel-heading d-flex justify-content-between align-items-center">
                     <h4 className="panel-tittle">
@@ -194,7 +194,7 @@ function EmpJobReviewPage() {
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 

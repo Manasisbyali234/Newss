@@ -54,13 +54,8 @@
     width: 100vw !important;
     max-width: 100% !important;
   }
-  
-  .emp-posted-jobs-page > div {
-    padding: 0.5rem !important;
-  }
-  
+
   .emp-posted-jobs-page .panel {
-    margin: 0 !important;
     margin-bottom: 0.5rem !important;
   }
   
@@ -102,6 +97,33 @@
     display: flex !important;
     flex-direction: row !important;
     gap: 0.5rem !important;
+  }
+
+  /* Keep status filter buttons horizontal on mobile */
+  .emp-posted-jobs-page .d-flex.gap-2 {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+  }
+
+  .emp-posted-jobs-page .d-flex.gap-2 .btn {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    white-space: nowrap !important;
+  }
+
+  /* Fix search icon positioning on mobile */
+  .emp-posted-jobs-page .position-relative .fa-search {
+    left: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    z-index: 10 !important;
+    font-size: 16px !important;
+  }
+
+  .emp-posted-jobs-page .position-relative .form-control {
+    padding-left: 40px !important;
   }
 }
 

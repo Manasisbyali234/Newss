@@ -196,10 +196,52 @@
   background: white !important;
 }
 
+/* Icon row universal alignment */
+.can-dashboard .icon-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 1rem !important;
+}
+
+.can-dashboard .icon-row > *:first-child {
+  flex-shrink: 0 !important;
+}
+
+/* Stats card improvements */
+.can-dashboard .dashboard-card-2 {
+  min-height: 120px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
 /* Responsive paddings */
 @media (max-width: 992px) {
   .can-dashboard .wt-admin-right-page-header { padding: 20px !important; }
+  
+  .can-dashboard .dashboard-card-2 {
+    padding: 1.25rem !important;
+  }
 }
+
 @media (max-width: 768px) {
   .can-dashboard { padding-bottom: 20px; }
+  
+  .can-dashboard .icon-row {
+    gap: 0.75rem !important;
+  }
+  
+  .can-dashboard .dashboard-card-2 {
+    padding: 1rem !important;
+    min-height: 100px !important;
+  }
+  
+  .can-dashboard .counter {
+    font-size: 24px !important;
+  }
+  
+  .can-dashboard h5 {
+    font-size: 0.875rem !important;
+  }
 }

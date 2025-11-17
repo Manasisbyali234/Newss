@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import AssessmentCard from "../assessments/AssessmnetCard";
 import CreateAssessmentModal from "../assessments/CreateassessmentModal";
 import axios from "axios";
+import './assessment-dashboard.css';
 
 export default function AssessmentDashboard() {
 	const [assessments, setAssessments] = useState([]);

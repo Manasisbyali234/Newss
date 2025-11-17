@@ -1,68 +1,84 @@
-/* Job Review Page Mobile Button Alignment */
+/* Job Review Page Mobile Icon and Title Alignment */
 @media (max-width: 767px) {
-  /* Force horizontal button alignment in job review */
-  .panel .panel-body .btn-group,
-  .panel .panel-body .d-flex,
-  .panel .panel-body .button-container,
-  .panel .panel-body .action-buttons,
-  .panel .panel-body .modal-footer,
-  .panel .panel-body .card-footer {
+  /* Keep icons inline with titles in panel headers */
+  .emp-job-review-page .panel-heading .panel-tittle {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .emp-job-review-page .panel-heading .panel-tittle i {
+    flex-shrink: 0 !important;
+    margin-right: 0.5rem !important;
+  }
+}
+
+/* Job Review Page Mobile Button Alignment - Only for job review page */
+@media (max-width: 767px) {
+  /* Force horizontal button alignment in job review - specific to job review page */
+  .emp-job-review-page .panel .panel-body .btn-group,
+  .emp-job-review-page .panel .panel-body .d-flex,
+  .emp-job-review-page .panel .panel-body .button-container,
+  .emp-job-review-page .panel .panel-body .action-buttons,
+  .emp-job-review-page .panel .panel-body .modal-footer,
+  .emp-job-review-page .panel .panel-body .card-footer {
     display: flex !important;
     flex-direction: row !important;
     gap: 0.5rem !important;
     justify-content: space-between !important;
     align-items: center !important;
   }
-  
-  /* Ensure buttons stay horizontal */
-  .panel .panel-body .btn,
-  .panel .panel-body button,
-  .modal-footer .btn,
-  .card-footer .btn {
+
+  /* Ensure buttons stay horizontal - specific to job review page */
+  .emp-job-review-page .panel .panel-body .btn,
+  .emp-job-review-page .panel .panel-body button,
+  .emp-job-review-page .modal-footer .btn,
+  .emp-job-review-page .card-footer .btn {
     flex: 1 !important;
     min-width: auto !important;
     white-space: nowrap !important;
     display: inline-block !important;
   }
-  
-  /* Fix any vertical button stacking */
-  .panel .panel-body .btn + .btn,
-  .panel .panel-body button + button,
-  .modal-footer .btn + .btn,
-  .card-footer .btn + .btn {
+
+  /* Fix any vertical button stacking - specific to job review page */
+  .emp-job-review-page .panel .panel-body .btn + .btn,
+  .emp-job-review-page .panel .panel-body button + button,
+  .emp-job-review-page .modal-footer .btn + .btn,
+  .emp-job-review-page .card-footer .btn + .btn {
     margin-left: 0.5rem !important;
     margin-top: 0 !important;
   }
-  
-  /* Override Bootstrap column stacking for buttons */
-  .panel .panel-body .col-6,
-  .panel .panel-body .col-sm-6,
-  .panel .panel-body .col-md-6 {
+
+  /* Override Bootstrap column stacking for buttons - specific to job review page */
+  .emp-job-review-page .panel .panel-body .col-6,
+  .emp-job-review-page .panel .panel-body .col-sm-6,
+  .emp-job-review-page .panel .panel-body .col-md-6 {
     flex: 0 0 50% !important;
     max-width: 50% !important;
   }
-  
-  /* Force button containers to stay horizontal */
-  .panel .panel-body .row {
+
+  /* Force button containers to stay horizontal - specific to job review page */
+  .emp-job-review-page .panel .panel-body .row {
     display: flex !important;
     flex-wrap: nowrap !important;
   }
 }
 
 @media (max-width: 575px) {
-  .panel .panel-body .btn-group,
-  .panel .panel-body .d-flex,
-  .panel .panel-body .button-container,
-  .panel .panel-body .action-buttons,
-  .panel .panel-body .modal-footer,
-  .panel .panel-body .card-footer {
+  .emp-job-review-page .panel .panel-body .btn-group,
+  .emp-job-review-page .panel .panel-body .d-flex,
+  .emp-job-review-page .panel .panel-body .button-container,
+  .emp-job-review-page .panel .panel-body .action-buttons,
+  .emp-job-review-page .panel .panel-body .modal-footer,
+  .emp-job-review-page .panel .panel-body .card-footer {
     gap: 0.25rem !important;
   }
-  
-  .panel .panel-body .btn,
-  .panel .panel-body button,
-  .modal-footer .btn,
-  .card-footer .btn {
+
+  .emp-job-review-page .panel .panel-body .btn,
+  .emp-job-review-page .panel .panel-body button,
+  .emp-job-review-page .modal-footer .btn,
+  .emp-job-review-page .card-footer .btn {
     font-size: 0.875rem !important;
     padding: 0.5rem 0.75rem !important;
   }

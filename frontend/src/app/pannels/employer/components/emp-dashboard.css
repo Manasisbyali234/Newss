@@ -220,39 +220,50 @@
 @media (max-width: 767px) {
   .emp-dashboard .row {
     margin: 0 !important;
+    display: block !important;
   }
-  
+
+  .emp-dashboard .row > div {
+    display: block !important;
+    width: 100% !important;
+    margin-bottom: 1rem !important;
+  }
+
   .emp-dashboard .col-xl-4,
   .emp-dashboard .col-lg-4,
   .emp-dashboard .col-xl-8,
-  .emp-dashboard .col-lg-8 {
+  .emp-dashboard .col-lg-8,
+  .emp-dashboard .col-md-12 {
     padding: 0 0.5rem !important;
     margin-bottom: 1rem !important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
   }
-  
+
   .emp-dashboard .dashboard-card-2 {
     padding: 1rem !important;
     text-align: center !important;
   }
-  
+
   .emp-dashboard .d-flex.align-items-center {
     flex-direction: column !important;
     text-align: center !important;
   }
-  
+
   .emp-dashboard .wt-card-icon-2 {
     margin-bottom: 0.5rem !important;
     margin-right: 0 !important;
   }
-  
+
   .emp-dashboard .counter {
     font-size: 2rem !important;
   }
-  
+
   .emp-dashboard h5 {
     font-size: 0.9rem !important;
   }
-  
+
   /* Profile completion section mobile fixes */
   .emp-dashboard .col-xl-8 > div,
   .emp-dashboard .col-xl-4 > div {
@@ -296,4 +307,54 @@
   min-height: 250px !important;
   height: auto !important;
   margin-bottom: 0.5rem !important;
+}
+
+/* Global mobile fixes for all employer pages */
+@media (max-width: 767px) {
+  /* Remove margins and padding from main content areas */
+  .twm-right-section-panel {
+    padding: 0 !important;
+  }
+
+  .twm-right-section-panel > div {
+    padding: 0 !important;
+  }
+
+  /* Remove panel margins */
+  .twm-right-section-panel .panel {
+    margin: 0 !important;
+  }
+
+  /* Force all Bootstrap grid columns to stack vertically */
+  .twm-right-section-panel .row {
+    display: block !important;
+    margin: 0 !important;
+  }
+
+  .twm-right-section-panel .row > div[class*="col-"] {
+    display: block !important;
+    width: 100% !important;
+    margin-bottom: 1rem !important;
+    padding: 0 !important;
+    flex: none !important;
+    max-width: none !important;
+  }
+
+  /* Ensure all flex containers stack on mobile */
+  .twm-right-section-panel .d-flex {
+    flex-direction: column !important;
+  }
+
+  .twm-right-section-panel .justify-content-between {
+    justify-content: flex-start !important;
+  }
+
+  .twm-right-section-panel .align-items-center {
+    align-items: flex-start !important;
+  }
+
+  /* Remove any remaining margins */
+  .twm-right-section-panel .wt-admin-right-page-header {
+    margin: 0 !important;
+  }
 }

@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { loadScript } from "../../../../globals/constants";
 import InterviewProcessManager from "./InterviewProcessManager";
+import './emp-candidate-review.css';
+import './emp-candidate-review-mobile.css';
 
 
 function EmpCandidateReviewPage () {
@@ -254,7 +256,7 @@ function EmpCandidateReviewPage () {
 	}
 
 	return (
-		<div className="container-fluid py-4" style={{backgroundColor: '#f8f9fa', minHeight: '100vh'}}>
+		<div className="container-fluid py-4 emp-candidate-review-page" style={{backgroundColor: '#f8f9fa', minHeight: '100vh'}}>
 			{/* Header Section */}
 			<div className="row mb-4">
 				<div className="col-12">
@@ -365,7 +367,7 @@ function EmpCandidateReviewPage () {
 									</div>
 								</div>
 								<div className="col-md-6">
-									<h6 className="text-primary mb-3"><i className="fa fa-users mr-2"></i>Family Information</h6>
+									<h6 className="text-primary mb-3 d-flex align-items-center gap-2"><User size={16} style={{ color: "#ff6600" }} />Family Information</h6>
 									<div className="info-item mb-3">
 										<div className="d-flex align-items-center gap-2 mb-1">
 											<User size={16} style={{ color: "#ff6600" }} />
@@ -381,7 +383,7 @@ function EmpCandidateReviewPage () {
 										<p className="text-muted mb-0 ms-4">{candidate.motherName || 'Not provided'}</p>
 									</div>
 
-									<h6 className="text-primary mb-3 mt-4"><i className="fa fa-map-marker-alt mr-2"></i>Address Information</h6>
+									<h6 className="text-primary mb-3 mt-4 d-flex align-items-center gap-2"><MapPin size={16} style={{ color: "#ff6600" }} />Address Information</h6>
 									<div className="info-item mb-3">
 										<div className="d-flex align-items-center gap-2 mb-1">
 											<MapPin size={16} style={{ color: "#ff6600" }} />
@@ -497,10 +499,10 @@ function EmpCandidateReviewPage () {
 									Resume
 								</h5>
 							</div>
-							<div className="card-body text-center p-4">
+							<div className="card-body p-4">
 								<button
 									className="btn btn-lg rounded-pill px-4 py-2 fw-semibold"
-									style={{backgroundColor: '#ff6600', color: 'white', border: 'none'}}
+									style={{backgroundColor: '#ff6600', color: 'white', border: 'none', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}
 									onClick={() => downloadDocument(candidate.resume, 'resume.pdf')}
 								>
 									<Download size={18} className="me-2" />Download Resume
@@ -708,13 +710,13 @@ function EmpCandidateReviewPage () {
 							</div>
 
 							<div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
-								<button style={{backgroundColor: '#ff6600', color: 'white', border: 'none', padding: '10px 16px', height: '40px', width: '100%', borderRadius: '50px', fontSize: '14px', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'}} onClick={saveReview}>
+								<button style={{backgroundColor: '#ff6600', color: 'white', border: 'none', padding: '10px 16px', height: '40px', width: '100%', borderRadius: '50px', fontSize: '14px', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', cursor: 'pointer'}} onClick={saveReview}>
 									<Save size={16} style={{marginRight: '8px'}} />Save Review
 								</button>
-								<button style={{backgroundColor: '#ff6600', color: 'white', border: 'none', padding: '10px 16px', height: '40px', width: '100%', borderRadius: '50px', fontSize: '14px', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'}} onClick={shortlistCandidate}>
+								<button style={{backgroundColor: '#ff6600', color: 'white', border: 'none', padding: '10px 16px', height: '40px', width: '100%', borderRadius: '50px', fontSize: '14px', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', cursor: 'pointer'}} onClick={shortlistCandidate}>
 									<Check size={16} style={{marginRight: '8px'}} />Shortlist Candidate
 								</button>
-								<button style={{backgroundColor: '#ff6600', color: 'white', border: 'none', padding: '10px 16px', height: '40px', width: '100%', borderRadius: '50px', fontSize: '14px', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'}} onClick={rejectCandidate}>
+								<button style={{backgroundColor: '#ff6600', color: 'white', border: 'none', padding: '10px 16px', height: '40px', width: '100%', borderRadius: '50px', fontSize: '14px', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', cursor: 'pointer'}} onClick={rejectCandidate}>
 									<X size={16} style={{marginRight: '8px'}} />Reject Candidate
 								</button>
 							</div>
