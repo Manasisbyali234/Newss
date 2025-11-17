@@ -1,127 +1,91 @@
-/* Job Categories Orange Theme - White Cards with Orange Background */
-/* Scoped to prevent overriding other elements */
+/* Job Categories - Horizontal Card Layout */
 
-/* Main job categories section background - Higher specificity */
-.section-full.twm-job-categories-hpage-6-area,
-.twm-job-categories-hpage-6-area.section-full,
 .twm-job-categories-hpage-6-area {
   background-color: transparent !important;
-  background: transparent !important;
 }
 
-/* Force horizontal layout with Bootstrap grid */
 .twm-job-categories-hpage-6-area .row {
   display: flex !important;
   flex-wrap: wrap !important;
-  flex-direction: row !important;
-  margin-left: -15px !important;
-  margin-right: -15px !important;
+  gap: 16px !important;
 }
 
 .twm-job-categories-hpage-6-area .col-lg-3,
 .twm-job-categories-hpage-6-area .col-md-6 {
-  display: inline-block !important;
-  float: left !important;
-  padding-left: 15px !important;
-  padding-right: 15px !important;
-  vertical-align: top !important;
+  flex: 1 1 calc(25% - 16px) !important;
+  min-width: 240px !important;
 }
 
-@media (min-width: 992px) {
-  .twm-job-categories-hpage-6-area .col-lg-3 {
-    width: 25% !important;
-    flex: 0 0 25% !important;
-    max-width: 25% !important;
-  }
+.job-categories-block-2 {
+  background: #ffffff !important;
+  border-radius: 18px !important;
+  padding: 16px 22px !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  min-width: 240px !important;
+  box-shadow: 0px 4px 18px rgba(0,0,0,0.06) !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+  height: auto !important;
+  border: none !important;
 }
 
-@media (min-width: 768px) and (max-width: 991px) {
+.job-categories-block-2:hover {
+  box-shadow: 0px 8px 22px rgba(0,0,0,0.12) !important;
+  transform: translateY(-3px) !important;
+}
+
+.job-categories-block-2 .twm-content {
+  text-align: left !important;
+  flex: 1 !important;
+}
+
+.job-categories-block-2 .twm-content span {
+  font-size: 17px !important;
+  font-weight: 600 !important;
+  color: #333 !important;
+  display: block !important;
+}
+
+.job-categories-block-2 .twm-content .twm-jobs-available {
+  font-size: 13px !important;
+  color: #A0A7B0 !important;
+  margin-top: 3px !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.job-categories-block-2 .twm-media {
+  background: rgba(255, 153, 0, 0.12) !important;
+  border-radius: 50% !important;
+  width: 28px !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+.job-categories-block-2 .twm-media [class*=flaticon-] {
+  color: #FF9D00 !important;
+  font-size: 18px !important;
+}
+
+.job-categories-block-2 .twm-media:after {
+  display: none !important;
+}
+
+@media (max-width: 991px) {
+  .twm-job-categories-hpage-6-area .col-lg-3,
   .twm-job-categories-hpage-6-area .col-md-6 {
-    width: 50% !important;
-    flex: 0 0 50% !important;
-    max-width: 50% !important;
+    flex: 1 1 calc(50% - 16px) !important;
   }
 }
 
 @media (max-width: 767px) {
   .twm-job-categories-hpage-6-area .col-lg-3,
   .twm-job-categories-hpage-6-area .col-md-6 {
-    width: 100% !important;
-    flex: 0 0 100% !important;
-    max-width: 100% !important;
+    flex: 1 1 100% !important;
   }
-}
-
-/* Prevent global link overrides */
-.twm-job-categories-hpage-6-area a:not(.job-categories-block-2 a):not(.job-categories-block-2 span) {
-  color: inherit !important;
-  text-decoration: inherit !important;
-}
-
-/* Keep job category cards white with consistent sizing */
-.job-categories-block-2 {
-  background-color: #fff !important;
-  border: none !important;
-  box-shadow: none !important;
-  height: 180px !important;
-  width: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-  align-items: center !important;
-  text-align: center !important;
-  padding: 20px !important;
-  box-sizing: border-box !important;
-}
-
-/* Icon styling - make icons orange */
-.job-categories-block-2 .twm-media [class*=flaticon-] {
-  color: #fd7e14 !important;
-}
-
-/* Icon background circle */
-.job-categories-block-2 .twm-media:after {
-  background-color: rgba(253, 126, 20, 0.1) !important;
-}
-
-/* Job count styling */
-.job-categories-block-2 .twm-content .twm-jobs-available {
-  background-color: #f0f6fe !important;
-  color: #1967d2 !important;
-}
-
-/* Category name styling */
-.job-categories-block-2 .twm-content a,
-.job-categories-block-2 .twm-content span {
-  color: #17171d !important;
-  text-decoration: none !important;
-}
-
-/* Hover effects */
-.job-categories-block-2:hover {
-  background-color: #fff !important;
-  transform: translateY(-5px);
-  transition: all 0.3s ease;
-  box-shadow: none !important;
-}
-
-.job-categories-block-2:hover .twm-media [class*=flaticon-] {
-  color: #fd7e14 !important;
-  transform: scale(1.1);
-}
-
-.job-categories-block-2:hover .twm-media:after {
-  background-color: rgba(253, 126, 20, 0.2) !important;
-  transform: translateX(-50%) translateY(-50%) scale(1.2);
-}
-
-.job-categories-block-2:hover .twm-content a,
-.job-categories-block-2:hover .twm-content span {
-  color: #fd7e14 !important;
-  text-decoration: none !important;
-}
-
-.job-categories-block-2:hover .twm-content .twm-jobs-available {
-  background-color: #fd7e14 !important;
-  color: #fff !important;
 }
