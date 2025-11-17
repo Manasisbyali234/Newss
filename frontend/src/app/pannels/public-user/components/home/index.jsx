@@ -9,6 +9,7 @@ import MobileTestIndicator from "../../../../../components/MobileTestIndicator";
 =======
 import HomeJobCard from "../../../../../components/HomeJobCard";
 // CSS is now in public/assets/css/home-job-cards.css
+import "../../../../../clean-job-categories.css";
 >>>>>>> 92872e199fdfa4aeeb9461804178829410fcb83d
 
 function TopRecruitersSection() {
