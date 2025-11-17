@@ -8,7 +8,7 @@ function SectionProfile({ employer }) {
                         <div className="twm-s-info-inner">
                             <i className="fas fa-money-bill-wave" />
                             <span className="twm-title">Company Type</span>
-                            <div className="twm-s-info-discription">{employer?.industrySector || employer?.companyType || 'Not specified'}</div>
+                            <div className="twm-s-info-discription">{(employer?.industrySector || employer?.companyType || 'Not specified').toUpperCase()}</div>
                         </div>
                     </li>
 

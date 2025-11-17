@@ -41,7 +41,7 @@ function SectionJobsSidebar2 ({ _config, job }) {
 									<div className="twm-s-info-inner">
 										<i className="fas fa-calendar-alt" />
 										<span className="twm-title">Application Last Date</span>
-										<div className="twm-s-info-discription" style={{fontWeight: 'bold', color: 'red'}}>August 30, 2025</div>
+										<div className="twm-s-info-discription" style={{fontWeight: 'bold', color: 'red'}}>{job?.lastDateOfApplication ? new Date(job.lastDateOfApplication).toLocaleDateString() : 'Not specified'}</div>
 									</div>
 								</li>
 
