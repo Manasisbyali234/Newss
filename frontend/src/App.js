@@ -17,7 +17,7 @@ import "./remove-shadows.css";
 import "./header-responsive.css";
 import "./home-responsive.css";
 import "./mobile-categories-fix.css";
-import "./job-categories-orange-theme.css";
+// Removed global import of job-categories-orange-theme.css - now imported locally in components that need it
 
 function App() {
 
