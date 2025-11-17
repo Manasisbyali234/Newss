@@ -9,27 +9,46 @@
   background: transparent !important;
 }
 
-/* Force horizontal layout */
+/* Force horizontal layout with Bootstrap grid */
 .twm-job-categories-hpage-6-area .row {
   display: flex !important;
   flex-wrap: wrap !important;
+  flex-direction: row !important;
+  margin-left: -15px !important;
+  margin-right: -15px !important;
 }
 
 .twm-job-categories-hpage-6-area .col-lg-3,
 .twm-job-categories-hpage-6-area .col-md-6 {
-  display: block !important;
-  flex: 0 0 auto !important;
+  display: inline-block !important;
+  float: left !important;
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+  vertical-align: top !important;
 }
 
 @media (min-width: 992px) {
   .twm-job-categories-hpage-6-area .col-lg-3 {
     width: 25% !important;
+    flex: 0 0 25% !important;
+    max-width: 25% !important;
   }
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
   .twm-job-categories-hpage-6-area .col-md-6 {
     width: 50% !important;
+    flex: 0 0 50% !important;
+    max-width: 50% !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .twm-job-categories-hpage-6-area .col-lg-3,
+  .twm-job-categories-hpage-6-area .col-md-6 {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
   }
 }
 
