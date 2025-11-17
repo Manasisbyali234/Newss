@@ -1,184 +1,19 @@
 .job-categories-block-2 {
-  background: #ffffff !important;
-  border-radius: 18px !important;
-  padding: 16px 22px !important;
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  min-width: 240px !important;
-  max-width: 240px !important;
-  width: 240px !important;
-  box-shadow: 0px 4px 18px rgba(0,0,0,0.06) !important;
-  cursor: pointer !important;
-  transition: all 0.25s ease !important;
-}
-
-div.job-categories-block-2[style] {
-  width: 240px !important;
-  max-width: 240px !important;
-  flex: 0 0 240px !important;
-}
-
-.col-lg-3, .col-md-6 {
-  flex: 0 0 auto !important;
-  width: auto !important;
-}
-
-.col-lg-3 .job-categories-block-2,
-.col-md-6 .job-categories-block-2 {
-  width: 240px !important;
-  max-width: 240px !important;
-  min-width: 240px !important;
-}
-
-[style*="background: rgb(255, 255, 255)"].job-categories-block-2,
-[style*="display: flex"].job-categories-block-2 {
-  width: 240px !important;
-  max-width: 240px !important;
-  flex: 0 0 240px !important;
-}
-
-.job-categories-block-2[style*="min-width"] {
-  width: 240px !important;
-  max-width: 240px !important;
-  flex-basis: 240px !important;
-}
-
-/* Override main style.css with higher specificity */
-.twm-job-categories-section-2 .job-categories-block-2,
-.twm-job-categories-hpage-6-area .job-categories-block-2,
-.job-categories-style1 .job-categories-block-2 {
-  background: #ffffff !important;
-  border-radius: 18px !important;
-  padding: 16px 22px !important;
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  min-width: 240px !important;
-  max-width: 240px !important;
-  width: 240px !important;
-  box-shadow: 0px 4px 18px rgba(0,0,0,0.06) !important;
-  cursor: pointer !important;
-  transition: all 0.25s ease !important;
-  text-align: left !important;
-  overflow: visible !important;
-}
-
-.twm-job-categories-section-2 .job-categories-block-2:hover,
-.twm-job-categories-hpage-6-area .job-categories-block-2:hover,
-.job-categories-style1 .job-categories-block-2:hover {
-  box-shadow: 0px 8px 22px rgba(0,0,0,0.12) !important;
-  transform: translateY(-3px) !important;
-  background: #ffffff !important;
-}
-
-.twm-job-categories-section-2 .job-categories-block-2 .twm-media,
-.twm-job-categories-hpage-6-area .job-categories-block-2 .twm-media,
-.job-categories-style1 .job-categories-block-2 .twm-media {
-  background: rgba(255, 153, 0, 0.12) !important;
-  border-radius: 50% !important;
-  width: 28px !important;
-  height: 28px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  color: #FF9D00 !important;
-  font-size: 18px !important;
-  margin: 0 !important;
-  flex-shrink: 0 !important;
-}
-
-.twm-job-categories-section-2 .job-categories-block-2 .twm-content,
-.twm-job-categories-hpage-6-area .job-categories-block-2 .twm-content,
-.job-categories-style1 .job-categories-block-2 .twm-content {
-  flex: 1 !important;
-  text-align: left !important;
-  margin-left: 15px !important;
-}
-
-.twm-job-categories-section-2 .job-categories-block-2 .twm-content span,
-.twm-job-categories-hpage-6-area .job-categories-block-2 .twm-content span,
-.job-categories-style1 .job-categories-block-2 .twm-content span {
-  font-size: 17px !important;
-  font-weight: 600 !important;
-  color: #333 !important;
-  display: block !important;
-}
-
-.twm-job-categories-section-2 .job-categories-block-2 .twm-jobs-available,
-.twm-job-categories-hpage-6-area .job-categories-block-2 .twm-jobs-available,
-.job-categories-style1 .job-categories-block-2 .twm-jobs-available {
-  font-size: 13px !important;
-  color: #A0A7B0 !important;
-  margin-top: 3px !important;
-  background: transparent !important;
-  padding: 0 !important;
-  border-radius: 0 !important;
-  display: block !important;
-}
-
-/* Force 240px width at ALL screen sizes */
-@media (max-width: 768px) {
-  .job-categories-block-2,
-  .category-card,
-  .twm-job-categories-section-2 .job-categories-block-2,
-  .twm-job-categories-hpage-6-area .job-categories-block-2,
-  .job-categories-style1 .job-categories-block-2 {
-    width: 240px !important;
-    max-width: 240px !important;
-    min-width: 240px !important;
-    flex-basis: 240px !important;
-    flex-grow: 0 !important;
-    flex-shrink: 0 !important;
-  }
-}
-
-@media (max-width: 576px) {
-  .job-categories-block-2,
-  .category-card,
-  .twm-job-categories-section-2 .job-categories-block-2,
-  .twm-job-categories-hpage-6-area .job-categories-block-2,
-  .job-categories-style1 .job-categories-block-2 {
-    width: 240px !important;
-    max-width: 240px !important;
-    min-width: 240px !important;
-    flex-basis: 240px !important;
-    flex-grow: 0 !important;
-    flex-shrink: 0 !important;
-  }
-}
-
-@media (min-width: 769px) {
-  .job-categories-block-2,
-  .category-card,
-  .twm-job-categories-section-2 .job-categories-block-2,
-  .twm-job-categories-hpage-6-area .job-categories-block-2,
-  .job-categories-style1 .job-categories-block-2 {
-    width: 240px !important;
-    max-width: 240px !important;
-    min-width: 240px !important;
-    flex-basis: 240px !important;
-    flex-grow: 0 !important;
-    flex-shrink: 0 !important;
-  }
-}
-
-/* Universal override for ALL job category cards */
-* .job-categories-block-2,
-* .category-card,
-div[class*="job-categories"] .job-categories-block-2,
-div[class*="col-"] .job-categories-block-2 {
-  width: 240px !important;
-  max-width: 240px !important;
-  min-width: 240px !important;
-  flex-basis: 240px !important;
-  flex-grow: 0 !important;
-  flex-shrink: 0 !important;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 16px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 240px;
+  box-shadow: 0px 4px 18px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
 
 .job-categories-block-2:hover {
-  box-shadow: 0px 8px 22px rgba(0,0,0,0.12) !important;
-  transform: translateY(-3px) !important;
+  box-shadow: 0px 8px 22px rgba(0,0,0,0.12);
+  transform: translateY(-3px);
 }
 
 .job-categories-block-2 .twm-content span {
