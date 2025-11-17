@@ -18,7 +18,7 @@
     opacity: 1 !important;
   }
   
-  .job-categories-block.mobile-category-item {
+  .category-card.mobile-category-item {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
@@ -30,7 +30,7 @@
     transition: all 0.25s ease !important;
   }
 
-  .job-categories-block.mobile-category-item:hover {
+  .category-card.mobile-category-item:hover {
     box-shadow: 0px 8px 22px rgba(0,0,0,0.12) !important;
     transform: translateY(-3px) !important;
   }

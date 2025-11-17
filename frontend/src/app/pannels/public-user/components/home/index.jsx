@@ -538,13 +538,13 @@ function Home1Page() {
                             <div className="owl-carousel job-categories-carousel owl-btn-left-bottom">
                                 {categories.map((category, index) => (
                                     <div key={index} className="item">
-                                        <div className="job-categories-block">
-                                            <div className="twm-media">
+                                        <div className="category-card">
+                                            <div className="plus-badge">
                                                 <div className={category.icon} />
                                             </div>
-                                            <div className="twm-content">
-                                                <div className="twm-jobs-available">{category.count}+ Posted new jobs</div>
-                                                <NavLink to={`${publicUser.jobs.GRID}?category=${category.name}`}>{category.name}</NavLink>
+                                            <div>
+                                                <div className="category-text-sub">{category.count}+ Posted new jobs</div>
+                                                <NavLink to={`${publicUser.jobs.GRID}?category=${category.name}`} className="category-text-title">{category.name}</NavLink>
                                             </div>
                                         </div>
                                     </div>
@@ -556,13 +556,13 @@ function Home1Page() {
                         <div className="job-categories-style1 m-b30 mobile-categories">
                             <div className="mobile-categories-grid">
                                 {categories.map((category, index) => (
-                                    <div key={index} className="job-categories-block mobile-category-item">
-                                        <div className="twm-media">
+                                    <div key={index} className="category-card mobile-category-item">
+                                        <div className="plus-badge">
                                             <div className={category.icon} />
                                         </div>
-                                        <div className="twm-content">
-                                            <div className="twm-jobs-available">{category.count}+ Posted new jobs</div>
-                                            <NavLink to={`${publicUser.jobs.GRID}?category=${category.name}`}>{category.name}</NavLink>
+                                        <div>
+                                            <div className="category-text-sub">{category.count}+ Posted new jobs</div>
+                                            <NavLink to={`${publicUser.jobs.GRID}?category=${category.name}`} className="category-text-title">{category.name}</NavLink>
                                         </div>
                                     </div>
                                 ))}
