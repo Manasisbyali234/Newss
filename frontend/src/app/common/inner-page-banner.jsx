@@ -7,7 +7,7 @@ function InnerPageBanner({_data}) {
         <>
             <div className="wt-bnr-inr overlay-wraper bg-center" style={{ backgroundImage: `url(${publicUrlFor("images/banner/1.jpg")})` }}>
                 <div className="overlay-main site-bg-white opacity-01" />
-                <div className="container">
+
                     <div className="wt-bnr-inr-entry">
                         <div className="banner-title-outer">
                             <div className="banner-title-name">
@@ -24,7 +24,6 @@ function InnerPageBanner({_data}) {
                         </div>
                         {/* BREADCRUMB ROW END */}
                     </div>
-                </div>
             </div>
         </>
     )

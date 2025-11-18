@@ -1,7 +1,7 @@
 /* Compact Job Card Styles */
 .compact-job-card {
     border: 1px solid #e9ecef;
-    border-radius: 6px;
+    border-radius: 20px;
     padding: 10px;
     background: #fff3e0;
     transition: all 0.3s ease;

@@ -25,12 +25,14 @@ export const forceLightMode = () => {
   // Force light color scheme on document
   const forceStyles = () => {
     document.documentElement.style.setProperty('color-scheme', 'light only', 'important');
-    document.documentElement.style.setProperty('background-color', '#ffffff', 'important');
+
     document.documentElement.style.setProperty('color', '#111827', 'important');
-    
-    document.body.style.setProperty('background-color', '#ffffff', 'important');
+
+
     document.body.style.setProperty('color', '#111827', 'important');
     document.body.style.setProperty('color-scheme', 'light only', 'important');
+
+
     
     // Add meta tag if not exists
     if (!document.querySelector('meta[name="color-scheme"]')) {
@@ -40,13 +42,7 @@ export const forceLightMode = () => {
       document.head.appendChild(meta);
     }
     
-    // Add viewport meta for better mobile handling
-    if (!document.querySelector('meta[name="theme-color"]')) {
-      const themeMeta = document.createElement('meta');
-      themeMeta.name = 'theme-color';
-      themeMeta.content = '#ffffff';
-      document.head.appendChild(themeMeta);
-    }
+
   };
 
   // Apply immediately
@@ -57,13 +53,11 @@ export const forceLightMode = () => {
   const checkAndApply = () => {
     const docStyle = getComputedStyle(document.documentElement);
     const bodyStyle = getComputedStyle(document.body);
-    
-    if (docStyle.colorScheme !== 'light only' || 
-        docStyle.backgroundColor !== 'rgb(255, 255, 255)' ||
-        bodyStyle.backgroundColor !== 'rgb(255, 255, 255)') {
+
+    if (docStyle.colorScheme !== 'light only') {
       forceStyles();
     }
-    
+
     rafId = requestAnimationFrame(checkAndApply);
   };
   

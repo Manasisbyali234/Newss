@@ -1,7 +1,7 @@
 /* New Job Card Styles */
 .new-job-card {
   background: white;
-  border-radius: 4px;
+  border-radius: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   transition: all 0.3s ease;

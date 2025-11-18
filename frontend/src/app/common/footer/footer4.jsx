@@ -6,7 +6,7 @@ function Footer4() {
     return (
         <>
             <footer className="footer-light" style={{fontFamily: '"Plus Jakarta Sans", sans-serif'}}>
-                <div className="container">
+
                     {/* NEWS LETTER SECTION START */}
                     <div className="ftr-nw-content">
                         <div className="row">
@@ -107,7 +107,6 @@ function Footer4() {
                             </ul>
                         </div>
                     </div>
-                </div>
             </footer>
 
         </>
