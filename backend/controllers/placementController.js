@@ -153,7 +153,7 @@ exports.createPassword = async (req, res) => {
 exports.uploadStudentData = async (req, res) => {
   try {
     const placementId = req.user.id;
-    const { customFileName } = req.body;
+    const { customFileName, university, batch } = req.body;
     
     if (!req.file) {
       return res.status(400).json({ success: false, message: 'No file uploaded' });
@@ -162,6 +162,8 @@ exports.uploadStudentData = async (req, res) => {
     console.log('File upload:', {
       originalname: req.file.originalname,
       customFileName: customFileName,
+      university: university,
+      batch: batch,
       mimetype: req.file.mimetype,
       size: req.file.size
     });
@@ -184,12 +186,14 @@ exports.uploadStudentData = async (req, res) => {
     
     // Removed console debug line for security;
     
-    // Add to file history with file data and custom name
+    // Add to file history with file data, custom name, university, and batch
     const placement = await Placement.findByIdAndUpdate(placementId, {
       $push: {
         fileHistory: {
           fileName: req.file.originalname,
           customName: customFileName && customFileName.trim() ? customFileName.trim() : null,
+          university: university && university.trim() ? university.trim() : null,
+          batch: batch && batch.trim() ? batch.trim() : null,
           uploadedAt: new Date(),
           status: 'pending',
           fileData: studentData,
@@ -205,9 +209,20 @@ exports.uploadStudentData = async (req, res) => {
     try {
       console.log('Creating notification for file upload...');
       const displayName = customFileName && customFileName.trim() ? customFileName.trim() : req.file.originalname;
+      let notificationMessage = `${placement.name} from ${placement.collegeName} has uploaded a new Excel/CSV file: "${displayName}"${customFileName ? ` (${req.file.originalname})` : ''}`;
+      
+      if (university && university.trim()) {
+        notificationMessage += ` - University: ${university.trim()}`;
+      }
+      if (batch && batch.trim()) {
+        notificationMessage += ` - Batch: ${batch.trim()}`;
+      }
+      
+      notificationMessage += '. File validated successfully and waiting for admin approval.';
+      
       const notification = await createNotification({
         title: 'New Student Data Uploaded',
-        message: `${placement.name} from ${placement.collegeName} has uploaded a new Excel/CSV file: "${displayName}"${customFileName ? ` (${req.file.originalname})` : ''}. File validated successfully and waiting for admin approval.`,
+        message: notificationMessage,
         type: 'file_uploaded',
         role: 'admin',
         relatedId: placementId,
@@ -222,7 +237,9 @@ exports.uploadStudentData = async (req, res) => {
       success: true,
       message: 'Student data uploaded and validated successfully. Waiting for admin approval.',
       fileName: req.file.originalname,
-      customName: customFileName && customFileName.trim() ? customFileName.trim() : null
+      customName: customFileName && customFileName.trim() ? customFileName.trim() : null,
+      university: university && university.trim() ? university.trim() : null,
+      batch: batch && batch.trim() ? batch.trim() : null
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

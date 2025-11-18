@@ -1653,21 +1653,21 @@ export default function EmpPostJob({ onNext }) {
 															const assessmentDetails = formData.interviewRoundDetails[assessmentKey];
 															
 															if (!selectedAssessment) {
-																alert('Please select an assessment first');
+																showToast('Please select an assessment first', 'warning');
 																return;
 															}
 															
 															if (!assessmentDetails?.fromDate || !assessmentDetails?.toDate) {
-																alert(`Please set both From Date and To Date for Assessment ${assessmentIndex + 1}`);
+																showToast(`Please set both From Date and To Date for Assessment ${assessmentIndex + 1}`, 'warning');
 																return;
 															}
 															
 															if (new Date(assessmentDetails.fromDate) > new Date(assessmentDetails.toDate)) {
-																alert(`Assessment ${assessmentIndex + 1} From Date cannot be after To Date`);
+																showToast(`Assessment ${assessmentIndex + 1} From Date cannot be after To Date`, 'error');
 																return;
 															}
 															
-															alert(`Assessment ${assessmentIndex + 1} scheduled successfully!\n\nAssessment: ${availableAssessments.find(a => a._id === selectedAssessment)?.title}\nFrom: ${new Date(assessmentDetails.fromDate).toLocaleDateString()}\nTo: ${new Date(assessmentDetails.toDate).toLocaleDateString()}`);
+															showToast(`Assessment ${assessmentIndex + 1} scheduled successfully! Assessment: ${availableAssessments.find(a => a._id === selectedAssessment)?.title} | From: ${new Date(assessmentDetails.fromDate).toLocaleDateString()} | To: ${new Date(assessmentDetails.toDate).toLocaleDateString()}`, 'success', 5000);
 														}}
 													>
 														<i className="fa fa-calendar-plus"></i>
@@ -2042,21 +2042,21 @@ export default function EmpPostJob({ onNext }) {
 															const roundDetails = formData.interviewRoundDetails[uniqueKey];
 															
 															if (!roundDetails?.description?.trim()) {
-																alert(`Please enter description for ${roundNames[roundType]}`);
+																showToast(`Please enter description for ${roundNames[roundType]}`, 'warning');
 																return;
 															}
 															
 															if (!roundDetails?.fromDate || !roundDetails?.toDate) {
-																alert(`Please set both From Date and To Date for ${roundNames[roundType]}`);
+																showToast(`Please set both From Date and To Date for ${roundNames[roundType]}`, 'warning');
 																return;
 															}
 															
 															if (!roundDetails?.time) {
-																alert(`Please set time for ${roundNames[roundType]}`);
+																showToast(`Please set time for ${roundNames[roundType]}`, 'warning');
 																return;
 															}
 															
-															alert(`${roundNames[roundType]} scheduled successfully!\n\nFrom: ${new Date(roundDetails.fromDate).toLocaleDateString()}\nTo: ${new Date(roundDetails.toDate).toLocaleDateString()}\nTime: ${roundDetails.time}\nDescription: ${roundDetails.description}`);
+															showToast(`${roundNames[roundType]} scheduled successfully! From: ${new Date(roundDetails.fromDate).toLocaleDateString()} | To: ${new Date(roundDetails.toDate).toLocaleDateString()} | Time: ${roundDetails.time}`, 'success', 5000);
 														}}
 													>
 														<i className="fa fa-calendar-plus"></i>

@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import showToast from "../../../../utils/toastNotification";
+import SearchBar from "../../../../components/SearchBar";
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
@@ -12,6 +14,7 @@ function AdminSubAdmin() {
         username: '',
         email: '',
         phone: '',
+        employerCode: '',
         permissions: [],
         password: '',
         confirmPassword: ''
@@ -24,6 +27,8 @@ function AdminSubAdmin() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [authChecked, setAuthChecked] = useState(false);
     const [validationErrors, setValidationErrors] = useState({});
+    const [filteredSubAdmins, setFilteredSubAdmins] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -100,6 +105,15 @@ function AdminSubAdmin() {
             errors.phone = 'Please enter a valid 10-digit phone number';
         }
         
+        // Employer Code validation
+        if (!formData.employerCode.trim()) {
+            errors.employerCode = 'Employer code is required';
+        } else if (formData.employerCode.trim().length < 3) {
+            errors.employerCode = 'Employer code must be at least 3 characters';
+        } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.employerCode)) {
+            errors.employerCode = 'Employer code can only contain letters, numbers, hyphens, and underscores';
+        }
+        
         // Permissions validation
         if (formData.permissions.length === 0) {
             errors.permissions = 'Please select at least one permission';
@@ -152,6 +166,7 @@ function AdminSubAdmin() {
                 username: formData.username,
                 email: formData.email,
                 phone: formData.phone,
+                employerCode: formData.employerCode,
                 permissions: formData.permissions
             };
             
@@ -171,14 +186,14 @@ function AdminSubAdmin() {
             
             const data = await response.json();
             if (data.success) {
-                alert(showEditForm ? 'Sub Admin updated successfully' : 'Sub Admin created successfully');
+                showToast(showEditForm ? 'Sub Admin updated successfully' : 'Sub Admin created successfully', 'success');
                 resetForm();
                 fetchSubAdmins();
             } else {
-                alert(data.message || `Error ${showEditForm ? 'updating' : 'creating'} sub admin`);
+                showToast(data.message || `Error ${showEditForm ? 'updating' : 'creating'} sub admin`, 'error');
             }
         } catch (error) {
-            alert(`Error ${showEditForm ? 'updating' : 'creating'} sub admin`);
+            showToast(`Error ${showEditForm ? 'updating' : 'creating'} sub admin`, 'error');
         }
         setLoading(false);
     };
@@ -190,6 +205,7 @@ function AdminSubAdmin() {
             username: '',
             email: '',
             phone: '',
+            employerCode: '',
             permissions: [],
             password: '',
             confirmPassword: ''
@@ -210,6 +226,7 @@ function AdminSubAdmin() {
             username: admin.username,
             email: admin.email,
             phone: admin.phone || '',
+            employerCode: admin.employerCode || '',
             permissions: admin.permissions || [],
             password: '',
             confirmPassword: ''
@@ -238,6 +255,7 @@ function AdminSubAdmin() {
             
             if (data.success) {
                 setSubAdmins(data.subAdmins);
+                setFilteredSubAdmins(data.subAdmins);
                 setError('');
             } else {
                 setError(data.message || 'Failed to fetch sub admins');
@@ -264,13 +282,13 @@ function AdminSubAdmin() {
             
             const data = await response.json();
             if (data.success) {
-                alert('Sub Admin deleted successfully');
+                showToast('Sub Admin deleted successfully', 'success');
                 fetchSubAdmins();
             } else {
-                alert(data.message || 'Error deleting sub admin');
+                showToast(data.message || 'Error deleting sub admin', 'error');
             }
         } catch (error) {
-            alert('Error deleting sub admin');
+            showToast('Error deleting sub admin', 'error');
         }
     };
 
@@ -286,6 +304,25 @@ function AdminSubAdmin() {
         setAuthChecked(true);
         fetchSubAdmins();
     }, []);
+
+    const handleSearch = (term) => {
+        setSearchTerm(term);
+        if (!term.trim()) {
+            setFilteredSubAdmins(subAdmins);
+        } else {
+            const filtered = subAdmins.filter(admin => 
+                admin.name.toLowerCase().includes(term.toLowerCase()) ||
+                admin.username.toLowerCase().includes(term.toLowerCase()) ||
+                admin.email.toLowerCase().includes(term.toLowerCase()) ||
+                admin.employerCode.toLowerCase().includes(term.toLowerCase())
+            );
+            setFilteredSubAdmins(filtered);
+        }
+    };
+
+    useEffect(() => {
+        setFilteredSubAdmins(subAdmins);
+    }, [subAdmins]);
 
 
 
@@ -321,6 +358,12 @@ function AdminSubAdmin() {
                                     </button>
                                 </div>
                                 
+                                <SearchBar 
+                                    onSearch={handleSearch}
+                                    placeholder="Search by name, username, email, or employer code..."
+                                    className="mb-3"
+                                />
+                                
                                 <div className="table-container">
                                     <table className="table emp-table">
                                         <thead>
@@ -328,19 +371,21 @@ function AdminSubAdmin() {
                                                 <th>Name</th>
                                                 <th>Username</th>
                                                 <th>Email</th>
+                                                <th>Employer Code</th>
                                                 <th>Permissions</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {subAdmins.length > 0 ? (
-                                                subAdmins.map((admin) => (
+                                            {filteredSubAdmins.length > 0 ? (
+                                                filteredSubAdmins.map((admin) => (
                                                     <tr key={admin._id}>
                                                         <td>
                                                             <span className="company-name">{admin.name}</span>
                                                         </td>
                                                         <td style={{fontFamily: 'monospace', fontSize: '0.85rem'}}>{admin.username}</td>
                                                         <td style={{fontFamily: 'monospace', fontSize: '0.85rem'}}>{admin.email}</td>
+                                                        <td style={{fontFamily: 'monospace', fontSize: '0.85rem', fontWeight: '600'}}>{admin.employerCode}</td>
                                                         <td style={{fontSize: '0.85rem'}}>
                                                             {admin.permissions.map((permission, index) => (
                                                                 <span key={index}>
@@ -372,8 +417,8 @@ function AdminSubAdmin() {
                                                 ))
                                             ) : (
                                                 <tr>
-                                                    <td colSpan="5" className="text-center">
-                                                        No sub admins found
+                                                    <td colSpan="6" className="text-center">
+                                                        {searchTerm ? `No sub admins found matching "${searchTerm}"` : 'No sub admins found'}
                                                     </td>
                                                 </tr>
                                             )}
@@ -480,6 +525,23 @@ function AdminSubAdmin() {
                                                 <div className="invalid-feedback d-block">
                                                     <i className="fa fa-exclamation-circle me-1"></i>
                                                     {validationErrors.phone}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="col-12">
+                                            <input
+                                                className={`form-control rounded-3 ${validationErrors.employerCode ? 'is-invalid' : ''}`}
+                                                name="employerCode"
+                                                type="text"
+                                                placeholder="Employer Code *"
+                                                value={formData.employerCode}
+                                                onChange={handleInputChange}
+                                            />
+                                            {validationErrors.employerCode && (
+                                                <div className="invalid-feedback d-block">
+                                                    <i className="fa fa-exclamation-circle me-1"></i>
+                                                    {validationErrors.employerCode}
                                                 </div>
                                             )}
                                         </div>

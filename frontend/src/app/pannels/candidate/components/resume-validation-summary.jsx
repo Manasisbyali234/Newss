@@ -115,7 +115,7 @@ function ResumeValidationSummary({ profile }) {
     if (validationSummary.isValid && validationSummary.completionPercentage >= 80) {
       return <i className="fa fa-check-circle text-success"></i>;
     } else if (validationSummary.errors.length > 0) {
-      return <i className="fa fa-exclamation-triangle text-danger"></i>;
+      return <i className="fa fa-times-circle text-danger"></i>;
     } else {
       return <i className="fa fa-info-circle text-warning"></i>;
     }
@@ -156,7 +156,7 @@ function ResumeValidationSummary({ profile }) {
             {validationSummary.errors.length > 0 && (
               <div className="alert alert-danger">
                 <h6 className="alert-heading">
-                  <i className="fa fa-exclamation-triangle me-2"></i>
+                  <i className="fa fa-times-circle me-2"></i>
                   Validation Errors ({validationSummary.errors.length})
                 </h6>
                 <ul className="mb-0">

@@ -199,6 +199,7 @@
 
 
 import React, { useState } from "react";
+import showToast from "../../../../../utils/toastNotification";
 
 export default function CreateAssessmentModal({ onClose, onCreate }) {
 	const [title, setTitle] = useState("");
@@ -240,26 +241,26 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 			const updated = questions.filter((_, i) => i !== index);
 			setQuestions(updated);
 		} else {
-			alert("Assessment must have at least one question");
+			showToast("Assessment must have at least one question", 'warning');
 		}
 	};
 
 	const handleSubmit = () => {
 		// Validate title
 		if (!title.trim()) {
-			alert("Please enter an assessment title");
+			showToast("Please enter an assessment title", 'warning');
 			return;
 		}
 		
 		// Validate time limit
 		if (!timeLimit || timeLimit < 1) {
-			alert("Please enter a valid time limit (at least 1 minute)");
+			showToast("Please enter a valid time limit (at least 1 minute)", 'warning');
 			return;
 		}
 		
 		// Validate questions
 		if (questions.length === 0) {
-			alert("Please add at least one question");
+			showToast("Please add at least one question", 'warning');
 			return;
 		}
 		
@@ -268,20 +269,20 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 			const question = questions[i];
 			
 			if (!question.question.trim()) {
-				alert(`Please enter text for Question ${i + 1}`);
+				showToast(`Please enter text for Question ${i + 1}`, 'warning');
 				return;
 			}
 			
 			// Check if all options are filled
 			for (let j = 0; j < question.options.length; j++) {
 				if (!question.options[j].trim()) {
-					alert(`Please fill Option ${String.fromCharCode(65 + j)} for Question ${i + 1}`);
+					showToast(`Please fill Option ${String.fromCharCode(65 + j)} for Question ${i + 1}`, 'warning');
 					return;
 				}
 			}
 			
 			if (!question.marks || question.marks < 1) {
-				alert(`Please enter valid marks for Question ${i + 1} (at least 1)`);
+				showToast(`Please enter valid marks for Question ${i + 1} (at least 1)`, 'warning');
 				return;
 			}
 		}

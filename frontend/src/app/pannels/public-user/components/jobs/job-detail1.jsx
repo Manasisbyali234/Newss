@@ -275,41 +275,9 @@ function JobDetail1Page() {
                                         </div>
                                     </div>
 
-                                    <div className="candidate-info-section" style={{marginBottom: '40px', padding: '25px', backgroundColor: '#e8f4fd', borderRadius: '12px', border: '2px solid #3498db'}}>
-                                        <h4 className="twm-s-title" style={{color: '#2c3e50', marginBottom: '20px', fontSize: '24px', fontWeight: '600'}}>
-                                            <i className="feather-info" style={{marginRight: '10px', color: '#3498db'}}></i>
-                                            Important Information for Candidates
-                                        </h4>
-                                        <div className="row">
-                                            <div className="col-md-6">
-                                                <div className="info-item" style={{marginBottom: '15px', padding: '15px', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #dee2e6'}}>
-                                                    <h6 style={{color: '#2c3e50', marginBottom: '8px', fontWeight: '600'}}>
-                                                        <i className={`feather-${job.employerId?.employerType === 'consultant' ? 'users' : 'building'}`} style={{marginRight: '8px', color: job.employerId?.employerType === 'consultant' ? '#f39c12' : '#27ae60'}}></i>
-                                                        Hiring Type
-                                                    </h6>
-                                                    <p style={{margin: '0', fontSize: '16px', color: '#495057', fontWeight: '500'}}>
-                                                        {job.employerId?.employerType === 'consultant' ? 'Through Consultancy' : 'Direct Company Hiring'}
-                                                    </p>
-                                                    {job.employerId?.employerType === 'consultant' && (
-                                                        <small style={{color: '#6c757d', fontSize: '14px'}}>This position is being recruited by a consultancy firm</small>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <div className="col-md-6">
-                                                <div className="info-item" style={{marginBottom: '15px', padding: '15px', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #dee2e6'}}>
-                                                    <h6 style={{color: '#2c3e50', marginBottom: '8px', fontWeight: '600'}}>
-                                                        <i className="feather-briefcase" style={{marginRight: '8px', color: '#3498db'}}></i>
-                                                        Employment Type
-                                                    </h6>
-                                                    <p style={{margin: '0', fontSize: '16px', color: '#495057', fontWeight: '500'}}>
-                                                        {job.typeOfEmployment || job.jobType || 'Not specified'}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
 
-                                    <div className="job-section" style={{marginBottom: '40px', padding: '25px', backgroundColor: '#f8f9fa', borderRadius: '12px', border: '1px solid #e9ecef'}}>
+
+                                    <div style={{marginBottom: '40px'}}>
                                         <h4 className="twm-s-title" style={{color: '#2c3e50', marginBottom: '20px', fontSize: '24px', fontWeight: '600'}}>
                                             <i className="feather-file-text" style={{marginRight: '10px', color: '#3498db'}}></i>
                                             Job Description
@@ -352,19 +320,7 @@ function JobDetail1Page() {
                                         </div>
                                     )}
 
-                                    <h4 className="twm-s-title" style={{marginTop: '32px'}}>Required Skills:</h4>
-                                    {job.requiredSkills && job.requiredSkills.length > 0 ? (
-                                        <div className="skills-container">
-                                            {job.requiredSkills.map((skill, index) => (
-                                                <span key={index} className="skill-tag">
-                                                    <i className="feather-check"></i>
-                                                    {skill}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <p style={{color: '#6c757d', fontStyle: 'italic'}}>No specific skills mentioned</p>
-                                    )}
+
 
                                     {job.responsibilities && job.responsibilities.length > 0 && (
                                         <>

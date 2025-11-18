@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import AssessmentCard from "../assessments/AssessmnetCard";
 import CreateAssessmentModal from "../assessments/CreateassessmentModal";
 import axios from "axios";
+import showToast from "../../../../../utils/toastNotification";
 import './assessment-dashboard.css';
 
 export default function AssessmentDashboard() {
@@ -38,7 +39,7 @@ export default function AssessmentDashboard() {
 			if (response.data.success) {
 				setAssessments((prev) => [response.data.assessment, ...prev]);
 				setShowModal(false);
-				alert('Assessment created successfully!');
+				showToast('Assessment created successfully!', 'success');
 			}
 		} catch (error) {
 			console.error('Error creating assessment:', error);
@@ -51,7 +52,7 @@ export default function AssessmentDashboard() {
 				errorMessage = error.response.data.errors[0].msg;
 			}
 			
-			alert(errorMessage);
+			showToast(errorMessage, 'error');
 		}
 	};
 
@@ -63,10 +64,10 @@ export default function AssessmentDashboard() {
 				headers: { Authorization: `Bearer ${token}` }
 			});
 			setAssessments(prev => prev.filter(a => a._id !== id));
-			alert('Assessment deleted successfully');
+			showToast('Assessment deleted successfully', 'success');
 		} catch (error) {
 			console.error('Error deleting assessment:', error);
-			alert('Failed to delete assessment');
+			showToast('Failed to delete assessment', 'error');
 		}
 	};
 

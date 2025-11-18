@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { loadScript } from "../../../../../globals/constants";
 import { employer, empRoute } from "../../../../../globals/route-names";
+import showToast from "../../../../../utils/toastNotification";
 import './emp-posted-jobs.css';
 
 export default function EmpPostedJobs() {
@@ -136,14 +137,14 @@ export default function EmpPostedJobs() {
             });
             
             if (response.ok) {
-                alert('Job deleted successfully!');
+                showToast('Job deleted successfully!', 'success');
                 fetchJobs();
             } else {
-                alert('Failed to delete job');
+                showToast('Failed to delete job', 'error');
             }
         } catch (error) {
             
-            alert('Failed to delete job');
+            showToast('Failed to delete job', 'error');
         }
     };
 
@@ -162,14 +163,14 @@ export default function EmpPostedJobs() {
             });
             
             if (response.ok) {
-                alert(`Job ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully!`);
+                showToast(`Job ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully!`, 'success');
                 fetchJobs();
             } else {
-                alert('Failed to update job status');
+                showToast('Failed to update job status', 'error');
             }
         } catch (error) {
             
-            alert('Failed to update job status');
+            showToast('Failed to update job status', 'error');
         }
     };
 

@@ -90,7 +90,7 @@ function CanMyResumePage() {
 						) : error ? (
 							<div className="text-center p-5">
 								<div className="alert alert-danger">
-									<i className="fa fa-exclamation-triangle fa-2x mb-3"></i>
+									<i className="fa fa-times-circle fa-2x mb-3"></i>
 									<h5>Error Loading Profile</h5>
 									<p>{error}</p>
 									<button 

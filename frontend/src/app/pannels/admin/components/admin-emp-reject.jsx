@@ -4,10 +4,12 @@ import { api } from '../../../../utils/api';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import './admin-emp-manage-styles.css';
+import SearchBar from '../../../../components/SearchBar';
 
 function AdminEmployersRejected() {
     const navigate = useNavigate();
     const [employers, setEmployers] = useState([]);
+    const [filteredEmployers, setFilteredEmployers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -29,6 +31,7 @@ function AdminEmployersRejected() {
                     emp.status === 'rejected' || (emp.isApproved === false && emp.status === 'inactive')
                 );
                 setEmployers(rejectedEmployers);
+                setFilteredEmployers(rejectedEmployers);
             } else {
                 setError(response.message || 'Failed to fetch rejected employers');
             }
@@ -38,6 +41,21 @@ function AdminEmployersRejected() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleSearch = (searchTerm) => {
+        if (!searchTerm.trim()) {
+            setFilteredEmployers(employers);
+            return;
+        }
+        
+        const filtered = employers.filter(employer => 
+            employer.companyName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            employer.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            employer.phone?.includes(searchTerm) ||
+            employer.employerType?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setFilteredEmployers(filtered);
     };
 
     const formatDate = (dateString) => {
@@ -60,7 +78,16 @@ function AdminEmployersRejected() {
 
             <div className="panel panel-default site-bg-white">
                     <div className="panel-heading wt-panel-heading p-a20">
-                        <h4 className="panel-tittle m-a0">Rejected Employers ({employers.length})</h4>
+                        <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap', gap: '15px', width: '100%'}}>
+                            <h4 className="panel-tittle m-a0" style={{marginRight: 'auto'}}>Rejected Employers ({filteredEmployers.length})</h4>
+                            <div style={{marginLeft: 'auto'}}>
+                                <SearchBar 
+                                    onSearch={handleSearch}
+                                    placeholder="Search rejected employers..."
+                                    className="employer-search"
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     <div className="panel-body wt-panel-body">
@@ -81,7 +108,7 @@ function AdminEmployersRejected() {
                                 </thead>
 
                                 <tbody>
-                                    {employers.length === 0 ? (
+                                    {filteredEmployers.length === 0 ? (
                                         <tr>
                                             <td colSpan="6" className="text-center" style={{padding: '40px', fontSize: '1rem', color: '#6c757d'}}>
                                                 <i className="fa fa-times-circle" style={{fontSize: '2rem', marginBottom: '10px', display: 'block', color: '#dee2e6'}}></i>
@@ -89,7 +116,7 @@ function AdminEmployersRejected() {
                                             </td>
                                         </tr>
                                     ) : (
-                                        employers.map((employer) => (
+                                        filteredEmployers.map((employer) => (
                                             <tr key={employer._id}>
                                                 <td style={{textAlign: 'center'}}>
                                                     <span className="company-name">

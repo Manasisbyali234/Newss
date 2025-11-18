@@ -24,6 +24,8 @@ const placementSchema = new mongoose.Schema({
   fileHistory: [{
     fileName: String,
     customName: String, // Custom display name set by user
+    university: String, // University name
+    batch: String, // Batch information
     uploadedAt: { type: Date, default: Date.now },
     status: { type: String, enum: ['pending', 'approved', 'rejected', 'processed'], default: 'pending' },
     fileData: String, // Base64 encoded file data

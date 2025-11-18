@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Save, Plus, Trash2, Edit3 } from 'lucide-react';
 import { api } from '../../../../utils/api';
+import showToast from '../../../../utils/toastNotification';
 
 const InterviewProcessManager = ({ applicationId, onSave }) => {
   const [interviewProcess, setInterviewProcess] = useState(null);
@@ -90,11 +91,11 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
       });
       
       setInterviewProcess(data.interviewProcess);
-      alert('Interview process saved successfully!');
+      showToast('Interview process saved successfully!', 'success');
       if (onSave) onSave(data.interviewProcess);
     } catch (error) {
       console.error('Error saving interview process:', error);
-      alert('Error saving interview process. Please try again.');
+      showToast('Error saving interview process. Please try again.', 'error');
     } finally {
       setSaving(false);
     }

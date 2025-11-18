@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import JobZImage from "../../../common/jobz-img";
 import { loadScript } from "../../../../globals/constants";
+import showToast from "../../../../utils/toastNotification";
 
 function AdminCandidates() {
     const [candidates, setCandidates] = useState([]);
@@ -43,14 +44,14 @@ function AdminCandidates() {
             });
             
             if (response.ok) {
-                alert('Candidate deleted successfully!');
+                showToast('Candidate deleted successfully!', 'success');
                 fetchCandidates();
             } else {
-                alert('Failed to delete candidate');
+                showToast('Failed to delete candidate', 'error');
             }
         } catch (error) {
             
-            alert('Failed to delete candidate');
+            showToast('Failed to delete candidate', 'error');
         }
     };
 

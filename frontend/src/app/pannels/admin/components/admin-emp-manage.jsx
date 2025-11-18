@@ -4,10 +4,14 @@ import { api } from '../../../../utils/api';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import './admin-emp-manage-styles.css';
+import './admin-search-styles.css';
+import showToast from '../../../../utils/toastNotification';
+import SearchBar from '../../../../components/SearchBar';
 
 function AdminEmployersAllRequest() {
     const navigate = useNavigate();
     const [employers, setEmployers] = useState([]);
+    const [filteredEmployers, setFilteredEmployers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [actionLoading, setActionLoading] = useState({});
@@ -30,6 +34,7 @@ function AdminEmployersAllRequest() {
                     emp.status !== 'approved' && emp.status !== 'rejected' && !emp.isApproved
                 );
                 setEmployers(pendingEmployers);
+                setFilteredEmployers(pendingEmployers);
             } else {
                 setError(response.message || 'Failed to fetch employers');
             }
@@ -41,17 +46,34 @@ function AdminEmployersAllRequest() {
         }
     };
 
+    const handleSearch = (searchTerm) => {
+        if (!searchTerm.trim()) {
+            setFilteredEmployers(employers);
+            return;
+        }
+        
+        const filtered = employers.filter(employer => 
+            employer.companyName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            employer.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            employer.phone?.includes(searchTerm) ||
+            employer.employerType?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setFilteredEmployers(filtered);
+    };
+
     const handleApprove = async (employerId) => {
         try {
             const response = await api.updateEmployerStatus(employerId, 'approved');
             if (response.success) {
-                setEmployers(employers.filter(emp => emp._id !== employerId));
-                alert('Employer approved successfully! Notification sent to employer.');
+                const updatedEmployers = employers.filter(emp => emp._id !== employerId);
+                setEmployers(updatedEmployers);
+                setFilteredEmployers(updatedEmployers);
+                showToast('Employer approved successfully! Notification sent to employer.', 'success');
             } else {
-                alert('Failed to approve employer');
+                showToast('Failed to approve employer', 'error');
             }
         } catch (error) {
-            alert('Error approving employer');
+            showToast('Error approving employer', 'error');
             
         }
     };
@@ -60,13 +82,15 @@ function AdminEmployersAllRequest() {
         try {
             const response = await api.updateEmployerStatus(employerId, 'rejected');
             if (response.success) {
-                setEmployers(employers.filter(emp => emp._id !== employerId));
-                alert('Employer rejected successfully! Notification sent to employer.');
+                const updatedEmployers = employers.filter(emp => emp._id !== employerId);
+                setEmployers(updatedEmployers);
+                setFilteredEmployers(updatedEmployers);
+                showToast('Employer rejected successfully! Notification sent to employer.', 'success');
             } else {
-                alert('Failed to reject employer');
+                showToast('Failed to reject employer', 'error');
             }
         } catch (error) {
-            alert('Error rejecting employer');
+            showToast('Error rejecting employer', 'error');
             
         }
     };
@@ -92,7 +116,16 @@ function AdminEmployersAllRequest() {
 
                 <div className="panel panel-default site-bg-white">
                     <div className="panel-heading wt-panel-heading p-a20">
-                        <h4 className="panel-tittle m-a0">Pending Employers ({employers.length})</h4>
+                        <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap', gap: '15px', width: '100%'}}>
+                            <h4 className="panel-tittle m-a0" style={{marginRight: 'auto'}}>Pending Employers ({filteredEmployers.length})</h4>
+                            <div style={{marginLeft: 'auto'}}>
+                                <SearchBar 
+                                    onSearch={handleSearch}
+                                    placeholder="Search employers by name, email, phone, or type..."
+                                    className="employer-search"
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     <div className="panel-body wt-panel-body">
@@ -114,7 +147,7 @@ function AdminEmployersAllRequest() {
                                 </thead>
 
                                 <tbody>
-                                    {employers.length === 0 ? (
+                                    {filteredEmployers.length === 0 ? (
                                         <tr>
                                             <td colSpan="7" className="text-center" style={{padding: '40px', fontSize: '1rem', color: '#6c757d'}}>
                                                 <i className="fa fa-building" style={{fontSize: '2rem', marginBottom: '10px', display: 'block', color: '#dee2e6'}}></i>
@@ -122,7 +155,7 @@ function AdminEmployersAllRequest() {
                                             </td>
                                         </tr>
                                     ) : (
-                                        employers.map((employer) => (
+                                        filteredEmployers.map((employer) => (
                                             <tr key={employer._id}>
                                                 <td style={{textAlign: 'center'}}>
                                                     <span className="company-name">

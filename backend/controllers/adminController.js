@@ -1145,7 +1145,7 @@ exports.getCandidatesForCredits = async (req, res) => {
 // Sub Admin Management Controllers
 exports.createSubAdmin = async (req, res) => {
   try {
-    const { name, firstName, lastName, username, email, phone, permissions, password } = req.body;
+    const { name, firstName, lastName, username, email, phone, employerCode, permissions, password } = req.body;
     
     // Check if username or email already exists
     const existingSubAdmin = await SubAdmin.findOne({ 
@@ -1166,6 +1166,7 @@ exports.createSubAdmin = async (req, res) => {
       username,
       email,
       phone,
+      employerCode,
       permissions,
       password,
       createdBy: req.user.id
@@ -1195,7 +1196,7 @@ exports.getAllSubAdmins = async (req, res) => {
 
 exports.updateSubAdmin = async (req, res) => {
   try {
-    const { name, firstName, lastName, username, email, phone, permissions, password } = req.body;
+    const { name, firstName, lastName, username, email, phone, employerCode, permissions, password } = req.body;
     
     // Check if username or email already exists for other sub-admins
     const existingSubAdmin = await SubAdmin.findOne({ 
@@ -1217,6 +1218,7 @@ exports.updateSubAdmin = async (req, res) => {
       username,
       email,
       phone,
+      employerCode,
       permissions
     };
     

@@ -731,6 +731,24 @@ function PlacementDetails() {
                                                                 Original: {file.fileName}
                                                             </p>
                                                         )}
+                                                        {file.university && (
+                                                            <p className="mb-1" style={{
+                                                                fontSize: '0.85rem',
+                                                                color: '#6c757d'
+                                                            }}>
+                                                                <i className="fa fa-university mr-2" style={{color: '#007bff'}}></i>
+                                                                {file.university}
+                                                            </p>
+                                                        )}
+                                                        {file.batch && (
+                                                            <p className="mb-2" style={{
+                                                                fontSize: '0.85rem',
+                                                                color: '#6c757d'
+                                                            }}>
+                                                                <i className="fa fa-users mr-2" style={{color: '#6f42c1'}}></i>
+                                                                Batch: {file.batch}
+                                                            </p>
+                                                        )}
                                                         <div className="d-flex flex-wrap align-items-center gap-3 mb-3">
                                                             <div className="d-flex align-items-center">
                                                                 <i className="fa fa-calendar mr-2" style={{color: '#007bff'}}></i>

@@ -2,6 +2,7 @@ import { ArrowLeft, Award, Briefcase, Calendar, Check, Download, Eye, FileText, 
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { loadScript } from "../../../../globals/constants";
+import showToast from "../../../../utils/toastNotification";
 import InterviewProcessManager from "./InterviewProcessManager";
 import './emp-candidate-review.css';
 import './emp-candidate-review-mobile.css';
@@ -145,15 +146,15 @@ function EmpCandidateReviewPage () {
 			
 			if (response.ok) {
 				const result = await response.json();
-				alert('Interview review saved successfully! Candidate will see the updated status.');
+				showToast('Interview review saved successfully! Candidate will see the updated status.', 'success');
 				
 			} else {
 				const errorData = await response.json();
-				alert(`Failed to save review: ${errorData.message || 'Unknown error'}`);
+				showToast(`Failed to save review: ${errorData.message || 'Unknown error'}`, 'error');
 			}
 		} catch (error) {
 			
-			alert('Error saving review. Please try again.');
+			showToast('Error saving review. Please try again.', 'error');
 		}
 	};
 
@@ -170,15 +171,15 @@ function EmpCandidateReviewPage () {
 			});
 			
 			if (response.ok) {
-				alert('Candidate shortlisted successfully! Status updated for candidate.');
+				showToast('Candidate shortlisted successfully! Status updated for candidate.', 'success');
 				setApplication(prev => ({ ...prev, status: 'shortlisted' }));
 			} else {
 				const errorData = await response.json();
-				alert(`Failed to shortlist candidate: ${errorData.message || 'Unknown error'}`);
+				showToast(`Failed to shortlist candidate: ${errorData.message || 'Unknown error'}`, 'error');
 			}
 		} catch (error) {
 			
-			alert('Error shortlisting candidate. Please try again.');
+			showToast('Error shortlisting candidate. Please try again.', 'error');
 		}
 	};
 
@@ -195,15 +196,15 @@ function EmpCandidateReviewPage () {
 			});
 			
 			if (response.ok) {
-				alert('Candidate rejected. Status updated for candidate.');
+				showToast('Candidate rejected. Status updated for candidate.', 'success');
 				setApplication(prev => ({ ...prev, status: 'rejected' }));
 			} else {
 				const errorData = await response.json();
-				alert(`Failed to reject candidate: ${errorData.message || 'Unknown error'}`);
+				showToast(`Failed to reject candidate: ${errorData.message || 'Unknown error'}`, 'error');
 			}
 		} catch (error) {
 			
-			alert('Error rejecting candidate. Please try again.');
+			showToast('Error rejecting candidate. Please try again.', 'error');
 		}
 	};
 

@@ -20,6 +20,8 @@ function PlacementDashboard() {
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [showStudentModal, setShowStudentModal] = useState(false);
     const [customFileName, setCustomFileName] = useState('');
+    const [university, setUniversity] = useState('');
+    const [batch, setBatch] = useState('');
     const [showNameModal, setShowNameModal] = useState(false);
     const [pendingFile, setPendingFile] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
@@ -258,7 +260,7 @@ function PlacementDashboard() {
         }
     };
 
-    const handleFileUpload = async (file, customName = '') => {
+    const handleFileUpload = async (file, customName = '', universityName = '', batchInfo = '') => {
         if (!file) return;
         
         if (!await validateFileFormat(file)) {
@@ -281,6 +283,12 @@ function PlacementDashboard() {
             if (customName.trim()) {
                 formData.append('customFileName', customName.trim());
             }
+            if (universityName.trim()) {
+                formData.append('university', universityName.trim());
+            }
+            if (batchInfo.trim()) {
+                formData.append('batch', batchInfo.trim());
+            }
 
             const data = await api.uploadStudentData(formData);
             
@@ -288,6 +296,8 @@ function PlacementDashboard() {
                 showToast('Student data uploaded successfully! Waiting for admin approval.', 'success');
                 setSelectedFile(null);
                 setCustomFileName('');
+                setUniversity('');
+                setBatch('');
                 setPendingFile(null);
                 document.getElementById('fileInput').value = '';
                 fetchPlacementDetails();
@@ -318,6 +328,8 @@ function PlacementDashboard() {
         if (file && await validateFileFormat(file)) {
             setPendingFile(file);
             setCustomFileName('');
+            setUniversity('');
+            setBatch('');
             setShowNameModal(true);
         }
     };
@@ -325,7 +337,7 @@ function PlacementDashboard() {
     const handleConfirmUpload = () => {
         if (pendingFile) {
             setShowNameModal(false);
-            handleFileUpload(pendingFile, customFileName);
+            handleFileUpload(pendingFile, customFileName, university, batch);
         }
     };
 
@@ -824,6 +836,18 @@ function PlacementDashboard() {
                                                     Original: {file.fileName}
                                                 </small>
                                             )}
+                                            {file.university && (
+                                                <small className="text-muted d-block" style={{fontSize: '0.75rem'}}>
+                                                    <i className="fa fa-university mr-1"></i>
+                                                    {file.university}
+                                                </small>
+                                            )}
+                                            {file.batch && (
+                                                <small className="text-muted d-block" style={{fontSize: '0.75rem'}}>
+                                                    <i className="fa fa-users mr-1"></i>
+                                                    Batch: {file.batch}
+                                                </small>
+                                            )}
                                         </strong>
                                                         <small className="text-muted d-block">
                                                             {new Date(file.uploadedAt).toLocaleDateString()} at {new Date(file.uploadedAt).toLocaleTimeString()}
@@ -1034,14 +1058,35 @@ function PlacementDashboard() {
                                     <label className="font-weight-bold">Custom Display Name (Optional):</label>
                                     <input
                                         type="text"
-                                        className="form-control"
+                                        className="form-control mb-3"
                                         value={customFileName}
                                         onChange={(e) => setCustomFileName(e.target.value)}
                                         placeholder="Enter a custom name for this file (e.g., 'CSE Batch 2024', 'Final Year Students')..."
                                         maxLength="100"
                                     />
+                                    
+                                    <label className="font-weight-bold">University:</label>
+                                    <input
+                                        type="text"
+                                        className="form-control mb-3"
+                                        value={university}
+                                        onChange={(e) => setUniversity(e.target.value)}
+                                        placeholder="Enter university name..."
+                                        maxLength="100"
+                                    />
+                                    
+                                    <label className="font-weight-bold">Batch:</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={batch}
+                                        onChange={(e) => setBatch(e.target.value)}
+                                        placeholder="Enter batch information (e.g., '2024', 'Spring 2024')..."
+                                        maxLength="50"
+                                    />
+                                    
                                     <small className="text-muted">
-                                        Leave empty to use the original filename. This name will be displayed to admins.
+                                        Leave fields empty to use defaults. This information will be displayed to admins.
                                     </small>
                                 </div>
                             </div>

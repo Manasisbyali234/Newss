@@ -312,7 +312,7 @@ function SectionCanEducation({ profile, onUpdate }) {
         }
 
         if (!validateForm()) {
-            showToast('Please fix the errors in the form', 'error', 4000);
+            showToast('Please correct the highlighted fields.', 'error', 4000);
             return;
         }
 
@@ -356,7 +356,7 @@ function SectionCanEducation({ profile, onUpdate }) {
 
     const handleUpdateEducation = () => {
         if (!validateForm()) {
-            showToast('Please fix the errors in the form', 'error', 4000);
+            showToast('Please correct the highlighted fields.', 'error', 4000);
             return;
         }
 
@@ -763,7 +763,7 @@ function SectionCanEducation({ profile, onUpdate }) {
         }
 
         if (hasErrors) {
-            showToast('Please fill in all required fields for this row.', 'warning', 4000);
+            showToast('Please correct the highlighted fields.', 'warning', 4000);
             return false;
         }
 
@@ -774,11 +774,7 @@ function SectionCanEducation({ profile, onUpdate }) {
         // Validate all fields before saving
         const validationResult = validateAllFields();
         if (!validationResult.isValid) {
-            if (validationResult.errors.length > 0) {
-                showToast(`Please fix the following errors: ${validationResult.errors.join(', ')}`, 'error', 6000);
-            } else {
-                showToast('Please fill in all required fields before saving.', 'warning', 4000);
-            }
+            showToast('Please correct the highlighted fields.', 'error', 4000);
             return;
         }
 
@@ -862,7 +858,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                 <div className="twm-panel-inner">
                     {/* Education Level Dropdown */}
                     <div className="mb-4">
-                        <label className="form-label fw-bold">Select Education Level <span className="text-danger">*</span></label>
+                        <label className="form-label fw-bold">Select Education Level</label>
                         <select
                             className={`form-select ${errors.educationLevel ? 'is-invalid' : ''}`}
                             value={selectedEducationLevel}
@@ -887,7 +883,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                                 <div className="row g-3">
                                     {/* Common Fields */}
                                     <div className="col-md-6">
-                                        <label className="form-label">School/College Name <span className="text-danger">*</span></label>
+                                        <label className="form-label">School/College Name</label>
                                         <input
                                             type="text"
                                             className={`form-control ${errors.schoolCollegeName ? 'is-invalid' : ''}`}
@@ -900,7 +896,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                                     </div>
 
                                     <div className="col-md-6">
-                                        <label className="form-label">Name of Board / University <span className="text-danger">*</span></label>
+                                        <label className="form-label">Name of Board / University</label>
                                         <input
                                             type="text"
                                             className={`form-control ${errors.boardUniversityName ? 'is-invalid' : ''}`}
@@ -913,7 +909,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                                     </div>
 
                                     <div className="col-md-4">
-                                        <label className="form-label">Registration Number <span className="text-danger">*</span></label>
+                                        <label className="form-label">Registration Number</label>
                                         <input
                                             type="text"
                                             className={`form-control ${errors.registrationNumber ? 'is-invalid' : ''}`}
@@ -926,7 +922,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                                     </div>
 
                                     <div className="col-md-4">
-                                        <label className="form-label">State <span className="text-danger">*</span></label>
+                                        <label className="form-label">State</label>
                                         <input
                                             type="text"
                                             className={`form-control ${errors.state ? 'is-invalid' : ''}`}
@@ -939,7 +935,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                                     </div>
 
                                     <div className="col-md-4">
-                                        <label className="form-label">Result <span className="text-danger">*</span></label>
+                                        <label className="form-label">Result</label>
                                         <select
                                             className={`form-select ${errors.result ? 'is-invalid' : ''}`}
                                             name="result"
@@ -991,7 +987,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                                     {(selectedEducationLevel === 'puc' || selectedEducationLevel === 'degree') && (
                                         <>
                                             <div className="col-md-6">
-                                                <label className="form-label">Course Name / Stream <span className="text-danger">*</span></label>
+                                                <label className="form-label">Course Name / Stream</label>
                                                 <input
                                                     type="text"
                                                     className={`form-control ${errors.courseName ? 'is-invalid' : ''}`}
@@ -1004,7 +1000,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                                             </div>
 
                                             <div className="col-md-6">
-                                                <label className="form-label">Year of Passing <span className="text-danger">*</span></label>
+                                                <label className="form-label">Year of Passing</label>
                                                 <input
                                                     type="number"
                                                     className={`form-control ${errors.yearOfPassing ? 'is-invalid' : ''}`}
@@ -1097,7 +1093,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                                             className="site-button"
                                             onClick={handleAddEducation}
                                         >
-                                            <i className="fa fa-plus me-1"></i> Add Education
+                                            <i className="fa fa-plus me-1"></i> Save Details
                                         </button>
                                     )}
                                 </div>

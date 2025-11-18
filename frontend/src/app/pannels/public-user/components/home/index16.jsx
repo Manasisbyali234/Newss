@@ -965,7 +965,7 @@ function Home16Page() {
                     {/* title="" START*/}
                     <div className="section-head center wt-small-separator-outer mb-3">
                         <div className="wt-small-separator site-text-primary">
-                            <div>Working Process</div>
+                            <div>Works for candidates</div>
                         </div>
 
                         <h2 className="wt-title">How It Works</h2>

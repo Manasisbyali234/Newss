@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../../../utils/api';
 import './admin-emp-manage-styles.css';
+import './admin-search-styles.css';
+import SearchBar from '../../../../components/SearchBar';
 
 function AdminPlacementOfficersApproved() {
     const navigate = useNavigate();
     const [placements, setPlacements] = useState([]);
+    const [filteredPlacements, setFilteredPlacements] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -22,6 +25,7 @@ function AdminPlacementOfficersApproved() {
                     placement.status === 'active' || placement.isApproved
                 );
                 setPlacements(approvedPlacements);
+                setFilteredPlacements(approvedPlacements);
             } else {
                 setError(response.message || 'Failed to fetch placement officers');
             }
@@ -30,6 +34,20 @@ function AdminPlacementOfficersApproved() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleSearch = (searchTerm) => {
+        if (!searchTerm.trim()) {
+            setFilteredPlacements(placements);
+            return;
+        }
+        
+        const filtered = placements.filter(placement => 
+            placement.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            placement.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            placement.phone?.includes(searchTerm)
+        );
+        setFilteredPlacements(filtered);
     };
 
     const formatDate = (dateString) => {
@@ -53,7 +71,16 @@ function AdminPlacementOfficersApproved() {
 
             <div className="panel panel-default site-bg-white">
                 <div className="panel-heading wt-panel-heading p-a20">
-                    <h4 className="panel-tittle m-a0">Approved Placement Officers ({placements.length})</h4>
+                    <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap', gap: '15px', width: '100%'}}>
+                        <h4 className="panel-tittle m-a0" style={{marginRight: 'auto'}}>Approved Placement Officers ({filteredPlacements.length})</h4>
+                        <div style={{marginLeft: 'auto'}}>
+                            <SearchBar 
+                                onSearch={handleSearch}
+                                placeholder="Search approved placement officers..."
+                                className="placement-search"
+                            />
+                        </div>
+                    </div>
                 </div>
 
                 <div className="panel-body wt-panel-body">
@@ -74,7 +101,7 @@ function AdminPlacementOfficersApproved() {
                             </thead>
 
                             <tbody>
-                                {placements.length === 0 ? (
+                                {filteredPlacements.length === 0 ? (
                                     <tr>
                                         <td colSpan="6" className="text-center" style={{padding: '40px', fontSize: '1rem', color: '#6c757d'}}>
                                             <i className="fa fa-check-circle" style={{fontSize: '2rem', marginBottom: '10px', display: 'block', color: '#dee2e6'}}></i>
@@ -82,7 +109,7 @@ function AdminPlacementOfficersApproved() {
                                         </td>
                                     </tr>
                                 ) : (
-                                    placements.map((placement) => (
+                                    filteredPlacements.map((placement) => (
                                         <tr key={placement._id}>
                                             <td style={{textAlign: 'center'}}>
                                                 <span className="company-name">

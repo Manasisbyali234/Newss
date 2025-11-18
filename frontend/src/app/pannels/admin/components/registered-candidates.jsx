@@ -2,10 +2,13 @@ import { useState, useEffect, useRef } from 'react';
 import { api } from '../../../../utils/api';
 import { useNavigate } from 'react-router-dom';
 import './registered-candidates-styles.css';
+import './admin-search-styles.css';
+import SearchBar from '../../../../components/SearchBar';
 
 function RegisteredCandidatesPage() {
     const navigate = useNavigate();
     const [candidates, setCandidates] = useState([]);
+    const [filteredCandidates, setFilteredCandidates] = useState([]);
     const [shortlistedApplications, setShortlistedApplications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedCandidate, setSelectedCandidate] = useState(null);
@@ -25,6 +28,7 @@ function RegisteredCandidatesPage() {
             
             if (candidatesResponse.success) {
                 setCandidates(candidatesResponse.data);
+                setFilteredCandidates(candidatesResponse.data);
             }
             if (shortlistedResponse.success) {
                 setShortlistedApplications(shortlistedResponse.data);
@@ -52,6 +56,24 @@ function RegisteredCandidatesPage() {
             selected: latestApp.finalStatus === 'selected' ? 'Yes' : 
                      latestApp.finalStatus === 'rejected' ? 'No' : 'Pending'
         };
+    };
+
+    const handleSearch = (searchTerm) => {
+        if (!searchTerm.trim()) {
+            setFilteredCandidates(candidates);
+            return;
+        }
+        
+        const filtered = candidates.filter(candidate => 
+            candidate.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            candidate.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            candidate.phone?.includes(searchTerm) ||
+            candidate.profile?.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            candidate.profile?.skills?.some(skill => 
+                skill.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+        );
+        setFilteredCandidates(filtered);
     };
 
     if (loading) {
@@ -125,13 +147,20 @@ function RegisteredCandidatesPage() {
 
             <div className="candidates-table-container" data-aos="fade-up" data-aos-delay="200">
                 <div className="candidates-table-header">
-                    <h4>
-                        <i className="fa fa-list-alt"></i>
-                        All Registered Candidates ({candidates.length})
-                    </h4>
+                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px'}}>
+                        <h4>
+                            <i className="fa fa-list-alt"></i>
+                            All Registered Candidates ({filteredCandidates.length})
+                        </h4>
+                        <SearchBar 
+                            onSearch={handleSearch}
+                            placeholder="Search candidates by name, email, phone, location, or skills..."
+                            className="candidates-search"
+                        />
+                    </div>
                 </div>
                 <div className="card-body">
-                    {candidates.length === 0 ? (
+                    {filteredCandidates.length === 0 ? (
                         <div className="empty-state" data-aos="fade-in">
                             <i className="fa fa-users"></i>
                             <h3>No Registered Candidates</h3>
@@ -152,7 +181,7 @@ function RegisteredCandidatesPage() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {candidates.map((candidate, index) => {
+                                    {filteredCandidates.map((candidate, index) => {
                                         const shortlistInfo = getCandidateShortlistInfo(candidate._id);
                                         return (
                                             <tr key={candidate._id}>

@@ -4,6 +4,11 @@ import showToast from "../../../../../utils/toastNotification";
 
 function SectionCanPersonalDetail({ profile }) {
     const [formData, setFormData] = useState({
+        firstName: '',
+        middleName: '',
+        lastName: '',
+        mobileNumber: '',
+        emailAddress: '',
         dateOfBirth: '',
         gender: '',
         location: '',
@@ -62,6 +67,11 @@ function SectionCanPersonalDetail({ profile }) {
     useEffect(() => {
         if (profile) {
             setFormData({
+                firstName: profile.firstName || profile.candidateId?.name || '',
+                middleName: profile.middleName || '',
+                lastName: profile.lastName || '',
+                mobileNumber: profile.mobileNumber || (profile.candidateId?.phone ? profile.candidateId.phone.replace(/^\+91/, '') : ''),
+                emailAddress: profile.candidateId?.email || profile.emailAddress || '',
                 dateOfBirth: profile.dateOfBirth || '',
                 gender: profile.gender || '',
                 location: profile.location || '',
@@ -80,6 +90,12 @@ function SectionCanPersonalDetail({ profile }) {
         const newErrors = { ...errors };
         
         switch (field) {
+
+            
+
+            
+
+            
             case 'dateOfBirth':
                 if (!value || !value.trim()) {
                     newErrors.dateOfBirth = 'Date of birth is required';
@@ -248,6 +264,138 @@ function SectionCanPersonalDetail({ profile }) {
                     <div className="panel-body wt-panel-body p-a20 m-b30">
                         <div className="row">
                             <div className="col-md-6">
+                                <label><i className="fa fa-user me-1"></i> First Name *</label>
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    placeholder="First name fetched from profile"
+                                    value={formData.firstName}
+                                    readOnly
+                                    style={{backgroundColor: '#f8f9fa', cursor: 'not-allowed'}}
+                                />
+                                <small className="text-muted">Name is fetched from your profile page</small>
+                            </div>
+
+                            <div className="col-md-6">
+                                <label><i className="fa fa-user me-1"></i> Middle Name</label>
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    placeholder="Middle name fetched from profile"
+                                    value={formData.middleName}
+                                    readOnly
+                                    style={{backgroundColor: '#f8f9fa', cursor: 'not-allowed'}}
+                                />
+                                <small className="text-muted">Name is fetched from your profile page</small>
+                            </div>
+
+                            <div className="col-md-6">
+                                <label><i className="fa fa-user me-1"></i> Last Name *</label>
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    placeholder="Last name fetched from profile"
+                                    value={formData.lastName}
+                                    readOnly
+                                    style={{backgroundColor: '#f8f9fa', cursor: 'not-allowed'}}
+                                />
+                                <small className="text-muted">Name is fetched from your profile page</small>
+                            </div>
+
+                            <div className="col-md-6">
+                                <label><i className="fa fa-phone me-1"></i> Mobile Number *</label>
+                                <div style={{position: 'relative'}}>
+                                    <div style={{
+                                        position: 'absolute',
+                                        left: '0',
+                                        top: '0',
+                                        bottom: '0',
+                                        zIndex: 10,
+                                        backgroundColor: '#f8f9fa',
+                                        border: '1px solid #ced4da',
+                                        borderRight: 'none',
+                                        borderRadius: '4px 0 0 4px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        paddingLeft: '12px',
+                                        paddingRight: '12px',
+                                        fontSize: '14px',
+                                        color: '#495057',
+                                        width: '60px'
+                                    }}>
+                                        +91
+                                    </div>
+                                    <input
+                                        className="form-control"
+                                        type="tel"
+                                        placeholder="Mobile number fetched from profile"
+                                        value={formData.mobileNumber}
+                                        readOnly
+                                        style={{ 
+                                            paddingLeft: '72px', 
+                                            borderRadius: '0 4px 4px 0', 
+                                            borderLeft: 'none',
+                                            backgroundColor: '#f8f9fa', 
+                                            cursor: 'not-allowed'
+                                        }}
+                                    />
+                                </div>
+                                <small className="text-muted">Mobile number is fetched from your profile page</small>
+                            </div>
+
+                            <div className="col-md-6">
+                                <label><i className="fa fa-envelope me-1"></i> Email Address *</label>
+                                <input
+                                    className="form-control"
+                                    type="email"
+                                    placeholder="Email fetched from profile"
+                                    value={formData.emailAddress}
+                                    readOnly
+                                    style={{backgroundColor: '#f8f9fa', cursor: 'not-allowed'}}
+                                />
+                                <small className="text-muted">Email is fetched from your profile page</small>
+                            </div>
+
+                            <div className="col-md-6">
+                                <label><i className="fa fa-map-marker me-1"></i> Location *</label>
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    placeholder="Enter location"
+                                    value={formData.location}
+                                    onChange={(e) => handleInputChange('location', e.target.value)}
+                                    required
+                                />
+                            </div>
+
+                            <div className="col-md-6">
+                                <label><i className="fa fa-map me-1"></i> State Code</label>
+                                <select 
+                                    className="form-control"
+                                    value={formData.stateCode}
+                                    onChange={(e) => handleInputChange('stateCode', e.target.value)}
+                                >
+                                    <option value="">Select State Code</option>
+                                    {indianStateCodes.map((state, index) => (
+                                        <option key={index} value={state.code}>{state.code} - {state.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="col-md-6">
+                                <label><i className="fa fa-map-pin me-1"></i> Pincode *</label>
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    placeholder="Enter 6-digit pincode"
+                                    value={formData.pincode}
+                                    onChange={(e) => handleInputChange('pincode', e.target.value)}
+                                    maxLength="6"
+                                    pattern="[0-9]{6}"
+                                    required
+                                />
+                            </div>
+                            <div className="col-md-6">
                                 <label><i className="fa fa-calendar me-1"></i> Date of Birth *</label>
                                 <input
                                     className={`form-control ${errors.dateOfBirth ? 'is-invalid' : ''}`}
@@ -277,45 +425,6 @@ function SectionCanPersonalDetail({ profile }) {
                                     <option value="female">Female</option>
                                     <option value="prefer_not_to_say">Prefer not to say</option>
                                 </select>
-                            </div>
-
-                            <div className="col-md-6">
-                                <label><i className="fa fa-map me-1"></i> State Code</label>
-                                <select 
-                                    className="form-control"
-                                    value={formData.stateCode}
-                                    onChange={(e) => handleInputChange('stateCode', e.target.value)}
-                                >
-                                    <option value="">Select State Code</option>
-                                    {indianStateCodes.map((state, index) => (
-                                        <option key={index} value={state.code}>{state.code} - {state.name}</option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="col-md-6">
-                                <label><i className="fa fa-map-pin me-1"></i> Pincode</label>
-                                <input
-                                    className="form-control"
-                                    type="text"
-                                    placeholder="Enter 6-digit pincode"
-                                    value={formData.pincode}
-                                    onChange={(e) => handleInputChange('pincode', e.target.value)}
-                                    maxLength="6"
-                                    pattern="[0-9]{6}"
-                                />
-                            </div>
-
-                            <div className="col-md-6">
-                                <label><i className="fa fa-map-marker me-1"></i> Location</label>
-                                <input
-                                    className="form-control"
-                                    type="text"
-                                    placeholder="Location will be auto-filled"
-                                    value={formData.location}
-                                    onChange={(e) => handleInputChange('location', e.target.value)}
-                                    readOnly
-                                />
                             </div>
 
                             <div className="col-md-6">

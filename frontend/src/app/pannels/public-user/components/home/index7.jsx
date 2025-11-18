@@ -532,7 +532,7 @@ function Home7Page() {
                     {/* title="" START*/}
                     <div className="section-head center wt-small-separator-outer  content-white">
                         <div className="wt-small-separator">
-                            <div>Working Process</div>
+                            <div>Works for candidates</div>
                         </div>
                         <h2 className="wt-title">Follow Our Steps, We Will Help You</h2>
                     </div>

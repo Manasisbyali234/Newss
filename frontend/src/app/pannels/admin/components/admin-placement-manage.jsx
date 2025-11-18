@@ -2,10 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { api } from '../../../../utils/api';
 import './admin-emp-manage-styles.css';
+import './admin-search-styles.css';
+import showToast from '../../../../utils/toastNotification';
+import SearchBar from '../../../../components/SearchBar';
 
 function AdminPlacementOfficersAllRequest() {
     const navigate = useNavigate();
     const [placements, setPlacements] = useState([]);
+    const [filteredPlacements, setFilteredPlacements] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -23,6 +27,7 @@ function AdminPlacementOfficersAllRequest() {
                     placement.status === 'pending' || (!placement.status && !placement.isApproved)
                 );
                 setPlacements(pendingPlacements);
+                setFilteredPlacements(pendingPlacements);
             } else {
                 setError(response.message || 'Failed to fetch placement officers');
             }
@@ -33,17 +38,33 @@ function AdminPlacementOfficersAllRequest() {
         }
     };
 
+    const handleSearch = (searchTerm) => {
+        if (!searchTerm.trim()) {
+            setFilteredPlacements(placements);
+            return;
+        }
+        
+        const filtered = placements.filter(placement => 
+            placement.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            placement.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            placement.phone?.includes(searchTerm)
+        );
+        setFilteredPlacements(filtered);
+    };
+
     const handleApprove = async (placementId) => {
         try {
             const response = await api.updatePlacementStatus(placementId, 'approved');
             if (response.success) {
-                setPlacements(placements.filter(placement => placement._id !== placementId));
-                alert('Placement officer approved successfully!');
+                const updatedPlacements = placements.filter(placement => placement._id !== placementId);
+                setPlacements(updatedPlacements);
+                setFilteredPlacements(updatedPlacements);
+                showToast('Placement officer approved successfully!', 'success');
             } else {
-                alert('Failed to approve placement officer');
+                showToast('Failed to approve placement officer', 'error');
             }
         } catch (error) {
-            alert('Error approving placement officer');
+            showToast('Error approving placement officer', 'error');
         }
     };
 
@@ -51,13 +72,15 @@ function AdminPlacementOfficersAllRequest() {
         try {
             const response = await api.updatePlacementStatus(placementId, 'rejected');
             if (response.success) {
-                setPlacements(placements.filter(placement => placement._id !== placementId));
-                alert('Placement officer rejected successfully!');
+                const updatedPlacements = placements.filter(placement => placement._id !== placementId);
+                setPlacements(updatedPlacements);
+                setFilteredPlacements(updatedPlacements);
+                showToast('Placement officer rejected successfully!', 'success');
             } else {
-                alert('Failed to reject placement officer');
+                showToast('Failed to reject placement officer', 'error');
             }
         } catch (error) {
-            alert('Error rejecting placement officer');
+            showToast('Error rejecting placement officer', 'error');
         }
     };
 
@@ -82,7 +105,16 @@ function AdminPlacementOfficersAllRequest() {
 
             <div className="panel panel-default site-bg-white">
                 <div className="panel-heading wt-panel-heading p-a20">
-                    <h4 className="panel-tittle m-a0">Pending Placement Officers ({placements.length})</h4>
+                    <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap', gap: '15px', width: '100%'}}>
+                        <h4 className="panel-tittle m-a0" style={{marginRight: 'auto'}}>Pending Placement Officers ({filteredPlacements.length})</h4>
+                        <div style={{marginLeft: 'auto'}}>
+                            <SearchBar 
+                                onSearch={handleSearch}
+                                placeholder="Search placement officers by name, email, or phone..."
+                                className="placement-search"
+                            />
+                        </div>
+                    </div>
                 </div>
 
                 <div className="panel-body wt-panel-body">
@@ -103,7 +135,7 @@ function AdminPlacementOfficersAllRequest() {
                             </thead>
 
                             <tbody>
-                                {placements.length === 0 ? (
+                                {filteredPlacements.length === 0 ? (
                                     <tr>
                                         <td colSpan="6" className="text-center" style={{padding: '40px', fontSize: '1rem', color: '#6c757d'}}>
                                             <i className="fa fa-graduation-cap" style={{fontSize: '2rem', marginBottom: '10px', display: 'block', color: '#dee2e6'}}></i>
@@ -111,7 +143,7 @@ function AdminPlacementOfficersAllRequest() {
                                         </td>
                                     </tr>
                                 ) : (
-                                    placements.map((placement) => (
+                                    filteredPlacements.map((placement) => (
                                         <tr key={placement._id}>
                                             <td style={{textAlign: 'center'}}>
                                                 <span className="company-name">
