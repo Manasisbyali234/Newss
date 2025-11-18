@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { loadScript } from "../../../../../globals/constants";
@@ -39,16 +38,10 @@ function JobDetail1Page() {
             const response = await fetch(`http://localhost:5000/api/public/jobs/${jobId}`);
             const data = await response.json();
             if (data.success) {
-                
-                
-                if (data.job.employerProfile) {
-                    
-                    
-                }
                 setJob(data.job);
             }
         } catch (error) {
-            
+            console.error('Error fetching job details:', error);
         } finally {
             setLoading(false);
         }
@@ -65,7 +58,7 @@ function JobDetail1Page() {
                 setHasApplied(data.hasApplied);
             }
         } catch (error) {
-            
+            console.error('Error checking application status:', error);
         }
     }, [jobId]);
 
@@ -80,7 +73,7 @@ function JobDetail1Page() {
                 setCandidateCredits(data.credits || 0);
             }
         } catch (error) {
-            
+            console.error('Error fetching credits:', error);
         }
     }, []);
 
@@ -98,7 +91,7 @@ function JobDetail1Page() {
 
     const sidebarConfig = {
         showJobInfo: true
-    }
+    };
 
     const handleScroll = useCallback(() => {
         const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -146,7 +139,7 @@ function JobDetail1Page() {
     }
 
     const handleApplyClick = async () => {
-        if (isEnded) return; // Guard
+        if (isEnded) return;
         if (!isLoggedIn) {
             alert('Please login first to apply for jobs!');
             return;
@@ -156,7 +149,6 @@ function JobDetail1Page() {
             try {
                 const token = localStorage.getItem('candidateToken');
                 
-                // Check candidate credits first
                 const statsResponse = await fetch('http://localhost:5000/api/candidate/dashboard/stats', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -169,14 +161,12 @@ function JobDetail1Page() {
                         return;
                     }
                     
-                    // Show credit deduction warning
                     const confirmApply = window.confirm(`You have ${credits} credits remaining. Applying for this job will deduct 1 credit. Do you want to continue?`);
                     if (!confirmApply) {
                         return;
                     }
                 }
                 
-                // Check if candidate has uploaded resume
                 const profileResponse = await fetch('http://localhost:5000/api/candidate/profile', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -204,250 +194,214 @@ function JobDetail1Page() {
                     alert(data.message || 'Failed to submit application');
                 }
             } catch (error) {
-                
+                console.error('Error applying for job:', error);
                 alert('Failed to submit application');
             }
         }
     };
 
-
-
     return (
-			<>
-				{/* Scroll Progress Indicator */}
-				<div className="scroll-progress" style={{width: `${scrollProgress}%`}}></div>
-				
-				<div className="section-full  p-t120 p-b90 bg-white">
-					<div className="container">
-						{/* BLOG SECTION START */}
-						<div className="section-content">
-							<div className="row d-flex justify-content-center">
-								<div className="col-lg-8 col-md-12">
-									{/* Candidate detail START */}
-									<div className="cabdidate-de-info">
-										<div className="twm-job-self-wrap">
-											<div className="twm-job-self-info">
-												<div className="twm-job-self-top">
-													<div className="twm-media-bg">
-														{job.employerProfile?.coverImage ? (
-															<img src={job.employerProfile.coverImage} alt="Company Cover" />
-														) : (
-															<JobZImage src="images/employer-bg.jpg" alt="#" />
-														)}
-														<div className="twm-jobs-category green">
-															<span className="twm-bg-green">New</span>
-														</div>
-													</div>
+        <>
+            <div className="scroll-progress" style={{width: `${scrollProgress}%`}}></div>
+            
+            <div className="section-full p-t120 p-b90 bg-white">
+                <div className="container">
+                    <div className="section-content">
+                        <div className="row d-flex justify-content-center">
+                            <div className="col-lg-8 col-md-12">
+                                <div className="cabdidate-de-info">
+                                    <div className="twm-job-self-wrap">
+                                        <div className="twm-job-self-info">
+                                            <div className="twm-job-self-top">
+                                                <div className="twm-media-bg">
+                                                    {job.employerProfile?.coverImage ? (
+                                                        <img src={job.employerProfile.coverImage} alt="Company Cover" />
+                                                    ) : (
+                                                        <JobZImage src="images/employer-bg.jpg" alt="#" />
+                                                    )}
+                                                    <div className="twm-jobs-category green">
+                                                        <span className="twm-bg-green">New</span>
+                                                    </div>
+                                                </div>
 
-													<div className="twm-mid-content">
-														<div className="twm-media">
-															{job.employerProfile?.logo ? (
-																<img src={job.employerProfile.logo} alt="Company Logo" />
-															) : (
-																<JobZImage src="images/jobs-company/pic1.jpg" alt="#" />
-															)}
-														</div>
+                                                <div className="twm-mid-content">
+                                                    <div className="twm-media">
+                                                        {job.employerProfile?.logo ? (
+                                                            <img src={job.employerProfile.logo} alt="Company Logo" />
+                                                        ) : (
+                                                            <JobZImage src="images/jobs-company/pic1.jpg" alt="#" />
+                                                        )}
+                                                    </div>
 
-														<h4 className="twm-job-title">
-															{job.title}
-															<span className="twm-job-post-duration">
-																/ {new Date(job.createdAt).toLocaleDateString()}
-															</span>
-														</h4>
-														<p className="twm-job-company"><strong>Company: {job.companyName || job.employerId?.companyName || 'Not specified'}</strong></p>
-														<p className="twm-job-address"><i className="feather-map-pin" />{job.location}</p>
-														
-														{((typeof job.salary === 'string' || typeof job.salary === 'number') || job.minSalary || job.maxSalary) && (
-															<div className="salary-info">
-																<span className="salary-amount">
-																	{typeof job.salary === 'string' || typeof job.salary === 'number' ? `₹${job.salary}` : 
-																	 (job.minSalary && job.maxSalary) ? `₹${job.minSalary} - ₹${job.maxSalary}` :
-																	 job.minSalary ? `₹${job.minSalary}+` :
-																	 `₹${job.maxSalary}`}
-																</span>
-															</div>
-														)}
+                                                    <h4 className="twm-job-title">
+                                                        {job.title}
+                                                        <span className="twm-job-post-duration">
+                                                            / {new Date(job.createdAt).toLocaleDateString()}
+                                                        </span>
+                                                    </h4>
+                                                    <p className="twm-job-company"><strong>Company: {job.companyName || job.employerId?.companyName || 'Not specified'}</strong></p>
+                                                    <p className="twm-job-address"><i className="feather-map-pin" />{job.location}</p>
+                                                    
+                                                    <div className="hiring-type-badge" style={{marginTop: '15px', marginBottom: '10px'}}>
+                                                        <span className={`badge ${job.employerId?.employerType === 'consultant' ? 'badge-warning' : 'badge-success'}`} 
+                                                            style={{fontSize: '14px', padding: '8px 16px', fontWeight: '600'}}>
+                                                            <i className={`feather-${job.employerId?.employerType === 'consultant' ? 'users' : 'building'}`} style={{marginRight: '6px'}}></i>
+                                                            {job.employerId?.employerType === 'consultant' ? 'Hiring through Consultancy' : 'Direct Company Hiring'}
+                                                        </span>
+                                                    </div>
+                                                    
+                                                    {((typeof job.salary === 'string' || typeof job.salary === 'number') || job.minSalary || job.maxSalary) && (
+                                                        <div className="salary-info">
+                                                            <span className="salary-amount">
+                                                                {typeof job.salary === 'string' || typeof job.salary === 'number' ? `₹${job.salary}` : 
+                                                                 (job.minSalary && job.maxSalary) ? `₹${job.minSalary} - ₹${job.maxSalary}` :
+                                                                 job.minSalary ? `₹${job.minSalary}+` :
+                                                                 `₹${job.maxSalary}`}
+                                                            </span>
+                                                        </div>
+                                                    )}
 
-														<div className="twm-job-self-bottom" style={{marginTop: '40px', paddingTop: '20px', textAlign: 'right', paddingRight: '20px'}}>
-															<button
-																className={`btn btn-outline-primary ${(hasApplied || isEnded) ? 'disabled' : ''}`}
-																onClick={handleApplyClick}
-																disabled={hasApplied}
-															>
-																{hasApplied ? 'Already Applied' : 'Apply Now'}
-															</button>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
+                                                    <div className="twm-job-self-bottom" style={{marginTop: '40px', paddingTop: '20px', textAlign: 'right', paddingRight: '20px'}}>
+                                                        <button
+                                                            className={`btn btn-outline-primary ${(hasApplied || isEnded) ? 'disabled' : ''}`}
+                                                            onClick={handleApplyClick}
+                                                            disabled={hasApplied}
+                                                        >
+                                                            {hasApplied ? 'Already Applied' : 'Apply Now'}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
+                                    <div className="candidate-info-section" style={{marginBottom: '40px', padding: '25px', backgroundColor: '#e8f4fd', borderRadius: '12px', border: '2px solid #3498db'}}>
+                                        <h4 className="twm-s-title" style={{color: '#2c3e50', marginBottom: '20px', fontSize: '24px', fontWeight: '600'}}>
+                                            <i className="feather-info" style={{marginRight: '10px', color: '#3498db'}}></i>
+                                            Important Information for Candidates
+                                        </h4>
+                                        <div className="row">
+                                            <div className="col-md-6">
+                                                <div className="info-item" style={{marginBottom: '15px', padding: '15px', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #dee2e6'}}>
+                                                    <h6 style={{color: '#2c3e50', marginBottom: '8px', fontWeight: '600'}}>
+                                                        <i className={`feather-${job.employerId?.employerType === 'consultant' ? 'users' : 'building'}`} style={{marginRight: '8px', color: job.employerId?.employerType === 'consultant' ? '#f39c12' : '#27ae60'}}></i>
+                                                        Hiring Type
+                                                    </h6>
+                                                    <p style={{margin: '0', fontSize: '16px', color: '#495057', fontWeight: '500'}}>
+                                                        {job.employerId?.employerType === 'consultant' ? 'Through Consultancy' : 'Direct Company Hiring'}
+                                                    </p>
+                                                    {job.employerId?.employerType === 'consultant' && (
+                                                        <small style={{color: '#6c757d', fontSize: '14px'}}>This position is being recruited by a consultancy firm</small>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <div className="info-item" style={{marginBottom: '15px', padding: '15px', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #dee2e6'}}>
+                                                    <h6 style={{color: '#2c3e50', marginBottom: '8px', fontWeight: '600'}}>
+                                                        <i className="feather-briefcase" style={{marginRight: '8px', color: '#3498db'}}></i>
+                                                        Employment Type
+                                                    </h6>
+                                                    <p style={{margin: '0', fontSize: '16px', color: '#495057', fontWeight: '500'}}>
+                                                        {job.typeOfEmployment || job.jobType || 'Not specified'}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
+                                    <div className="job-section" style={{marginBottom: '40px', padding: '25px', backgroundColor: '#f8f9fa', borderRadius: '12px', border: '1px solid #e9ecef'}}>
+                                        <h4 className="twm-s-title" style={{color: '#2c3e50', marginBottom: '20px', fontSize: '24px', fontWeight: '600'}}>
+                                            <i className="feather-file-text" style={{marginRight: '10px', color: '#3498db'}}></i>
+                                            Job Description
+                                        </h4>
+                                        <div style={{lineHeight: '1.8', fontSize: '16px', color: '#495057'}}>
+                                            {job.description}
+                                        </div>
+                                    </div>
 
-										{/* Job Description Section */}
-										<div className="job-section" style={{marginBottom: '40px', padding: '25px', backgroundColor: '#f8f9fa', borderRadius: '12px', border: '1px solid #e9ecef'}}>
-											<h4 className="twm-s-title" style={{color: '#2c3e50', marginBottom: '20px', fontSize: '24px', fontWeight: '600'}}>
-												<i className="feather-file-text" style={{marginRight: '10px', color: '#3498db'}}></i>
-												Job Description
-											</h4>
-											<div style={{lineHeight: '1.8', fontSize: '16px', color: '#495057'}}>
-												{job.description}
-											</div>
-										</div>
+                                    {job.employerId?.employerType === 'consultant' && job.employerProfile && (
+                                        <div className="job-section" style={{marginBottom: '40px', padding: '25px', backgroundColor: '#fff3cd', borderRadius: '12px', border: '2px solid #f39c12'}}>
+                                            <h4 className="twm-s-title" style={{color: '#2c3e50', marginBottom: '20px', fontSize: '24px', fontWeight: '600'}}>
+                                                <i className="feather-users" style={{marginRight: '10px', color: '#f39c12'}}></i>
+                                                About the Consultancy
+                                            </h4>
+                                            <div className="consultant-info-box">
+                                                <div className="row">
+                                                    <div className="col-md-3">
+                                                        {job.employerProfile.logo && (
+                                                            <img 
+                                                                src={job.employerProfile.logo} 
+                                                                alt="Consultant Logo" 
+                                                                style={{width: '80px', height: '80px', objectFit: 'contain', borderRadius: '8px'}}
+                                                                loading="lazy"
+                                                            />
+                                                        )}
+                                                    </div>
+                                                    <div className="col-md-9">
+                                                        <h5>{job.employerId?.companyName || 'Consultant'}</h5>
+                                                        {job.employerProfile.description && <p>{job.employerProfile.description}</p>}
+                                                        {job.employerProfile.website && (
+                                                            <p><strong>Website:</strong> <a href={job.employerProfile.website} target="_blank" rel="noopener noreferrer">{job.employerProfile.website}</a></p>
+                                                        )}
+                                                        {job.employerProfile.location && (
+                                                            <p><strong>Location:</strong> {job.employerProfile.location}</p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
 
-										{/* Location Section */}
-										<div className="job-section" style={{marginBottom: '40px', padding: '25px', backgroundColor: '#f8f9fa', borderRadius: '12px', border: '1px solid #e9ecef'}}>
-											<h4 className="twm-s-title" style={{color: '#2c3e50', marginBottom: '20px', fontSize: '24px', fontWeight: '600'}}>
-												<i className="feather-map-pin" style={{marginRight: '10px', color: '#e74c3c'}}></i>
-												Location
-											</h4>
-											<div style={{fontSize: '18px', color: '#495057', fontWeight: '500'}}>
-												<i className="feather-navigation" style={{marginRight: '8px', color: '#e74c3c'}}></i>
-												{job.location}
-											</div>
-											{job.employerProfile?.location && job.employerProfile.location !== job.location && (
-												<div style={{marginTop: '10px', fontSize: '16px', color: '#6c757d'}}>
-													<i className="feather-building" style={{marginRight: '8px'}}></i>
-													Company Location: {job.employerProfile.location}
-												</div>
-											)}
-										</div>
+                                    <h4 className="twm-s-title" style={{marginTop: '32px'}}>Required Skills:</h4>
+                                    {job.requiredSkills && job.requiredSkills.length > 0 ? (
+                                        <div className="skills-container">
+                                            {job.requiredSkills.map((skill, index) => (
+                                                <span key={index} className="skill-tag">
+                                                    <i className="feather-check"></i>
+                                                    {skill}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p style={{color: '#6c757d', fontStyle: 'italic'}}>No specific skills mentioned</p>
+                                    )}
 
-										{/* Why Join Us Section */}
-										{(job.employerProfile?.whyJoinUs || job.companyDescription) && (
-											<div className="job-section" style={{marginBottom: '40px', padding: '25px', backgroundColor: '#f8f9fa', borderRadius: '12px', border: '1px solid #e9ecef'}}>
-												<h4 className="twm-s-title" style={{color: '#2c3e50', marginBottom: '20px', fontSize: '24px', fontWeight: '600'}}>
-													<i className="feather-star" style={{marginRight: '10px', color: '#f39c12'}}></i>
-													Why Join Us
-												</h4>
-												<div style={{lineHeight: '1.8', fontSize: '16px', color: '#495057'}}>
-													{job.employerProfile?.whyJoinUs || job.companyDescription}
-												</div>
-											</div>
-										)}
+                                    {job.responsibilities && job.responsibilities.length > 0 && (
+                                        <>
+                                            <h4 className="twm-s-title">Responsibilities:</h4>
+                                            <ul className="description-list-2">
+                                                {job.responsibilities.map((resp, index) => (
+                                                    <li key={index}>{resp}</li>
+                                                ))}
+                                            </ul>
+                                        </>
+                                    )}
 
-										{job.postedBy === 'Consultant' && job.employerProfile && (
-											<>
-												<h4 className="twm-s-title">About Consultant:</h4>
-												<div style={{padding: '20px', marginBottom: '20px', border: '1px solid #dee2e6', borderRadius: '12px'}} className="consultant-info-box">
-													<div className="row">
-														<div className="col-md-3">
-															{job.employerProfile.logo && (
-																<img 
-																	src={job.employerProfile.logo} 
-																	alt="Consultant Logo" 
-																	style={{width: '80px', height: '80px', objectFit: 'contain', borderRadius: '8px'}}
-																	loading="lazy"
-																/>
-															)}
-														</div>
-														<div className="col-md-9">
-															<h5>{job.employerId?.companyName || 'Consultant'}</h5>
-															{job.employerProfile.description && <p>{job.employerProfile.description}</p>}
-															{job.employerProfile.website && (
-																<p><strong>Website:</strong> <a href={job.employerProfile.website} target="_blank" rel="noopener noreferrer">{job.employerProfile.website}</a></p>
-															)}
-															{job.employerProfile.location && (
-																<p><strong>Location:</strong> {job.employerProfile.location}</p>
-															)}
-														</div>
-													</div>
-												</div>
-											</>
-										)}
+                                    {job.benefits && job.benefits.length > 0 && (
+                                        <>
+                                            <h4 className="twm-s-title">Benefits:</h4>
+                                            <ul className="description-list-2">
+                                                {job.benefits.map((benefit, index) => (
+                                                    <li key={index}>{benefit}</li>
+                                                ))}
+                                            </ul>
+                                        </>
+                                    )}
 
-
-										
-										<div className="job-details-grid">
-											<div className="row">
-												<div className="col-md-6">
-													<div className="detail-item" style={{marginBottom: '15px'}}>
-														<h5 style={{display: 'inline'}}><i className="feather-briefcase" style={{marginRight: '8px'}}></i>Job Type:&nbsp;</h5>
-														<span>{job.jobType}</span>
-													</div>
-												</div>
-												<div className="col-md-6">
-													<div className="detail-item" style={{marginBottom: '15px'}}>
-														<h5 style={{display: 'inline'}}><i className="feather-check-circle" style={{marginRight: '8px'}}></i>Backlogs Allowed:&nbsp;</h5>
-														<span className={`badge ${job.backlogsAllowed ? 'badge-success' : 'badge-danger'}`}>{job.backlogsAllowed ? 'Yes' : 'No'}</span>
-													</div>
-												</div>
-												{job.lastDateOfApplication && (
-													<div className="col-md-6">
-														<div className="detail-item" style={{marginBottom: '15px'}}>
-															<h5 style={{display: 'inline'}}><i className="feather-calendar" style={{marginRight: '8px'}}></i>Last Date to Apply:&nbsp;</h5>
-															<span style={{color: '#dc3545', fontWeight: '600'}}>{new Date(job.lastDateOfApplication).toLocaleDateString()}</span>
-														</div>
-													</div>
-												)}
-												{job.employerProfile?.website && (
-													<div className="col-md-6">
-														<div className="detail-item" style={{marginBottom: '15px'}}>
-															<h5 style={{display: 'inline'}}><i className="feather-globe" style={{marginRight: '8px'}}></i>Website:&nbsp;</h5>
-															<a href={job.employerProfile.website} target="_blank" rel="noopener noreferrer">{job.employerProfile.website}</a>
-														</div>
-													</div>
-												)}
-											</div>
-										</div>
-
-										<h4 className="twm-s-title" style={{marginTop: '32px'}}>Required Skills:</h4>
-										{job.requiredSkills && job.requiredSkills.length > 0 ? (
-											<div className="skills-container">
-												{job.requiredSkills.map((skill, index) => (
-													<span key={index} className="skill-tag">
-														<i className="feather-check"></i>
-														{skill}
-													</span>
-												))}
-											</div>
-										) : (
-											<p style={{color: '#6c757d', fontStyle: 'italic'}}>No specific skills mentioned</p>
-										)}
-
-										{job.responsibilities && job.responsibilities.length > 0 && (
-											<>
-												<h4 className="twm-s-title">Responsibilities:</h4>
-												<ul className="description-list-2">
-													{job.responsibilities.map((resp, index) => (
-														<li key={index}>{resp}</li>
-													))}
-												</ul>
-											</>
-										)}
-
-										{job.benefits && job.benefits.length > 0 && (
-											<>
-												<h4 className="twm-s-title">Benefits:</h4>
-												<ul className="description-list-2">
-													{job.benefits.map((benefit, index) => (
-														<li key={index}>{benefit}</li>
-													))}
-												</ul>
-											</>
-										)}
-
-										<SectionShareProfile />
-										{/* <SectionJobLocation /> */}
-
-
-									</div>
-								</div>
-								
-								<div className="col-lg-4 col-md-12 rightSidebar">
-									<SectionJobsSidebar2 _config={sidebarConfig} job={job} />
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<ApplyJobPopup />
-				
-
-
-
-			</>
-		);
+                                    <SectionShareProfile />
+                                </div>
+                            </div>
+                            
+                            <div className="col-lg-4 col-md-12 rightSidebar">
+                                <SectionJobsSidebar2 _config={sidebarConfig} job={job} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ApplyJobPopup />
+        </>
+    );
 }
 
 export default JobDetail1Page;

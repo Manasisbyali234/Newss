@@ -252,4 +252,167 @@ const sendOTPEmail = async (email, otp, name) => {
   return result;
 };
 
-module.exports = { sendWelcomeEmail, sendResetEmail, sendPasswordCreationEmail, sendAssessmentNotificationEmail, sendOTPEmail };
+const sendPlacementCandidateWelcomeEmail = async (email, name, placementOfficerName, collegeName) => {
+  const transporter = createTransport();
+  const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/`;
+  const createPasswordUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/create-password?email=${encodeURIComponent(email)}&type=candidate`;
+  const supportEmail = process.env.SUPPORT_EMAIL || 'support@taleglobal.com';
+
+  const welcomeTemplate = `
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 650px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
+      <div style="background-color: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-top: 4px solid #fd7e14;">
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="color: #2c3e50; margin: 0; font-size: 28px; font-weight: 600;">🎉 Welcome to TaleGlobal!</h1>
+          <p style="color: #7f8c8d; margin: 10px 0 0 0; font-size: 16px;">Your Gateway to Career Success</p>
+        </div>
+
+        <!-- Greeting -->
+        <div style="margin-bottom: 25px;">
+          <p style="color: #2c3e50; font-size: 18px; line-height: 1.6; margin: 0;">Dear <strong>${name}</strong>,</p>
+        </div>
+
+        <!-- Approval Message -->
+        <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0f9ff 100%); padding: 25px; border-radius: 10px; margin: 25px 0; border-left: 5px solid #28a745;">
+          <h3 style="color: #155724; margin: 0 0 15px 0; font-size: 18px; display: flex; align-items: center;">
+            ✅ Registration Approved!
+          </h3>
+          <p style="color: #155724; margin: 0; font-size: 16px; line-height: 1.6;">
+            Congratulations! Your registration has been <strong>approved</strong> by your placement officer <strong>${placementOfficerName}</strong> from <strong>${collegeName}</strong>.
+          </p>
+        </div>
+
+        <!-- Create Password Section -->
+        <div style="background-color: #fff8e1; padding: 25px; border-radius: 10px; margin: 25px 0; border: 2px solid #ffc107;">
+          <h3 style="color: #f57c00; margin: 0 0 20px 0; font-size: 18px; display: flex; align-items: center;">
+            🔐 Create Your Password
+          </h3>
+          <p style="color: #856404; margin: 0 0 20px 0; font-size: 16px; line-height: 1.6;">
+            To complete your registration and access your dashboard, please create a secure password by clicking the button below:
+          </p>
+          <div style="background-color: white; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0;">
+            <div style="margin-bottom: 15px;">
+              <label style="color: #666; font-size: 14px; font-weight: 600; display: block; margin-bottom: 5px;">Email Address:</label>
+              <div style="background-color: #f8f9fa; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 16px; color: #2c3e50; border: 1px solid #dee2e6;">${email}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Create Password Button -->
+        <div style="text-align: center; margin: 35px 0;">
+          <a href="${createPasswordUrl}" style="background: linear-gradient(135deg, #fd7e14 0%, #ff6b35 100%); color: white; padding: 16px 40px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 18px; display: inline-block; box-shadow: 0 4px 15px rgba(253, 126, 20, 0.3); transition: all 0.3s ease;">🔑 Create Your Password</a>
+        </div>
+        
+        <!-- Next Steps -->
+        <div style="background-color: #f8f9fa; padding: 25px; border-radius: 10px; margin: 25px 0;">
+          <h3 style="color: #2c3e50; margin: 0 0 20px 0; font-size: 18px; display: flex; align-items: center;">
+            📋 What's Next?
+          </h3>
+          <div style="color: #495057; line-height: 1.8; font-size: 15px;">
+            <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+              <span style="color: #fd7e14; font-weight: bold; margin-right: 10px; font-size: 16px;">1.</span>
+              <span><strong>Create your password</strong> using the button above</span>
+            </div>
+            <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+              <span style="color: #fd7e14; font-weight: bold; margin-right: 10px; font-size: 16px;">2.</span>
+              <span><strong>Complete your profile</strong> with personal and academic details</span>
+            </div>
+            <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+              <span style="color: #fd7e14; font-weight: bold; margin-right: 10px; font-size: 16px;">3.</span>
+              <span><strong>Upload your resume</strong> and showcase your skills</span>
+            </div>
+            <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+              <span style="color: #fd7e14; font-weight: bold; margin-right: 10px; font-size: 16px;">4.</span>
+              <span><strong>Browse job opportunities</strong> from top companies</span>
+            </div>
+            <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+              <span style="color: #fd7e14; font-weight: bold; margin-right: 10px; font-size: 16px;">5.</span>
+              <span><strong>Apply to jobs</strong> with one click</span>
+            </div>
+            <div style="display: flex; align-items: flex-start;">
+              <span style="color: #fd7e14; font-weight: bold; margin-right: 10px; font-size: 16px;">6.</span>
+              <span><strong>Track your applications</strong> and interview progress</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Note -->
+        <div style="background-color: #fff3cd; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #ffc107;">
+          <p style="color: #856404; margin: 0; font-size: 14px; display: flex; align-items: center;">
+            <span style="margin-right: 8px; font-size: 16px;">🔒</span>
+            <span><strong>Security Tip:</strong> Please create a strong password with at least 10 characters, including uppercase, lowercase, numbers, and special characters for maximum security.</span>
+          </p>
+        </div>
+
+        <!-- Quick Access Info -->
+        <div style="background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #2196f3;">
+          <h4 style="color: #1565c0; margin: 0 0 10px 0; font-size: 16px;">📱 Quick Access</h4>
+          <p style="color: #1565c0; margin: 0; font-size: 14px;">
+            After creating your password, bookmark this link for easy access: <strong>${loginUrl}</strong><br>
+            Sign in using the <strong>"Candidate"</strong> tab on our homepage.
+          </p>
+        </div>
+        
+        <!-- Support -->
+        <div style="text-align: center; margin: 30px 0; padding: 20px; background-color: #f8f9fa; border-radius: 8px;">
+          <p style="color: #6c757d; margin: 0 0 10px 0; font-size: 14px;">Need help getting started?</p>
+          <p style="color: #6c757d; margin: 0; font-size: 14px;">
+            Contact our support team at <a href="mailto:${supportEmail}" style="color: #fd7e14; text-decoration: none; font-weight: 600;">${supportEmail}</a>
+          </p>
+        </div>
+        
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 40px; padding-top: 30px; border-top: 2px solid #e9ecef;">
+          <p style="color: #6c757d; font-size: 16px; margin: 0 0 5px 0; font-weight: 600;">Best regards,</p>
+          <p style="color: #fd7e14; font-size: 18px; margin: 0 0 5px 0; font-weight: 700;">The TaleGlobal Team</p>
+          <p style="color: #6c757d; font-size: 14px; margin: 0; font-style: italic;">🌟 Connecting Talent with Opportunities 🌟</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const mailOptions = {
+    from: `"TaleGlobal Team" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: '🎉 Welcome to TaleGlobal - Create Your Password!',
+    html: welcomeTemplate
+  };
+
+  console.log(`Sending welcome email to: ${email}`);
+  const result = await transporter.sendMail(mailOptions);
+  console.log(`Welcome email sent successfully to: ${email}`);
+  return result;
+};
+
+const retryFailedEmail = async (email, name, password, placementOfficerName, collegeName, maxRetries = 3) => {
+  let attempt = 0;
+  let lastError;
+  
+  while (attempt < maxRetries) {
+    try {
+      await sendPlacementCandidateWelcomeEmail(email, name, password, placementOfficerName, collegeName);
+      return { success: true, attempt: attempt + 1 };
+    } catch (error) {
+      lastError = error;
+      attempt++;
+      console.log(`Email retry ${attempt}/${maxRetries} failed for ${email}:`, error.message);
+      
+      if (attempt < maxRetries) {
+        // Wait before retry (exponential backoff)
+        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+      }
+    }
+  }
+  
+  return { success: false, error: lastError, attempts: attempt };
+};
+
+module.exports = { 
+  sendWelcomeEmail, 
+  sendResetEmail, 
+  sendPasswordCreationEmail, 
+  sendAssessmentNotificationEmail, 
+  sendOTPEmail, 
+  sendPlacementCandidateWelcomeEmail,
+  retryFailedEmail
+};

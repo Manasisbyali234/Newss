@@ -5,6 +5,7 @@ const Candidate = require('../models/Candidate');
 const CandidateProfile = require('../models/CandidateProfile');
 const Employer = require('../models/Employer');
 const Placement = require('../models/Placement');
+const PlacementCandidate = require('../models/PlacementCandidate');
 const Job = require('../models/Job');
 const Application = require('../models/Application');
 const Blog = require('../models/Blog');
@@ -1446,54 +1447,142 @@ exports.approveIndividualFile = async (req, res) => {
       
       let createdCount = 0;
       let skippedCount = 0;
+      let emailsSent = 0;
+      let emailsFailed = 0;
       const errors = [];
+      const createdCandidates = [];
       
       // Process each row from Excel
-      for (const row of jsonData) {
+      for (let index = 0; index < jsonData.length; index++) {
         try {
-          const email = row.Email || row.email || row.EMAIL;
-          const password = row.Password || row.password || row.PASSWORD;
-          const name = row.Name || row.name || row.NAME || row['Full Name'] || row['full name'] || row['FULL NAME'] || row['Student Name'] || row['student name'] || row['STUDENT NAME'] || row['Candidate Name'] || row['candidate name'] || row['CANDIDATE NAME'];
+          const row = jsonData[index];
+          let email = row.Email || row.email || row.EMAIL;
+          let password = row.Password || row.password || row.PASSWORD;
+          let name = row.Name || row.name || row.NAME || row['Full Name'] || row['full name'] || row['FULL NAME'] || row['Student Name'] || row['student name'] || row['STUDENT NAME'] || row['Candidate Name'] || row['candidate name'] || row['CANDIDATE NAME'];
           const phone = row.Phone || row.phone || row.PHONE || row.Mobile || row.mobile || row.MOBILE;
+          const course = row.Course || row.course || row.COURSE || row.Branch || row.branch || row.BRANCH;
+          const collegeName = row['College Name'] || row['college name'] || row['COLLEGE NAME'] || row.College || row.college || row.COLLEGE || placement.collegeName;
           
+          // Auto-generate missing fields with proper validation
+          if (!email || email.trim() === '') {
+            email = `student${index + 1}@${placement.collegeName.toLowerCase().replace(/\s+/g, '')}.edu`;
+          }
+          if (!password || password.trim() === '') {
+            password = `pwd${Math.random().toString(36).substr(2, 8)}`;
+          }
+          if (!name || name.trim() === '') {
+            name = `Student ${index + 1}`;
+          }
+          
+          // Validate required fields
           if (!email || !password || !name) {
-            errors.push(`Row missing required fields`);
+            errors.push(`Row ${index + 1}: Missing required fields (email, password, or name)`);
             continue;
           }
           
           // Check if candidate already exists
-          const existingCandidate = await Candidate.findOne({ email });
+          const existingCandidate = await Candidate.findOne({ email: email.trim().toLowerCase() });
           if (existingCandidate) {
             skippedCount++;
             continue;
           }
           
-          // Create candidate with placement credits
+          // Use file-specific credits or individual row credits
+          const rowCredits = parseInt(row['Credits Assigned'] || row['credits assigned'] || row['CREDITS ASSIGNED'] || row.Credits || row.credits || row.CREDITS || row.Credit || row.credit || 0);
+          const finalCredits = rowCredits || file.credits || placement.credits || 0;
+          
+          // Create candidate with placement credentials
           const candidate = await Candidate.create({
-            name,
-            email,
-            password,
-            phone: phone || '',
-            credits: placement.credits || 0,
+            name: name.trim(),
+            email: email.trim().toLowerCase(),
+            password: password.trim(),
+            phone: phone ? phone.toString().trim() : '',
+            course: course ? course.trim() : '',
+            credits: finalCredits,
             registrationMethod: 'placement',
             placementId: placement._id,
+            fileId: file._id,
             isVerified: true,
             status: 'active'
           });
           
           // Create candidate profile
-          await CandidateProfile.create({ candidateId: candidate._id });
+          await CandidateProfile.create({ 
+            candidateId: candidate._id,
+            collegeName: collegeName || placement.collegeName,
+            education: [{
+              degreeName: course ? course.trim() : '',
+              collegeName: collegeName || placement.collegeName,
+              scoreType: 'percentage',
+              scoreValue: '0'
+            }]
+          });
+          
+          // Create placement candidate record with enhanced data
+          const placementCandidate = await PlacementCandidate.create({
+            candidateId: candidate._id,
+            studentName: name.trim(),
+            studentEmail: email.trim().toLowerCase(),
+            studentPhone: phone ? phone.toString().trim() : '',
+            course: course ? course.trim() : '',
+            collegeName: collegeName || placement.collegeName,
+            placementId: placement._id,
+            placementOfficerName: placement.name,
+            placementOfficerEmail: placement.email,
+            placementOfficerPhone: placement.phone,
+            fileId: file._id,
+            fileName: file.customName || file.fileName,
+            status: 'approved',
+            approvedAt: new Date(),
+            approvedBy: req.user.id,
+            creditsAssigned: finalCredits,
+            originalRowData: row
+          });
+          
+          // Send welcome email with create password link
+          try {
+            const { sendPlacementCandidateWelcomeEmail } = require('../utils/emailService');
+            await sendPlacementCandidateWelcomeEmail(
+              email.trim().toLowerCase(),
+              name.trim(),
+              placement.name,
+              placement.collegeName
+            );
+            
+            // Update placement candidate record to mark email as sent
+            await PlacementCandidate.findByIdAndUpdate(
+              placementCandidate._id,
+              { 
+                welcomeEmailSent: true,
+                welcomeEmailSentAt: new Date()
+              }
+            );
+            
+            emailsSent++;
+          } catch (emailError) {
+            console.error(`Failed to send welcome email to ${email}:`, emailError);
+            emailsFailed++;
+            // Continue processing even if email fails
+          }
+          
+          createdCandidates.push({
+            name: candidate.name,
+            email: candidate.email,
+            password: password.trim(),
+            credits: finalCredits,
+            course: course || 'Not Specified',
+            collegeName: collegeName || placement.collegeName
+          });
           
           createdCount++;
         } catch (rowError) {
           console.error('Row processing error:', rowError);
-          errors.push(`Error processing row: ${rowError.message}`);
+          errors.push(`Row ${index + 1}: ${rowError.message}`);
         }
       }
       
       // Update file status to 'processed' after successful approval and processing
-      console.log(`Updating file ${fileId} status to processed`);
-      const updatedPlacement = await Placement.findOneAndUpdate(
+      await Placement.findOneAndUpdate(
         { _id: placementId, 'fileHistory._id': fileId },
         { 
           $set: { 
@@ -1501,21 +1590,15 @@ exports.approveIndividualFile = async (req, res) => {
             'fileHistory.$.processedAt': new Date(),
             'fileHistory.$.candidatesCreated': createdCount
           }
-        },
-        { new: true }
+        }
       );
-      console.log(`File status updated to processed for placement ${placementId}`);
-      
-      // Verify the update
-      const verifyPlacement = await Placement.findById(placementId);
-      const updatedFile = verifyPlacement.fileHistory.find(f => f._id.toString() === fileId);
-      console.log(`Verified file status: ${updatedFile?.status}`);
 
-      // Create notification
+      // Create comprehensive notification
       try {
-        const notification = await createNotification({
-          title: 'File Approved & Processed - Candidates Can Login',
-          message: `File "${file.customName || file.fileName}" has been approved and processed. ${createdCount} candidates created and can now login to candidate dashboard. ${skippedCount} candidates were skipped (already exist).`,
+        const displayName = file.customName || file.fileName;
+        await createNotification({
+          title: 'Students Approved - Welcome Emails Sent',
+          message: `File "${displayName}" approved! ${createdCount} students can now create their passwords. ${emailsSent} welcome emails sent successfully.`,
           type: 'file_processed',
           role: 'admin',
           relatedId: placementId,
@@ -1525,13 +1608,22 @@ exports.approveIndividualFile = async (req, res) => {
         console.error('Notification creation failed:', notifError);
       }
       
+      const displayName = file.customName || file.fileName;
       res.json({
         success: true,
-        message: `File approved and processed successfully. ${createdCount} candidates created and can now login to candidate dashboard. ${skippedCount} candidates were skipped.`,
-        stats: { created: createdCount, skipped: skippedCount, errors: errors.length },
+        message: `File "${displayName}" approved! ${createdCount} students created and ${emailsSent} welcome emails sent. All students can now create their passwords and access their accounts.`,
+        stats: { 
+          created: createdCount, 
+          skipped: skippedCount, 
+          errors: errors.length,
+          emailsSent: emailsSent,
+          emailsFailed: emailsFailed
+        },
+        createdCandidates: createdCandidates.slice(0, 10),
+        errors: errors.slice(0, 10),
         loginInstructions: {
           url: 'http://localhost:3000/',
-          message: 'Candidates can now login using their email and password from the Excel file (Sign In → Candidate tab)'
+          message: 'Students have received welcome emails with create password links. They can create their passwords and then login using Sign In → Candidate tab'
         }
       });
       
@@ -1846,6 +1938,342 @@ exports.getStoredExcelData = async (req, res) => {
   }
 };
 
+
+// Get all placement candidates with comprehensive details
+exports.getAllPlacementCandidates = async (req, res) => {
+  try {
+    const { page = 1, limit = 50, status, placementId, search } = req.query;
+    
+    let query = {};
+    if (status) query.status = status;
+    if (placementId) query.placementId = placementId;
+    
+    // Add search functionality
+    if (search) {
+      query.$or = [
+        { studentName: { $regex: search, $options: 'i' } },
+        { studentEmail: { $regex: search, $options: 'i' } },
+        { placementOfficerName: { $regex: search, $options: 'i' } },
+        { collegeName: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    const placementCandidates = await PlacementCandidate.find(query)
+      .populate('candidateId', 'name email phone credits status createdAt')
+      .populate('placementId', 'name email collegeName phone')
+      .populate('approvedBy', 'name email')
+      .sort({ createdAt: -1 })
+      .limit(limit * 1)
+      .skip((page - 1) * limit);
+
+    const totalCandidates = await PlacementCandidate.countDocuments(query);
+    
+    // Enhance data with additional information
+    const enhancedCandidates = placementCandidates.map(pc => ({
+      id: pc._id,
+      studentName: pc.studentName,
+      studentEmail: pc.studentEmail,
+      studentPhone: pc.studentPhone,
+      course: pc.course,
+      collegeName: pc.collegeName,
+      creditsAssigned: pc.creditsAssigned,
+      
+      // Placement Officer Details
+      placementOfficer: {
+        id: pc.placementId?._id,
+        name: pc.placementOfficerName,
+        email: pc.placementOfficerEmail,
+        phone: pc.placementOfficerPhone,
+        collegeName: pc.placementId?.collegeName
+      },
+      
+      // File Information
+      fileInfo: {
+        id: pc.fileId,
+        fileName: pc.fileName
+      },
+      
+      // Status and Approval
+      status: pc.status,
+      approvedAt: pc.approvedAt,
+      approvedBy: pc.approvedBy ? {
+        name: pc.approvedBy.name,
+        email: pc.approvedBy.email
+      } : null,
+      
+      // Email Status
+      welcomeEmailSent: pc.welcomeEmailSent,
+      welcomeEmailSentAt: pc.welcomeEmailSentAt,
+      
+      // Candidate Account Status
+      candidateAccount: pc.candidateId ? {
+        id: pc.candidateId._id,
+        name: pc.candidateId.name,
+        email: pc.candidateId.email,
+        phone: pc.candidateId.phone,
+        credits: pc.candidateId.credits,
+        status: pc.candidateId.status,
+        createdAt: pc.candidateId.createdAt
+      } : null,
+      
+      createdAt: pc.createdAt,
+      updatedAt: pc.updatedAt
+    }));
+
+    res.json({ 
+      success: true, 
+      data: enhancedCandidates,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(totalCandidates / parseInt(limit)),
+        totalCandidates,
+        limit: parseInt(limit)
+      }
+    });
+  } catch (error) {
+    console.error('Error getting placement candidates:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Resend welcome email to specific placement candidate
+exports.resendWelcomeEmail = async (req, res) => {
+  try {
+    const { placementCandidateId } = req.params;
+    
+    const placementCandidate = await PlacementCandidate.findById(placementCandidateId)
+      .populate('candidateId', 'password')
+      .populate('placementId', 'name collegeName');
+    
+    if (!placementCandidate) {
+      return res.status(404).json({ success: false, message: 'Placement candidate not found' });
+    }
+
+    if (!placementCandidate.candidateId) {
+      return res.status(400).json({ success: false, message: 'Candidate account not found' });
+    }
+
+    try {
+      const { sendPlacementCandidateWelcomeEmail } = require('../utils/emailService');
+      await sendPlacementCandidateWelcomeEmail(
+        placementCandidate.studentEmail,
+        placementCandidate.studentName,
+        placementCandidate.candidateId.password,
+        placementCandidate.placementOfficerName,
+        placementCandidate.collegeName
+      );
+      
+      // Update email sent status
+      await PlacementCandidate.findByIdAndUpdate(
+        placementCandidateId,
+        { 
+          welcomeEmailSent: true,
+          welcomeEmailSentAt: new Date()
+        }
+      );
+      
+      res.json({ 
+        success: true, 
+        message: `Welcome email resent successfully to ${placementCandidate.studentEmail}` 
+      });
+    } catch (emailError) {
+      console.error('Failed to resend welcome email:', emailError);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Failed to send welcome email. Please try again.' 
+      });
+    }
+  } catch (error) {
+    console.error('Error resending welcome email:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Retry failed email sends for placement candidates
+exports.retryFailedEmails = async (req, res) => {
+  try {
+    // Find placement candidates where email failed or wasn't sent
+    const failedEmailCandidates = await PlacementCandidate.find({
+      status: 'approved',
+      $or: [
+        { welcomeEmailSent: { $ne: true } },
+        { emailRetryCount: { $gt: 0 } }
+      ]
+    })
+    .populate('candidateId', 'password')
+    .populate('placementId', 'name collegeName')
+    .limit(50); // Process in batches
+    
+    let emailsSent = 0;
+    let emailsFailed = 0;
+    const results = [];
+
+    for (const placementCandidate of failedEmailCandidates) {
+      try {
+        if (!placementCandidate.candidateId) {
+          emailsFailed++;
+          results.push({
+            email: placementCandidate.studentEmail,
+            status: 'failed',
+            reason: 'Candidate account not found'
+          });
+          continue;
+        }
+
+        const { retryFailedEmail } = require('../utils/emailService');
+        const retryResult = await retryFailedEmail(
+          placementCandidate.studentEmail,
+          placementCandidate.studentName,
+          placementCandidate.candidateId.password,
+          placementCandidate.placementOfficerName,
+          placementCandidate.collegeName
+        );
+        
+        if (retryResult.success) {
+          // Update placement candidate record
+          await PlacementCandidate.findByIdAndUpdate(
+            placementCandidate._id,
+            { 
+              welcomeEmailSent: true,
+              welcomeEmailSentAt: new Date(),
+              emailRetryCount: (placementCandidate.emailRetryCount || 0) + 1,
+              lastEmailAttempt: new Date()
+            }
+          );
+          
+          emailsSent++;
+          results.push({
+            email: placementCandidate.studentEmail,
+            status: 'sent',
+            attempts: retryResult.attempt,
+            sentAt: new Date()
+          });
+        } else {
+          // Update retry count even if failed
+          await PlacementCandidate.findByIdAndUpdate(
+            placementCandidate._id,
+            { 
+              emailRetryCount: (placementCandidate.emailRetryCount || 0) + retryResult.attempts,
+              lastEmailAttempt: new Date()
+            }
+          );
+          
+          emailsFailed++;
+          results.push({
+            email: placementCandidate.studentEmail,
+            status: 'failed',
+            attempts: retryResult.attempts,
+            reason: retryResult.error?.message || 'Unknown error'
+          });
+        }
+      } catch (emailError) {
+        console.error(`Failed to retry email for ${placementCandidate.studentEmail}:`, emailError);
+        emailsFailed++;
+        results.push({
+          email: placementCandidate.studentEmail,
+          status: 'failed',
+          reason: emailError.message
+        });
+      }
+    }
+    
+    res.json({ 
+      success: true, 
+      message: `Email retry completed. ${emailsSent} emails sent successfully, ${emailsFailed} failed.`,
+      stats: {
+        total: failedEmailCandidates.length,
+        sent: emailsSent,
+        failed: emailsFailed
+      },
+      results: results
+    });
+  } catch (error) {
+    console.error('Error retrying failed emails:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Bulk resend welcome emails to multiple placement candidates
+exports.bulkResendWelcomeEmails = async (req, res) => {
+  try {
+    const { placementCandidateIds } = req.body;
+    
+    if (!Array.isArray(placementCandidateIds) || placementCandidateIds.length === 0) {
+      return res.status(400).json({ success: false, message: 'Invalid candidate IDs provided' });
+    }
+
+    const placementCandidates = await PlacementCandidate.find({
+      _id: { $in: placementCandidateIds }
+    })
+    .populate('candidateId', 'password')
+    .populate('placementId', 'name collegeName');
+    
+    let emailsSent = 0;
+    let emailsFailed = 0;
+    const results = [];
+
+    for (const placementCandidate of placementCandidates) {
+      try {
+        if (!placementCandidate.candidateId) {
+          emailsFailed++;
+          results.push({
+            email: placementCandidate.studentEmail,
+            status: 'failed',
+            reason: 'Candidate account not found'
+          });
+          continue;
+        }
+
+        const { sendPlacementCandidateWelcomeEmail } = require('../utils/emailService');
+        await sendPlacementCandidateWelcomeEmail(
+          placementCandidate.studentEmail,
+          placementCandidate.studentName,
+          placementCandidate.candidateId.password,
+          placementCandidate.placementOfficerName,
+          placementCandidate.collegeName
+        );
+        
+        // Update email sent status
+        await PlacementCandidate.findByIdAndUpdate(
+          placementCandidate._id,
+          { 
+            welcomeEmailSent: true,
+            welcomeEmailSentAt: new Date()
+          }
+        );
+        
+        emailsSent++;
+        results.push({
+          email: placementCandidate.studentEmail,
+          status: 'sent',
+          sentAt: new Date()
+        });
+      } catch (emailError) {
+        console.error(`Failed to send welcome email to ${placementCandidate.studentEmail}:`, emailError);
+        emailsFailed++;
+        results.push({
+          email: placementCandidate.studentEmail,
+          status: 'failed',
+          reason: emailError.message
+        });
+      }
+    }
+    
+    res.json({ 
+      success: true, 
+      message: `Bulk email operation completed. ${emailsSent} emails sent, ${emailsFailed} failed.`,
+      stats: {
+        total: placementCandidates.length,
+        sent: emailsSent,
+        failed: emailsFailed
+      },
+      results: results
+    });
+  } catch (error) {
+    console.error('Error bulk resending welcome emails:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
 
 // Sync credits between Excel data and candidate dashboard
 exports.syncExcelCreditsWithCandidates = async (req, res) => {
@@ -2212,6 +2640,286 @@ exports.downloadSupportAttachment = async (req, res) => {
   }
 };
 
+
+// Get placement candidate statistics
+exports.getPlacementCandidateStats = async (req, res) => {
+  try {
+    const totalCandidates = await PlacementCandidate.countDocuments();
+    const approvedCandidates = await PlacementCandidate.countDocuments({ status: 'approved' });
+    const pendingCandidates = await PlacementCandidate.countDocuments({ status: 'pending' });
+    const rejectedCandidates = await PlacementCandidate.countDocuments({ status: 'rejected' });
+    
+    const emailsSent = await PlacementCandidate.countDocuments({ welcomeEmailSent: true });
+    const emailsPending = await PlacementCandidate.countDocuments({ 
+      status: 'approved',
+      welcomeEmailSent: { $ne: true }
+    });
+    
+    // Get placement officers with candidate counts
+    const placementOfficerStats = await PlacementCandidate.aggregate([
+      {
+        $group: {
+          _id: '$placementId',
+          placementOfficerName: { $first: '$placementOfficerName' },
+          collegeName: { $first: '$collegeName' },
+          totalCandidates: { $sum: 1 },
+          approvedCandidates: {
+            $sum: { $cond: [{ $eq: ['$status', 'approved'] }, 1, 0] }
+          },
+          emailsSent: {
+            $sum: { $cond: ['$welcomeEmailSent', 1, 0] }
+          }
+        }
+      },
+      { $sort: { totalCandidates: -1 } },
+      { $limit: 10 }
+    ]);
+    
+    // Get recent activity (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    const recentActivity = await PlacementCandidate.countDocuments({
+      createdAt: { $gte: thirtyDaysAgo }
+    });
+    
+    res.json({
+      success: true,
+      stats: {
+        totalCandidates,
+        approvedCandidates,
+        pendingCandidates,
+        rejectedCandidates,
+        emailsSent,
+        emailsPending,
+        recentActivity
+      },
+      placementOfficerStats
+    });
+  } catch (error) {
+    console.error('Error getting placement candidate stats:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Bulk approve all students in a placement
+exports.approveAllStudentsInPlacement = async (req, res) => {
+  try {
+    const { id: placementId } = req.params;
+    
+    const placement = await Placement.findById(placementId);
+    if (!placement) {
+      return res.status(404).json({ success: false, message: 'Placement officer not found' });
+    }
+
+    let totalProcessed = 0;
+    let totalEmailsSent = 0;
+    let totalEmailsFailed = 0;
+    let totalErrors = 0;
+    const processedFiles = [];
+    
+    // Process all pending files in fileHistory
+    if (placement.fileHistory && placement.fileHistory.length > 0) {
+      for (let file of placement.fileHistory) {
+        if (file.status === 'pending' && file.fileData) {
+          try {
+            const { base64ToBuffer } = require('../utils/base64Helper');
+            const result = base64ToBuffer(file.fileData);
+            const buffer = result.buffer;
+
+            let workbook;
+            if (file.fileType && file.fileType.includes('csv')) {
+              const csvData = buffer.toString('utf8');
+              workbook = XLSX.read(csvData, { type: 'string' });
+            } else {
+              workbook = XLSX.read(buffer, { type: 'buffer' });
+            }
+            
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet);
+            
+            let fileProcessed = 0;
+            let fileEmailsSent = 0;
+            let fileEmailsFailed = 0;
+            
+            // Process each row from Excel
+            for (let index = 0; index < jsonData.length; index++) {
+              try {
+                const row = jsonData[index];
+                let email = row.Email || row.email || row.EMAIL;
+                let password = row.Password || row.password || row.PASSWORD;
+                let name = row.Name || row.name || row.NAME || row['Full Name'] || row['Student Name'] || row['Candidate Name'];
+                const phone = row.Phone || row.phone || row.PHONE || row.Mobile || row.mobile;
+                const course = row.Course || row.course || row.Branch || row.branch;
+                const collegeName = row['College Name'] || row.College || placement.collegeName;
+                
+                // Auto-generate missing fields
+                if (!email || email.trim() === '') {
+                  email = `student${index + 1}@${placement.collegeName.toLowerCase().replace(/\s+/g, '')}.edu`;
+                }
+                if (!password || password.trim() === '') {
+                  password = `pwd${Math.random().toString(36).substr(2, 8)}`;
+                }
+                if (!name || name.trim() === '') {
+                  name = `Student ${index + 1}`;
+                }
+                
+                // Check if candidate already exists
+                const existingCandidate = await Candidate.findOne({ email: email.trim().toLowerCase() });
+                if (existingCandidate) {
+                  continue;
+                }
+                
+                const rowCredits = parseInt(row['Credits Assigned'] || row.Credits || file.credits || placement.credits || 0);
+                
+                // Create candidate
+                const candidate = await Candidate.create({
+                  name: name.trim(),
+                  email: email.trim().toLowerCase(),
+                  password: password.trim(),
+                  phone: phone ? phone.toString().trim() : '',
+                  course: course ? course.trim() : '',
+                  credits: rowCredits,
+                  registrationMethod: 'placement',
+                  placementId: placement._id,
+                  fileId: file._id,
+                  isVerified: true,
+                  status: 'active'
+                });
+                
+                // Create candidate profile
+                await CandidateProfile.create({ 
+                  candidateId: candidate._id,
+                  collegeName: collegeName || placement.collegeName,
+                  education: [{
+                    degreeName: course ? course.trim() : '',
+                    collegeName: collegeName || placement.collegeName,
+                    scoreType: 'percentage',
+                    scoreValue: '0'
+                  }]
+                });
+                
+                // Create placement candidate record
+                const placementCandidate = await PlacementCandidate.create({
+                  candidateId: candidate._id,
+                  studentName: name.trim(),
+                  studentEmail: email.trim().toLowerCase(),
+                  studentPhone: phone ? phone.toString().trim() : '',
+                  course: course ? course.trim() : '',
+                  collegeName: collegeName || placement.collegeName,
+                  placementId: placement._id,
+                  placementOfficerName: placement.name,
+                  placementOfficerEmail: placement.email,
+                  placementOfficerPhone: placement.phone,
+                  fileId: file._id,
+                  fileName: file.customName || file.fileName,
+                  status: 'approved',
+                  approvedAt: new Date(),
+                  approvedBy: req.user.id,
+                  creditsAssigned: rowCredits,
+                  originalRowData: row
+                });
+                
+                // Send welcome email
+                try {
+                  const { sendPlacementCandidateWelcomeEmail } = require('../utils/emailService');
+                  await sendPlacementCandidateWelcomeEmail(
+                    email.trim().toLowerCase(),
+                    name.trim(),
+                    password.trim(),
+                    placement.name,
+                    placement.collegeName
+                  );
+                  
+                  await PlacementCandidate.findByIdAndUpdate(
+                    placementCandidate._id,
+                    { 
+                      welcomeEmailSent: true,
+                      welcomeEmailSentAt: new Date()
+                    }
+                  );
+                  
+                  fileEmailsSent++;
+                } catch (emailError) {
+                  console.error(`Failed to send welcome email to ${email}:`, emailError);
+                  fileEmailsFailed++;
+                }
+                
+                fileProcessed++;
+              } catch (rowError) {
+                console.error('Row processing error:', rowError);
+                totalErrors++;
+              }
+            }
+            
+            // Update file status
+            await Placement.findOneAndUpdate(
+              { _id: placementId, 'fileHistory._id': file._id },
+              { 
+                $set: { 
+                  'fileHistory.$.status': 'processed',
+                  'fileHistory.$.processedAt': new Date(),
+                  'fileHistory.$.candidatesCreated': fileProcessed
+                }
+              }
+            );
+            
+            processedFiles.push({
+              fileName: file.customName || file.fileName,
+              studentsProcessed: fileProcessed,
+              emailsSent: fileEmailsSent,
+              emailsFailed: fileEmailsFailed
+            });
+            
+            totalProcessed += fileProcessed;
+            totalEmailsSent += fileEmailsSent;
+            totalEmailsFailed += fileEmailsFailed;
+            
+          } catch (fileError) {
+            console.error(`Error processing file ${file.fileName}:`, fileError);
+            totalErrors++;
+          }
+        }
+      }
+    }
+    
+    // Create comprehensive notification
+    try {
+      await createNotification({
+        title: 'Bulk Student Approval Completed',
+        message: `All pending students in ${placement.collegeName} have been processed. ${totalProcessed} students approved, ${totalEmailsSent} welcome emails sent successfully.`,
+        type: 'bulk_approval_completed',
+        role: 'admin',
+        relatedId: placementId,
+        createdBy: req.user.id
+      });
+    } catch (notifError) {
+      console.error('Notification creation failed:', notifError);
+    }
+    
+    res.json({
+      success: true,
+      message: `Bulk approval completed! ${totalProcessed} students approved and ${totalEmailsSent} welcome emails sent.`,
+      stats: {
+        totalStudentsProcessed: totalProcessed,
+        totalEmailsSent: totalEmailsSent,
+        totalEmailsFailed: totalEmailsFailed,
+        totalErrors: totalErrors,
+        filesProcessed: processedFiles.length
+      },
+      processedFiles: processedFiles,
+      loginInstructions: {
+        url: 'http://localhost:3000/',
+        message: 'All approved students have received welcome emails with login credentials'
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error in bulk approval:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
 
 // OTP-based Password Reset for Admin/SubAdmin
 exports.sendOTP = async (req, res) => {

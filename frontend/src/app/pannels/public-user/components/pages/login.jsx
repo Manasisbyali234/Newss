@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { loadScript, publicUrlFor } from "../../../../../globals/constants";
 import { handleFacebookLogin, handleGoogleLogin } from "../../../../../utils/socialAuth";
+import CreatePasswordModal from "../../../../common/CreatePasswordModal";
 
 
 function LoginPage() {
@@ -122,6 +123,9 @@ function LoginPage() {
 
     return (
         <>
+            <CreatePasswordModal />
+            <CreatePasswordModal modalId="createPasswordModalEmployer" userType="employer" />
+            <CreatePasswordModal modalId="createPasswordModalPlacement" userType="placement" />
             <div className="min-vh-100 d-flex align-items-center" style={{background: 'transparent'}}>
                 <div className="container">
                     <div className="row justify-content-center">
@@ -195,7 +199,18 @@ function LoginPage() {
                                                         <input type="checkbox" className="form-check-input" id="rememberCandidate" />
                                                         <label className="form-check-label text-muted" htmlFor="rememberCandidate" style={{fontSize: '14px'}}>Remember me</label>
                                                     </div>
-                                                    <NavLink to={publicUser.pages.FORGOT} className="site-text-primary" style={{fontSize: '14px', textDecoration: 'none'}}>Forgot Password</NavLink>
+                                                    <div className="d-flex flex-column align-items-end">
+                                                        <NavLink to={publicUser.pages.FORGOT} className="site-text-primary" style={{fontSize: '14px', textDecoration: 'none', marginBottom: '4px'}}>Forgot Password</NavLink>
+                                                        <button 
+                                                            type="button" 
+                                                            className="btn btn-link p-0 site-text-primary" 
+                                                            style={{fontSize: '14px', textDecoration: 'none', border: 'none', background: 'none'}}
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#createPasswordModal"
+                                                        >
+                                                            Create Password
+                                                        </button>
+                                                    </div>
                                                 </div>
                                                 <button type="submit" className="w-100 mb-3" disabled={loading} style={{padding: '12px', borderRadius: '8px', fontWeight: '500', backgroundColor: '#fd7e14', color: 'white', border: 'none'}}>
                                                     {loading ? 'Logging in...' : 'Log in'}
@@ -238,7 +253,18 @@ function LoginPage() {
                                                         <input type="checkbox" className="form-check-input" id="rememberEmployer" />
                                                         <label className="form-check-label text-muted" htmlFor="rememberEmployer" style={{fontSize: '14px'}}>Remember me</label>
                                                     </div>
-                                                    <NavLink to={publicUser.pages.FORGOT} className="site-text-primary" style={{fontSize: '14px', textDecoration: 'none'}}>Forgot Password</NavLink>
+                                                    <div className="d-flex flex-column align-items-end">
+                                                        <NavLink to={publicUser.pages.FORGOT} className="site-text-primary" style={{fontSize: '14px', textDecoration: 'none', marginBottom: '4px'}}>Forgot Password</NavLink>
+                                                        <button 
+                                                            type="button" 
+                                                            className="btn btn-link p-0 site-text-primary" 
+                                                            style={{fontSize: '14px', textDecoration: 'none', border: 'none', background: 'none'}}
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#createPasswordModalEmployer"
+                                                        >
+                                                            Create Password
+                                                        </button>
+                                                    </div>
                                                 </div>
                                                 <button type="submit" className="w-100 mb-3" disabled={loading} style={{padding: '12px', borderRadius: '8px', fontWeight: '500', backgroundColor: '#fd7e14', color: 'white', border: 'none'}}>
                                                     {loading ? 'Logging in...' : 'Log in'}
@@ -281,7 +307,18 @@ function LoginPage() {
                                                         <input type="checkbox" className="form-check-input" id="rememberPlacement" />
                                                         <label className="form-check-label text-muted" htmlFor="rememberPlacement" style={{fontSize: '14px'}}>Remember me</label>
                                                     </div>
-                                                    <NavLink to={publicUser.pages.FORGOT} className="site-text-primary" style={{fontSize: '14px', textDecoration: 'none'}}>Forgot Password</NavLink>
+                                                    <div className="d-flex flex-column align-items-end">
+                                                        <NavLink to={publicUser.pages.FORGOT} className="site-text-primary" style={{fontSize: '14px', textDecoration: 'none', marginBottom: '4px'}}>Forgot Password</NavLink>
+                                                        <button 
+                                                            type="button" 
+                                                            className="btn btn-link p-0 site-text-primary" 
+                                                            style={{fontSize: '14px', textDecoration: 'none', border: 'none', background: 'none'}}
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#createPasswordModalPlacement"
+                                                        >
+                                                            Create Password
+                                                        </button>
+                                                    </div>
                                                 </div>
                                                 <button type="submit" className="w-100 mb-3" disabled={loading} style={{padding: '12px', borderRadius: '8px', fontWeight: '500', backgroundColor: '#fd7e14', color: 'white', border: 'none'}}>
                                                     {loading ? 'Logging in...' : 'Log in'}

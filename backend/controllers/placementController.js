@@ -3,8 +3,9 @@ const mongoose = require('mongoose');
 const Placement = require('../models/Placement');
 const Candidate = require('../models/Candidate');
 const CandidateProfile = require('../models/CandidateProfile');
+const PlacementCandidate = require('../models/PlacementCandidate');
 const { createNotification } = require('./notificationController');
-const { sendWelcomeEmail } = require('../utils/emailService');
+const { sendWelcomeEmail, sendPlacementCandidateWelcomeEmail } = require('../utils/emailService');
 const XLSX = require('xlsx');
 const { base64ToBuffer } = require('../utils/base64Helper');
 const { emitCreditUpdate, emitBulkCreditUpdate } = require('../utils/websocket');
@@ -876,6 +877,49 @@ exports.processFileApproval = async (req, res) => {
             scoreValue: '0'
           }]
         });
+        
+        // Create placement candidate record
+        await PlacementCandidate.create({
+          candidateId: candidate._id,
+          studentName: name.trim(),
+          studentEmail: email.trim().toLowerCase(),
+          studentPhone: phone ? phone.toString().trim() : '',
+          course: course ? course.trim() : '',
+          collegeName: collegeName || placement.collegeName,
+          placementId: placement._id,
+          placementOfficerName: placement.name,
+          placementOfficerEmail: placement.email,
+          placementOfficerPhone: placement.phone,
+          fileId: file._id,
+          fileName: file.customName || file.fileName,
+          status: 'approved',
+          approvedAt: new Date(),
+          creditsAssigned: finalCredits,
+          originalRowData: row
+        });
+        
+        // Send welcome email with login credentials
+        try {
+          await sendPlacementCandidateWelcomeEmail(
+            email.trim().toLowerCase(),
+            name.trim(),
+            password.trim(),
+            placement.name,
+            placement.collegeName
+          );
+          
+          // Update placement candidate record to mark email as sent
+          await PlacementCandidate.findOneAndUpdate(
+            { candidateId: candidate._id },
+            { 
+              welcomeEmailSent: true,
+              welcomeEmailSentAt: new Date()
+            }
+          );
+        } catch (emailError) {
+          console.error(`Failed to send welcome email to ${email}:`, emailError);
+          // Continue processing even if email fails
+        }
         
         createdCandidates.push({
           name: candidate.name,

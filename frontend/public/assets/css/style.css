@@ -6307,6 +6307,9 @@ button.scroltop span {
   background-color: #fcfcfc;
   padding: 30px;
   border-radius: 10px;
+  position: sticky;
+  top: 20px;
+  z-index: 100;
 }
 @media (max-width: 991px) {
   .side-bar {

@@ -1,26 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { pubRoute, publicUser } from '../../../globals/route-names';
 import { validatePhoneNumber, handlePhoneInputChange, validatePhoneOnBlur } from '../../../utils/phoneValidation';
+import CountryCodeSelector from '../../../components/CountryCodeSelector';
 
 function SignUpPopup() {
     const [candidateData, setCandidateData] = useState({
         username: '',
         email: '',
-        mobile: ''
+        mobile: '',
+        countryCode: '+91'
     });
     
     const [employerData, setEmployerData] = useState({
         name: '',
         email: '',
         mobile: '',
-        employerCategory: ''
+        employerCategory: '',
+        countryCode: '+91'
     });
     
     const [placementData, setPlacementData] = useState({
         name: '',
         email: '',
         phone: '',
-        collegeName: ''
+        collegeName: '',
+        countryCode: '+91'
     });
     
     const [loading, setLoading] = useState(false);
@@ -29,9 +33,9 @@ function SignUpPopup() {
     const [fieldErrors, setFieldErrors] = useState({});
 
     useEffect(() => {
-        setCandidateData({ username: '', email: '', mobile: '' });
-        setEmployerData({ name: '', email: '', mobile: '', employerCategory: '' });
-        setPlacementData({ name: '', email: '', phone: '', collegeName: '' });
+        setCandidateData({ username: '', email: '', mobile: '', countryCode: '+91' });
+        setEmployerData({ name: '', email: '', mobile: '', employerCategory: '', countryCode: '+91' });
+        setPlacementData({ name: '', email: '', phone: '', collegeName: '', countryCode: '+91' });
         setFieldErrors({});
         setError('');
         setSuccess('');
@@ -209,7 +213,7 @@ function SignUpPopup() {
                 body: JSON.stringify({
                     name: candidateData.username,
                     email: candidateData.email,
-                    phone: candidateData.mobile,
+                    phone: candidateData.countryCode + candidateData.mobile,
                     sendWelcomeEmail: true
                 })
             });
@@ -217,7 +221,7 @@ function SignUpPopup() {
             const data = await response.json();
 
             if (response.ok && data.success) {
-                setCandidateData({ username: '', email: '', mobile: '' });
+                setCandidateData({ username: '', email: '', mobile: '', countryCode: '+91' });
                 setFieldErrors({});
                 setError('');
                 setSuccess('Registration successful! Please check your email to create your password.');
@@ -256,7 +260,7 @@ function SignUpPopup() {
                 body: JSON.stringify({
                     name: employerData.name,
                     email: employerData.email,
-                    phone: employerData.mobile,
+                    phone: employerData.countryCode + employerData.mobile,
                     companyName: employerData.name,
                     employerCategory: employerData.employerCategory,
                     employerType: employerData.employerCategory === 'consultancy' ? 'consultant' : 'company',
@@ -267,7 +271,7 @@ function SignUpPopup() {
             const data = await response.json();
 
             if (response.ok && data.success) {
-                setEmployerData({ name: '', email: '', mobile: '', employerCategory: '' });
+                setEmployerData({ name: '', email: '', mobile: '', employerCategory: '', countryCode: '+91' });
                 setFieldErrors({});
                 setError('');
                 setSuccess('Registration successful! Please check your email to create your password.');
@@ -306,7 +310,7 @@ function SignUpPopup() {
                 body: JSON.stringify({
                     name: placementData.name,
                     email: placementData.email,
-                    phone: placementData.phone,
+                    phone: placementData.countryCode + placementData.phone,
                     collegeName: placementData.collegeName,
                     sendWelcomeEmail: true
                 })
@@ -315,7 +319,7 @@ function SignUpPopup() {
             const data = await response.json();
 
             if (response.ok && data.success) {
-                setPlacementData({ name: '', email: '', phone: '', collegeName: '' });
+                setPlacementData({ name: '', email: '', phone: '', collegeName: '', countryCode: '+91' });
                 setFieldErrors({});
                 setError('');
                 setSuccess('Registration successful! Please check your email to create your password.');
@@ -453,15 +457,24 @@ function SignUpPopup() {
 
 												<div className="col-lg-12">
 													<div className="form-group mb-3">
-														<input
-															name="mobile"
-															type="tel"
-															className={`form-control ${fieldErrors.mobile ? 'is-invalid' : ''}`}
-															placeholder="Mobile No.*"
-															value={candidateData.mobile}
-															onChange={handleCandidateChange}
-															required
-														/>
+														<div style={{ position: 'relative' }}>
+															<div style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', zIndex: 10 }}>
+																<CountryCodeSelector
+																	value={candidateData.countryCode}
+																	onChange={(code) => setCandidateData(prev => ({ ...prev, countryCode: code }))}
+																/>
+															</div>
+															<input
+																name="mobile"
+																type="tel"
+																className={`form-control ${fieldErrors.mobile ? 'is-invalid' : ''}`}
+																style={{ paddingLeft: '140px' }}
+																placeholder="Mobile No.*"
+																value={candidateData.mobile}
+																onChange={handleCandidateChange}
+																required
+															/>
+														</div>
 														{fieldErrors.mobile && (
 															<div className="invalid-feedback d-block">{fieldErrors.mobile}</div>
 														)}
@@ -569,15 +582,24 @@ function SignUpPopup() {
 
 												<div className="col-lg-12">
 													<div className="form-group mb-3">
-														<input
-															name="mobile"
-															type="tel"
-															className={`form-control ${fieldErrors.mobile ? 'is-invalid' : ''}`}
-															placeholder="Mobile No.*"
-															value={employerData.mobile}
-															onChange={handleEmployerChange}
-															required
-														/>
+														<div style={{ position: 'relative' }}>
+															<div style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', zIndex: 10 }}>
+																<CountryCodeSelector
+																	value={employerData.countryCode}
+																	onChange={(code) => setEmployerData(prev => ({ ...prev, countryCode: code }))}
+																/>
+															</div>
+															<input
+																name="mobile"
+																type="tel"
+																className={`form-control ${fieldErrors.mobile ? 'is-invalid' : ''}`}
+																style={{ paddingLeft: '140px' }}
+																placeholder="Mobile No.*"
+																value={employerData.mobile}
+																onChange={handleEmployerChange}
+																required
+															/>
+														</div>
 														{fieldErrors.mobile && (
 															<div className="invalid-feedback d-block">{fieldErrors.mobile}</div>
 														)}
@@ -666,15 +688,24 @@ function SignUpPopup() {
 
 												<div className="col-lg-12">
 													<div className="form-group mb-3">
-														<input
-															name="phone"
-															type="tel"
-															className={`form-control ${fieldErrors.phone ? 'is-invalid' : ''}`}
-															placeholder="Phone Number*"
-															value={placementData.phone}
-															onChange={handlePlacementChange}
-															required
-														/>
+														<div style={{ position: 'relative' }}>
+															<div style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', zIndex: 10 }}>
+																<CountryCodeSelector
+																	value={placementData.countryCode}
+																	onChange={(code) => setPlacementData(prev => ({ ...prev, countryCode: code }))}
+																/>
+															</div>
+															<input
+																name="phone"
+																type="tel"
+																className={`form-control ${fieldErrors.phone ? 'is-invalid' : ''}`}
+																style={{ paddingLeft: '140px' }}
+																placeholder="Phone Number*"
+																value={placementData.phone}
+																onChange={handlePlacementChange}
+																required
+															/>
+														</div>
 														{fieldErrors.phone && (
 															<div className="invalid-feedback d-block">{fieldErrors.phone}</div>
 														)}

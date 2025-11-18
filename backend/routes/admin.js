@@ -98,6 +98,13 @@ router.get('/placements/:id', checkPermission('placement_officers'), adminContro
 router.get('/placements/:id/candidates', checkPermission('placement_officers'), require('../controllers/placementController').getPlacementCandidates);
 router.put('/placements/:id/status', checkPermission('placement_officers'), adminController.updatePlacementStatus);
 
+// Placement Candidate Management Routes
+router.get('/placement-candidates', checkPermission('placement_officers'), adminController.getAllPlacementCandidates);
+router.get('/placement-candidates/stats', checkPermission('placement_officers'), adminController.getPlacementCandidateStats);
+router.post('/placement-candidates/:placementCandidateId/resend-email', checkPermission('placement_officers'), adminController.resendWelcomeEmail);
+router.post('/placement-candidates/bulk-resend-emails', checkPermission('placement_officers'), adminController.bulkResendWelcomeEmails);
+router.post('/placement-candidates/retry-failed-emails', checkPermission('placement_officers'), adminController.retryFailedEmails);
+
 
 router.post('/placements/:id/process', checkPermission('placement_officers'), require('../controllers/placementController').processPlacementApproval);
 router.get('/placements/:id/download', checkPermission('placement_officers'), adminController.downloadPlacementFile);
@@ -115,6 +122,7 @@ router.get('/placements/:id/stored-excel-data', checkPermission('placement_offic
 router.get('/placements/:id/stored-excel-data/:fileId', checkPermission('placement_officers'), adminController.getStoredExcelData);
 router.post('/placements/:id/sync-excel-credits', checkPermission('placement_officers'), adminController.syncExcelCreditsWithCandidates);
 router.get('/placements/:id/download-id-card', checkPermission('placement_officers'), adminController.downloadPlacementIdCard);
+router.post('/placements/:id/approve-all-students', checkPermission('placement_officers'), adminController.approveAllStudentsInPlacement);
 
 // Sub Admin Management Routes (Only for main admins)
 router.post('/sub-admins', auth(['admin']), [
