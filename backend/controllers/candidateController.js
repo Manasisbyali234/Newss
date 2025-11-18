@@ -359,6 +359,30 @@ exports.uploadMarksheet = async (req, res) => {
   }
 };
 
+exports.uploadEducationDocument = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
+
+    // Validate file type
+    const allowedTypes = ['application/pdf'];
+    if (!allowedTypes.includes(req.file.mimetype)) {
+      return res.status(400).json({ success: false, message: 'Only PDF files are allowed' });
+    }
+
+    const { fileToBase64 } = require('../middlewares/upload');
+    const documentBase64 = fileToBase64(req.file);
+
+    res.json({ success: true, document: documentBase64 });
+  } catch (error) {
+    if (error.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ success: false, message: 'File size must be less than 50MB' });
+    }
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // New endpoint to handle education with marksheet uploads
 exports.updateEducationWithMarksheet = async (req, res) => {
   try {

@@ -82,7 +82,7 @@ function SectionJobsSidebar2 ({ _config, job }) {
 								<li>
 									<div className="twm-s-info-inner">
 										<i className="fas fa-users" />
-										<span className="twm-title" style={{fontWeight: 'bold', color: '#000'}}>Hiring Type</span>
+										<span className="twm-title" style={{color: '#000'}}>Hiring Type</span>
 										<div className="twm-s-info-discription">
 											{job?.employerId?.employerType === 'consultant' ? 'Through Consultancy' : 'Direct Company Hiring'}
 										</div>
@@ -92,7 +92,7 @@ function SectionJobsSidebar2 ({ _config, job }) {
 								<li>
 									<div className="twm-s-info-inner">
 										<i className="fas fa-briefcase" />
-										<span className="twm-title" style={{fontWeight: 'bold', color: '#000'}}>Employment Type</span>
+										<span className="twm-title" style={{color: '#000'}}>Employment Type</span>
 										<div className="twm-s-info-discription">
 											{job?.typeOfEmployment || job?.jobType || 'Not specified'}
 										</div>

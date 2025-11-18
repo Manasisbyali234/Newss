@@ -510,19 +510,6 @@ function SectionCanPersonalDetail({ profile }) {
                                 ></textarea>
                                 {errors.permanentAddress && <div className="invalid-feedback">{errors.permanentAddress}</div>}
                             </div>
-
-                            <div className="col-md-12">
-                                <label><i className="fa fa-envelope me-1"></i> Correspondence Address *</label>
-                                <textarea
-                                    className={`form-control ${errors.correspondenceAddress ? 'is-invalid' : ''}`}
-                                    rows={2}
-                                    placeholder="Enter correspondence address"
-                                    value={formData.correspondenceAddress}
-                                    onChange={(e) => handleInputChange('correspondenceAddress', e.target.value)}
-                                    required
-                                ></textarea>
-                                {errors.correspondenceAddress && <div className="invalid-feedback">{errors.correspondenceAddress}</div>}
-                            </div>
                         </div>
 
                         <div className="text-left mt-4">

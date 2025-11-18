@@ -5,6 +5,7 @@ import CountryCodeSelector from "../../../../components/CountryCodeSelector";
 import { ErrorDisplay, GlobalErrorDisplay } from "../../../../components/ErrorDisplay";
 import { validateField, validateForm, displayError, safeApiCall, getErrorMessage } from "../../../../utils/errorHandler";
 import showToast from "../../../../utils/toastNotification";
+import RichTextEditor from "../../../../components/RichTextEditor";
 import './emp-company-profile.css';
 import '../../../../components/ErrorDisplay.css';
 
@@ -1002,14 +1003,13 @@ function EmpCompanyProfilePage() {
                             <div className="col-md-12">
                                 <div className="form-group">
                                     <label><FileText size={16} className="me-2" /> Description</label>
-                                    <textarea
-                                        className="form-control"
-                                        rows={3}
+                                    <RichTextEditor
                                         value={formData.description || 'We are a dynamic company focused on delivering excellent services and creating opportunities for talented professionals.'}
-                                        onChange={(e) => handleInputChange('description', e.target.value)}
-                                        placeholder="Company description..."
+                                        onChange={(value) => handleInputChange('description', value)}
+                                        placeholder="Enter company description..."
+                                        className="form-control-editor"
                                     />
-                                    <small className="text-muted">A default description has been provided. You can edit it as needed.</small>
+                                    <small className="text-muted mt-1">Use the toolbar above to format your company description with bold, italic, lists, and alignment options.</small>
                                 </div>
                             </div>
 
@@ -1066,13 +1066,13 @@ function EmpCompanyProfilePage() {
                             <div className="col-md-6">
                                 <div className="form-group">
                                     <label><Briefcase size={16} className="me-2" /> Why Join Us</label>
-                                    <textarea
-                                        className="form-control"
-                                        rows={3}
+                                    <RichTextEditor
                                         value={formData.whyJoinUs}
-                                        onChange={(e) => handleInputChange('whyJoinUs', e.target.value)}
+                                        onChange={(value) => handleInputChange('whyJoinUs', value)}
                                         placeholder="Highlight the benefits of working with your company..."
+                                        className="form-control-editor"
                                     />
+                                    <small className="text-muted mt-1" style={{color: '#000000 !important'}}>Use the toolbar above to format your text with bold, italic, lists, and alignment options.</small>
                                 </div>
                             </div>
                         </div>

@@ -1,0 +1,154 @@
+.rich-text-editor {
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background: white;
+}
+
+.editor-toolbar {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid #dee2e6;
+    background: #f8f9fa;
+    border-radius: 4px 4px 0 0;
+    gap: 4px;
+}
+
+.toolbar-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid transparent;
+    background: transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #000000 !important;
+    transition: all 0.2s ease;
+}
+
+.toolbar-btn:hover {
+    background: #ff6b35 !important;
+    color: white !important;
+    border-color: #ff6b35 !important;
+}
+
+.toolbar-btn svg {
+    color: #000000 !important;
+    stroke: #000000 !important;
+    fill: #000000 !important;
+    width: 16px !important;
+    height: 16px !important;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.toolbar-btn:hover svg {
+    color: white !important;
+    stroke: white !important;
+    fill: white !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.toolbar-separator {
+    width: 1px;
+    height: 20px;
+    background: #dee2e6;
+    margin: 0 4px;
+}
+
+.editor-content {
+    min-height: 120px;
+    padding: 12px;
+    outline: none;
+    line-height: 1.5;
+    font-family: inherit;
+    font-size: 14px;
+    color: #495057;
+}
+
+.editor-content:empty:before {
+    content: attr(data-placeholder);
+    color: #6c757d;
+    font-style: italic;
+}
+
+.editor-content ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.editor-content li {
+    margin: 4px 0;
+}
+
+.editor-content p {
+    margin: 0 0 8px 0;
+}
+
+.editor-content br {
+    line-height: 1.5;
+}
+
+.rich-text-editor:focus-within {
+    border-color: #ff6b35;
+    box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+}
+
+.form-control-editor {
+    border: 2px solid #e1e5e9;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    background-color: #fff;
+}
+
+.form-control-editor:focus-within {
+    border-color: #ff6b35;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+    transform: translateY(-1px);
+    background-color: #fff8f5;
+}
+
+.form-control-editor:hover {
+    border-color: #b8c6db;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-control-editor .rich-text-editor {
+    border: none;
+    border-radius: 0;
+}
+
+.form-control-editor .editor-toolbar {
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 4px 4px 0 0;
+}
+
+.form-control-editor .editor-content {
+    min-height: 100px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .editor-toolbar {
+        flex-wrap: wrap;
+        gap: 2px;
+        padding: 6px 8px;
+    }
+    
+    .toolbar-btn {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .editor-content {
+        min-height: 80px;
+        padding: 10px;
+    }
+}
