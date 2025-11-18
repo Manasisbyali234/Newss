@@ -13,7 +13,7 @@ function Footer3 () {
 						fontFamily: '"Plus Jakarta Sans", sans-serif'
 					}}
 				>
-					<div className="container">
+
 						{/* FOOTER BLOCKES START */}
 						<div className="footer-top">
 							<div className="row">
@@ -158,7 +158,6 @@ function Footer3 () {
 								</ul>
 							</div>
 						</div>
-					</div>
 				</footer>
 			</>
 		);

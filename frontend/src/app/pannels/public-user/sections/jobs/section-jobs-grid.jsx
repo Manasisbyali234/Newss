@@ -200,7 +200,7 @@ const SectionJobsGrid = memo(({ filters, onTotalChange }) => {
 
         return (
             <Col key={job._id} lg={6} md={12} className="mb-4">
-                <div ref={cardRef} className="new-job-card" data-visible="true" style={{borderRadius: '12px', overflow: 'hidden', border: '1px solid #e0e0e0', backgroundColor: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.1)'}}>
+                <div ref={cardRef} className="new-job-card" data-visible="true" style={{overflow: 'hidden', border: '1px solid #e0e0e0', boxShadow: '0 2px 8px rgba(0,0,0,0.1)'}}>
                     {/* Top Row */}
                     <div className="job-card-header" style={{padding: '8px 16px'}}>
                         <div className="job-card-left" style={{display: 'flex', alignItems: 'center', gap: '15px'}}>

@@ -68,83 +68,7 @@ body {
   color-scheme: light only !important;
 }
 
-/* Override dark mode media queries */
-@media (prefers-color-scheme: dark) {
-  :root,
-  html,
-  body,
-  #root {
-    background-color: #ffffff !important;
-    color-scheme: light only !important;
-  }
 
-  .container,
-  .container-fluid,
-  .panel,
-  .card,
-  .modal-content,
-  .dropdown-menu {
-    background-color: #ffffff !important;
-  }
-
-  input,
-  select,
-  textarea,
-  .form-control,
-  .form-select {
-    background-color: #ffffff !important;
-    color: #212529 !important;
-    border: 1px solid #ced4da !important;
-  }
-
-  .text-dark {
-    color: #212529 !important;
-  }
-
-  .text-muted {
-    color: #6c757d !important;
-  }
-
-  .text-primary {
-    color: #0d6efd !important;
-  }
-
-  .site-text-primary {
-    color: #FF6A00 !important;
-  }
-
-  .btn-primary {
-    background-color: #0d6efd !important;
-    color: #ffffff !important;
-    border-color: #0d6efd !important;
-  }
-
-  .site-button,
-  button.site-button {
-    background-color: #fd7e14 !important;
-    color: #ffffff !important;
-    border-color: #fd7e14 !important;
-  }
-
-  .nav-pills {
-    background-color: #f8f9fa !important;
-  }
-
-  .nav-pills .nav-link.active {
-    background-color: #0d6efd !important;
-    color: #ffffff !important;
-  }
-
-  .nav-pills .nav-link {
-    color: #6c757d !important;
-  }
-
-  .alert-danger {
-    background-color: #f8d7da !important;
-    color: #721c24 !important;
-    border-color: #f5c6cb !important;
-  }
-}
 
 * {
   color-scheme: light only !important;
@@ -3212,6 +3136,116 @@ input[type="checkbox"],
     transform: scale(1) !important;
     zoom: 1 !important;
   }
+}
+
+/* ============================================================================
+ * BROWSER COMPATIBILITY FIXES - REMOVE WHITE BACKGROUNDS
+ * ============================================================================ */
+
+/* Remove white/light backgrounds from py-2 container elements */
+.py-2.container {
+    background-color: transparent !important;
+    background: transparent !important;
+}
+
+/* ============================================================================
+ * JOB CARD BORDER RADIUS STANDARDIZATION
+ * ============================================================================ */
+
+/* Ensure all job cards have curved edges */
+.home-job-card,
+.new-job-card,
+.compact-job-card,
+.twm-jobs-grid-style1,
+.twm-jobs-list-style1,
+.twm-employer-grid-style1,
+.nk-card,
+.job-card {
+    border-radius: 20px !important;
+}
+
+/* Ensure job card pseudo-elements also have curved edges */
+.home-job-card::after,
+.new-job-card::after {
+    border-radius: 20px !important;
+}
+
+/* ============================================================================
+ * CONTAINER OVERRIDES - Remove Bootstrap container constraints
+ * ============================================================================ */
+
+.container {
+  width: 100% !important;
+  max-width: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-bottom: auto !important;
+}
+
+.container-fluid {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+@media (max-width: 576px) {
+  .container, .container-fluid {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .container, .container-fluid {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .container, .container-fluid {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
+@media (max-width: 575px) {
+  .container {
+    max-width: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .container {
+    max-width: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
+@media (max-width: 991px) {
+  .container {
+    max-width: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .container, .container-fluid, .panel, .card, .modal-content, .dropdown-menu {
+    background-color: #ffffff !important;
+  }
+}
+
+.container, .container-fluid, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+  width: 100% !important;
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
 }
 
 /* ============================================================================

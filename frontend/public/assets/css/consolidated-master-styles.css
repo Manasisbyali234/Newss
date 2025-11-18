@@ -217,3 +217,41 @@ input[type="checkbox"],
     zoom: 1 !important;
   }
 }
+
+/* ============================================================================
+ * JOB CARD BORDER RADIUS STANDARDIZATION - HIGHEST PRIORITY
+ * ============================================================================ */
+
+/* Force all job cards to have curved edges - maximum specificity override */
+html body div.home-job-card,
+html body div.job-card,
+html body div.new-job-card,
+html body .home-job-card,
+html body .job-card,
+html body .new-job-card,
+.home-job-card,
+.job-card,
+.new-job-card,
+.compact-job-card,
+.twm-jobs-grid-style1,
+.twm-jobs-list-style1,
+.twm-employer-grid-style1,
+.nk-card,
+[class*="job-card"],
+[class*="home-job-card"],
+[class*="new-job-card"] {
+    border-radius: 20px !important;
+    border-radius: 20px !important !important;
+}
+
+/* Specific override for new-job-card to ensure it works */
+.new-job-card {
+    border-radius: 20px !important;
+    border-radius: 20px !important !important;
+}
+
+/* Ensure job card pseudo-elements also have curved edges */
+.home-job-card::after,
+.new-job-card::after {
+    border-radius: 20px !important;
+}

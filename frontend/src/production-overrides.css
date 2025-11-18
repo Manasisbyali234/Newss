@@ -248,7 +248,7 @@ html body div.home-jobs-grid div.home-job-card,
 html body div.job-card,
 html body div.new-job-card {
     background-color: #ffffff !important;
-    border-radius: 16px !important;
+    border-radius: 20px !important;
     box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08) !important;
     padding: 24px !important;
     display: flex !important;

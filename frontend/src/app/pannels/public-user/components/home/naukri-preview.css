@@ -1,5 +1,5 @@
 /* Naukri-style: More exact layout, spacing, and cards (scoped) */
-.naukri-preview-page { --nk-radius: 12px; --nk-gap: 16px; --nk-muted: #667085; }
+.naukri-preview-page { --nk-radius: 20px; --nk-gap: 16px; --nk-muted: #667085; }
 
 /* HERO */
 .nk-hero { background: var(--nk-hero-bg, #f2f5ff); padding: 40px 0 32px; }
