@@ -1139,18 +1139,11 @@ function SectionCanEducation({ profile, onUpdate }) {
                                             <th style={{minWidth: '120px', whiteSpace: 'nowrap'}}>Qualification</th>
                                             <th style={{minWidth: '150px'}}>Degree/Course</th>
                                             <th style={{minWidth: '180px'}}>Institution</th>
-<<<<<<< HEAD
-                                            <th style={{minWidth: '120px', whiteSpace: 'nowrap'}}>Reg. Number</th>
+                                            <th style={{minWidth: '120px', whiteSpace: 'nowrap'}}>Enrollment No.</th>
                                             <th style={{minWidth: '80px'}}>State</th>
                                             <th style={{minWidth: '80px', whiteSpace: 'nowrap'}}>Score</th>
                                             <th style={{minWidth: '70px'}}>Result</th>
                                             <th style={{minWidth: '100px', whiteSpace: 'nowrap'}}>Document</th>
-=======
-                                            <th style={{minWidth: '120px', whiteSpace: 'nowrap'}}>Enrollment No.</th>
-                                            <th style={{minWidth: '80px', whiteSpace: 'nowrap'}}>Score</th>
-                                            <th style={{minWidth: '70px'}}>Result</th>
-                                            <th style={{minWidth: '80px'}}>Document</th>
->>>>>>> 143ce0e5073775d9cf0e8dc24a0f25a1deab94a1
                                             <th style={{minWidth: '100px', whiteSpace: 'nowrap'}}>Actions</th>
                                         </tr>
                                     </thead>
@@ -1180,7 +1173,6 @@ function SectionCanEducation({ profile, onUpdate }) {
                                                         {entry.result}
                                                     </span>
                                                 </td>
-<<<<<<< HEAD
                                                 <td style={{fontSize: '12px', textAlign: 'center'}}>
                                                     {entry.documentBase64 ? (
                                                         <span className="badge bg-success" style={{fontSize: '10px'}}>
@@ -1189,27 +1181,6 @@ function SectionCanEducation({ profile, onUpdate }) {
                                                         </span>
                                                     ) : (
                                                         <span className="badge bg-warning" style={{fontSize: '10px'}}>
-=======
-                                                <td style={{textAlign: 'center'}}>
-                                                    {entry.documentBase64 ? (
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-success btn-sm"
-                                                            onClick={() => {
-                                                                const base64Data = entry.documentBase64.startsWith('data:') 
-                                                                    ? entry.documentBase64 
-                                                                    : `data:application/pdf;base64,${entry.documentBase64}`;
-                                                                const newWindow = window.open();
-                                                                newWindow.document.write(`<iframe src="${base64Data}" width="100%" height="100%" style="border:none;"></iframe>`);
-                                                            }}
-                                                            title="View Document"
-                                                            style={{padding: '2px 6px', fontSize: '11px'}}
-                                                        >
-                                                            <i className="fa fa-eye"></i> View
-                                                        </button>
-                                                    ) : (
-                                                        <span className="badge bg-secondary" style={{fontSize: '11px'}}>
->>>>>>> 143ce0e5073775d9cf0e8dc24a0f25a1deab94a1
                                                             No Document
                                                         </span>
                                                     )}
