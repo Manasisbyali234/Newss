@@ -608,7 +608,8 @@ exports.createJob = async (req, res) => {
       companyLogo: jobData.companyLogo ? 'Present' : 'Missing',
       companyName: jobData.companyName,
       companyDescription: jobData.companyDescription ? 'Present' : 'Missing',
-      category: jobData.category
+      category: jobData.category,
+      typeOfEmployment: jobData.typeOfEmployment
     });
     console.log('Parsed CTC:', jobData.ctc);
     console.log('Parsed Net Salary:', jobData.netSalary);
@@ -629,6 +630,7 @@ exports.createJob = async (req, res) => {
     }
     
     const job = await Job.create(jobData);
+    console.log('Job created successfully with typeOfEmployment:', job.typeOfEmployment);
     console.log('Job created:', JSON.stringify(job, null, 2));
 
     // If job has assessment, update existing applications to set assessmentStatus to 'available'
@@ -677,6 +679,11 @@ exports.createJob = async (req, res) => {
 
     res.status(201).json({ success: true, job });
   } catch (error) {
+    console.error('Job creation error:', error);
+    if (error.name === 'ValidationError') {
+      const validationErrors = Object.keys(error.errors).map(key => `${key}: ${error.errors[key].message}`);
+      return res.status(400).json({ success: false, message: `Validation failed: ${validationErrors.join(', ')}` });
+    }
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -841,10 +848,15 @@ exports.updateJob = async (req, res) => {
       }
     }
 
+    console.log('Updated job with typeOfEmployment:', job.typeOfEmployment);
     console.log('Updated job:', job);
     res.json({ success: true, job });
   } catch (error) {
-    console.log('Update job error:', error);
+    console.error('Update job error:', error);
+    if (error.name === 'ValidationError') {
+      const validationErrors = Object.keys(error.errors).map(key => `${key}: ${error.errors[key].message}`);
+      return res.status(400).json({ success: false, message: `Validation failed: ${validationErrors.join(', ')}` });
+    }
     res.status(500).json({ success: false, message: error.message });
   }
 };

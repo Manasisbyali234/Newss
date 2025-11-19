@@ -254,7 +254,6 @@ function SectionCanPersonalDetail({ profile }) {
         <>
             <div className="panel-heading wt-panel-heading p-a20 panel-heading-with-btn">
                 <h4 className="panel-tittle m-a0">
-                    <i className="fa fa-id-card site-text-primary me-2"></i>
                     Personal Details
                 </h4>
             </div>

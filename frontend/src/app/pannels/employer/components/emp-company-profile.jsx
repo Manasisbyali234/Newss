@@ -8,6 +8,7 @@ import showToast from "../../../../utils/toastNotification";
 import RichTextEditor from "../../../../components/RichTextEditor";
 import './emp-company-profile.css';
 import '../../../../components/ErrorDisplay.css';
+import '../../../../remove-profile-hover-effects.css';
 
 function EmpCompanyProfilePage() {
     const [formData, setFormData] = useState({
@@ -350,8 +351,9 @@ function EmpCompanyProfilePage() {
             return;
         }
 
-        const body = new FormData();
-        body.append('logo', file);
+        const formData = new FormData();
+        formData.append('logo', file);
+        
         try {
             const token = localStorage.getItem('employerToken');
             if (!token) {
@@ -359,11 +361,16 @@ function EmpCompanyProfilePage() {
                 return;
             }
             
-            const data = await safeApiCall('http://localhost:5000/api/employer/profile/logo', {
+            const response = await fetch('http://localhost:5000/api/employer/profile/logo', {
                 method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` },
-                body
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                    // Don't set Content-Type header - let browser set it with boundary for multipart/form-data
+                },
+                body: formData
             });
+            
+            const data = await response.json();
             
             if (data.success) {
                 handleInputChange('logo', data.logo);
@@ -372,13 +379,8 @@ function EmpCompanyProfilePage() {
                 showToast(data.message || 'Logo upload failed', 'error');
             }
         } catch (error) {
-            if (error.name === 'AuthError') {
-                showToast('Session expired. Please login again.', 'warning');
-                localStorage.removeItem('employerToken');
-                window.location.href = '/employer/login';
-                return;
-            }
-            displayError(error, { useToast: true });
+            console.error('Logo upload error:', error);
+            showToast('Logo upload failed. Please try again.', 'error');
         }
     };
 
@@ -398,8 +400,9 @@ function EmpCompanyProfilePage() {
             return;
         }
 
-        const body = new FormData();
-        body.append('cover', file);
+        const formData = new FormData();
+        formData.append('cover', file);
+        
         try {
             const token = localStorage.getItem('employerToken');
             if (!token) {
@@ -407,11 +410,16 @@ function EmpCompanyProfilePage() {
                 return;
             }
             
-            const data = await safeApiCall('http://localhost:5000/api/employer/profile/cover', {
+            const response = await fetch('http://localhost:5000/api/employer/profile/cover', {
                 method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` },
-                body
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                    // Don't set Content-Type header - let browser set it with boundary for multipart/form-data
+                },
+                body: formData
             });
+            
+            const data = await response.json();
             
             if (data.success) {
                 handleInputChange('coverImage', data.coverImage);
@@ -420,13 +428,8 @@ function EmpCompanyProfilePage() {
                 showToast(data.message || 'Cover image upload failed', 'error');
             }
         } catch (error) {
-            if (error.name === 'AuthError') {
-                showToast('Session expired. Please login again.', 'warning');
-                localStorage.removeItem('employerToken');
-                window.location.href = '/employer/login';
-                return;
-            }
-            displayError(error, { useToast: true });
+            console.error('Cover upload error:', error);
+            showToast('Cover upload failed. Please try again.', 'error');
         }
     };
 
@@ -446,9 +449,10 @@ function EmpCompanyProfilePage() {
             return;
         }
 
-        const body = new FormData();
-        body.append('document', file);
-        body.append('fieldName', fieldName);
+        const formData = new FormData();
+        formData.append('document', file);
+        formData.append('fieldName', fieldName);
+        
         try {
             const token = localStorage.getItem('employerToken');
             if (!token) {
@@ -456,11 +460,16 @@ function EmpCompanyProfilePage() {
                 return;
             }
             
-            const data = await safeApiCall('http://localhost:5000/api/employer/profile/document', {
+            const response = await fetch('http://localhost:5000/api/employer/profile/document', {
                 method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` },
-                body: body
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                    // Don't set Content-Type header - let browser set it with boundary for multipart/form-data
+                },
+                body: formData
             });
+            
+            const data = await response.json();
             
             if (data.success) {
                 handleInputChange(fieldName, data.filePath);
@@ -469,13 +478,8 @@ function EmpCompanyProfilePage() {
                 showToast(data.message || 'Document upload failed', 'error');
             }
         } catch (error) {
-            if (error.name === 'AuthError') {
-                showToast('Session expired. Please login again.', 'warning');
-                localStorage.removeItem('employerToken');
-                window.location.href = '/employer/login';
-                return;
-            }
-            displayError(error, { useToast: true });
+            console.error('Document upload error:', error);
+            showToast('Document upload failed. Please try again.', 'error');
         }
     };
 
@@ -505,11 +509,12 @@ function EmpCompanyProfilePage() {
             return;
         }
 
-        const body = new FormData();
-        body.append('document', file);
+        const formDataObj = new FormData();
+        formDataObj.append('document', file);
         if (companyName) {
-            body.append('companyName', companyName);
+            formDataObj.append('companyName', companyName);
         }
+        
         try {
             const token = localStorage.getItem('employerToken');
             if (!token) {
@@ -517,11 +522,16 @@ function EmpCompanyProfilePage() {
                 return;
             }
             
-            const data = await safeApiCall('http://localhost:5000/api/employer/profile/authorization-letter', {
+            const response = await fetch('http://localhost:5000/api/employer/profile/authorization-letter', {
                 method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` },
-                body: body
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                    // Don't set Content-Type header - let browser set it with boundary for multipart/form-data
+                },
+                body: formDataObj
             });
+            
+            const data = await response.json();
             
             if (data.success) {
                 setFormData(prev => ({
@@ -535,13 +545,8 @@ function EmpCompanyProfilePage() {
                 showToast(data.message || 'Document upload failed', 'error');
             }
         } catch (error) {
-            if (error.name === 'AuthError') {
-                showToast('Session expired. Please login again.', 'warning');
-                localStorage.removeItem('employerToken');
-                window.location.href = '/employer/login';
-                return;
-            }
-            displayError(error, { useToast: true });
+            console.error('Authorization letter upload error:', error);
+            showToast('Authorization letter upload failed. Please try again.', 'error');
         }
     };
 
