@@ -9,6 +9,8 @@ import InterviewDateTester from "../../../../../components/InterviewDateTester";
 import { ErrorDisplay, GlobalErrorDisplay } from "../../../../../components/ErrorDisplay";
 import { validateField, validateForm, displayError, safeApiCall, getErrorMessage } from "../../../../../utils/errorHandler";
 import showToast from "../../../../../utils/toastNotification";
+import RichTextEditor from "../../../../../components/RichTextEditor";
+
 import "../../../../../components/ErrorDisplay.css";
 
 export default function EmpPostJob({ onNext }) {
@@ -23,6 +25,7 @@ export default function EmpPostJob({ onNext }) {
 		vacancies: "",
 		applicationLimit: "",
 		jobDescription: "",
+		rolesAndResponsibilities: "",
 		education: "", // dropdown
 		backlogsAllowed: false,
 		requiredSkills: [],
@@ -546,6 +549,7 @@ export default function EmpPostJob({ onNext }) {
 				vacancies: parseInt(formData.vacancies) || 0,
 				applicationLimit: parseInt(formData.applicationLimit) || 0,
 				description: formData.jobDescription || 'Job description to be updated',
+				rolesAndResponsibilities: formData.rolesAndResponsibilities || '',
 				requiredSkills: formData.requiredSkills,
 				experienceLevel: formData.experienceLevel,
 				minExperience: formData.minExperience ? parseInt(formData.minExperience) : 0,
@@ -2356,19 +2360,31 @@ export default function EmpPostJob({ onNext }) {
 							<i className="fa fa-align-left" style={{marginRight: '8px', color: '#ff6b35'}}></i>
 							Job Description *
 						</label>
-						<textarea 
-							style={{
-								...input, 
-								minHeight: '140px',
-								lineHeight: 1.6,
-								fontFamily: 'inherit',
-							}} 
+						<RichTextEditor
 							value={formData.jobDescription || 'We are looking for a talented professional to join our dynamic team. The ideal candidate will be responsible for key tasks and contribute to our company\'s growth and success.'}
-							onChange={(e) => update({ jobDescription: e.target.value })}
+							onChange={(value) => update({ jobDescription: value })}
 							placeholder="Provide a detailed description of the job role, responsibilities, and expectations..."
+							className="form-control-editor"
 						/>
-						<small style={{color: '#6b7280', fontSize: 12, marginTop: 6, display: 'block'}}>
-							Include key responsibilities, day-to-day tasks, and what makes this role unique
+						<small style={{color: '#6b7280', fontSize: 12, marginTop: 8, display: 'block'}}>
+							Use the toolbar above to format your job description with bold, italic, lists, and alignment options
+						</small>
+					</div>
+
+					{/* Roles and Responsibilities */}
+					<div style={fullRow}>
+						<label style={label}>
+							<i className="fa fa-tasks" style={{marginRight: '8px', color: '#ff6b35'}}></i>
+							Roles and Responsibilities
+						</label>
+						<RichTextEditor
+							value={formData.rolesAndResponsibilities || ''}
+							onChange={(value) => update({ rolesAndResponsibilities: value })}
+							placeholder="List the key roles and responsibilities for this position..."
+							className="form-control-editor"
+						/>
+						<small style={{color: '#6b7280', fontSize: 12, marginTop: 8, display: 'block'}}>
+							Use bullet points or numbered lists to clearly outline the main responsibilities
 						</small>
 					</div>
 				</div>

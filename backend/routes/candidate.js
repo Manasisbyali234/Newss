@@ -271,6 +271,8 @@ router.post('/education', uploadMarksheet.single('marksheet'), [
 
 router.put('/education/marksheet', uploadMarksheet.single('marksheet'), candidateController.updateEducationWithMarksheet);
 
+router.put('/education/document', upload.single('document'), candidateController.uploadEducationDocument);
+
 router.delete('/education/:educationId', candidateController.deleteEducation);
 
 // Assessment Routes

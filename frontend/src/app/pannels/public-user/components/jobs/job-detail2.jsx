@@ -42,7 +42,7 @@ function JobDetail2Page() {
                                         <div className="twm-media">
                                             <JobZImage src="images/jobs-company/pic1.jpg" alt="#" />
                                         </div>
-                                        <h4 className="twm-job-title">Senior Web Designer , Developer <span className="twm-job-post-duration">/ 1 days ago</span></h4>
+                                        <h4 className="twm-job-title">Senior Web Designer , Developer</h4>
                                         <p className="twm-job-address"><i className="feather-map-pin" />#56 Sunset Blvd Sahakar Nagar, Bengaluru, 560902</p>
                                         <div className="twm-job-self-mid">
                                             <div className="twm-job-self-mid-left">

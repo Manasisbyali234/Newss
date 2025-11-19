@@ -235,9 +235,6 @@ function JobDetail1Page() {
 
                                                     <h4 className="twm-job-title">
                                                         {job.title}
-                                                        <span className="twm-job-post-duration">
-                                                            / {new Date(job.createdAt).toLocaleDateString()}
-                                                        </span>
                                                     </h4>
                                                     <p className="twm-job-company"><strong>Company: {job.companyName || job.employerId?.companyName || 'Not specified'}</strong></p>
                                                     <p className="twm-job-address"><i className="feather-map-pin" />{job.location}</p>
@@ -282,8 +279,16 @@ function JobDetail1Page() {
                                             <i className="feather-file-text" style={{marginRight: '10px', color: '#3498db'}}></i>
                                             Job Description
                                         </h4>
-                                        <div style={{lineHeight: '1.8', fontSize: '16px', color: '#495057'}}>
-                                            {job.description}
+                                        <div style={{lineHeight: '1.8', fontSize: '16px', color: '#495057'}} dangerouslySetInnerHTML={{__html: job.description}}>
+                                        </div>
+                                    </div>
+
+                                    <div style={{marginBottom: '40px'}}>
+                                        <h4 className="twm-s-title" style={{color: '#2c3e50', marginBottom: '20px', fontSize: '24px', fontWeight: '600'}}>
+                                            <i className="feather-list" style={{marginRight: '10px', color: '#e74c3c'}}></i>
+                                            Roles and Responsibilities
+                                        </h4>
+                                        <div style={{lineHeight: '1.8', fontSize: '16px', color: '#495057'}} dangerouslySetInnerHTML={{__html: job.rolesAndResponsibilities || 'Roles and responsibilities to be updated'}}>
                                         </div>
                                     </div>
 

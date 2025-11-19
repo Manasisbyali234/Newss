@@ -283,9 +283,9 @@ function EmployersDetail1Page() {
 												</p>
 
 												<h4 className="twm-s-title">Why Join Us</h4>
-												<p>
-													{employer.whyJoinUs || 'No information available about why to join this company.'}
-												</p>
+												<div dangerouslySetInnerHTML={{
+													__html: employer.whyJoinUs || 'No information available about why to join this company.'
+												}} />
 
 
 											</div>
