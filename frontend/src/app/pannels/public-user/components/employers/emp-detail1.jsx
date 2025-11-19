@@ -242,7 +242,7 @@ function EmployersDetail1Page() {
 														href="#reviews"
 														role="tab"
 													>
-														ADD Reviews
+														Add Reviews
 													</a>
 												</li>
 											)}
