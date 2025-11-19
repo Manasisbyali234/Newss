@@ -388,21 +388,24 @@ function SectionCandidateOverview() {
 								}}
 								onClick={card.clickable ? card.onClick : undefined}
 							>
-								<div className="icon-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '0.75rem' }}>
+								<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+									{/* Icon on left edge */}
 									<div className={`fs-2 ${card.color}`} style={{ flexShrink: 0, lineHeight: 1 }}>
 										<i className={card.icon} />
 									</div>
-									<div className={`counter fw-bold fs-3 ${card.color}`} style={{ lineHeight: 1 }}>
-										<CountUp end={card.count} duration={2} />
+									
+									{/* Number and text on right edge */}
+									<div style={{ textAlign: 'right' }}>
+										<div className={`counter fw-bold fs-3 ${card.color}`} style={{ lineHeight: 1, marginBottom: '0.25rem' }}>
+											<CountUp end={card.count} duration={2} />
+										</div>
+										<h5 className="mb-0" style={{ fontSize: '0.95rem', fontWeight: '600' }}>{card.label}</h5>
+										{card.label.includes('Excel') && candidate.placement?.collegeName && (
+											<small className="text-muted d-block" style={{ fontSize: '0.75rem', marginTop: '0.25rem' }}>
+												From: {candidate.placement.collegeName}
+											</small>
+										)}
 									</div>
-								</div>
-								<div>
-									<h5 className="mb-0" style={{ fontSize: '0.95rem', fontWeight: '600' }}>{card.label}</h5>
-									{card.label.includes('Excel') && candidate.placement?.collegeName && (
-										<small className="text-muted d-block" style={{ fontSize: '0.75rem', marginTop: '0.25rem' }}>
-											From: {candidate.placement.collegeName}
-										</small>
-									)}
 								</div>
 							</div>
 						</div>
