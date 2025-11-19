@@ -1453,6 +1453,7 @@ exports.approveIndividualFile = async (req, res) => {
       let emailsFailed = 0;
       const errors = [];
       const createdCandidates = [];
+      const skippedCandidates = [];
       
       // Process each row from Excel
       for (let index = 0; index < jsonData.length; index++) {
@@ -1486,6 +1487,11 @@ exports.approveIndividualFile = async (req, res) => {
           const existingCandidate = await Candidate.findOne({ email: email.trim().toLowerCase() });
           if (existingCandidate) {
             skippedCount++;
+            skippedCandidates.push({
+              name: name.trim(),
+              email: email.trim().toLowerCase(),
+              reason: 'Already exists in database'
+            });
             continue;
           }
           
@@ -1547,6 +1553,7 @@ exports.approveIndividualFile = async (req, res) => {
             await sendPlacementCandidateWelcomeEmail(
               email.trim().toLowerCase(),
               name.trim(),
+              password.trim(),
               placement.name,
               placement.collegeName
             );
@@ -1611,9 +1618,16 @@ exports.approveIndividualFile = async (req, res) => {
       }
       
       const displayName = file.customName || file.fileName;
+      let message;
+      if (createdCount === 0 && skippedCount > 0) {
+        message = `File "${displayName}" processed! ${skippedCount} students already exist in the system. Use "Resend Welcome Emails" to send emails to existing students.`;
+      } else {
+        message = `File "${displayName}" approved! ${createdCount} students created and ${emailsSent} welcome emails sent. All students can now create their passwords and access their accounts.`;
+      }
+      
       res.json({
         success: true,
-        message: `File "${displayName}" approved! ${createdCount} students created and ${emailsSent} welcome emails sent. All students can now create their passwords and access their accounts.`,
+        message,
         stats: { 
           created: createdCount, 
           skipped: skippedCount, 
@@ -1622,10 +1636,11 @@ exports.approveIndividualFile = async (req, res) => {
           emailsFailed: emailsFailed
         },
         createdCandidates: createdCandidates.slice(0, 10),
+        skippedCandidates: skippedCandidates.slice(0, 10),
         errors: errors.slice(0, 10),
         loginInstructions: {
           url: 'http://localhost:3000/',
-          message: 'Students have received welcome emails with create password links. They can create their passwords and then login using Sign In → Candidate tab'
+          message: createdCount > 0 ? 'Students have received welcome emails with create password links. They can create their passwords and then login using Sign In → Candidate tab' : 'Students already exist. Use Resend Welcome Emails feature to send login credentials.'
         }
       });
       

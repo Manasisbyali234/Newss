@@ -19,7 +19,7 @@ function Footer1() {
 							<div className="row">
 								<div className="col-lg-4 col-md-12">
 									<div className="widget widget_about">
-										<div className="logo-footer clearfix">
+										<div className="logo-footer clearfix" style={{marginBottom: '20px', paddingLeft: '15px'}}>
 											<NavLink to={publicUser.INITIAL}>
 												<JobZImage
 													id="skin_footer_light_logo"
@@ -28,7 +28,7 @@ function Footer1() {
 												/>
 											</NavLink>
 										</div>
-										<p>
+										<p style={{paddingLeft: '15px', backgroundColor: 'transparent !important'}}>
 											A smarter way to search, apply, and succeed. Explore
 											thousands of opportunities tailored to your goals.
 										</p>

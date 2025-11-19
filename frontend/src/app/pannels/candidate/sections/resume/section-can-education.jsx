@@ -14,16 +14,18 @@ function SectionCanEducation({ profile, onUpdate }) {
     const [additionalEditMode, setAdditionalEditMode] = useState([]);
     const [editMode, setEditMode] = useState({ tenth: false, diploma: false, degree: false });
     const [educationData, setEducationData] = useState({
-        tenth: { schoolName: '', location: '', passoutYear: '', percentage: '', cgpa: '', grade: '', marksheet: null, marksheetBase64: null },
-        diploma: { schoolName: '', location: '', passoutYear: '', percentage: '', cgpa: '', grade: '', marksheet: null, marksheetBase64: null },
-        degree: { schoolName: '', location: '', passoutYear: '', percentage: '', cgpa: '', grade: '', marksheet: null, marksheetBase64: null }
+        tenth: { schoolName: '', location: '', passoutYear: '', registrationNumber: '', state: '', specialization: '', percentage: '', cgpa: '', grade: '', marksheet: null, marksheetBase64: null },
+        diploma: { schoolName: '', location: '', passoutYear: '', registrationNumber: '', state: '', specialization: '', percentage: '', cgpa: '', grade: '', marksheet: null, marksheetBase64: null },
+        degree: { schoolName: '', location: '', passoutYear: '', registrationNumber: '', state: '', specialization: '', percentage: '', cgpa: '', grade: '', marksheet: null, marksheetBase64: null }
     });
     const [additionalErrors, setAdditionalErrors] = useState([]);
 
     const educationLevels = [
         { value: 'sslc', label: 'SSLC / 10th' },
         { value: 'puc', label: 'PUC / 12th / Diploma' },
-        { value: 'degree', label: 'Degree / Graduation' }
+        { value: 'degree', label: 'Degree / Graduation' },
+        { value: 'masters', label: 'Masters / Post Graduation' },
+        { value: 'phd', label: 'PhD / Doctorate' }
     ];
 
     const [formData, setFormData] = useState({
@@ -53,22 +55,24 @@ function SectionCanEducation({ profile, onUpdate }) {
                 if (index === 0) educationLevel = 'sslc';
                 else if (index === 1) educationLevel = 'puc';
                 else if (index === 2) educationLevel = 'degree';
+                else if (index === 3) educationLevel = 'masters';
+                else if (index === 4) educationLevel = 'phd';
 
                 return {
                     id: Date.now() + index,
                     educationLevel,
                     schoolCollegeName: edu.degreeName || '',
                     boardUniversityName: edu.collegeName || '',
-                    registrationNumber: '',
-                    state: '',
-                    result: edu.grade ? 'Passed' : '',
+                    registrationNumber: edu.registrationNumber || '',
+                    state: edu.state || '',
+                    result: edu.grade || (edu.percentage ? 'Passed' : ''),
                     percentage: edu.percentage || '',
                     cgpa: edu.cgpa || '',
                     securedMarks: '',
                     maximumMarks: '',
-                    courseName: '',
+                    courseName: edu.specialization || '',
                     yearOfPassing: edu.passYear || '',
-                    specialization: '',
+                    specialization: edu.specialization || '',
                     documentBase64: edu.marksheet || null,
                     documentName: edu.marksheet ? 'Uploaded Document' : ''
                 };
@@ -77,9 +81,9 @@ function SectionCanEducation({ profile, onUpdate }) {
 
             // Initialize educationData for table-based management
             const initialEducationData = {
-                tenth: { schoolName: '', location: '', passoutYear: '', percentage: '', cgpa: '', grade: '', marksheet: null, marksheetBase64: null },
-                diploma: { schoolName: '', location: '', passoutYear: '', percentage: '', cgpa: '', grade: '', marksheet: null, marksheetBase64: null },
-                degree: { schoolName: '', location: '', passoutYear: '', percentage: '', cgpa: '', grade: '', marksheet: null, marksheetBase64: null }
+                tenth: { schoolName: '', location: '', passoutYear: '', registrationNumber: '', state: '', specialization: '', percentage: '', cgpa: '', grade: '', marksheet: null, marksheetBase64: null },
+                diploma: { schoolName: '', location: '', passoutYear: '', registrationNumber: '', state: '', specialization: '', percentage: '', cgpa: '', grade: '', marksheet: null, marksheetBase64: null },
+                degree: { schoolName: '', location: '', passoutYear: '', registrationNumber: '', state: '', specialization: '', percentage: '', cgpa: '', grade: '', marksheet: null, marksheetBase64: null }
             };
 
             // Map profile education data to the table structure
@@ -89,6 +93,9 @@ function SectionCanEducation({ profile, onUpdate }) {
                         schoolName: edu.degreeName || '',
                         location: edu.collegeName || '',
                         passoutYear: edu.passYear || '',
+                        registrationNumber: edu.registrationNumber || '',
+                        state: edu.state || '',
+                        specialization: edu.specialization || '',
                         percentage: edu.percentage || '',
                         cgpa: edu.cgpa || '',
                         grade: edu.grade || '',
@@ -100,6 +107,9 @@ function SectionCanEducation({ profile, onUpdate }) {
                         schoolName: edu.degreeName || '',
                         location: edu.collegeName || '',
                         passoutYear: edu.passYear || '',
+                        registrationNumber: edu.registrationNumber || '',
+                        state: edu.state || '',
+                        specialization: edu.specialization || '',
                         percentage: edu.percentage || '',
                         cgpa: edu.cgpa || '',
                         grade: edu.grade || '',
@@ -111,6 +121,9 @@ function SectionCanEducation({ profile, onUpdate }) {
                         schoolName: edu.degreeName || '',
                         location: edu.collegeName || '',
                         passoutYear: edu.passYear || '',
+                        registrationNumber: edu.registrationNumber || '',
+                        state: edu.state || '',
+                        specialization: edu.specialization || '',
                         percentage: edu.percentage || '',
                         cgpa: edu.cgpa || '',
                         grade: edu.grade || '',
@@ -125,6 +138,9 @@ function SectionCanEducation({ profile, onUpdate }) {
                         schoolName: edu.degreeName || '',
                         location: edu.collegeName || '',
                         passoutYear: edu.passYear || '',
+                        registrationNumber: edu.registrationNumber || '',
+                        state: edu.state || '',
+                        specialization: edu.specialization || '',
                         percentage: edu.percentage || '',
                         cgpa: edu.cgpa || '',
                         grade: edu.grade || '',
@@ -249,8 +265,8 @@ function SectionCanEducation({ profile, onUpdate }) {
             }
         }
 
-        // Additional fields for PUC/Diploma and Degree
-        if (selectedEducationLevel === 'puc' || selectedEducationLevel === 'degree') {
+        // Additional fields for PUC/Diploma, Degree, Masters, and PhD
+        if (selectedEducationLevel === 'puc' || selectedEducationLevel === 'degree' || selectedEducationLevel === 'masters' || selectedEducationLevel === 'phd') {
             if (!formData.courseName || !formData.courseName.trim()) {
                 newErrors.courseName = 'Course Name is required';
                 isValid = false;
@@ -261,15 +277,16 @@ function SectionCanEducation({ profile, onUpdate }) {
             }
         }
 
-        // Check for duplicate entries
-        const isDuplicate = educationEntries.some(entry =>
-            entry.educationLevel === selectedEducationLevel &&
-            entry.id !== editingEntry?.id
-        );
+        // Check for duplicate entries only when adding new entries (not when editing)
+        if (!editingEntry) {
+            const isDuplicate = educationEntries.some(entry =>
+                entry.educationLevel === selectedEducationLevel
+            );
 
-        if (isDuplicate) {
-            newErrors.educationLevel = 'This education level already exists';
-            isValid = false;
+            if (isDuplicate) {
+                newErrors.educationLevel = 'This education level already exists';
+                isValid = false;
+            }
         }
 
         setErrors(newErrors);
@@ -279,11 +296,11 @@ function SectionCanEducation({ profile, onUpdate }) {
     const uploadDocument = async (file) => {
         try {
             const formDataUpload = new FormData();
-            formDataUpload.append('document', file);
+            formDataUpload.append('marksheet', file);
 
             const token = localStorage.getItem('candidateToken');
-            const response = await fetch('http://localhost:5000/api/candidate/education/document', {
-                method: 'PUT',
+            const response = await fetch('http://localhost:5000/api/candidate/upload-marksheet', {
+                method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },
@@ -294,7 +311,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                 const result = await response.json();
                 setFormData(prev => ({
                     ...prev,
-                    documentBase64: result.document
+                    documentBase64: result.filePath
                 }));
                 showToast('Document uploaded successfully!', 'success', 4000);
             } else {
@@ -413,6 +430,9 @@ function SectionCanEducation({ profile, onUpdate }) {
                 degreeName: entry.schoolCollegeName,
                 collegeName: entry.boardUniversityName,
                 passYear: entry.yearOfPassing,
+                registrationNumber: entry.registrationNumber,
+                state: entry.state,
+                specialization: entry.courseName || entry.specialization,
                 percentage: entry.percentage,
                 cgpa: entry.cgpa,
                 grade: entry.result,
@@ -499,6 +519,9 @@ function SectionCanEducation({ profile, onUpdate }) {
             schoolName: '',
             location: '',
             passoutYear: '',
+            registrationNumber: '',
+            state: '',
+            specialization: '',
             percentage: '',
             cgpa: '',
             grade: '',
@@ -787,6 +810,9 @@ function SectionCanEducation({ profile, onUpdate }) {
                     degreeName: educationData.tenth.schoolName?.trim(),
                     collegeName: educationData.tenth.location?.trim(),
                     passYear: educationData.tenth.passoutYear,
+                    registrationNumber: educationData.tenth.registrationNumber,
+                    state: educationData.tenth.state,
+                    specialization: educationData.tenth.specialization,
                     percentage: educationData.tenth.percentage,
                     cgpa: educationData.tenth.cgpa,
                     grade: educationData.tenth.grade,
@@ -796,6 +822,9 @@ function SectionCanEducation({ profile, onUpdate }) {
                     degreeName: educationData.diploma.schoolName?.trim(),
                     collegeName: educationData.diploma.location?.trim(),
                     passYear: educationData.diploma.passoutYear,
+                    registrationNumber: educationData.diploma.registrationNumber,
+                    state: educationData.diploma.state,
+                    specialization: educationData.diploma.specialization,
                     percentage: educationData.diploma.percentage,
                     cgpa: educationData.diploma.cgpa,
                     grade: educationData.diploma.grade,
@@ -805,6 +834,9 @@ function SectionCanEducation({ profile, onUpdate }) {
                     degreeName: educationData.degree.schoolName?.trim(),
                     collegeName: educationData.degree.location?.trim(),
                     passYear: educationData.degree.passoutYear,
+                    registrationNumber: educationData.degree.registrationNumber,
+                    state: educationData.degree.state,
+                    specialization: educationData.degree.specialization,
                     percentage: educationData.degree.percentage,
                     cgpa: educationData.degree.cgpa,
                     grade: educationData.degree.grade,
@@ -814,6 +846,9 @@ function SectionCanEducation({ profile, onUpdate }) {
                     degreeName: row.schoolName?.trim(),
                     collegeName: row.location?.trim(),
                     passYear: row.passoutYear,
+                    registrationNumber: row.registrationNumber,
+                    state: row.state,
+                    specialization: row.specialization,
                     percentage: row.percentage,
                     cgpa: row.cgpa,
                     grade: row.grade,
@@ -844,7 +879,9 @@ function SectionCanEducation({ profile, onUpdate }) {
         const levelMap = {
             sslc: 'SSLC / 10th',
             puc: 'PUC / 12th / Diploma',
-            degree: 'Degree / Graduation'
+            degree: 'Degree / Graduation',
+            masters: 'Masters / Post Graduation',
+            phd: 'PhD / Doctorate'
         };
         return levelMap[level] || level;
     };
@@ -983,8 +1020,8 @@ function SectionCanEducation({ profile, onUpdate }) {
                                         {errors.cgpa && <div className="invalid-feedback">{errors.cgpa}</div>}
                                     </div>
 
-                                    {/* Additional fields for PUC/Diploma and Degree */}
-                                    {(selectedEducationLevel === 'puc' || selectedEducationLevel === 'degree') && (
+                                    {/* Additional fields for PUC/Diploma, Degree, Masters, and PhD */}
+                                    {(selectedEducationLevel === 'puc' || selectedEducationLevel === 'degree' || selectedEducationLevel === 'masters' || selectedEducationLevel === 'phd') && (
                                         <>
                                             <div className="col-md-6">
                                                 <label className="form-label">Course Name / Stream</label>
@@ -1113,8 +1150,10 @@ function SectionCanEducation({ profile, onUpdate }) {
                                             <th style={{minWidth: '150px'}}>Degree/Course</th>
                                             <th style={{minWidth: '180px'}}>Institution</th>
                                             <th style={{minWidth: '120px', whiteSpace: 'nowrap'}}>Reg. Number</th>
+                                            <th style={{minWidth: '80px'}}>State</th>
                                             <th style={{minWidth: '80px', whiteSpace: 'nowrap'}}>Score</th>
                                             <th style={{minWidth: '70px'}}>Result</th>
+                                            <th style={{minWidth: '100px', whiteSpace: 'nowrap'}}>Document</th>
                                             <th style={{minWidth: '100px', whiteSpace: 'nowrap'}}>Actions</th>
                                         </tr>
                                     </thead>
@@ -1133,6 +1172,9 @@ function SectionCanEducation({ profile, onUpdate }) {
                                                 <td style={{fontSize: '13px'}}>
                                                     {entry.registrationNumber}
                                                 </td>
+                                                <td style={{fontSize: '13px'}}>
+                                                    {entry.state}
+                                                </td>
                                                 <td style={{fontSize: '13px', textAlign: 'center'}}>
                                                     {entry.percentage || entry.cgpa}
                                                 </td>
@@ -1140,6 +1182,18 @@ function SectionCanEducation({ profile, onUpdate }) {
                                                     <span className={`badge ${entry.result === 'Passed' ? 'bg-success' : 'bg-danger'}`} style={{fontSize: '11px'}}>
                                                         {entry.result}
                                                     </span>
+                                                </td>
+                                                <td style={{fontSize: '12px', textAlign: 'center'}}>
+                                                    {entry.documentBase64 ? (
+                                                        <span className="badge bg-success" style={{fontSize: '10px'}}>
+                                                            <i className="fa fa-file-pdf-o me-1"></i>
+                                                            Uploaded
+                                                        </span>
+                                                    ) : (
+                                                        <span className="badge bg-warning" style={{fontSize: '10px'}}>
+                                                            No Document
+                                                        </span>
+                                                    )}
                                                 </td>
                                                 <td>
                                                     <div className="d-flex gap-1 justify-content-center">

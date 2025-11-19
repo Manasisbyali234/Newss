@@ -267,6 +267,7 @@
 .location-select {
   padding-left: 40px;
   box-sizing: border-box;
+  height: 48px;
 }
 
 .location-suggestions {

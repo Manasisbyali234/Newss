@@ -10,7 +10,7 @@ export default function AssessmentResult({ result }) {
   ];
 
   return (
-    <div className="container mt-5">
+    <div className="mt-5">
       <div className="card shadow-lg">
         <div className="card-header bg-primary text-white text-center">
           <h3 className="mb-0">Assessment Completed!</h3>

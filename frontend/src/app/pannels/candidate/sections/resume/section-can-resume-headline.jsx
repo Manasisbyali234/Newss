@@ -48,14 +48,14 @@ function SectionCanResumeHeadline({ profile }) {
                 </h4>
                 <button 
                     type="button"
-                    className="btn btn-link site-text-primary p-0"
+                    className="btn btn-outline-primary btn-sm"
                     onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         setIsEditing(!isEditing);
                     }}
                 >
-                    <i className={isEditing ? "fa fa-times" : "fa fa-edit"}></i>
+                    {isEditing ? "Cancel" : "Edit"}
                 </button>
             </div>
             <div className="panel-body wt-panel-body p-a20">

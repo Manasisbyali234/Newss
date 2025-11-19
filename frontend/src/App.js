@@ -12,6 +12,8 @@ import "./consolidated-master-styles.css";
 import "./home-job-cards.css";
 // CARD STYLES PRESERVATION - Ensures card styles remain intact after hosting
 import "./card-styles-preserve.css";
+// REMOVE BUTTON HOVER EFFECTS - No color changes on hover
+import "./remove-button-hover-effects.css";
 
 function App() {
 

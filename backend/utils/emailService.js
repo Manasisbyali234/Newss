@@ -252,7 +252,7 @@ const sendOTPEmail = async (email, otp, name) => {
   return result;
 };
 
-const sendPlacementCandidateWelcomeEmail = async (email, name, placementOfficerName, collegeName) => {
+const sendPlacementCandidateWelcomeEmail = async (email, name, password, placementOfficerName, collegeName) => {
   const transporter = createTransport();
   const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/`;
   const createPasswordUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/create-password?email=${encodeURIComponent(email)}&type=candidate`;
@@ -282,25 +282,30 @@ const sendPlacementCandidateWelcomeEmail = async (email, name, placementOfficerN
           </p>
         </div>
 
-        <!-- Create Password Section -->
-        <div style="background-color: #fff8e1; padding: 25px; border-radius: 10px; margin: 25px 0; border: 2px solid #ffc107;">
-          <h3 style="color: #f57c00; margin: 0 0 20px 0; font-size: 18px; display: flex; align-items: center;">
-            🔐 Create Your Password
+        <!-- Login Credentials Section -->
+        <div style="background-color: #e8f5e8; padding: 25px; border-radius: 10px; margin: 25px 0; border: 2px solid #28a745;">
+          <h3 style="color: #155724; margin: 0 0 20px 0; font-size: 18px; display: flex; align-items: center;">
+            🔑 Your Login Credentials
           </h3>
-          <p style="color: #856404; margin: 0 0 20px 0; font-size: 16px; line-height: 1.6;">
-            To complete your registration and access your dashboard, please create a secure password by clicking the button below:
+          <p style="color: #155724; margin: 0 0 20px 0; font-size: 16px; line-height: 1.6;">
+            Your account is ready! Use these credentials to log in to your dashboard:
           </p>
-          <div style="background-color: white; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0;">
+          <div style="background-color: white; padding: 20px; border-radius: 8px; border: 1px solid #28a745;">
             <div style="margin-bottom: 15px;">
               <label style="color: #666; font-size: 14px; font-weight: 600; display: block; margin-bottom: 5px;">Email Address:</label>
               <div style="background-color: #f8f9fa; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 16px; color: #2c3e50; border: 1px solid #dee2e6;">${email}</div>
             </div>
+            <div>
+              <label style="color: #666; font-size: 14px; font-weight: 600; display: block; margin-bottom: 5px;">Password:</label>
+              <div style="background-color: #f8f9fa; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 16px; color: #2c3e50; border: 1px solid #dee2e6; font-weight: bold;">${password}</div>
+            </div>
           </div>
         </div>
 
-        <!-- Create Password Button -->
+        <!-- Login Button -->
         <div style="text-align: center; margin: 35px 0;">
-          <a href="${createPasswordUrl}" style="background: linear-gradient(135deg, #fd7e14 0%, #ff6b35 100%); color: white; padding: 16px 40px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 18px; display: inline-block; box-shadow: 0 4px 15px rgba(253, 126, 20, 0.3); transition: all 0.3s ease;">🔑 Create Your Password</a>
+          <a href="${loginUrl}" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 16px 40px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 18px; display: inline-block; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3); transition: all 0.3s ease; margin-right: 15px;">🚀 Login to Dashboard</a>
+          <a href="${createPasswordUrl}" style="background: linear-gradient(135deg, #fd7e14 0%, #ff6b35 100%); color: white; padding: 16px 40px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 18px; display: inline-block; box-shadow: 0 4px 15px rgba(253, 126, 20, 0.3); transition: all 0.3s ease;">🔐 Create New Password</a>
         </div>
         
         <!-- Next Steps -->
@@ -311,7 +316,7 @@ const sendPlacementCandidateWelcomeEmail = async (email, name, placementOfficerN
           <div style="color: #495057; line-height: 1.8; font-size: 15px;">
             <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
               <span style="color: #fd7e14; font-weight: bold; margin-right: 10px; font-size: 16px;">1.</span>
-              <span><strong>Create your password</strong> using the button above</span>
+              <span><strong>Login to your dashboard</strong> using the credentials above</span>
             </div>
             <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
               <span style="color: #fd7e14; font-weight: bold; margin-right: 10px; font-size: 16px;">2.</span>
@@ -340,7 +345,7 @@ const sendPlacementCandidateWelcomeEmail = async (email, name, placementOfficerN
         <div style="background-color: #fff3cd; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #ffc107;">
           <p style="color: #856404; margin: 0; font-size: 14px; display: flex; align-items: center;">
             <span style="margin-right: 8px; font-size: 16px;">🔒</span>
-            <span><strong>Security Tip:</strong> Please create a strong password with at least 10 characters, including uppercase, lowercase, numbers, and special characters for maximum security.</span>
+            <span><strong>Security Tip:</strong> You can login with the provided password or create a new secure password using the "Create New Password" button above for enhanced security.</span>
           </p>
         </div>
 
@@ -348,8 +353,8 @@ const sendPlacementCandidateWelcomeEmail = async (email, name, placementOfficerN
         <div style="background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #2196f3;">
           <h4 style="color: #1565c0; margin: 0 0 10px 0; font-size: 16px;">📱 Quick Access</h4>
           <p style="color: #1565c0; margin: 0; font-size: 14px;">
-            After creating your password, bookmark this link for easy access: <strong>${loginUrl}</strong><br>
-            Sign in using the <strong>"Candidate"</strong> tab on our homepage.
+            Bookmark this link for easy access: <strong>${loginUrl}</strong><br>
+            Sign in using the <strong>"Candidate"</strong> tab with your email and password.
           </p>
         </div>
         
@@ -374,7 +379,7 @@ const sendPlacementCandidateWelcomeEmail = async (email, name, placementOfficerN
   const mailOptions = {
     from: `"TaleGlobal Team" <${process.env.EMAIL_USER}>`,
     to: email,
-    subject: '🎉 Welcome to TaleGlobal - Create Your Password!',
+    subject: '🎉 Welcome to TaleGlobal - Your Account is Ready!',
     html: welcomeTemplate
   };
 

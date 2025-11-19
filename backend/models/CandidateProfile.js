@@ -28,6 +28,8 @@ const candidateProfileSchema = new mongoose.Schema({
     specialization: String,
     collegeName: String,
     passYear: String,
+    registrationNumber: String,
+    state: String,
     scoreType: { type: String, enum: ['percentage', 'cgpa', 'sgpa', 'grade'], default: 'percentage' },
     scoreValue: String,
     percentage: String, // Keep for backward compatibility

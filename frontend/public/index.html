@@ -57,7 +57,8 @@
   <style>
     :root { color-scheme: light only !important; }
     html { color-scheme: light only !important; }
-    body { color-scheme: light only !important; background-color: #ffffff !important; color: #111827 !important; }
+    body { color-scheme: light only !important; background-color: #ffffff !important; color: #000000 !important; }
+    i, svg, [class^="fa"], [class*=" fa"], .fa, .fas, .far, .fal, .fab, .fad { color: #FF7A00 !important; fill: #FF7A00 !important; stroke: #FF7A00 !important; }
   </style>
   
   <!-- Disable pinch-zoom on content scales (accessibility friendly) -->
@@ -104,6 +105,9 @@
   <!-- COMPLETE MOBILE RESPONSIVE STYLES - Load after all other CSS -->
   <!-- Comprehensive mobile responsiveness for all devices (320px to 1199px) -->
   <link rel="stylesheet" type="text/css" href="%PUBLIC_URL%/assets/css/mobile-responsive-complete.css">
+
+  <!-- REMOVE BUTTON HOVER EFFECTS - No color changes on button hover -->
+  <link rel="stylesheet" type="text/css" href="%PUBLIC_URL%/assets/css/remove-button-hover-effects.css">
 
   <!-- Tailwind CSS (CDN) for noukary-style homepage; preflight disabled to avoid conflicts -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -161,12 +165,12 @@
       // Wait for body to be available
       if (document.body) {
         document.body.style.setProperty('background-color', '#ffffff', 'important');
-        document.body.style.setProperty('color', '#111827', 'important');
+        document.body.style.setProperty('color', '#000000', 'important');
       } else {
         document.addEventListener('DOMContentLoaded', function() {
           if (document.body) {
             document.body.style.setProperty('background-color', '#ffffff', 'important');
-            document.body.style.setProperty('color', '#111827', 'important');
+            document.body.style.setProperty('color', '#000000', 'important');
           }
         });
       }

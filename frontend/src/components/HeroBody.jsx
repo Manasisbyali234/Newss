@@ -249,8 +249,8 @@ const HeroBody = ({ onSearch }) => {
                 <label className="search-label">LOCATION</label>
                 <div className="location-input">
                   <svg className="location-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
-                    <path d="m21 21-4.35-4.35" stroke="currentColor" strokeWidth="2"/>
+                    <circle cx="11" cy="11" r="8" stroke="#000000" strokeWidth="2" fill="none"/>
+                    <path d="m21 21-4.35-4.35" stroke="#000000" strokeWidth="2" fill="none"/>
                   </svg>
                   <input
                     type="text"

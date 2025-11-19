@@ -225,9 +225,6 @@ body {
 input,
 select,
 textarea,
-button,
-.btn,
-.site-button,
 .form-control,
 .wt-search-bar-select,
 .form-select,
@@ -238,11 +235,21 @@ button,
 .ant-input-affix-wrapper,
 .ant-input-number,
 .ant-input-number-input,
-.ant-btn,
 .ant-select-dropdown,
 .ant-select-selection-search-input {
   background-color: #ffffff !important;
   color: #111827 !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+}
+
+button,
+.btn,
+.site-button,
+.ant-btn {
+  background-color: #ffffff !important;
   border: 1px solid #d1d5db !important;
   border-radius: 12px !important;
   box-shadow: none !important;
@@ -772,6 +779,26 @@ button:focus:not(:focus-visible),
 a:focus:not(:focus-visible),
 input:focus:not(:focus-visible) {
   outline: none;
+}
+
+/* Icon Colors - Orange Theme */
+i,
+svg,
+[class^="fa-"],
+[class*=" fa-"],
+.fa,
+.fas,
+.far,
+.fal,
+.fab,
+.fad,
+[class^="feather-"],
+[class*=" feather-"],
+.feather,
+svg.feather {
+  color: #FF7A00 !important;
+  fill: #FF7A00 !important;
+  stroke: #FF7A00 !important;
 }
 
 /* ============================================================================
@@ -3234,11 +3261,7 @@ input[type="checkbox"],
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .container, .container-fluid, .panel, .card, .modal-content, .dropdown-menu {
-    background-color: #ffffff !important;
-  }
-}
+
 
 .container, .container-fluid, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
   width: 100% !important;
@@ -3246,6 +3269,59 @@ input[type="checkbox"],
   padding-left: 0 !important;
   margin-right: 0 !important;
   margin-left: 0 !important;
+}
+
+/* ============================================================================
+ * FINAL ICON COLOR OVERRIDE - ENSURE ALL ICONS ARE ORANGE
+ * ============================================================================ */
+
+i {
+  color: #FF7A00 !important;
+  fill: #FF7A00 !important;
+  stroke: #FF7A00 !important;
+}
+
+svg {
+  color: #FF7A00 !important;
+  fill: #FF7A00 !important;
+  stroke: #FF7A00 !important;
+}
+
+[class^="fa"],
+[class*=" fa"],
+.fa,
+.fas,
+.far,
+.fal,
+.fab,
+.fad,
+[class^="feather"],
+[class*=" feather"],
+.feather {
+  color: #FF7A00 !important;
+  fill: #FF7A00 !important;
+  stroke: #FF7A00 !important;
+}
+
+button i,
+.btn i,
+.site-button i,
+a.btn i,
+.apply-now-btn i,
+.apply-now-button i,
+button [class^="fa"],
+button [class*=" fa"],
+.btn [class^="fa"],
+.btn [class*=" fa"],
+.site-button [class^="fa"],
+a.btn [class^="fa"],
+button svg,
+.btn svg,
+.site-button svg,
+a.btn svg {
+  color: #FF7A00 !important;
+  fill: #FF7A00 !important;
+  stroke: #FF7A00 !important;
 }
 
 /* ============================================================================

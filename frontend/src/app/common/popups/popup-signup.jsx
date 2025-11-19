@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { pubRoute, publicUser } from '../../../globals/route-names';
 import { validatePhoneNumber, handlePhoneInputChange, validatePhoneOnBlur } from '../../../utils/phoneValidation';
-import CountryCodeSelector from '../../../components/CountryCodeSelector';
 
 function SignUpPopup() {
     const [candidateData, setCandidateData] = useState({
@@ -426,6 +425,7 @@ function SignUpPopup() {
 															name="username"
 															type="text"
 															className={`form-control ${fieldErrors.username ? 'is-invalid' : ''}`}
+															style={{ backgroundColor: 'transparent', border: '1px solid #ddd' }}
 															placeholder="Name*"
 															value={candidateData.username}
 															autoComplete="new-password"
@@ -443,6 +443,7 @@ function SignUpPopup() {
 															name="email"
 															type="email"
 															className={`form-control ${fieldErrors.email ? 'is-invalid' : ''}`}
+															style={{ backgroundColor: 'transparent', border: '1px solid #ddd' }}
 															placeholder="Email*"
 															value={candidateData.email}
 															autoComplete="new-password"
@@ -455,26 +456,38 @@ function SignUpPopup() {
 													</div>
 												</div>
 
-												<div className="col-lg-12">
+												<div className="col-lg-6 col-md-6">
 													<div className="form-group mb-3">
-														<div style={{ position: 'relative' }}>
-															<div style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', zIndex: 10 }}>
-																<CountryCodeSelector
-																	value={candidateData.countryCode}
-																	onChange={(code) => setCandidateData(prev => ({ ...prev, countryCode: code }))}
-																/>
-															</div>
-															<input
-																name="mobile"
-																type="tel"
-																className={`form-control ${fieldErrors.mobile ? 'is-invalid' : ''}`}
-																style={{ paddingLeft: '140px' }}
-																placeholder="Mobile No.*"
-																value={candidateData.mobile}
-																onChange={handleCandidateChange}
-																required
-															/>
-														</div>
+														<select 
+															name="countryCode"
+															className="form-control"
+															style={{ backgroundColor: 'transparent', border: '1px solid #ddd' }}
+															value={candidateData.countryCode}
+															onChange={handleCandidateChange}
+														>
+															<option value="+91">+91 (India)</option>
+															<option value="+1">+1 (USA/Canada)</option>
+															<option value="+44">+44 (UK)</option>
+															<option value="+61">+61 (Australia)</option>
+															<option value="+33">+33 (France)</option>
+															<option value="+49">+49 (Germany)</option>
+															<option value="+81">+81 (Japan)</option>
+															<option value="+86">+86 (China)</option>
+														</select>
+													</div>
+												</div>
+												<div className="col-lg-6 col-md-6">
+													<div className="form-group mb-3">
+														<input
+															name="mobile"
+															type="tel"
+															className={`form-control ${fieldErrors.mobile ? 'is-invalid' : ''}`}
+															style={{ backgroundColor: 'transparent', border: '1px solid #ddd' }}
+															placeholder="Mobile No.*"
+															value={candidateData.mobile}
+															onChange={handleCandidateChange}
+															required
+														/>
 														{fieldErrors.mobile && (
 															<div className="invalid-feedback d-block">{fieldErrors.mobile}</div>
 														)}
@@ -532,6 +545,7 @@ function SignUpPopup() {
 														<select
 															name="employerCategory"
 															className={`form-control ${fieldErrors.employerCategory ? 'is-invalid' : ''}`}
+															style={{ backgroundColor: 'transparent', border: '1px solid #ddd' }}
 															value={employerData.employerCategory}
 															onChange={handleEmployerChange}
 															required
@@ -551,6 +565,7 @@ function SignUpPopup() {
 															name="name"
 															type="text"
 															className={`form-control ${fieldErrors.name ? 'is-invalid' : ''}`}
+															style={{ backgroundColor: 'transparent', border: '1px solid #ddd' }}
 															placeholder="Company Name*"
 															value={employerData.name}
 															autoComplete="new-password"
@@ -568,6 +583,7 @@ function SignUpPopup() {
 															name="email"
 															type="email"
 															className={`form-control ${fieldErrors.email ? 'is-invalid' : ''}`}
+															style={{ backgroundColor: 'transparent', border: '1px solid #ddd' }}
 															placeholder="Email*"
 															value={employerData.email}
 															autoComplete="new-password"
@@ -580,26 +596,38 @@ function SignUpPopup() {
 													</div>
 												</div>
 
-												<div className="col-lg-12">
+												<div className="col-lg-6 col-md-6">
 													<div className="form-group mb-3">
-														<div style={{ position: 'relative' }}>
-															<div style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', zIndex: 10 }}>
-																<CountryCodeSelector
-																	value={employerData.countryCode}
-																	onChange={(code) => setEmployerData(prev => ({ ...prev, countryCode: code }))}
-																/>
-															</div>
-															<input
-																name="mobile"
-																type="tel"
-																className={`form-control ${fieldErrors.mobile ? 'is-invalid' : ''}`}
-																style={{ paddingLeft: '140px' }}
-																placeholder="Mobile No.*"
-																value={employerData.mobile}
-																onChange={handleEmployerChange}
-																required
-															/>
-														</div>
+														<select 
+															name="countryCode"
+															className="form-control"
+															style={{ backgroundColor: 'transparent', border: '1px solid #ddd' }}
+															value={employerData.countryCode}
+															onChange={handleEmployerChange}
+														>
+															<option value="+91">+91 (India)</option>
+															<option value="+1">+1 (USA/Canada)</option>
+															<option value="+44">+44 (UK)</option>
+															<option value="+61">+61 (Australia)</option>
+															<option value="+33">+33 (France)</option>
+															<option value="+49">+49 (Germany)</option>
+															<option value="+81">+81 (Japan)</option>
+															<option value="+86">+86 (China)</option>
+														</select>
+													</div>
+												</div>
+												<div className="col-lg-6 col-md-6">
+													<div className="form-group mb-3">
+														<input
+															name="mobile"
+															type="tel"
+															className={`form-control ${fieldErrors.mobile ? 'is-invalid' : ''}`}
+															style={{ backgroundColor: 'transparent', border: '1px solid #ddd' }}
+															placeholder="Mobile No.*"
+															value={employerData.mobile}
+															onChange={handleEmployerChange}
+															required
+														/>
 														{fieldErrors.mobile && (
 															<div className="invalid-feedback d-block">{fieldErrors.mobile}</div>
 														)}
@@ -657,6 +685,7 @@ function SignUpPopup() {
 															name="name"
 															type="text"
 															className={`form-control ${fieldErrors.name ? 'is-invalid' : ''}`}
+															style={{ backgroundColor: 'transparent', border: '1px solid #ddd' }}
 															placeholder="Name*"
 															value={placementData.name}
 															autoComplete="new-password"
@@ -674,6 +703,7 @@ function SignUpPopup() {
 															name="email"
 															type="email"
 															className={`form-control ${fieldErrors.email ? 'is-invalid' : ''}`}
+															style={{ backgroundColor: 'transparent', border: '1px solid #ddd' }}
 															placeholder="Email*"
 															value={placementData.email}
 															autoComplete="new-password"
@@ -686,26 +716,38 @@ function SignUpPopup() {
 													</div>
 												</div>
 
-												<div className="col-lg-12">
+												<div className="col-lg-6 col-md-6">
 													<div className="form-group mb-3">
-														<div style={{ position: 'relative' }}>
-															<div style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', zIndex: 10 }}>
-																<CountryCodeSelector
-																	value={placementData.countryCode}
-																	onChange={(code) => setPlacementData(prev => ({ ...prev, countryCode: code }))}
-																/>
-															</div>
-															<input
-																name="phone"
-																type="tel"
-																className={`form-control ${fieldErrors.phone ? 'is-invalid' : ''}`}
-																style={{ paddingLeft: '140px' }}
-																placeholder="Phone Number*"
-																value={placementData.phone}
-																onChange={handlePlacementChange}
-																required
-															/>
-														</div>
+														<select 
+															name="countryCode"
+															className="form-control"
+															style={{ backgroundColor: 'transparent', border: '1px solid #ddd' }}
+															value={placementData.countryCode}
+															onChange={handlePlacementChange}
+														>
+															<option value="+91">+91 (India)</option>
+															<option value="+1">+1 (USA/Canada)</option>
+															<option value="+44">+44 (UK)</option>
+															<option value="+61">+61 (Australia)</option>
+															<option value="+33">+33 (France)</option>
+															<option value="+49">+49 (Germany)</option>
+															<option value="+81">+81 (Japan)</option>
+															<option value="+86">+86 (China)</option>
+														</select>
+													</div>
+												</div>
+												<div className="col-lg-6 col-md-6">
+													<div className="form-group mb-3">
+														<input
+															name="phone"
+															type="tel"
+															className={`form-control ${fieldErrors.phone ? 'is-invalid' : ''}`}
+															style={{ backgroundColor: 'transparent', border: '1px solid #ddd' }}
+															placeholder="Phone Number*"
+															value={placementData.phone}
+															onChange={handlePlacementChange}
+															required
+														/>
 														{fieldErrors.phone && (
 															<div className="invalid-feedback d-block">{fieldErrors.phone}</div>
 														)}
@@ -718,6 +760,7 @@ function SignUpPopup() {
 															name="collegeName"
 															type="text"
 															className={`form-control ${fieldErrors.collegeName ? 'is-invalid' : ''}`}
+															style={{ backgroundColor: 'transparent', border: '1px solid #ddd' }}
 															placeholder="College Name*"
 															value={placementData.collegeName}
 															onChange={handlePlacementChange}
