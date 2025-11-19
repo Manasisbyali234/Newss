@@ -144,7 +144,7 @@
     font-size: 18px;
   }
 
-  /* How It Works Section - 2 columns */
+  /* How It Works for Candidates Section - 2 columns */
   .twm-how-it-work-section3 .row > .col {
     flex: 0 0 50%;
     max-width: 50%;
@@ -425,7 +425,7 @@
     margin-bottom: 0.5rem;
   }
 
-  /* How It Works - Single Column */
+  /* How It Works for Candidates - Single Column */
   .twm-how-it-work-section3 .row > .col {
     flex: 0 0 100%;
     max-width: 100%;
@@ -808,7 +808,7 @@
     font-size: 0.8rem;
   }
 
-  /* How It Works */
+  /* How It Works for Candidates */
   .twm-w-process-steps3 {
     padding: 0.8rem;
   }

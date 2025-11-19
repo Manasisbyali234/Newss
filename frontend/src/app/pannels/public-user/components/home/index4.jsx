@@ -326,7 +326,7 @@ function Home4Page() {
                                             {/* title="" START*/}
                                             <div className="section-head left wt-small-separator-outer">
                                                 <div className="wt-small-separator">
-                                                    <div>How it Works</div>
+                                                    <div>How It Works for Candidates</div>
                                                 </div>
                                                 <h2>Follow our steps we will help you.</h2>
                                             </div>

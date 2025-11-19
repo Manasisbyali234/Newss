@@ -209,14 +209,14 @@ function AfterLoginPage() {
                 </div>
             </div>
 
-            {/* How It Works Section */}
+            {/* How It Works for Candidates Section */}
             <div className="section-full p-t120 p-b90 site-bg-white twm-how-it-work-area">
                 <div className="container">
                     <div className="section-head center wt-small-separator-outer">
                         <div className="wt-small-separator site-text-primary">
-                            <div>Works for candidates</div>
+                            <div>for candidates</div>
                         </div>
-                        <h2 className="wt-title">How It Works</h2>
+                        <h2 className="wt-title">How It Works for Candidates</h2>
                     </div>
                     <div className="twm-how-it-work-section">
                         <div className="row">

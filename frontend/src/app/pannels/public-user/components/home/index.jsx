@@ -386,9 +386,9 @@ function Home1Page() {
                             {/* title="" START*/}
                             <div className="section-head left wt-small-separator-outer">
                                 <div className="wt-small-separator site-text-primary">
-                                    <div>Works for candidates</div>
+                                    <div>for candidates</div>
                                 </div>
-                                <h2 className="wt-title">How It Works</h2>
+                                <h2 className="wt-title">How It Works for Candidates</h2>
                             </div>
                             <ul className="description-list">
                                 <li>
