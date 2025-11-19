@@ -533,8 +533,13 @@ export default function EmpPostJob({ onNext }) {
 			setIsSubmitting(true);
 
 			// Debug logging
-			
-			
+			console.log('Frontend - Submitting job with typeOfEmployment:', formData.typeOfEmployment);
+			console.log('Frontend - Full jobData being sent:', {
+				title: formData.jobTitle,
+				category: formData.category,
+				typeOfEmployment: formData.typeOfEmployment,
+				jobType: formData.jobType
+			});
 
 			// Extract assessment dates from interview round details
 			const assessmentRoundKey = formData.interviewRoundOrder.find(key => formData.interviewRoundTypes[key] === 'assessment');
@@ -1031,8 +1036,14 @@ export default function EmpPostJob({ onNext }) {
 							borderRadius: 8,
 							background: '#fff'
 						}}>
-							{['Permanent', 'Temporary', 'Freelance', 'Consultant', 'Trainee'].map(empType => (
-								<label key={empType} style={{
+							{[
+								{ value: 'permanent', label: 'Permanent' },
+								{ value: 'temporary', label: 'Temporary' },
+								{ value: 'freelance', label: 'Freelance' },
+								{ value: 'consultant', label: 'Consultant' },
+								{ value: 'trainee', label: 'Trainee' }
+							].map(empType => (
+								<label key={empType.value} style={{
 									display: 'flex',
 									alignItems: 'center',
 									gap: 6,
@@ -1041,17 +1052,17 @@ export default function EmpPostJob({ onNext }) {
 									padding: '6px 8px',
 									borderRadius: 4,
 									transition: 'background 0.2s',
-									background: formData.typeOfEmployment === empType ? '#fff5f2' : 'transparent'
+									background: formData.typeOfEmployment === empType.value ? '#fff5f2' : 'transparent'
 								}}>
 									<input
 										type="radio"
 										name="typeOfEmployment"
-										value={empType}
-										checked={formData.typeOfEmployment === empType}
+										value={empType.value}
+										checked={formData.typeOfEmployment === empType.value}
 										onChange={(e) => update({ typeOfEmployment: e.target.value })}
 										style={{cursor: 'pointer'}}
 									/>
-									<span>{empType}</span>
+									<span>{empType.label}</span>
 								</label>
 							))}
 						</div>

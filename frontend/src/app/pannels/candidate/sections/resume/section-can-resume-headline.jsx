@@ -1,16 +1,21 @@
 import { useState, useEffect } from "react";
 import { api } from "../../../../../utils/api";
+import showToast from "../../../../../utils/toastNotification";
 
 function SectionCanResumeHeadline({ profile }) {
     const [headline, setHeadline] = useState('');
     const [loading, setLoading] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
 
     useEffect(() => {
         setHeadline(profile?.resumeHeadline || '');
     }, [profile]);
 
     const handleSave = async () => {
+        if (!headline.trim()) {
+            showToast('Resume headline cannot be empty', 'warning', 4000);
+            return;
+        }
+
         setLoading(true);
         try {
             const token = localStorage.getItem('candidateToken');
@@ -27,88 +32,60 @@ function SectionCanResumeHeadline({ profile }) {
             const data = await response.json();
             
             if (response.ok && data.success) {
-                setIsEditing(false);
-                alert('Resume headline updated successfully!');
+                showToast('Resume headline updated successfully!', 'success', 4000);
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
             } else {
-                alert('Failed to update resume headline: ' + (data.message || 'Unknown error'));
+                showToast('Failed to update resume headline: ' + (data.message || 'Unknown error'), 'error', 4000);
             }
         } catch (error) {
-            alert('Failed to update resume headline: ' + error.message);
+            showToast('Failed to update resume headline: ' + error.message, 'error', 4000);
         } finally {
             setLoading(false);
         }
     };
+
     return (
         <>
-            <div className="panel-heading wt-panel-heading p-a20 d-flex justify-content-between align-items-center">
+            <div className="panel-heading wt-panel-heading p-a20 panel-heading-with-btn">
                 <h4 className="panel-tittle m-a0">
-                    <i className="fa fa-newspaper-o site-text-primary me-2"></i>
                     Resume Headline
                 </h4>
-                <button 
-                    type="button"
-                    className="btn btn-outline-primary btn-sm"
-                    onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setIsEditing(!isEditing);
-                    }}
-                >
-                    {isEditing ? "Cancel" : "Edit"}
-                </button>
             </div>
-            <div className="panel-body wt-panel-body p-a20">
-                {isEditing ? (
-                    <div className="edit-form">
-                        <div className="alert alert-info mb-3">
-                            <i className="fa fa-info-circle me-2"></i>
-                            Write concisely what makes you unique and right person for the job.
-                        </div>
-                        <textarea 
-                            className="form-control mb-3" 
-                            placeholder="e.g., Experienced Software Developer with 3+ years in React and Node.js" 
-                            value={headline}
-                            onChange={(e) => setHeadline(e.target.value)}
-                            rows={3}
-                            maxLength={200}
-                        />
-                        <div className="d-flex justify-content-between align-items-center">
-                            <small className="text-muted">{headline.length}/200 characters</small>
-                            <div>
-                                <button 
-                                    type="button"
-                                    className="shared-button btn-sm me-2"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        setIsEditing(false);
-                                    }}
-                                    disabled={loading}
-                                >
-                                    Cancel
-                                </button>
-                                <button 
-                                    type="button"
-                                    className="btn btn-primary btn-sm"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        handleSave();
-                                    }}
-                                    disabled={loading}
-                                >
-                                    {loading ? 'Saving...' : 'Save'}
-                                </button>
+
+            <form onSubmit={(e) => e.preventDefault()}>
+                <div className="panel panel-default">
+                    <div className="panel-body wt-panel-body p-a20 m-b30">
+                        <div className="row">
+                            <div className="col-md-12">
+                                <label><i className="fa fa-newspaper-o me-1"></i> Resume Headline *</label>
+                                <textarea 
+                                    className="form-control" 
+                                    placeholder="e.g., Experienced Software Developer with 3+ years in React and Node.js" 
+                                    value={headline}
+                                    onChange={(e) => setHeadline(e.target.value)}
+                                    rows={3}
+                                    maxLength={200}
+                                    required
+                                />
+                                <small className="text-muted">{headline.length}/200 characters</small>
                             </div>
                         </div>
+
+                        <div className="text-left mt-4">
+                            <button 
+                                type="button" 
+                                onClick={handleSave} 
+                                className="btn btn-outline-primary" 
+                                disabled={loading}
+                                style={{backgroundColor: 'transparent'}}
+                            >
+                                <i className="fa fa-save me-1"></i>
+                                {loading ? 'Saving...' : 'Save Changes'}
+                            </button>
+                        </div>
                     </div>
-                ) : (
-                    <div className="twm-panel-inner">
-                        <p>{headline || 'Add your resume headline'}</p>
-                    </div>
-                )}
-            </div>
+                </div>
+            </form>
         </>
     )
 }

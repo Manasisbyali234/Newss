@@ -14,6 +14,8 @@ import "./home-job-cards.css";
 import "./card-styles-preserve.css";
 // REMOVE BUTTON HOVER EFFECTS - No color changes on hover
 import "./remove-button-hover-effects.css";
+// REMOVE RESUME CARD HOVER EFFECTS - No hover effects on resume page cards
+import "./remove-resume-card-hover.css";
 
 function App() {
 

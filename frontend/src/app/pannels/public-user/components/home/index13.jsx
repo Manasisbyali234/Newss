@@ -232,9 +232,9 @@ function Home13Page() {
                     {/* title="" START*/}
                     <div className="section-head center wt-small-separator-outer">
                         <div className="wt-small-separator site-text-primary">
-                            <div>Works for candidates</div>
+                            <div>for candidates</div>
                         </div>
-                        <h2 className="wt-title">How It Works</h2>
+                        <h2 className="wt-title">How It Works for Candidates</h2>
                     </div>
                     {/* title="" END*/}
                     <div className="twm-how-it-work-section3">

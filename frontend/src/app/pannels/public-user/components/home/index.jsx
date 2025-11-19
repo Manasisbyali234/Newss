@@ -3,14 +3,11 @@ import { loadScript, publicUrlFor } from "../../../../../globals/constants";
 import JobZImage from "../../../../common/jobz-img";
 import CountUp from "react-countup";
 import { publicUser } from "../../../../../globals/route-names";
-<<<<<<< HEAD
 import { NavLink } from "react-router-dom";
 import MobileTestIndicator from "../../../../../components/MobileTestIndicator";
-=======
 import HomeJobCard from "../../../../../components/HomeJobCard";
 // CSS is now in public/assets/css/home-job-cards.css
 import "../../../../../clean-job-categories.css";
->>>>>>> 92872e199fdfa4aeeb9461804178829410fcb83d
 
 function TopRecruitersSection() {
     const [jobs, setJobs] = useState([]);
@@ -386,9 +383,9 @@ function Home1Page() {
                             {/* title="" START*/}
                             <div className="section-head left wt-small-separator-outer">
                                 <div className="wt-small-separator site-text-primary">
-                                    <div>Works for candidates</div>
+                                    <div>for candidates</div>
                                 </div>
-                                <h2 className="wt-title">How It Works</h2>
+                                <h2 className="wt-title">How It Works for candidates</h2>
                             </div>
                             <ul className="description-list">
                                 <li>
@@ -467,7 +464,7 @@ function Home1Page() {
                         </div>
                     </div>
                     <div className="twm-how-it-work-section">
-<<<<<<< HEAD
+
                         <div className="row">
                             <div className="col-xl-4 col-lg-6 col-md-6 col-sm-12">
                                 <div className="twm-w-process-steps">
@@ -507,8 +504,6 @@ function Home1Page() {
                                 </div>
                             </div>
                         </div>
-=======
->>>>>>> 92872e199fdfa4aeeb9461804178829410fcb83d
                     </div>
                 </div>
             </div>
@@ -619,6 +614,9 @@ function Home1Page() {
             {/* TOP RECRUITERS START */}
             <TopRecruitersSection />
             {/* TOP RECRUITERS END */}
+            {/* TOP COMPANIES START */}
+            <div className="section-full p-t120 p-b90 site-bg-white">
+                <div className="container">
                 <div className="twm-company-approch-outer">
                     <div className="twm-company-approch">
                         <div className="row">
@@ -660,6 +658,7 @@ function Home1Page() {
                             </div>
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
             {/* TOP COMPANIES END */}
@@ -987,7 +986,9 @@ function Home1Page() {
             </div>
             {/* OUR BLOG END */}
         </div>
+    
     )
+
 }
 
 export default Home1Page;

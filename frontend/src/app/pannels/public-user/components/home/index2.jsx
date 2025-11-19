@@ -219,7 +219,7 @@ function Home2Page() {
                             {/* title="" START*/}
                             <div className="section-head left wt-small-separator-outer">
                                 <div className="wt-small-separator site-text-primary">
-                                    <div>How It Works </div>
+                                    <div>How It Works for Candidates </div>
                                 </div>
                                 <h2 className="wt-title">Follow our steps we will help you.</h2>
                             </div>
