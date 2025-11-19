@@ -456,7 +456,7 @@ function SignUpPopup() {
 													</div>
 												</div>
 
-												<div className="col-lg-6 col-md-6">
+												<div className="col-lg-3 col-md-3" style={{ paddingRight: '5px' }}>
 													<div className="form-group mb-3">
 														<select 
 															name="countryCode"
@@ -476,7 +476,7 @@ function SignUpPopup() {
 														</select>
 													</div>
 												</div>
-												<div className="col-lg-6 col-md-6">
+												<div className="col-lg-9 col-md-9" style={{ paddingLeft: '5px' }}>
 													<div className="form-group mb-3">
 														<input
 															name="mobile"
@@ -596,7 +596,7 @@ function SignUpPopup() {
 													</div>
 												</div>
 
-												<div className="col-lg-6 col-md-6">
+												<div className="col-lg-3 col-md-3" style={{ paddingRight: '5px' }}>
 													<div className="form-group mb-3">
 														<select 
 															name="countryCode"
@@ -616,7 +616,7 @@ function SignUpPopup() {
 														</select>
 													</div>
 												</div>
-												<div className="col-lg-6 col-md-6">
+												<div className="col-lg-9 col-md-9" style={{ paddingLeft: '5px' }}>
 													<div className="form-group mb-3">
 														<input
 															name="mobile"
@@ -716,7 +716,7 @@ function SignUpPopup() {
 													</div>
 												</div>
 
-												<div className="col-lg-6 col-md-6">
+												<div className="col-lg-3 col-md-3" style={{ paddingRight: '5px' }}>
 													<div className="form-group mb-3">
 														<select 
 															name="countryCode"
@@ -736,7 +736,7 @@ function SignUpPopup() {
 														</select>
 													</div>
 												</div>
-												<div className="col-lg-6 col-md-6">
+												<div className="col-lg-9 col-md-9" style={{ paddingLeft: '5px' }}>
 													<div className="form-group mb-3">
 														<input
 															name="phone"
