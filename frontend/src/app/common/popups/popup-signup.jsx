@@ -139,16 +139,73 @@ function SignUpPopup() {
     };
 
     const validateForm = (formData, formType) => {
-        const errors = {};
+        let hasErrors = false;
+        const tempErrors = {};
 
         // Validate all required fields
         Object.keys(formData).forEach(field => {
-            if (formData[field] !== undefined) {
-                validateField(field, formData[field], formType);
+            const value = formData[field];
+            
+            switch (field) {
+                case 'username':
+                case 'name':
+                    if (!value || !value.trim()) {
+                        tempErrors[field] = 'Name is required';
+                        hasErrors = true;
+                    } else if (value.trim().length < 2) {
+                        tempErrors[field] = 'Name must be at least 2 characters long';
+                        hasErrors = true;
+                    } else if (!/^[a-zA-Z\s]+$/.test(value.trim())) {
+                        tempErrors[field] = 'Name can only contain letters and spaces';
+                        hasErrors = true;
+                    }
+                    break;
+
+                case 'email':
+                    if (!value || !value.trim()) {
+                        tempErrors.email = 'Email is required';
+                        hasErrors = true;
+                    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())) {
+                        tempErrors.email = 'Please enter a valid email address';
+                        hasErrors = true;
+                    }
+                    break;
+
+                case 'mobile':
+                case 'phone':
+                    if (!value || !value.trim()) {
+                        tempErrors[field] = 'Phone number is required';
+                        hasErrors = true;
+                    } else {
+                        const phoneValidation = validatePhoneNumber(value, true);
+                        if (!phoneValidation.isValid) {
+                            tempErrors[field] = phoneValidation.message;
+                            hasErrors = true;
+                        }
+                    }
+                    break;
+
+                case 'employerCategory':
+                    if (!value) {
+                        tempErrors.employerCategory = 'Please select an employer category';
+                        hasErrors = true;
+                    }
+                    break;
+
+                case 'collegeName':
+                    if (!value || !value.trim()) {
+                        tempErrors.collegeName = 'College name is required';
+                        hasErrors = true;
+                    } else if (value.trim().length < 3) {
+                        tempErrors.collegeName = 'College name must be at least 3 characters long';
+                        hasErrors = true;
+                    }
+                    break;
             }
         });
 
-        return Object.keys(fieldErrors).length === 0;
+        setFieldErrors(tempErrors);
+        return !hasErrors;
     };
 
     const handleCandidateChange = (e) => {
@@ -195,8 +252,9 @@ function SignUpPopup() {
         e.preventDefault();
 
         const isFormValid = validateForm(candidateData, 'candidate');
+        console.log('Candidate validation:', { isFormValid, candidateData });
 
-        if (!isFormValid || Object.keys(fieldErrors).length > 0) {
+        if (!isFormValid) {
             setError('Please correct the errors below and try again.');
             return;
         }
@@ -206,7 +264,9 @@ function SignUpPopup() {
         
         try {
             const apiUrl = process.env.REACT_APP_API_URL || '';
-            const response = await fetch(`${apiUrl}/api/candidate/register`, {
+            const endpoint = `${apiUrl}/api/candidate/register`;
+            console.log('Calling candidate endpoint:', endpoint);
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -242,8 +302,9 @@ function SignUpPopup() {
         e.preventDefault();
 
         const isFormValid = validateForm(employerData, 'employer');
+        console.log('Employer validation:', { isFormValid, employerData });
 
-        if (!isFormValid || Object.keys(fieldErrors).length > 0) {
+        if (!isFormValid) {
             setError('Please correct the errors below and try again.');
             return;
         }
@@ -253,7 +314,9 @@ function SignUpPopup() {
         
         try {
             const apiUrl = process.env.REACT_APP_API_URL || '';
-            const response = await fetch(`${apiUrl}/api/employer/register`, {
+            const endpoint = `${apiUrl}/api/employer/register`;
+            console.log('Calling employer endpoint:', endpoint);
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -292,8 +355,9 @@ function SignUpPopup() {
         e.preventDefault();
 
         const isFormValid = validateForm(placementData, 'placement');
+        console.log('Placement validation:', { isFormValid, placementData });
 
-        if (!isFormValid || Object.keys(fieldErrors).length > 0) {
+        if (!isFormValid) {
             setError('Please correct the errors below and try again.');
             return;
         }
@@ -303,7 +367,9 @@ function SignUpPopup() {
         
         try {
             const apiUrl = process.env.REACT_APP_API_URL || '';
-            const response = await fetch(`${apiUrl}/api/placement/register`, {
+            const endpoint = `${apiUrl}/api/placement/register`;
+            console.log('Calling placement endpoint:', endpoint);
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -456,7 +522,7 @@ function SignUpPopup() {
 													</div>
 												</div>
 
-												<div className="col-lg-4 col-md-4">
+												<div className="col-lg-3 col-md-3" style={{ paddingRight: '5px' }}>
 													<div className="form-group mb-3">
 														<select 
 															name="countryCode"
@@ -476,7 +542,7 @@ function SignUpPopup() {
 														</select>
 													</div>
 												</div>
-												<div className="col-lg-8 col-md-8">
+												<div className="col-lg-9 col-md-9" style={{ paddingLeft: '5px' }}>
 													<div className="form-group mb-3">
 														<input
 															name="mobile"
@@ -596,7 +662,7 @@ function SignUpPopup() {
 													</div>
 												</div>
 
-												<div className="col-lg-4 col-md-4">
+												<div className="col-lg-3 col-md-3" style={{ paddingRight: '5px' }}>
 													<div className="form-group mb-3">
 														<select 
 															name="countryCode"
@@ -616,7 +682,7 @@ function SignUpPopup() {
 														</select>
 													</div>
 												</div>
-												<div className="col-lg-8 col-md-8">
+												<div className="col-lg-9 col-md-9" style={{ paddingLeft: '5px' }}>
 													<div className="form-group mb-3">
 														<input
 															name="mobile"
@@ -716,7 +782,7 @@ function SignUpPopup() {
 													</div>
 												</div>
 
-												<div className="col-lg-4 col-md-4">
+												<div className="col-lg-3 col-md-3" style={{ paddingRight: '5px' }}>
 													<div className="form-group mb-3">
 														<select 
 															name="countryCode"
@@ -736,7 +802,7 @@ function SignUpPopup() {
 														</select>
 													</div>
 												</div>
-												<div className="col-lg-8 col-md-8">
+												<div className="col-lg-9 col-md-9" style={{ paddingLeft: '5px' }}>
 													<div className="form-group mb-3">
 														<input
 															name="phone"
