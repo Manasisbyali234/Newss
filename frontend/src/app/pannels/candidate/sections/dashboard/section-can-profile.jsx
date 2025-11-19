@@ -113,7 +113,9 @@ function CompleteProfileCard() {
 			<div className="mt-3 d-flex flex-wrap gap-2">
 				<button
 					className="btn btn-outline-primary btn-lg px-5"
-					style={{backgroundColor: 'transparent', borderColor: '#ff6b35', color: '#ff6b35'}}
+					style={{backgroundColor: 'transparent !important', borderColor: '#ff6b35 !important', color: '#ff6b35 !important', transition: 'none !important'}}
+					onMouseEnter={(e) => {e.target.style.setProperty('background-color', 'transparent', 'important'); e.target.style.setProperty('border-color', '#ff6b35', 'important'); e.target.style.setProperty('color', '#ff6b35', 'important');}}
+					onMouseLeave={(e) => {e.target.style.setProperty('background-color', 'transparent', 'important'); e.target.style.setProperty('border-color', '#ff6b35', 'important'); e.target.style.setProperty('color', '#ff6b35', 'important');}}
 					onClick={() => (window.location.href = "/candidate/my-resume")}
 				>
 					{profileCompletion === 100 ? 'View Resume' : 'Complete Resume'}

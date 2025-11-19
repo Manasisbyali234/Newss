@@ -170,10 +170,11 @@ const NotificationBell = ({ userRole }) => {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            gap: '16px'
+            gap: '8px',
+            overflow: 'hidden'
           }}>
             <h4 style={{ margin: 0, fontSize: '16px', flexShrink: 0, lineHeight: '24px' }}>Notifications</h4>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0, minWidth: 'fit-content' }}>
               {unreadCount > 0 && (
                 <button 
                   onClick={markAllAsRead}
@@ -210,8 +211,12 @@ const NotificationBell = ({ userRole }) => {
                   flexShrink: 0,
                   lineHeight: '1',
                   width: '24px',
-                  height: '24px'
+                  height: '24px',
+                  transition: 'none',
+                  overflow: 'hidden'
                 }}
+                onMouseEnter={(e) => {e.target.style.setProperty('background', 'none', 'important'); e.target.style.setProperty('color', '#666', 'important');}}
+                onMouseLeave={(e) => {e.target.style.setProperty('background', 'none', 'important'); e.target.style.setProperty('color', '#666', 'important');}}
                 title="Close notifications"
               >
                 ×

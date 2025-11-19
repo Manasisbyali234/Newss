@@ -711,13 +711,13 @@ function EmpCandidateReviewPage () {
 							</div>
 
 							<div className="d-flex flex-column gap-2">
-								<button className="btn btn-outline-primary w-100 px-4 py-2" style={{backgroundColor: '#ff6600', borderColor: '#ff6600', color: 'white', borderRadius: '50px', fontSize: '14px', fontWeight: '600', minHeight: '40px'}} onClick={saveReview}>
+								<button className="btn btn-outline-primary w-100 px-4 py-2" style={{backgroundColor: '#ff6600', borderColor: '#ff6600', color: 'white', borderRadius: '50px', fontSize: '14px', fontWeight: '600', minHeight: '40px', transition: 'none'}} onMouseEnter={(e) => {e.target.style.backgroundColor = '#ff6600'; e.target.style.borderColor = '#ff6600'; e.target.style.color = 'white';}} onClick={saveReview}>
 									<Save size={16} className="me-2" />Save Review
 								</button>
-								<button className="btn btn-outline-primary w-100 px-4 py-2" style={{backgroundColor: '#ff6600', borderColor: '#ff6600', color: 'white', borderRadius: '50px', fontSize: '14px', fontWeight: '600', minHeight: '40px'}} onClick={shortlistCandidate}>
+								<button className="btn btn-outline-primary w-100 px-4 py-2" style={{backgroundColor: '#ff6600', borderColor: '#ff6600', color: 'white', borderRadius: '50px', fontSize: '14px', fontWeight: '600', minHeight: '40px', transition: 'none'}} onMouseEnter={(e) => {e.target.style.backgroundColor = '#ff6600'; e.target.style.borderColor = '#ff6600'; e.target.style.color = 'white';}} onClick={shortlistCandidate}>
 									<Check size={16} className="me-2" />Shortlist Candidate
 								</button>
-								<button className="btn btn-outline-primary w-100 px-4 py-2" style={{backgroundColor: '#ff6600', borderColor: '#ff6600', color: 'white', borderRadius: '50px', fontSize: '14px', fontWeight: '600', minHeight: '40px'}} onClick={rejectCandidate}>
+								<button className="btn btn-outline-primary w-100 px-4 py-2" style={{backgroundColor: '#ff6600', borderColor: '#ff6600', color: 'white', borderRadius: '50px', fontSize: '14px', fontWeight: '600', minHeight: '40px', transition: 'none'}} onMouseEnter={(e) => {e.target.style.backgroundColor = '#ff6600'; e.target.style.borderColor = '#ff6600'; e.target.style.color = 'white';}} onClick={rejectCandidate}>
 									<X size={16} className="me-2" />Reject Candidate
 								</button>
 							</div>

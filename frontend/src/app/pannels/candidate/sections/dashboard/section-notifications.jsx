@@ -81,7 +81,7 @@ function SectionNotifications() {
 											{new Date(notif.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
 										</small>
 									</div>
-									<button onClick={() => dismissNotification(notif._id)} style={{ background: '#fed7aa', border: 'none', color: 'black', fontSize: '12px', cursor: 'pointer', borderRadius: '2px', padding: '2px 6px', height: 'fit-content' }}>
+									<button onClick={() => dismissNotification(notif._id)} style={{ background: '#fed7aa', border: 'none', color: 'black', fontSize: '12px', cursor: 'pointer', borderRadius: '2px', padding: '2px 6px', height: 'fit-content', flexShrink: 0, width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'none' }} onMouseEnter={(e) => {e.target.style.setProperty('background', '#fed7aa', 'important'); e.target.style.setProperty('color', 'black', 'important');}} onMouseLeave={(e) => {e.target.style.setProperty('background', '#fed7aa', 'important'); e.target.style.setProperty('color', 'black', 'important');}}>
 										<i className="fa fa-times"></i>
 									</button>
 								</div>
