@@ -1,4 +1,4 @@
-import { ArrowLeft, Award, Briefcase, Calendar, Check, Download, Eye, FileText, GraduationCap, Mail, MapPin, Phone, Save, User, UserCircle2, X } from "lucide-react";
+import { ArrowLeft, Award, Briefcase, Calendar, Check, Download, FileText, GraduationCap, Mail, MapPin, Phone, Save, User, UserCircle2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { loadScript } from "../../../../globals/constants";
@@ -423,8 +423,8 @@ function EmpCandidateReviewPage () {
 							<div className="card-body">
 								<div className="row">
 									{candidate.education.map((edu, index) => (
-										<div key={index} className="col-md-6 mb-3">
-											<div className="border rounded p-3">
+										<div key={index} className="col-md-6 mb-3 d-flex">
+											<div className="border rounded p-3 w-100 d-flex flex-column">
 												<h6 className="text-primary mb-2">
 													{index === 0 ? '10th Grade' : index === 1 ? '12th Grade' : 'Degree'}
 												</h6>
@@ -439,7 +439,7 @@ function EmpCandidateReviewPage () {
 															style={{color: 'white', backgroundColor: '#ff6600', borderColor: '#ff6600'}}
 															onClick={() => viewDocument(edu.marksheet)}
 														>
-															<Eye size={14} className="me-1" />View
+															<i className="fa fa-eye me-1" style={{color: 'white'}}></i>View
 														</button>
 														<button
 															className="btn btn-outline-secondary btn-sm"
@@ -710,15 +710,15 @@ function EmpCandidateReviewPage () {
 								</label>
 							</div>
 
-							<div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
-								<button style={{backgroundColor: '#ff6600', color: 'white', border: 'none', padding: '10px 16px', height: '40px', width: '100%', borderRadius: '50px', fontSize: '14px', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', cursor: 'pointer'}} onClick={saveReview}>
-									<Save size={16} style={{marginRight: '8px'}} />Save Review
+							<div className="d-flex flex-column gap-2">
+								<button className="btn btn-outline-primary w-100 px-4 py-2" style={{backgroundColor: '#ff6600', borderColor: '#ff6600', color: 'white', borderRadius: '50px', fontSize: '14px', fontWeight: '600', minHeight: '40px'}} onClick={saveReview}>
+									<Save size={16} className="me-2" />Save Review
 								</button>
-								<button style={{backgroundColor: '#ff6600', color: 'white', border: 'none', padding: '10px 16px', height: '40px', width: '100%', borderRadius: '50px', fontSize: '14px', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', cursor: 'pointer'}} onClick={shortlistCandidate}>
-									<Check size={16} style={{marginRight: '8px'}} />Shortlist Candidate
+								<button className="btn btn-outline-primary w-100 px-4 py-2" style={{backgroundColor: '#ff6600', borderColor: '#ff6600', color: 'white', borderRadius: '50px', fontSize: '14px', fontWeight: '600', minHeight: '40px'}} onClick={shortlistCandidate}>
+									<Check size={16} className="me-2" />Shortlist Candidate
 								</button>
-								<button style={{backgroundColor: '#ff6600', color: 'white', border: 'none', padding: '10px 16px', height: '40px', width: '100%', borderRadius: '50px', fontSize: '14px', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', cursor: 'pointer'}} onClick={rejectCandidate}>
-									<X size={16} style={{marginRight: '8px'}} />Reject Candidate
+								<button className="btn btn-outline-primary w-100 px-4 py-2" style={{backgroundColor: '#ff6600', borderColor: '#ff6600', color: 'white', borderRadius: '50px', fontSize: '14px', fontWeight: '600', minHeight: '40px'}} onClick={rejectCandidate}>
+									<X size={16} className="me-2" />Reject Candidate
 								</button>
 							</div>
 						</div>

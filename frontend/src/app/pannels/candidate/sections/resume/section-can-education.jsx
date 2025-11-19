@@ -1134,12 +1134,20 @@ function SectionCanEducation({ profile, onUpdate }) {
                             <h5 className="mb-3">Education Summary</h5>
                             <div className="table-responsive" style={{overflowX: 'auto'}}>
                                 <table className="table table-bordered table-sm" style={{minWidth: '100%', fontSize: '14px'}}>
+                                <style>{`
+                                    .table tbody tr:hover {
+                                        background-color: transparent !important;
+                                    }
+                                    .table tbody tr:hover td {
+                                        background-color: transparent !important;
+                                    }
+                                `}</style>
                                     <thead className="table-light">
                                         <tr>
                                             <th style={{minWidth: '120px', whiteSpace: 'nowrap'}}>Qualification</th>
                                             <th style={{minWidth: '150px'}}>Degree/Course</th>
-                                            <th style={{minWidth: '180px'}}>Institution</th>
-                                            <th style={{minWidth: '120px', whiteSpace: 'nowrap'}}>Enrollment No.</th>
+                                            <th style={{minWidth: '120px'}}>Institution</th>
+                                            <th style={{minWidth: '80px', whiteSpace: 'nowrap'}}>Enrollment No.</th>
                                             <th style={{minWidth: '80px'}}>State</th>
                                             <th style={{minWidth: '80px', whiteSpace: 'nowrap'}}>Score</th>
                                             <th style={{minWidth: '70px'}}>Result</th>
@@ -1160,7 +1168,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                                                     {entry.boardUniversityName}
                                                 </td>
                                                 <td style={{fontSize: '13px'}}>
-                                                    {entry.registrationNumber}
+                                                    {entry.registrationNumber || '-'}
                                                 </td>
                                                 <td style={{fontSize: '13px'}}>
                                                     {entry.state}

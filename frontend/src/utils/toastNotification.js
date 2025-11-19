@@ -40,7 +40,7 @@ const showToast = (message, type = 'info', duration = 3000) => {
         },
         warning: {
             bg: '#f59e0b',
-            icon: '⚠'
+            icon: ''
         },
         info: {
             bg: '#3b82f6',
@@ -68,7 +68,7 @@ const showToast = (message, type = 'info', duration = 3000) => {
     `;
 
     toast.innerHTML = `
-        <span style="flex-shrink: 0; font-size: 18px; font-weight: bold;">${style.icon}</span>
+        ${style.icon ? `<span style="flex-shrink: 0; font-size: 18px; font-weight: bold;">${style.icon}</span>` : ''}
         <span style="flex: 1;">${message}</span>
     `;
 

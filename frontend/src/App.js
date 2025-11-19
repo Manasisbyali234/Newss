@@ -16,6 +16,8 @@ import "./card-styles-preserve.css";
 import "./remove-button-hover-effects.css";
 // REMOVE RESUME CARD HOVER EFFECTS - No hover effects on resume page cards
 import "./remove-resume-card-hover.css";
+// TAB ICON FIX - Remove orange color from tab icons
+import "./tab-icon-fix.css";
 
 function App() {
 

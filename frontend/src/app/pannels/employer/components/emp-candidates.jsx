@@ -323,7 +323,7 @@ function EmpCandidatesPage() {
                             )
                           }
                         >
-                          <Eye size={16} className="me-1" /> View Details
+                          <i className="fa fa-eye me-1" style={{ color: '#000000' }}></i> View Details
                         </button>
                       </div>
                     </div>

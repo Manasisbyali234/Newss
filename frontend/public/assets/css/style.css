@@ -25404,12 +25404,12 @@ color: #f56523 !important;
 }
 
 .wt-admin-right-page-header .page-subtitle i {
-    color: #fd7e14;
+    color: inherit;
     margin-right: 8px;
 }
 
 .wt-admin-right-page-header h2 i {
-    color: #fd7e14;
+    color: inherit;
     margin-right: 16px;
 }
 

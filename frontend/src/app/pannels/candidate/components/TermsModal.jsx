@@ -73,11 +73,11 @@ const TermsModal = ({ isOpen, onAccept, onDecline, assessment }) => {
                     <div className="modal-footer">
                         <button
                             type="button"
-                            className="btn btn-secondary"
+                            className="btn btn-outline-secondary px-4"
                             onClick={onDecline}
                             style={{
                                 backgroundColor: 'transparent',
-                                border: '1px solid #6c757d',
+                                borderColor: '#6c757d',
                                 color: '#6c757d'
                             }}
                         >
@@ -85,11 +85,11 @@ const TermsModal = ({ isOpen, onAccept, onDecline, assessment }) => {
                         </button>
                         <button
                             type="button"
-                            className="btn btn-primary"
+                            className="btn btn-outline-primary px-4"
                             onClick={onAccept}
                             style={{
                                 backgroundColor: 'transparent',
-                                border: '1px solid #ff6b35',
+                                borderColor: '#ff6b35',
                                 color: '#ff6b35'
                             }}
                         >

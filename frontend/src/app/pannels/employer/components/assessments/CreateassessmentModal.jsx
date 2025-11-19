@@ -337,7 +337,6 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 								placeholder="e.g., JavaScript Fundamentals"
 								value={title}
 								onChange={(e) => setTitle(e.target.value)}
-								required
 							/>
 						</div>
 						<div className="col-3">
@@ -346,7 +345,6 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 								className="form-select"
 								value={type}
 								onChange={(e) => setType(e.target.value)}
-								required
 							>
 								<option value="Technical">Technical</option>
 								<option value="Soft Skill">Soft Skill</option>
@@ -363,7 +361,6 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 								value={timeLimit}
 								onChange={(e) => setTimeLimit(e.target.value)}
 								min="1"
-								required
 							/>
 						</div>
 					</div>
@@ -402,7 +399,7 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 									title="Remove Question"
 									style={{ fontSize: "12px", padding: "2px 6px" }}
 								>
-									❌
+									Remove
 								</button>
 							</div>
 							<input
@@ -413,7 +410,6 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 								onChange={(e) =>
 									handleQuestionChange(qIndex, "question", e.target.value)
 								}
-								required
 							/>
 							<div className="row">
 								{q.options.map((opt, optIndex) => (
@@ -440,7 +436,6 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 											onChange={(e) =>
 												handleOptionChange(qIndex, optIndex, e.target.value)
 											}
-											required
 										/>
 									</div>
 								))}
@@ -458,7 +453,6 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 										handleQuestionChange(qIndex, "marks", e.target.value)
 									}
 									min="1"
-									required
 								/>
 							</div>
 						</div>

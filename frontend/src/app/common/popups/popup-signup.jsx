@@ -252,7 +252,6 @@ function SignUpPopup() {
         e.preventDefault();
 
         const isFormValid = validateForm(candidateData, 'candidate');
-        console.log('Candidate validation:', { isFormValid, candidateData });
 
         if (!isFormValid) {
             setError('Please correct the errors below and try again.');
@@ -264,9 +263,7 @@ function SignUpPopup() {
         
         try {
             const apiUrl = process.env.REACT_APP_API_URL || '';
-            const endpoint = `${apiUrl}/api/candidate/register`;
-            console.log('Calling candidate endpoint:', endpoint);
-            const response = await fetch(endpoint, {
+            const response = await fetch(`${apiUrl}/api/candidate/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -302,7 +299,6 @@ function SignUpPopup() {
         e.preventDefault();
 
         const isFormValid = validateForm(employerData, 'employer');
-        console.log('Employer validation:', { isFormValid, employerData });
 
         if (!isFormValid) {
             setError('Please correct the errors below and try again.');
@@ -314,9 +310,7 @@ function SignUpPopup() {
         
         try {
             const apiUrl = process.env.REACT_APP_API_URL || '';
-            const endpoint = `${apiUrl}/api/employer/register`;
-            console.log('Calling employer endpoint:', endpoint);
-            const response = await fetch(endpoint, {
+            const response = await fetch(`${apiUrl}/api/employer/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -355,7 +349,6 @@ function SignUpPopup() {
         e.preventDefault();
 
         const isFormValid = validateForm(placementData, 'placement');
-        console.log('Placement validation:', { isFormValid, placementData });
 
         if (!isFormValid) {
             setError('Please correct the errors below and try again.');
@@ -367,9 +360,7 @@ function SignUpPopup() {
         
         try {
             const apiUrl = process.env.REACT_APP_API_URL || '';
-            const endpoint = `${apiUrl}/api/placement/register`;
-            console.log('Calling placement endpoint:', endpoint);
-            const response = await fetch(endpoint, {
+            const response = await fetch(`${apiUrl}/api/placement/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

@@ -322,7 +322,7 @@ export default function EmpPostedJobs() {
 														onClick={() => navigate(`/employer/emp-job-review/${job._id}`)}
 														title="View Details"
 													>
-														<Eye size={16} />
+														<i className="fa fa-eye" style={{ color: '#000000' }}></i>
 													</button>
 
 

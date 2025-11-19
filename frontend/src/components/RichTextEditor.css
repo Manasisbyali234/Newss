@@ -1,6 +1,6 @@
 .rich-text-editor {
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
     background: white;
 }
 
@@ -8,30 +8,31 @@
     display: flex;
     align-items: center;
     padding: 8px 12px;
-    border-bottom: 1px solid #dee2e6;
-    background: #f8f9fa;
-    border-radius: 4px 4px 0 0;
-    gap: 4px;
+    border-bottom: 1px solid #d1d5db;
+    background: #ffffff;
+    border-radius: 6px 6px 0 0;
+    gap: 8px;
 }
 
 .toolbar-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    border: 1px solid transparent;
-    background: transparent;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
     border-radius: 4px;
     cursor: pointer;
     color: #000000 !important;
-    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .toolbar-btn:hover {
-    background: #ff6b35 !important;
-    color: white !important;
-    border-color: #ff6b35 !important;
+    background: #f3f4f6 !important;
+    color: #000000 !important;
+    border-color: #9ca3af !important;
 }
 
 .toolbar-btn svg {
@@ -61,13 +62,36 @@
 }
 
 .editor-content {
-    min-height: 120px;
+    min-height: 100px;
     padding: 12px;
     outline: none;
     line-height: 1.5;
-    font-family: inherit;
+    font-family: Arial, sans-serif;
     font-size: 14px;
-    color: #495057;
+    color: #000000 !important;
+    background: #ffffff;
+}
+
+/* Force all text in RichTextEditor to be black everywhere */
+.rich-text-editor .editor-content *,
+.rich-text-editor .editor-content,
+.form-control-editor .editor-content *,
+.form-control-editor .editor-content {
+    color: #000000 !important;
+}
+
+.editor-content p, .editor-content div, .editor-content span, .editor-content li,
+.editor-content strong, .editor-content em, .editor-content u, .editor-content ul {
+    color: #000000 !important;
+}
+
+/* Global override for any RichTextEditor content */
+[contenteditable="true"] {
+    color: #000000 !important;
+}
+
+[contenteditable="true"] * {
+    color: #000000 !important;
 }
 
 .editor-content:empty:before {
@@ -94,28 +118,23 @@
 }
 
 .rich-text-editor:focus-within {
-    border-color: #ff6b35;
-    box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+    border-color: #000000;
+    box-shadow: none;
 }
 
 .form-control-editor {
-    border: 2px solid #e1e5e9;
+    border: 1px solid #d1d5db;
     border-radius: 6px;
-    transition: all 0.3s ease;
-    background-color: #fff;
+    background-color: #ffffff;
 }
 
 .form-control-editor:focus-within {
-    border-color: #ff6b35;
-    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
-    transform: translateY(-1px);
-    background-color: #fff8f5;
+    border-color: #000000;
+    background-color: #ffffff;
 }
 
 .form-control-editor:hover {
-    border-color: #b8c6db;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-color: #9ca3af;
 }
 
 .form-control-editor .rich-text-editor {
@@ -124,9 +143,9 @@
 }
 
 .form-control-editor .editor-toolbar {
-    background: #f8f9fa;
-    border-bottom: 1px solid #dee2e6;
-    border-radius: 4px 4px 0 0;
+    background: #ffffff;
+    border-bottom: 1px solid #d1d5db;
+    border-radius: 6px 6px 0 0;
 }
 
 .form-control-editor .editor-content {

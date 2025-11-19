@@ -781,25 +781,7 @@ input:focus:not(:focus-visible) {
   outline: none;
 }
 
-/* Icon Colors - Orange Theme */
-i,
-svg,
-[class^="fa-"],
-[class*=" fa-"],
-.fa,
-.fas,
-.far,
-.fal,
-.fab,
-.fad,
-[class^="feather-"],
-[class*=" feather-"],
-.feather,
-svg.feather {
-  color: #FF7A00 !important;
-  fill: #FF7A00 !important;
-  stroke: #FF7A00 !important;
-}
+/* Icon Colors - Removed global orange override to allow default colors */
 
 /* ============================================================================
  * SECTION 6: ANIMATIONS & TRANSITIONS

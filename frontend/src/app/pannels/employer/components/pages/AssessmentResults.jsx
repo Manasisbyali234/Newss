@@ -131,7 +131,7 @@ export default function AssessmentResults() {
                       Completed
                     </th>
                     <th style={{ padding: '16px 12px', textAlign: 'left', fontWeight: '600', color: '#232323', fontSize: '13px', border: 'none', verticalAlign: 'middle', whiteSpace: 'nowrap' }}>
-                      <i className="fa fa-exclamation-triangle me-2" style={{color: '#ff6b35'}}></i>
+                      <i className="fa fa-exclamation-triangle me-2"></i>
                       Violations
                     </th>
                     <th style={{ padding: '16px 12px', textAlign: 'center', fontWeight: '600', color: '#232323', fontSize: '13px', border: 'none', verticalAlign: 'middle', whiteSpace: 'nowrap' }}>
