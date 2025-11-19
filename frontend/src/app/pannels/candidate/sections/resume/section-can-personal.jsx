@@ -90,11 +90,15 @@ function SectionCanPersonalDetail({ profile }) {
         const newErrors = { ...errors };
         
         switch (field) {
-
-            
-
-            
-
+            case 'location':
+            case 'pincode':
+            case 'gender':
+                if (!value || !value.trim()) {
+                    newErrors[field] = 'This field is required';
+                } else {
+                    delete newErrors[field];
+                }
+                break;
             
             case 'dateOfBirth':
                 if (!value || !value.trim()) {
@@ -153,6 +157,19 @@ function SectionCanPersonalDetail({ profile }) {
         
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
+    };
+
+    const validateAllRequiredFields = () => {
+        const requiredFields = ['location', 'pincode', 'dateOfBirth', 'gender', 'fatherName', 'motherName', 'residentialAddress', 'permanentAddress'];
+        let isValid = true;
+        
+        requiredFields.forEach(field => {
+            if (!validateField(field, formData[field])) {
+                isValid = false;
+            }
+        });
+        
+        return isValid;
     };
 
     const fetchLocationByPincode = async (pincode) => {
@@ -221,6 +238,11 @@ function SectionCanPersonalDetail({ profile }) {
     };
 
     const handleSubmit = async () => {
+        if (!validateAllRequiredFields()) {
+            showToast('Please fill all required fields correctly', 'error', 4000);
+            return;
+        }
+        
         setLoading(true);
         try {
             const updateData = {
@@ -358,13 +380,17 @@ function SectionCanPersonalDetail({ profile }) {
                             <div className="col-md-6">
                                 <label><i className="fa fa-map-marker me-1"></i> Location *</label>
                                 <input
-                                    className="form-control"
+                                    className={`form-control ${errors.location ? 'is-invalid' : ''}`}
                                     type="text"
                                     placeholder="Enter location"
                                     value={formData.location}
-                                    onChange={(e) => handleInputChange('location', e.target.value)}
+                                    onChange={(e) => {
+                                        handleInputChange('location', e.target.value);
+                                        validateField('location', e.target.value);
+                                    }}
                                     required
                                 />
+                                {errors.location && <div className="text-danger mt-1"><small>{errors.location}</small></div>}
                             </div>
 
                             <div className="col-md-6">
@@ -384,15 +410,19 @@ function SectionCanPersonalDetail({ profile }) {
                             <div className="col-md-6">
                                 <label><i className="fa fa-map-pin me-1"></i> Pincode *</label>
                                 <input
-                                    className="form-control"
+                                    className={`form-control ${errors.pincode ? 'is-invalid' : ''}`}
                                     type="text"
                                     placeholder="Enter 6-digit pincode"
                                     value={formData.pincode}
-                                    onChange={(e) => handleInputChange('pincode', e.target.value)}
+                                    onChange={(e) => {
+                                        handleInputChange('pincode', e.target.value);
+                                        validateField('pincode', e.target.value);
+                                    }}
                                     maxLength="6"
                                     pattern="[0-9]{6}"
                                     required
                                 />
+                                {errors.pincode && <div className="text-danger mt-1"><small>{errors.pincode}</small></div>}
                             </div>
                             <div className="col-md-6">
                                 <label><i className="fa fa-calendar me-1"></i> Date of Birth *</label>
@@ -408,15 +438,18 @@ function SectionCanPersonalDetail({ profile }) {
                                     min={new Date(new Date().getFullYear() - 100, 0, 1).toISOString().split('T')[0]}
                                     required
                                 />
-                                {errors.dateOfBirth && <div className="invalid-feedback">{errors.dateOfBirth}</div>}
+                                {errors.dateOfBirth && <div className="text-danger mt-1"><small>{errors.dateOfBirth}</small></div>}
                             </div>
 
                             <div className="col-md-6">
                                 <label><i className="fa fa-venus-mars me-1"></i> Gender *</label>
                                 <select 
-                                    className="form-control"
+                                    className={`form-control ${errors.gender ? 'is-invalid' : ''}`}
                                     value={formData.gender}
-                                    onChange={(e) => handleInputChange('gender', e.target.value)}
+                                    onChange={(e) => {
+                                        handleInputChange('gender', e.target.value);
+                                        validateField('gender', e.target.value);
+                                    }}
                                     required
                                 >
                                     <option value="">Select Gender</option>
@@ -424,6 +457,7 @@ function SectionCanPersonalDetail({ profile }) {
                                     <option value="female">Female</option>
                                     <option value="prefer_not_to_say">Prefer not to say</option>
                                 </select>
+                                {errors.gender && <div className="text-danger mt-1"><small>{errors.gender}</small></div>}
                             </div>
 
                             <div className="col-md-6">
@@ -433,10 +467,13 @@ function SectionCanPersonalDetail({ profile }) {
                                     type="text"
                                     placeholder="Enter name"
                                     value={formData.fatherName}
-                                    onChange={(e) => handleInputChange('fatherName', e.target.value)}
+                                    onChange={(e) => {
+                                        handleInputChange('fatherName', e.target.value);
+                                        validateField('fatherName', e.target.value);
+                                    }}
                                     required
                                 />
-                                {errors.fatherName && <div className="invalid-feedback">{errors.fatherName}</div>}
+                                {errors.fatherName && <div className="text-danger mt-1"><small>{errors.fatherName}</small></div>}
                             </div>
 
                             <div className="col-md-6">
@@ -446,10 +483,13 @@ function SectionCanPersonalDetail({ profile }) {
                                     type="text"
                                     placeholder="Enter name"
                                     value={formData.motherName}
-                                    onChange={(e) => handleInputChange('motherName', e.target.value)}
+                                    onChange={(e) => {
+                                        handleInputChange('motherName', e.target.value);
+                                        validateField('motherName', e.target.value);
+                                    }}
                                     required
                                 />
-                                {errors.motherName && <div className="invalid-feedback">{errors.motherName}</div>}
+                                {errors.motherName && <div className="text-danger mt-1"><small>{errors.motherName}</small></div>}
                             </div>
 
                             <div className="col-md-12">
@@ -459,10 +499,13 @@ function SectionCanPersonalDetail({ profile }) {
                                     rows={2}
                                     placeholder="Enter address"
                                     value={formData.residentialAddress}
-                                    onChange={(e) => handleInputChange('residentialAddress', e.target.value)}
+                                    onChange={(e) => {
+                                        handleInputChange('residentialAddress', e.target.value);
+                                        validateField('residentialAddress', e.target.value);
+                                    }}
                                     required
                                 ></textarea>
-                                {errors.residentialAddress && <div className="invalid-feedback">{errors.residentialAddress}</div>}
+                                {errors.residentialAddress && <div className="text-danger mt-1"><small>{errors.residentialAddress}</small></div>}
                             </div>
 
                             <div className="col-md-12">
@@ -503,22 +546,25 @@ function SectionCanPersonalDetail({ profile }) {
                                     rows={2}
                                     placeholder="Enter permanent address"
                                     value={formData.permanentAddress}
-                                    onChange={(e) => handleInputChange('permanentAddress', e.target.value)}
+                                    onChange={(e) => {
+                                        handleInputChange('permanentAddress', e.target.value);
+                                        validateField('permanentAddress', e.target.value);
+                                    }}
                                     disabled={sameAsResidential}
                                     required
                                 ></textarea>
-                                {errors.permanentAddress && <div className="invalid-feedback">{errors.permanentAddress}</div>}
+                                {errors.permanentAddress && <div className="text-danger mt-1"><small>{errors.permanentAddress}</small></div>}
                             </div>
                         </div>
 
                         <div className="text-left mt-4">
-                            <button type="button" onClick={handleSubmit} className="btn btn-outline-primary" disabled={loading || Object.keys(errors).length > 0} style={{backgroundColor: 'transparent'}}>
+                            <button type="button" onClick={handleSubmit} className="btn btn-outline-primary" disabled={loading} style={{backgroundColor: 'transparent'}}>
                                 <i className="fa fa-save me-1"></i>
                                 {loading ? 'Saving...' : 'Save Changes'}
                             </button>
                             {Object.keys(errors).length > 0 && (
                                 <div className="text-danger mt-2">
-                                    <small><i className="fa fa-exclamation-triangle me-1"></i>Please fix the validation errors above</small>
+                                    <small>Please fix the validation errors above</small>
                                 </div>
                             )}
                         </div>

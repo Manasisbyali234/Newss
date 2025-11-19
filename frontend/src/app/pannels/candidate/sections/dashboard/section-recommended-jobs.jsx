@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { MapPin, Clock, Users, DollarSign } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../../../../../utils/api';
 import './recommended-jobs.css';
 
@@ -7,6 +8,7 @@ function SectionRecommendedJobs() {
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchRecommendedJobs();
@@ -137,6 +139,7 @@ function SectionRecommendedJobs() {
                                 borderBottom: index < jobs.length - 1 ? '1px solid #e5e7eb' : 'none',
                                 cursor: 'pointer'
                             }}
+                            onClick={() => navigate(`/job-detail/${job._id}`)}
                         >
                             <div className="d-flex justify-content-between align-items-start mb-2">
                                 <div className="flex-grow-1">

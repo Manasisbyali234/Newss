@@ -265,14 +265,16 @@ function SectionCanEducation({ profile, onUpdate }) {
             }
         }
 
+        // Year of Passing is required for all education levels
+        if (!formData.yearOfPassing || !formData.yearOfPassing.trim()) {
+            newErrors.yearOfPassing = 'Year of Passing is required';
+            isValid = false;
+        }
+
         // Additional fields for PUC/Diploma, Degree, Masters, and PhD
         if (selectedEducationLevel === 'puc' || selectedEducationLevel === 'degree' || selectedEducationLevel === 'masters' || selectedEducationLevel === 'phd') {
             if (!formData.courseName || !formData.courseName.trim()) {
                 newErrors.courseName = 'Course Name is required';
-                isValid = false;
-            }
-            if (!formData.yearOfPassing || !formData.yearOfPassing.trim()) {
-                newErrors.yearOfPassing = 'Year of Passing is required';
                 isValid = false;
             }
         }
@@ -1020,6 +1022,24 @@ function SectionCanEducation({ profile, onUpdate }) {
                                         {errors.cgpa && <div className="invalid-feedback">{errors.cgpa}</div>}
                                     </div>
 
+                                    {/* Year of Passing for SSLC/10th */}
+                                    {selectedEducationLevel === 'sslc' && (
+                                        <div className="col-md-6">
+                                            <label className="form-label">Year of Passing</label>
+                                            <input
+                                                type="number"
+                                                className={`form-control ${errors.yearOfPassing ? 'is-invalid' : ''}`}
+                                                name="yearOfPassing"
+                                                value={formData.yearOfPassing}
+                                                onChange={handleInputChange}
+                                                placeholder="Enter year of passing"
+                                                min="1950"
+                                                max={new Date().getFullYear() + 10}
+                                            />
+                                            {errors.yearOfPassing && <div className="invalid-feedback">{errors.yearOfPassing}</div>}
+                                        </div>
+                                    )}
+
                                     {/* Additional fields for PUC/Diploma, Degree, Masters, and PhD */}
                                     {(selectedEducationLevel === 'puc' || selectedEducationLevel === 'degree' || selectedEducationLevel === 'masters' || selectedEducationLevel === 'phd') && (
                                         <>
@@ -1149,6 +1169,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                                             <th style={{minWidth: '120px'}}>Institution</th>
                                             <th style={{minWidth: '80px', whiteSpace: 'nowrap'}}>Enrollment No.</th>
                                             <th style={{minWidth: '80px'}}>State</th>
+                                            <th style={{minWidth: '80px', whiteSpace: 'nowrap'}}>Year</th>
                                             <th style={{minWidth: '80px', whiteSpace: 'nowrap'}}>Score</th>
                                             <th style={{minWidth: '70px'}}>Result</th>
                                             <th style={{minWidth: '100px', whiteSpace: 'nowrap'}}>Document</th>
@@ -1172,6 +1193,9 @@ function SectionCanEducation({ profile, onUpdate }) {
                                                 </td>
                                                 <td style={{fontSize: '13px'}}>
                                                     {entry.state}
+                                                </td>
+                                                <td style={{fontSize: '13px', textAlign: 'center'}}>
+                                                    {entry.yearOfPassing || '-'}
                                                 </td>
                                                 <td style={{fontSize: '13px', textAlign: 'center'}}>
                                                     {entry.percentage || entry.cgpa}
