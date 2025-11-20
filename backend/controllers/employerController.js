@@ -232,6 +232,12 @@ exports.updateProfile = async (req, res) => {
           relatedId: profile._id,
           createdBy: req.user._id
         });
+        
+        // Update employer status to indicate profile is submitted for review
+        await Employer.findByIdAndUpdate(req.user._id, { 
+          profileSubmittedForReview: true,
+          profileSubmittedAt: new Date()
+        });
       } else {
         // Regular profile update notification
         await createNotification({
@@ -250,7 +256,28 @@ exports.updateProfile = async (req, res) => {
     // Clear employer-related caches when profile is updated
     cacheInvalidation.clearEmployerGridCaches();
 
-    res.json({ success: true, profile });
+    // Check if this is the first time profile is being completed
+    const employer = await Employer.findById(req.user._id);
+    const requiredFields = ['companyName', 'description', 'location', 'phone', 'email'];
+    const isProfileComplete = requiredFields.every(field => profile[field]);
+    
+    let message = 'Profile updated successfully!';
+    if (isProfileComplete && !employer.isApproved && !employer.profileSubmittedForReview) {
+      message = 'Profile completed successfully! Your profile has been submitted for admin review. You will be able to post jobs once approved.';
+    } else if (isProfileComplete && employer.profileSubmittedForReview && !employer.isApproved) {
+      message = 'Profile updated successfully! Your profile is currently under admin review.';
+    } else if (isProfileComplete && employer.isApproved) {
+      message = 'Profile updated successfully! You can now post jobs.';
+    }
+    
+    res.json({ 
+      success: true, 
+      profile,
+      message,
+      isProfileComplete,
+      isApproved: employer.isApproved,
+      profileSubmittedForReview: employer.profileSubmittedForReview
+    });
   } catch (error) {
     console.error('Profile update error:', error);
     if (error.type === 'entity.too.large') {
@@ -500,9 +527,17 @@ exports.createJob = async (req, res) => {
 
     // Check if employer is approved by admin
     if (!req.user.isApproved) {
+      const employer = await Employer.findById(req.user._id);
+      if (!employer.profileSubmittedForReview) {
+        return res.status(403).json({ 
+          success: false, 
+          message: 'Please complete and save your company profile first to submit it for admin review.',
+          requiresProfile: true
+        });
+      }
       return res.status(403).json({ 
         success: false, 
-        message: 'Your company profile is under review. Admin approval is required before you can post jobs. Please wait for approval.',
+        message: 'Your company profile is under admin review. You can post jobs once approved by admin.',
         requiresApproval: true
       });
     }
@@ -1417,6 +1452,7 @@ exports.getProfileCompletion = async (req, res) => {
         completion: 0, 
         missingFields: ['All profile fields'],
         isApproved: employer?.isApproved || false,
+        profileSubmittedForReview: employer?.profileSubmittedForReview || false,
         canPostJobs: false,
         message: 'Please complete your company profile to post jobs.'
       });
@@ -1493,12 +1529,15 @@ exports.getProfileCompletion = async (req, res) => {
     
     const isProfileComplete = missingRequiredFields.length === 0;
     const isApproved = employer?.isApproved || false;
+    const profileSubmittedForReview = employer?.profileSubmittedForReview || false;
     const canPostJobs = isProfileComplete && isApproved;
     
     let message = '';
     if (missingRequiredFields.length > 0) {
       message = `Please complete required fields: ${missingRequiredFields.join(', ')}`;
-    } else if (!isApproved) {
+    } else if (!profileSubmittedForReview) {
+      message = 'Your profile is complete. Save your profile to submit it for admin review.';
+    } else if (profileSubmittedForReview && !isApproved) {
       message = 'Your profile is complete and under admin review. You can post jobs once approved.';
     } else {
       message = 'Your profile is approved. You can now post jobs!';
@@ -1511,6 +1550,7 @@ exports.getProfileCompletion = async (req, res) => {
       allMissingFields: missingFields, // All missing fields for reference
       isProfileComplete,
       isApproved,
+      profileSubmittedForReview,
       canPostJobs,
       message
     });
@@ -1521,6 +1561,7 @@ exports.getProfileCompletion = async (req, res) => {
       completion: 0, 
       missingFields: ['Profile data'],
       isApproved: false,
+      profileSubmittedForReview: false,
       canPostJobs: false,
       message: 'Error loading profile status.'
     });

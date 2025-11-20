@@ -132,17 +132,7 @@ const Header1 = memo(function Header1({ _config }) {
                                             Employers
                                         </NavLink>
                                     </li>
-                                    <li className="nav-item">
-                                        <NavLink
-                                            to="/contact-us"
-                                            className={({ isActive }) => 
-                                                isActive ? "nav-link-custom active" : "nav-link-custom"
-                                            }
-                                            onClick={closeMenu}
-                                        >
-                                            Contact Us
-                                        </NavLink>
-                                    </li>
+
 
                                 </ul>
 
@@ -234,7 +224,7 @@ const Header1 = memo(function Header1({ _config }) {
                             <li><NavLink to="/" className={({ isActive }) => isActive ? "active" : ""} onClick={closeMenu}>Home</NavLink></li>
                             <li><NavLink to="/job-grid" className={({ isActive }) => isActive ? "active" : ""} onClick={closeMenu}>Jobs</NavLink></li>
                             <li><NavLink to="/emp-grid" className={({ isActive }) => isActive ? "active" : ""} onClick={closeMenu}>Employers</NavLink></li>
-                            <li><NavLink to="/contact-us" className={({ isActive }) => isActive ? "active" : ""} onClick={closeMenu}>Contact Us</NavLink></li>
+
                         </ul>
 
                         {/* Auth buttons for mobile menu */}

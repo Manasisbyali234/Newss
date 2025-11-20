@@ -4,6 +4,10 @@ let isConnected = false;
 
 const connectDB = async () => {
   try {
+    console.log('MONGODB_URI:', process.env.MONGODB_URI ? 'Found' : 'Not found');
+    if (!process.env.MONGODB_URI) {
+      throw new Error('MONGODB_URI environment variable is not set');
+    }
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,

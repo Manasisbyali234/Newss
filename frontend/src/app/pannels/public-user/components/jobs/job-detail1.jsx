@@ -292,6 +292,52 @@ function JobDetail1Page() {
                                         </div>
                                     </div>
 
+                                    <div style={{marginBottom: '40px'}}>
+                                        <h4 className="twm-s-title" style={{color: '#2c3e50', marginBottom: '20px', fontSize: '24px', fontWeight: '600'}}>
+                                            <i className="feather-code" style={{marginRight: '10px', color: '#9b59b6'}}></i>
+                                            Required Skills
+                                        </h4>
+                                        <div className="job-skills-container" style={{display: 'flex', flexWrap: 'wrap', gap: '10px'}}>
+                                            {job?.requiredSkills && job.requiredSkills.length > 0 ? (
+                                                job.requiredSkills.map((skill, index) => (
+                                                    <span 
+                                                        key={index} 
+                                                        className="skill-tag" 
+                                                        style={{
+                                                            backgroundColor: '#e8f4fd',
+                                                            color: '#2980b9',
+                                                            padding: '8px 16px',
+                                                            borderRadius: '20px',
+                                                            fontSize: '14px',
+                                                            fontWeight: '500',
+                                                            border: '1px solid #bde0ff',
+                                                            display: 'inline-block'
+                                                        }}
+                                                    >
+                                                        {skill}
+                                                    </span>
+                                                ))
+                                            ) : (
+                                                <p style={{color: '#6c757d', fontStyle: 'italic'}}>No specific skills mentioned for this position</p>
+                                            )}
+                                        </div>
+                                        
+                                        {job?.transportation && (job.transportation.oneWay || job.transportation.twoWay || job.transportation.noCab) && (
+                                            <div style={{marginTop: '25px'}}>
+                                                <h5 style={{color: '#2c3e50', marginBottom: '15px', fontSize: '18px', fontWeight: '600'}}>
+                                                    Transportation
+                                                </h5>
+                                                <p style={{color: '#495057', fontSize: '16px', lineHeight: '1.6'}}>
+                                                    {[
+                                                        job.transportation.oneWay && 'One-way Cab',
+                                                        job.transportation.twoWay && 'Two-way Cab',
+                                                        job.transportation.noCab && 'No Cab Facility'
+                                                    ].filter(Boolean).join(', ')}
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+
                                     {job.employerId?.employerType === 'consultant' && job.employerProfile && (
                                         <div className="job-section" style={{marginBottom: '40px', padding: '25px', backgroundColor: '#fff3cd', borderRadius: '12px', border: '2px solid #f39c12'}}>
                                             <h4 className="twm-s-title" style={{color: '#2c3e50', marginBottom: '20px', fontSize: '24px', fontWeight: '600'}}>

@@ -652,10 +652,9 @@ function PlacementDashboard() {
                                     </span>
                                 </div>
                             </div>
-                            <div className="d-flex flex-column" style={{gap: '0.75rem', minWidth: '220px'}}>
-                                <div className="d-flex align-items-center" style={{background: 'rgba(255, 140, 0, 0.08)', borderRadius: '16px', padding: '0.85rem 1.1rem'}}>
-                                    <span className="badge badge-light" style={{background: '#fff3e6', color: '#dd6b20', fontWeight: 600, borderRadius: '999px', padding: '0.4rem 0.9rem', fontSize: '0.75rem'}}>Status</span>
-                                    <span className="ml-auto" style={{fontWeight: 700, color: '#1f2937', textTransform: 'capitalize'}}>{placementData?.status || 'Pending'}</span>
+                            <div className="d-flex flex-column" style={{gap: '0.75rem', minWidth: '300px'}}>
+                                <div style={{background: 'rgba(255, 140, 0, 0.08)', borderRadius: '16px', padding: '0.5rem', overflow: 'hidden'}}>
+                                    <PlacementNotifications />
                                 </div>
 
                             </div>
@@ -777,13 +776,6 @@ function PlacementDashboard() {
                 </div>
             </div>
 
-            {/* Notifications & File History & Student Data */}
-            <div className="row">
-                <div className="col-lg-4 mb-4">
-                    <PlacementNotifications />
-                </div>
-            </div>
-            
             {/* File History & Student Data */}
             <div className="row">
                 <div className="col-lg-4 mb-4">

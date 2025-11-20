@@ -282,7 +282,9 @@ exports.getAllEmployers = async (req, res) => {
     
     let query = {};
     if (status) query.status = status;
-    if (approvalStatus === 'pending') query.isApproved = false;
+    if (approvalStatus === 'pending') {
+      query.isApproved = false;
+    }
     if (approvalStatus === 'approved') query.isApproved = true;
 
     const employers = await Employer.find(query)
@@ -395,10 +397,10 @@ exports.updateEmployerStatus = async (req, res) => {
     // Create notification for employer
     if (isApproved !== undefined) {
       const notificationData = {
-        title: isApproved ? 'Account Approved' : 'Account Rejected',
+        title: isApproved ? 'Profile Approved - You Can Now Post Jobs!' : 'Profile Rejected',
         message: isApproved 
-          ? 'Your employer account has been approved. You can now post jobs.' 
-          : 'Your employer account has been rejected. Please contact support for more information.',
+          ? 'Congratulations! Your company profile has been approved by admin. You can now post jobs and start hiring candidates.' 
+          : 'Your company profile has been rejected by admin. Please contact support for more information or resubmit your profile with the required corrections.',
         type: isApproved ? 'profile_approved' : 'profile_rejected',
         role: 'employer',
         relatedId: employer._id,
@@ -1260,9 +1262,13 @@ exports.deleteSubAdmin = async (req, res) => {
 // Get employers pending approval with complete profiles
 exports.getEmployersPendingApproval = async (req, res) => {
   try {
-    const employers = await Employer.find({ isApproved: false, status: 'active' })
+    const employers = await Employer.find({ 
+      isApproved: false, 
+      status: 'active',
+      profileSubmittedForReview: true // Only show employers who have submitted complete profiles
+    })
       .select('-password')
-      .sort({ createdAt: -1 });
+      .sort({ profileSubmittedAt: -1 }); // Sort by submission date
 
     // Filter employers with complete profiles
     const employersWithCompleteProfile = [];
@@ -1276,7 +1282,8 @@ exports.getEmployersPendingApproval = async (req, res) => {
         employersWithCompleteProfile.push({
           ...employer.toObject(),
           profile: profile.toObject(),
-          isProfileComplete: true
+          isProfileComplete: true,
+          profileSubmittedAt: employer.profileSubmittedAt
         });
       }
     }

@@ -56,6 +56,7 @@ function EmpCompanyProfilePage() {
         companyIdCardPicture: '',
         alternateContact: '',
         alternateContactCountryCode: '+91',
+        employerCode: '',
         
         // Images
         logo: '',
@@ -790,7 +791,7 @@ function EmpCompanyProfilePage() {
                 
                 <div className="alert alert-info mt-3" style={{fontSize: '14px'}}>
                     <i className="fas fa-info-circle me-2"></i>
-                    <strong>Tip:</strong> Upload all files (logo, documents, etc.) individually first, then click "Save Profile" to save your text information.
+                    <strong>Important:</strong> Complete all required fields and click "Save Profile" to submit your profile for admin review. You can post jobs only after admin approval.
                 </div>
                 
                 {globalErrors.length > 0 && (
@@ -1660,6 +1661,19 @@ function EmpCompanyProfilePage() {
                                         />
                                     </div>
                                     <ErrorDisplay errors={errors} fieldName="alternateContact" />
+                                </div>
+                            </div>
+
+                            <div className="col-lg-4 col-md-6">
+                                <div className="form-group">
+                                    <label><Hash size={16} className="me-2" /> Employer Code</label>
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={formData.employerCode}
+                                        onChange={(e) => handleInputChange('employerCode', e.target.value)}
+                                        placeholder="Enter employer code"
+                                    />
                                 </div>
                             </div>
                         </div>

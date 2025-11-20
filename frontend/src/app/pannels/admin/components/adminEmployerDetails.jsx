@@ -274,6 +274,10 @@ function EmployerDetails() {
                             <h6><i className="fa fa-mobile"></i>Contact Mobile</h6>
                             <p>{profile.contactMobile || 'N/A'}</p>
                         </div>
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="625">
+                            <h6><i className="fa fa-id-badge"></i>Employer Code</h6>
+                            <p>{profile.employerCode || 'N/A'}</p>
+                        </div>
                         <div className="profile-field" data-aos="fade-right" data-aos-delay="650">
                             <h6><i className="fa fa-globe"></i>Website</h6>
                             <p>{profile.website || 'N/A'}</p>

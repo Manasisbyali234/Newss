@@ -187,7 +187,7 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                 <div className="sidebar-elements search-bx">
                     <form>
                         <div className="form-group mb-4 position-relative">
-                            <h4 className="section-head-small mb-4">Job Title ({jobTitles.length} available)</h4>
+                            <h4 className="section-head-small mb-4">Designation ({jobTitles.length} available)</h4>
                             <div className="input-group" style={{background: 'transparent', border: 'none', boxShadow: 'none'}}>
                                 <input 
                                     type="text" 
@@ -549,35 +549,7 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                     </form>
                 </div>
                 
-                <div className="widget tw-sidebar-tags-wrap">
-                    <h4 className="section-head-small mb-4">Tags</h4>
-                    <div className="tagcloud">
-                        {['General', 'Jobs', 'Payment', 'Application', 'Work', 'Recruiting', 'Employer', 'Income', 'Tips'].map(tag => (
-                            <a 
-                                key={tag}
-                                href="#" 
-                                className={`tag-link ${filters.keyword === tag ? 'active' : ''}`}
-                                onClick={(e) => { 
-                                    e.preventDefault(); 
-                                    if (filters.keyword === tag) {
-                                        // If clicking the same tag, clear the filter
-                                        setFilters({...filters, keyword: ''});
-                                    } else {
-                                        // Set the new tag filter
-                                        setFilters({...filters, keyword: tag});
-                                    }
-                                }}
-                                style={{
-                                    backgroundColor: filters.keyword === tag ? '#1967d2' : '',
-                                    color: filters.keyword === tag ? 'white' : '',
-                                    fontWeight: filters.keyword === tag ? 'bold' : 'normal'
-                                }}
-                            >
-                                {tag}
-                            </a>
-                        ))}
-                    </div>
-                </div>
+
             </div>
             {/* <SectionSideAdvert />    */}
         </>
