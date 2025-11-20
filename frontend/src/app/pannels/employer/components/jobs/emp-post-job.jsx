@@ -197,6 +197,7 @@ export default function EmpPostJob({ onNext }) {
 					vacancies: job.vacancies || '',
 					applicationLimit: job.applicationLimit || '',
 					jobDescription: job.description || '',
+					rolesAndResponsibilities: job.responsibilities ? job.responsibilities.join('\n') : '',
 					education: job.education || '',
 					backlogsAllowed: job.backlogsAllowed || false,
 					requiredSkills: job.requiredSkills || [],

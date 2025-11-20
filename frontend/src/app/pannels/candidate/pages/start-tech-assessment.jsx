@@ -667,21 +667,22 @@ const StartAssessment = () => {
 								>
 									Next →
 								</button>
-							) : null}
-							<button
-								onClick={handleSubmit}
-								disabled={isSubmitted}
-								style={{
-									background: "#2ecc71",
-									color: "#fff",
-									border: "none",
-									padding: "8px 15px",
-									borderRadius: "5px",
-									cursor: isSubmitted ? "not-allowed" : "pointer",
-								}}
-							>
-								Submit Assessment
-							</button>
+							) : (
+								<button
+									onClick={handleSubmit}
+									disabled={isSubmitted}
+									style={{
+										background: "#2ecc71",
+										color: "#fff",
+										border: "none",
+										padding: "8px 15px",
+										borderRadius: "5px",
+										cursor: isSubmitted ? "not-allowed" : "pointer",
+									}}
+								>
+									Submit Assessment
+								</button>
+							)}
 						</div>
 					</div>
 				</div>

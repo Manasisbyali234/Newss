@@ -509,6 +509,47 @@ exports.createJob = async (req, res) => {
 
     const jobData = { ...req.body, employerId: req.user._id, status: 'active' };
     
+    // Handle rolesAndResponsibilities field conversion
+    console.log('=== DEBUG ROLES & RESPONSIBILITIES ===');
+    console.log('rolesAndResponsibilities field:', jobData.rolesAndResponsibilities);
+    console.log('rolesAndResponsibilities type:', typeof jobData.rolesAndResponsibilities);
+    console.log('rolesAndResponsibilities length:', jobData.rolesAndResponsibilities ? jobData.rolesAndResponsibilities.length : 0);
+    
+    if (jobData.rolesAndResponsibilities) {
+      // Convert rich text to array of responsibilities
+      // Remove HTML tags and split by line breaks or bullet points
+      const cleanText = jobData.rolesAndResponsibilities
+        .replace(/<[^>]*>/g, '') // Remove HTML tags
+        .replace(/&nbsp;/g, ' ') // Replace non-breaking spaces
+        .trim();
+      
+      console.log('Clean text after processing:', cleanText);
+      console.log('Clean text length:', cleanText.length);
+      
+      if (cleanText) {
+        // Split by line breaks and filter out empty lines
+        const responsibilities = cleanText
+          .split(/\n|\r\n|\r/)
+          .map(line => line.trim())
+          .filter(line => line.length > 0)
+          .map(line => line.replace(/^[\u2022\-\*]\s*/, '')); // Remove bullet points
+        
+        console.log('Final responsibilities array:', responsibilities);
+        jobData.responsibilities = responsibilities.length > 0 ? responsibilities : [cleanText];
+      } else {
+        console.log('Clean text is empty, setting empty responsibilities array');
+        jobData.responsibilities = [];
+      }
+      
+      // Remove the original field to avoid confusion
+      delete jobData.rolesAndResponsibilities;
+    } else {
+      console.log('No rolesAndResponsibilities field found in jobData');
+      jobData.responsibilities = [];
+    }
+    console.log('Final jobData.responsibilities:', jobData.responsibilities);
+    console.log('=== END DEBUG ===');
+    
     // Map assignedAssessment to assessmentId
     if (jobData.assignedAssessment) {
       jobData.assessmentId = jobData.assignedAssessment;
@@ -697,6 +738,47 @@ exports.updateJob = async (req, res) => {
     if (!oldJob) {
       return res.status(404).json({ success: false, message: 'Job not found' });
     }
+    
+    // Handle rolesAndResponsibilities field conversion
+    console.log('=== UPDATE JOB - DEBUG ROLES & RESPONSIBILITIES ===');
+    console.log('rolesAndResponsibilities field:', req.body.rolesAndResponsibilities);
+    console.log('rolesAndResponsibilities type:', typeof req.body.rolesAndResponsibilities);
+    console.log('rolesAndResponsibilities length:', req.body.rolesAndResponsibilities ? req.body.rolesAndResponsibilities.length : 0);
+    
+    if (req.body.rolesAndResponsibilities) {
+      // Convert rich text to array of responsibilities
+      // Remove HTML tags and split by line breaks or bullet points
+      const cleanText = req.body.rolesAndResponsibilities
+        .replace(/<[^>]*>/g, '') // Remove HTML tags
+        .replace(/&nbsp;/g, ' ') // Replace non-breaking spaces
+        .trim();
+      
+      console.log('Clean text after processing:', cleanText);
+      console.log('Clean text length:', cleanText.length);
+      
+      if (cleanText) {
+        // Split by line breaks and filter out empty lines
+        const responsibilities = cleanText
+          .split(/\n|\r\n|\r/)
+          .map(line => line.trim())
+          .filter(line => line.length > 0)
+          .map(line => line.replace(/^[\u2022\-\*]\s*/, '')); // Remove bullet points
+        
+        console.log('Final responsibilities array:', responsibilities);
+        req.body.responsibilities = responsibilities.length > 0 ? responsibilities : [cleanText];
+      } else {
+        console.log('Clean text is empty, setting empty responsibilities array');
+        req.body.responsibilities = [];
+      }
+      
+      // Remove the original field to avoid confusion
+      delete req.body.rolesAndResponsibilities;
+    } else {
+      console.log('No rolesAndResponsibilities field found in req.body');
+      req.body.responsibilities = [];
+    }
+    console.log('Final req.body.responsibilities:', req.body.responsibilities);
+    console.log('=== END UPDATE DEBUG ===');
     
     // Parse CTC from string format to proper structure
     if (req.body.ctc && typeof req.body.ctc === 'string') {

@@ -76,8 +76,15 @@ const ViolationModal = ({ isOpen, violationType, timestamp, onAcknowledge }) => 
                     <div className="modal-footer">
                         <button
                             type="button"
-                            className="btn btn-danger"
                             onClick={onAcknowledge}
+                            style={{
+                                background: "#e74c3c",
+                                color: "#fff",
+                                border: "none",
+                                padding: "8px 15px",
+                                borderRadius: "5px",
+                                cursor: "pointer",
+                            }}
                         >
                             Acknowledge & Exit Assessment
                         </button>
