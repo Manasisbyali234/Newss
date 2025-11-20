@@ -302,7 +302,7 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 			style={{ background: "rgba(0,0,0,0.5)", zIndex: 1050 }}
 		>
 			<div
-				className="bg-white rounded-3 shadow-lg"
+				className="rounded-3 shadow-lg"
 				style={{
 					width: "600px",
 					maxHeight: "90vh",
@@ -386,7 +386,6 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 						<div
 							key={qIndex}
 							className="border rounded-3 p-3 mb-3"
-							style={{ background: "#f9fafb" }}
 						>
 							<div className="d-flex justify-content-between align-items-center mb-2">
 								<label className="form-label small text-muted mb-0">

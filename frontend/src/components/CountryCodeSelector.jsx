@@ -231,7 +231,7 @@ const CountryCodeSelector = ({ value, onChange, className = "" }) => {
   const selectedCountry = countryCodes.find(c => c.code === value) || countryCodes[40];
 
   return (
-    <div ref={dropdownRef} style={{ position: 'relative', width: '120px', height: '50px', flexShrink: 0 }}>
+    <div ref={dropdownRef} style={{ position: 'relative', width: '120px', height: '57px', flexShrink: 0 }}>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}

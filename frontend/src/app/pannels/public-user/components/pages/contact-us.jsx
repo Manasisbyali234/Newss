@@ -82,8 +82,7 @@ function ContactUsPage() {
             <>
                 <div className="section-full twm-contact-one">
                     <div className="section-content">
-                        <div className="container">
-                            <div className="contact-one-inner">
+                        <div className="contact-one-inner">
                                 <div className="row justify-content-center">
                                     <div className="col-lg-8 col-md-10">
                                         <div className="contact-form-outer text-center">
@@ -101,7 +100,6 @@ function ContactUsPage() {
                                     </div>
                                 </div>
                             </div>
-                        </div>
                     </div>
                 </div>
             </>
@@ -112,9 +110,8 @@ function ContactUsPage() {
         <>
             <div className="section-full twm-contact-one">
                 <div className="section-content">
-                    <div className="container">
-                        {/* CONTACT FORM*/}
-                        <div className="contact-one-inner">
+                    {/* CONTACT FORM*/}
+                    <div className="contact-one-inner">
                             <div className="row">
                                 <div className="col-lg-6 col-md-12">
                                     <div className="contact-form-outer">
@@ -252,7 +249,6 @@ function ContactUsPage() {
                                 </div>
                             </div>
                         </div>
-                    </div>
                 </div>
             </div>
             <div className="gmap-outline">

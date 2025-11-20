@@ -15,9 +15,9 @@ function Footer3 () {
 				>
 
 						{/* FOOTER BLOCKES START */}
-						<div className="footer-top">
-							<div className="row">
-								<div className="col-lg-4 col-md-12">
+						<div className="footer-top" style={{padding: '40px 0'}}>
+							<div className="row" style={{margin: '0'}}>
+								<div className="col-lg-4 col-md-12" style={{padding: '0 15px'}}>
 									<div className="widget widget_about">
 										<div className="logo-footer clearfix">
 											<NavLink to={publicUser.INITIAL}>
@@ -52,9 +52,9 @@ function Footer3 () {
 									</div>
 								</div>
 
-								<div className="col-lg-8 col-md-12">
-									<div className="row">
-										<div className="col-lg-6 col-md-6 col-sm-6">
+								<div className="col-lg-8 col-md-12" style={{padding: '0 15px'}}>
+									<div className="row" style={{margin: '0'}}>
+										<div className="col-lg-6 col-md-6 col-sm-6" style={{padding: '0 10px'}}>
 											<div className="widget widget_services ftr-list-center">
 												<h3 className="widget-title">Quick Links</h3>
 												<ul>
@@ -83,7 +83,7 @@ function Footer3 () {
 											</div>
 										</div>
 
-										<div className="col-lg-6 col-md-6 col-sm-6">
+										<div className="col-lg-6 col-md-6 col-sm-6" style={{padding: '0 10px'}}>
 											<div className="widget widget_services ftr-list-center">
 												<h3 className="widget-title">Helpful Links</h3>
 												<ul>
@@ -119,8 +119,8 @@ function Footer3 () {
 						</div>
 
 						{/* FOOTER COPYRIGHT */}
-						<div className="footer-bottom">
-							<div className="footer-bottom-info">
+						<div className="footer-bottom" style={{padding: '20px 0'}}>
+							<div className="footer-bottom-info" style={{margin: '0 15px'}}>
 								<div className="footer-copy-right">
 									<span className="copyrights-text">
 										Copyright © 2025 by Tale Global. All Rights Reserved.
