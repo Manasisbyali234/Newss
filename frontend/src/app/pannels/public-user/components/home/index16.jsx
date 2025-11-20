@@ -396,7 +396,7 @@ function Home16Page() {
                     </div>
                     <h2 className="wt-title">Choose a Relevant Category</h2>
                 </div>
-                <Container className="py-2" style={{background: 'transparent', backgroundColor: 'transparent'}}>
+                <div style={{background: 'transparent', backgroundColor: 'transparent'}}>
                     <div className="category-cards-container">
                         <NavLink to="/job-grid?category=IT" style={{textDecoration: 'none'}}>
                             <div className="category-card" style={{
@@ -619,7 +619,7 @@ function Home16Page() {
                             All Categories
                         </NavLink>
                     </div>
-                </Container>
+                </div>
             </div>
             {/* JOBS CATEGORIES SECTION END */}
 
@@ -627,7 +627,7 @@ function Home16Page() {
             <div className="section-full p-t20 p-b20 twm-bg-ring-wrap2 animate-on-scroll" style={{background: 'transparent', backgroundColor: 'transparent'}}>
                 <div className="twm-bg-ring-right" />
                 <div className="twm-bg-ring-left" />
-                <Container className="py-2" style={{background: 'transparent', backgroundColor: 'transparent'}}>
+                <div style={{background: 'transparent', backgroundColor: 'transparent'}}>
                     <div className="wt-separator-two-part" style={{background: 'transparent'}}>
                         <Row className="wt-separator-two-part-row">
                             <Col
@@ -821,13 +821,13 @@ function Home16Page() {
                             </Row>
                         </div>
                     </div>
-                </Container>
+                </div>
             </div>
             {/* JOB POST END */}
 
             {/* Recruiters START */}
             <div className="section-full p-t20 p-b20 animate-on-scroll" style={{background: 'transparent', backgroundColor: 'transparent'}}>
-                <Container className="py-2" style={{background: 'transparent', backgroundColor: 'transparent'}}>
+                <div style={{background: 'transparent', backgroundColor: 'transparent'}}>
                     {/* title="" START*/}
                     <div className="recruiters-header-section" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', background: 'transparent'}}>
                         <div className="text-left">
@@ -955,13 +955,13 @@ function Home16Page() {
 
                         </div>
                     </div>
-                </Container>
+                </div>
             </div>
             {/* Recruiters END */}
 
             {/* HOW IT WORK SECTION START */}
             <div className="section-full p-t20 p-b20 twm-how-it-work-area animate-on-scroll" style={{backgroundColor: 'white'}}>
-                <Container className="py-2">
+                <div>
                     {/* title="" START*/}
                     <div className="section-head center wt-small-separator-outer mb-3">
                         <div className="wt-small-separator site-text-primary">
@@ -975,7 +975,7 @@ function Home16Page() {
                     <div className="twm-how-it-work-section3">
                         <Row>
                             <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4">
-                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '25px', borderRadius: '12px'}}>
+                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '25px', borderRadius: '12px', minHeight: '140px'}}>
                                     <div className="twm-media" style={{flexShrink: '0', marginRight: '20px'}}>
                                         <div style={{width: '60px', height: '60px', background: 'linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                                             <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -992,7 +992,7 @@ function Home16Page() {
                             </Col>
 
                             <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4">
-                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '25px', borderRadius: '12px'}}>
+                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '25px', borderRadius: '12px', minHeight: '140px'}}>
                                     <div className="twm-media" style={{flexShrink: '0', marginRight: '20px'}}>
                                         <div style={{width: '60px', height: '60px', background: 'linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                                             <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1009,7 +1009,7 @@ function Home16Page() {
                             </Col>
 
                             <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4">
-                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '25px', borderRadius: '12px'}}>
+                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '25px', borderRadius: '12px', minHeight: '140px'}}>
                                     <div className="twm-media" style={{flexShrink: '0', marginRight: '20px'}}>
                                         <div style={{width: '60px', height: '60px', background: 'linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                                             <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1026,7 +1026,7 @@ function Home16Page() {
                             </Col>
 
                             <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4">
-                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '25px', borderRadius: '12px'}}>
+                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '25px', borderRadius: '12px', minHeight: '140px'}}>
                                     <div className="twm-media" style={{flexShrink: '0', marginRight: '20px'}}>
                                         <div style={{width: '60px', height: '60px', background: 'linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                                             <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1043,13 +1043,13 @@ function Home16Page() {
                             </Col>
                         </Row>
                     </div>
-                </Container>
+                </div>
             </div>
             {/* HOW IT WORK SECTION END */}
 
             {/* HOW IT WORK FOR EMPLOYERS SECTION START */}
             <div className="section-full p-t20 p-b20 twm-how-it-work-area animate-on-scroll">
-                <Container className="py-2">
+                <div>
                     {/* title START */}
                     <div className="section-head center wt-small-separator-outer mb-3">
                         <div className="wt-small-separator">
@@ -1116,7 +1116,7 @@ function Home16Page() {
                             </Col>
                         </Row>
                     </div>
-                </Container>
+                </div>
             </div>
             {/* HOW IT WORK FOR EMPLOYERS SECTION END */}
         </>

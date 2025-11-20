@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useCallback, memo, useRef } from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import { NavLink, useNavigate } from "react-router-dom";
 import JobZImage from "../../../../common/jobz-img";
 import SectionEmployerSidebar from "../../sections/employers/section-employer-sidebar";
@@ -228,8 +228,7 @@ const EmployersGridPage = memo(() => {
 
     return (
         <div className="section-full py-5 site-bg-white emp-grid-page">
-            <Container>
-                <Row className="mb-4">
+            <Row className="mb-4">
                     <Col lg={4} md={12} className="rightSidebar">
                         <SectionEmployerSidebar onFilterChange={setFilters} />
                     </Col>
@@ -264,7 +263,6 @@ const EmployersGridPage = memo(() => {
                         <SectionPagination />
                     </Col>
                 </Row>
-            </Container>
         </div>
     );
 });
