@@ -1377,36 +1377,82 @@ exports.getProfileCompletion = async (req, res) => {
       });
     }
     
-    // Required fields for profile completion - same logic as createJob
-    const requiredFields = ['companyName', 'description', 'location', 'phone', 'email'];
-    const completedFields = requiredFields.filter(field => {
+    // Comprehensive list of fields for profile completion calculation
+    const profileFields = {
+      // Basic required fields (weight: 2 each)
+      companyName: { weight: 2, required: true },
+      description: { weight: 2, required: true },
+      location: { weight: 2, required: true },
+      phone: { weight: 2, required: true },
+      email: { weight: 2, required: true },
+      
+      // Important additional fields (weight: 1.5 each)
+      website: { weight: 1.5, required: false },
+      establishedSince: { weight: 1.5, required: false },
+      teamSize: { weight: 1.5, required: false },
+      industrySector: { weight: 1.5, required: false },
+      companyType: { weight: 1.5, required: false },
+      corporateAddress: { weight: 1.5, required: false },
+      
+      // Optional fields (weight: 1 each)
+      whyJoinUs: { weight: 1, required: false },
+      logo: { weight: 1, required: false },
+      coverImage: { weight: 1, required: false },
+      
+      // Contact details (weight: 1 each)
+      contactFullName: { weight: 1, required: false },
+      contactDesignation: { weight: 1, required: false },
+      contactOfficialEmail: { weight: 1, required: false },
+      contactMobile: { weight: 1, required: false }
+    };
+    
+    let totalWeight = 0;
+    let completedWeight = 0;
+    const missingFields = [];
+    const missingRequiredFields = [];
+    
+    // Calculate completion based on weighted fields
+    Object.keys(profileFields).forEach(field => {
+      const fieldConfig = profileFields[field];
       const value = profile[field];
-      return value && (typeof value !== 'string' || value.trim() !== '');
+      const isCompleted = value && (typeof value !== 'string' || value.trim() !== '');
+      
+      totalWeight += fieldConfig.weight;
+      
+      if (isCompleted) {
+        completedWeight += fieldConfig.weight;
+      } else {
+        missingFields.push(field);
+        if (fieldConfig.required) {
+          missingRequiredFields.push(field);
+        }
+      }
     });
-    const completion = Math.round((completedFields.length / requiredFields.length) * 100);
-    const missingFields = requiredFields.filter(field => {
-      const value = profile[field];
-      return !value || (typeof value === 'string' && value.trim() === '');
-    });
+    
+    // Calculate percentage based on weighted completion
+    const completion = Math.round((completedWeight / totalWeight) * 100);
     
     // Log for debugging
     console.log('Profile completion check:', {
-      companyName: profile.companyName,
-      description: profile.description,
-      location: profile.location,
-      phone: profile.phone,
-      email: profile.email,
-      completedFields: completedFields.length,
-      missingFields
+      companyName: profile.companyName ? 'Present' : 'Missing',
+      description: profile.description ? 'Present' : 'Missing',
+      location: profile.location ? 'Present' : 'Missing',
+      phone: profile.phone ? 'Present' : 'Missing',
+      email: profile.email ? 'Present' : 'Missing',
+      completedWeight,
+      totalWeight,
+      completion,
+      missingRequiredFields,
+      totalMissingFields: missingFields.length
     });
     
-    const isProfileComplete = missingFields.length === 0;
+    const isProfileComplete = missingRequiredFields.length === 0;
     const isApproved = employer?.isApproved || false;
     const canPostJobs = isProfileComplete && isApproved;
     
     let message = '';
-    if (!isProfileComplete) {
-      message = 'Please complete your company profile to submit for admin approval.';
+    if (missingRequiredFields.length > 0) {
+      message = `Please complete required fields: ${missingRequiredFields.join(', ')}`;
     } else if (!isApproved) {
       message = 'Your profile is complete and under admin review. You can post jobs once approved.';
     } else {
@@ -1416,7 +1462,8 @@ exports.getProfileCompletion = async (req, res) => {
     res.json({ 
       success: true, 
       completion, 
-      missingFields,
+      missingFields: missingRequiredFields, // Only return required missing fields for UI
+      allMissingFields: missingFields, // All missing fields for reference
       isProfileComplete,
       isApproved,
       canPostJobs,

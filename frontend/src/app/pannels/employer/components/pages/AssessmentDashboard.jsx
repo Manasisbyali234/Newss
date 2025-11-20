@@ -122,9 +122,13 @@ export default function AssessmentDashboard() {
 						</div>
 					) : (
 						<div className="row">
-							{assessments.map((assessment) => (
+							{assessments.map((assessment, index) => (
 								<div key={assessment._id} className="col-md-6 col-lg-4 mb-3">
-									<AssessmentCard data={assessment} onDelete={handleDeleteAssessment} />
+									<AssessmentCard 
+										data={assessment} 
+										onDelete={handleDeleteAssessment}
+										index={index}
+									/>
 								</div>
 							))}
 						</div>

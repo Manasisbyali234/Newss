@@ -14,7 +14,13 @@ function EmpDashboardPage() {
         shortlisted: 0
     });
     const [employer, setEmployer] = useState({ companyName: 'Company', logo: null });
-    const [profileCompletion, setProfileCompletion] = useState({ completion: 75, missingFields: [] });
+    const [profileCompletion, setProfileCompletion] = useState({ 
+        completion: 0, 
+        missingFields: [], 
+        message: 'Loading...', 
+        isProfileComplete: false, 
+        canPostJobs: false 
+    });
     const [recentActivity, setRecentActivity] = useState([]);
     const [notifications, setNotifications] = useState([]);
     const [isMobile, setIsMobile] = useState(false);
@@ -82,12 +88,30 @@ function EmpDashboardPage() {
 
             if (completionResponse.ok) {
                 const completionData = await completionResponse.json();
+                console.log('Profile completion data received:', completionData);
                 if (completionData.success) {
                     setProfileCompletion({
-                        completion: completionData.completion || 75,
-                        missingFields: completionData.missingFields || []
+                        completion: completionData.completion || 0,
+                        missingFields: completionData.missingFields || [],
+                        message: completionData.message || '',
+                        isProfileComplete: completionData.isProfileComplete || false,
+                        canPostJobs: completionData.canPostJobs || false
+                    });
+                } else {
+                    console.error('Profile completion API error:', completionData.message);
+                    setProfileCompletion({
+                        completion: 0,
+                        missingFields: ['Unable to load profile data'],
+                        message: 'Error loading profile completion status'
                     });
                 }
+            } else {
+                console.error('Profile completion API failed:', completionResponse.status);
+                setProfileCompletion({
+                    completion: 0,
+                    missingFields: ['API Error'],
+                    message: 'Failed to load profile completion status'
+                });
             }
 
             if (activityResponse.ok) {
@@ -273,9 +297,51 @@ function EmpDashboardPage() {
 
                                     {/* Content */}
                                     <div style={{ flex: '1' }}>
-                                        <p style={{ color: '#374151', marginBottom: '1.5rem' }}>
+                                        <p style={{ color: '#374151', marginBottom: '1rem' }}>
                                             You are <span style={{ fontWeight: '600' }}>{profileCompletion.completion}% done</span>. Complete the remaining fields to improve your company visibility.
                                         </p>
+                                        
+                                        {/* Show missing fields if any */}
+                                        {profileCompletion.missingFields && profileCompletion.missingFields.length > 0 && (
+                                            <div style={{ marginBottom: '1.5rem' }}>
+                                                <p style={{ color: '#dc2626', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>
+                                                    Missing required fields:
+                                                </p>
+                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                                    {profileCompletion.missingFields.map((field, index) => (
+                                                        <span 
+                                                            key={index}
+                                                            style={{
+                                                                background: '#fef2f2',
+                                                                color: '#dc2626',
+                                                                padding: '0.25rem 0.5rem',
+                                                                borderRadius: '0.375rem',
+                                                                fontSize: '0.75rem',
+                                                                border: '1px solid #fecaca'
+                                                            }}
+                                                        >
+                                                            {field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                        
+                                        {/* Show profile completion message */}
+                                        {profileCompletion.message && (
+                                            <div style={{ 
+                                                marginBottom: '1.5rem',
+                                                padding: '0.75rem',
+                                                borderRadius: '0.5rem',
+                                                background: profileCompletion.isProfileComplete ? '#f0f9ff' : '#fef3c7',
+                                                border: `1px solid ${profileCompletion.isProfileComplete ? '#bae6fd' : '#fde68a'}`,
+                                                color: profileCompletion.isProfileComplete ? '#0369a1' : '#92400e'
+                                            }}>
+                                                <p style={{ margin: 0, fontSize: '0.875rem' }}>
+                                                    {profileCompletion.message}
+                                                </p>
+                                            </div>
+                                        )}
                                         
                                         <div style={{ 
                                             display: 'flex', 

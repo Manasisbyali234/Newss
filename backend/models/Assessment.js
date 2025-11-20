@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const AssessmentSchema = new mongoose.Schema({
   employerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Employer', required: true },
   jobId: { type: mongoose.Schema.Types.ObjectId, ref: 'Job' },
+  serialNumber: { type: Number, required: true },
   title: { type: String, required: true },
   type: { type: String, enum: ['Technical', 'Soft Skill', 'General'], default: 'Technical' },
   description: { type: String },

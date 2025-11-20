@@ -329,7 +329,7 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 					<div className="row mb-3">
 						<div className="col-6">
 							<label className="form-label small text-muted mb-1">
-								Assessment Title <span className="text-danger">*</span>
+								Assessment Title
 							</label>
 							<input
 								type="text"
@@ -340,7 +340,7 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 							/>
 						</div>
 						<div className="col-3">
-							<label className="form-label small text-muted mb-1">Type <span className="text-danger">*</span></label>
+							<label className="form-label small text-muted mb-1">Type</label>
 							<select
 								className="form-select"
 								value={type}
@@ -353,7 +353,7 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 						</div>
 						<div className="col-3">
 							<label className="form-label small text-muted mb-1">
-								Time Limit (min) <span className="text-danger">*</span>
+								Time Limit (min)
 							</label>
 							<input
 								type="number"
@@ -390,7 +390,7 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 						>
 							<div className="d-flex justify-content-between align-items-center mb-2">
 								<label className="form-label small text-muted mb-0">
-									Question {qIndex + 1} <span className="text-danger">*</span>
+									Question {qIndex + 1}
 								</label>
 								<button
 									type="button"
@@ -431,7 +431,7 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 											className="form-control"
 											placeholder={`Option ${String.fromCharCode(
 												65 + optIndex
-											)} *`}
+											)}`}
 											value={opt}
 											onChange={(e) =>
 												handleOptionChange(qIndex, optIndex, e.target.value)
@@ -442,7 +442,7 @@ export default function CreateAssessmentModal({ onClose, onCreate }) {
 							</div>
 							<div className="mt-2">
 								<label className="form-label small text-muted mb-1">
-									Marks <span className="text-danger">*</span>
+									Marks
 								</label>
 								<input
 									type="number"
