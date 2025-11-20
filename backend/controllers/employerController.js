@@ -509,33 +509,58 @@ exports.createJob = async (req, res) => {
 
     const jobData = { ...req.body, employerId: req.user._id, status: 'active' };
     
+    console.log('=== FULL REQUEST BODY DEBUG ===');
+    console.log('Full req.body:', JSON.stringify(req.body, null, 2));
+    console.log('jobData keys:', Object.keys(jobData));
+    console.log('=== END FULL DEBUG ===');
+    
     // Handle rolesAndResponsibilities field conversion
     console.log('=== DEBUG ROLES & RESPONSIBILITIES ===');
     console.log('rolesAndResponsibilities field:', jobData.rolesAndResponsibilities);
     console.log('rolesAndResponsibilities type:', typeof jobData.rolesAndResponsibilities);
     console.log('rolesAndResponsibilities length:', jobData.rolesAndResponsibilities ? jobData.rolesAndResponsibilities.length : 0);
     
-    if (jobData.rolesAndResponsibilities) {
+    if (jobData.rolesAndResponsibilities && typeof jobData.rolesAndResponsibilities === 'string') {
       // Convert rich text to array of responsibilities
       // Remove HTML tags and split by line breaks or bullet points
-      const cleanText = jobData.rolesAndResponsibilities
+      let cleanText = jobData.rolesAndResponsibilities
         .replace(/<[^>]*>/g, '') // Remove HTML tags
         .replace(/&nbsp;/g, ' ') // Replace non-breaking spaces
+        .replace(/&amp;/g, '&') // Replace HTML entities
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
         .trim();
       
       console.log('Clean text after processing:', cleanText);
       console.log('Clean text length:', cleanText.length);
       
-      if (cleanText) {
-        // Split by line breaks and filter out empty lines
-        const responsibilities = cleanText
-          .split(/\n|\r\n|\r/)
-          .map(line => line.trim())
-          .filter(line => line.length > 0)
-          .map(line => line.replace(/^[\u2022\-\*]\s*/, '')); // Remove bullet points
+      if (cleanText && cleanText.length > 0) {
+        // Try multiple splitting strategies
+        let responsibilities = [];
+        
+        // First try splitting by common patterns
+        if (cleanText.includes('\n')) {
+          // Split by line breaks
+          responsibilities = cleanText
+            .split(/\n|\r\n|\r/)
+            .map(line => line.trim())
+            .filter(line => line.length > 0)
+            .map(line => line.replace(/^[\u2022\-\*•]\s*/, '')); // Remove bullet points
+        } else if (cleanText.includes('.') && cleanText.split('.').length > 2) {
+          // Split by periods if multiple sentences
+          responsibilities = cleanText
+            .split('.')
+            .map(line => line.trim())
+            .filter(line => line.length > 0)
+            .map(line => line.replace(/^[\u2022\-\*•]\s*/, ''));
+        } else {
+          // Use the entire text as a single responsibility
+          responsibilities = [cleanText];
+        }
         
         console.log('Final responsibilities array:', responsibilities);
-        jobData.responsibilities = responsibilities.length > 0 ? responsibilities : [cleanText];
+        jobData.responsibilities = responsibilities;
       } else {
         console.log('Clean text is empty, setting empty responsibilities array');
         jobData.responsibilities = [];
@@ -544,7 +569,7 @@ exports.createJob = async (req, res) => {
       // Remove the original field to avoid confusion
       delete jobData.rolesAndResponsibilities;
     } else {
-      console.log('No rolesAndResponsibilities field found in jobData');
+      console.log('No valid rolesAndResponsibilities field found in jobData');
       jobData.responsibilities = [];
     }
     console.log('Final jobData.responsibilities:', jobData.responsibilities);
@@ -745,27 +770,47 @@ exports.updateJob = async (req, res) => {
     console.log('rolesAndResponsibilities type:', typeof req.body.rolesAndResponsibilities);
     console.log('rolesAndResponsibilities length:', req.body.rolesAndResponsibilities ? req.body.rolesAndResponsibilities.length : 0);
     
-    if (req.body.rolesAndResponsibilities) {
+    if (req.body.rolesAndResponsibilities && typeof req.body.rolesAndResponsibilities === 'string') {
       // Convert rich text to array of responsibilities
       // Remove HTML tags and split by line breaks or bullet points
-      const cleanText = req.body.rolesAndResponsibilities
+      let cleanText = req.body.rolesAndResponsibilities
         .replace(/<[^>]*>/g, '') // Remove HTML tags
         .replace(/&nbsp;/g, ' ') // Replace non-breaking spaces
+        .replace(/&amp;/g, '&') // Replace HTML entities
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
         .trim();
       
       console.log('Clean text after processing:', cleanText);
       console.log('Clean text length:', cleanText.length);
       
-      if (cleanText) {
-        // Split by line breaks and filter out empty lines
-        const responsibilities = cleanText
-          .split(/\n|\r\n|\r/)
-          .map(line => line.trim())
-          .filter(line => line.length > 0)
-          .map(line => line.replace(/^[\u2022\-\*]\s*/, '')); // Remove bullet points
+      if (cleanText && cleanText.length > 0) {
+        // Try multiple splitting strategies
+        let responsibilities = [];
+        
+        // First try splitting by common patterns
+        if (cleanText.includes('\n')) {
+          // Split by line breaks
+          responsibilities = cleanText
+            .split(/\n|\r\n|\r/)
+            .map(line => line.trim())
+            .filter(line => line.length > 0)
+            .map(line => line.replace(/^[\u2022\-\*•]\s*/, '')); // Remove bullet points
+        } else if (cleanText.includes('.') && cleanText.split('.').length > 2) {
+          // Split by periods if multiple sentences
+          responsibilities = cleanText
+            .split('.')
+            .map(line => line.trim())
+            .filter(line => line.length > 0)
+            .map(line => line.replace(/^[\u2022\-\*•]\s*/, ''));
+        } else {
+          // Use the entire text as a single responsibility
+          responsibilities = [cleanText];
+        }
         
         console.log('Final responsibilities array:', responsibilities);
-        req.body.responsibilities = responsibilities.length > 0 ? responsibilities : [cleanText];
+        req.body.responsibilities = responsibilities;
       } else {
         console.log('Clean text is empty, setting empty responsibilities array');
         req.body.responsibilities = [];
@@ -774,7 +819,7 @@ exports.updateJob = async (req, res) => {
       // Remove the original field to avoid confusion
       delete req.body.rolesAndResponsibilities;
     } else {
-      console.log('No rolesAndResponsibilities field found in req.body');
+      console.log('No valid rolesAndResponsibilities field found in req.body');
       req.body.responsibilities = [];
     }
     console.log('Final req.body.responsibilities:', req.body.responsibilities);
