@@ -53,7 +53,7 @@ function Footer1() {
 								</div>
 
 								<div className="col-lg-8 col-md-12">
-									<div className="row">
+									<div className="row g-3">
 										<div className="col-lg-6 col-md-6 col-sm-6">
 											<div className="widget widget_services ftr-list-center">
 												<h3 className="widget-title">Quick Links</h3>
@@ -122,7 +122,7 @@ function Footer1() {
 						<div className="footer-bottom">
 							<div className="footer-bottom-info">
 								<div className="footer-copy-right">
-									<span className="copyrights-text">
+									<span className="copyrights-text" style={{paddingLeft: '15px'}}>
 										Copyright © 2025 by Tale Global. All Rights Reserved.
 									</span>
 								</div>
