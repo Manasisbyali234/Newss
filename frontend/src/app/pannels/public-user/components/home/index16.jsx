@@ -861,7 +861,7 @@ function Home16Page() {
 
                     <div className="section-content">
                         <div className="twm-jobs-grid-wrap">
-                            <div style={{padding: '0 20px', background: 'transparent', width: '100%'}}>
+                            <div style={{padding: '0 45px', background: 'transparent', width: '100%'}}>
                                 <Row style={{'--bs-gutter-x': '6px'}}>
                                 {jobs.length > 0 ? (
                                     jobs.map((job) => (
