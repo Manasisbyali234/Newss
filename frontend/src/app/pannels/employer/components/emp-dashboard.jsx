@@ -150,7 +150,7 @@ function EmpDashboardPage() {
                                 width: '60px',
                                 height: '60px',
                                 borderRadius: '50%',
-                                background: employer.logo ? `url(${employer.logo})` : '#f97316',
+                                background: employer.logo ? `url("${employer.logo}") center/cover` : '#f97316',
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
                                 display: 'flex',

@@ -198,7 +198,7 @@ const HeroBody = ({ onSearch }) => {
         {/* Search Bar */}
         <div className="search-container">
           <div className="search-field">
-            <label className="search-label">Designation</label>
+            <label className="search-label">WHAT</label>
             <select 
               className={`search-select${touched.what && errors.what ? ' has-error' : ''}`}
               value={searchData.what}
