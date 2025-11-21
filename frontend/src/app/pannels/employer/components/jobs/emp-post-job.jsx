@@ -990,7 +990,7 @@ export default function EmpPostJob({ onNext }) {
 							<option value="HR">HR</option>
 							<option value="Operations">Operations</option>
 							<option value="Design">Design</option>
-							<option value="Content">Content</option>
+							<option value="Content">Content Writer</option>
 							<option value="Healthcare">Healthcare</option>
 							<option value="Education">Education</option>
 							<option value="Other">Other</option>

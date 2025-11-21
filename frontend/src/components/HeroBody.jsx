@@ -173,8 +173,7 @@ const HeroBody = ({ onSearch }) => {
         <div className="hero-layout">
           <div className="hero-text" style={{ flex: 1, textAlign: 'left' }}>
             <h1 className="hero-title">
-              Find the <span className="highlight">job</span> that fits<br />
-              your life
+              Find the <span className="highlight">job</span> that fits your life
             </h1>
             <p className="hero-subtitle" style={{ color: '#ff9c00' }}>
               Type your keyword, then click search to find your perfect job.

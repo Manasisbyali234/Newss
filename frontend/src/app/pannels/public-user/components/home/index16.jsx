@@ -134,7 +134,8 @@ function Home16Page() {
                         { name: 'Healthcare', count: categoryCount['Healthcare'] || 0 },
                         { name: 'HR', count: categoryCount['HR'] || 0 },
                         { name: 'Finance', count: categoryCount['Finance'] || 0 },
-                        { name: 'Marketing', count: categoryCount['Marketing'] || 0 },
+                        { name: 'Education', count: categoryCount['Education'] || 0 },
+                        { name: 'Design', count: categoryCount['Design'] || 0 },
                         { name: 'Operations', count: categoryCount['Operations'] || 0 }
                     ];
                     
@@ -616,12 +617,12 @@ function Home16Page() {
                                 }}>+</div>
                             </div>
                         </NavLink>
+
                     </div>
-                    <div className="text-center job-categories-btn">
-                        <NavLink to="/job-grid" className="site-button" style={{padding: '0.5rem 1rem', fontSize: '14px', display: 'inline-flex', width: 'auto', whiteSpace: 'nowrap'}}>
-                            All Categories
-                        </NavLink>
-                        <NavLink to="/job-grid?category=Marketing" style={{textDecoration: 'none'}}>
+                    
+                    {/* Second Row */}
+                    <div className="category-cards-container" style={{marginLeft: '10px', marginRight: '10px', marginTop: '20px'}}>
+                        <NavLink to="/job-grid?category=Finance" style={{textDecoration: 'none'}}>
                             <div className="category-card" style={{
                                 background: '#ffffff',
                                 borderRadius: '18px',
@@ -644,12 +645,12 @@ function Home16Page() {
                                         fontSize: '17px',
                                         fontWeight: '600',
                                         color: '#333'
-                                    }}>Marketing</div>
+                                    }}>Finance</div>
                                     <div className="category-text-sub" style={{
                                         fontSize: '13px',
                                         color: '#A0A7B0',
                                         marginTop: '3px'
-                                    }}>{categories[6]?.count || 0} Jobs</div>
+                                    }}>{categories[5]?.count || 0} Jobs</div>
                                 </div>
                                 <div className="plus-badge" style={{
                                     background: 'rgba(255, 153, 0, 0.12)',
@@ -664,7 +665,7 @@ function Home16Page() {
                                 }}>+</div>
                             </div>
                         </NavLink>
-                        <NavLink to="/job-grid?category=HR" style={{textDecoration: 'none'}}>
+                        <NavLink to="/job-grid?category=Education" style={{textDecoration: 'none'}}>
                             <div className="category-card" style={{
                                 background: '#ffffff',
                                 borderRadius: '18px',
@@ -687,12 +688,55 @@ function Home16Page() {
                                         fontSize: '17px',
                                         fontWeight: '600',
                                         color: '#333'
-                                    }}>Human Resources</div>
+                                    }}>Education</div>
                                     <div className="category-text-sub" style={{
                                         fontSize: '13px',
                                         color: '#A0A7B0',
                                         marginTop: '3px'
-                                    }}>{categories[4]?.count || 0} Jobs</div>
+                                    }}>{categories.find(cat => cat.name === 'Education')?.count || 0} Jobs</div>
+                                </div>
+                                <div className="plus-badge" style={{
+                                    background: 'rgba(255, 153, 0, 0.12)',
+                                    borderRadius: '50%',
+                                    width: '28px',
+                                    height: '28px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: '#FF9D00',
+                                    fontSize: '18px'
+                                }}>+</div>
+                            </div>
+                        </NavLink>
+                        <NavLink to="/job-grid?category=Design" style={{textDecoration: 'none'}}>
+                            <div className="category-card" style={{
+                                background: '#ffffff',
+                                borderRadius: '18px',
+                                padding: '16px 22px',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                boxShadow: '0px 4px 18px rgba(0,0,0,0.06)',
+                                cursor: 'pointer',
+                                transition: 'all 0.25s ease'
+                            }} onMouseEnter={(e) => {
+                                e.currentTarget.style.boxShadow = '0px 8px 22px rgba(0,0,0,0.12)';
+                                e.currentTarget.style.transform = 'translateY(-3px)';
+                            }} onMouseLeave={(e) => {
+                                e.currentTarget.style.boxShadow = '0px 4px 18px rgba(0,0,0,0.06)';
+                                e.currentTarget.style.transform = 'translateY(0px)';
+                            }}>
+                                <div>
+                                    <div className="category-text-title" style={{
+                                        fontSize: '17px',
+                                        fontWeight: '600',
+                                        color: '#333'
+                                    }}>Design</div>
+                                    <div className="category-text-sub" style={{
+                                        fontSize: '13px',
+                                        color: '#A0A7B0',
+                                        marginTop: '3px'
+                                    }}>{categories.find(cat => cat.name === 'Design')?.count || 0} Jobs</div>
                                 </div>
                                 <div className="plus-badge" style={{
                                     background: 'rgba(255, 153, 0, 0.12)',
@@ -735,7 +779,7 @@ function Home16Page() {
                                         fontSize: '13px',
                                         color: '#A0A7B0',
                                         marginTop: '3px'
-                                    }}>{categories[7]?.count || 0} Jobs</div>
+                                    }}>{categories.find(cat => cat.name === 'Operations')?.count || 0} Jobs</div>
                                 </div>
                                 <div className="plus-badge" style={{
                                     background: 'rgba(255, 153, 0, 0.12)',
@@ -750,6 +794,7 @@ function Home16Page() {
                                 }}>+</div>
                             </div>
                         </NavLink>
+
                     </div>
                 </div>
             </div>
