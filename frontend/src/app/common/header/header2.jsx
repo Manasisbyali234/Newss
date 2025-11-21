@@ -204,7 +204,7 @@ function Header2({ _config }) {
                                     <li><NavLink to={publicUser.pages.PRICING}>Pricing</NavLink></li>
                                     <li><NavLink to={publicUser.pages.ERROR404}>Error-404</NavLink></li>
                                     <li><NavLink to={publicUser.pages.FAQ}>FAQ's</NavLink></li>
-                                    <li><NavLink to={publicUser.pages.CONTACT}>Contact Us</NavLink></li>
+
                                     <li><NavLink to={publicUser.pages.MAINTENANCE}>Under Maintenance</NavLink></li>
                                     <li><NavLink to={publicUser.pages.COMING}>Coming soon</NavLink></li>
                                     <li><NavLink to={publicUser.pages.LOGIN}>Login</NavLink></li>

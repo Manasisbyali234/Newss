@@ -246,7 +246,7 @@ ul {
 
 /*===Heading & Title====*/
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Plus Jakarta Sans", sans-serif;;
+ font-family: 'Satoshi', sans-serif;;
   line-height: 1.2;
   color: #17171d;
 }
@@ -2944,7 +2944,7 @@ ol li {
   position: relative;
   margin: -10px 0px;
   padding: 10px 0px;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 @media (max-width: 991px) {
   .header-style-3 .header-nav .nav > li ul {
@@ -3607,7 +3607,7 @@ ol li {
   position: relative;
   margin: -10px 0px;
   padding: 10px 0px;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 @media (max-width: 991px) {
   .header-full-width .header-nav .nav > li ul {
@@ -4263,7 +4263,7 @@ ol li {
   position: relative;
   margin: -10px 0px;
   padding: 10px 0px;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 @media (max-width: 991px) {
   .header-style-light .header-nav .nav > li ul {
@@ -5085,7 +5085,7 @@ ol li {
 }
 /*Title separators*/
 .wt-small-separator {
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   margin-bottom: 10px;
   position: relative;
   display: inline-block;
@@ -5246,7 +5246,7 @@ ol li {
   font-size: 38px;
   line-height: 38px;
   font-weight: 700;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 @media (max-width: 991px) {
   .counter-outer-two .tw-count-number {
@@ -5258,7 +5258,7 @@ ol li {
   font-size: 46px;
   line-height: 50px;
   font-weight: 600;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 @media (max-width: 991px) {
   .counter-outer-two .counter {
@@ -5395,7 +5395,7 @@ ol li {
   color: #fff;
   background-color: #1967d2;
   border: none;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-weight: 600;
   padding: 9px 30px;
   border-radius: 0px 10px 10px 0px;
@@ -5422,14 +5422,14 @@ ol li {
   font-size: 16px;
   padding-top: 80px;
   background-size: cover;
-  font-family: "Plus Jakarta Sans", sans-serif !important;
+  font-family: 'Satoshi', sans-serif !important;
 }
 
 .footer-dark *,
 .footer-light *,
 .footer-top *,
 .footer-bottom * {
-  font-family: "Plus Jakarta Sans", sans-serif !important;
+  font-family: 'Satoshi', sans-serif!important;
   color: #2c2c2c !important;
 }
 
@@ -5496,7 +5496,7 @@ ol li {
   font-weight: 500;
 }
 .footer-dark .widget-title {
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   color: #f0f6fe;
   font-weight: 400;
   font-size: 20px;
@@ -5594,7 +5594,7 @@ ol li {
   color: #fff;
   background-color: #1967d2;
   border: none;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-weight: 600;
   padding: 9px 30px;
   border-radius: 0px 10px 10px 0px;
@@ -5630,7 +5630,7 @@ ol li {
   font-weight: 500;
 }
 .footer-light .widget-title {
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   color: #1967d2;
   font-weight: 400;
   font-size: 20px;
@@ -5897,7 +5897,7 @@ button.scroltop span {
   }
 }
 .pricing-table-1 .p-table-inner .p-table-price span {
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-size: 38px;
   line-height: 56px;
   font-weight: 600;
@@ -5914,7 +5914,7 @@ button.scroltop span {
   font-size: 18px;
   margin-bottom: 0px;
   font-weight: 600;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .pricing-table-1 .p-table-recommended {
   background-color: #2db346;
@@ -5980,7 +5980,7 @@ button.scroltop span {
   position: relative;
   display: inline-block;
   font-size: 18px;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-weight: 400;
   color: #1967d2;
 }
@@ -6282,7 +6282,7 @@ button.scroltop span {
   text-align: center;
   display: inline-block;
   transition: 0.5s all ease;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-weight: 400;
   border-radius: 10px;
 }
@@ -6399,7 +6399,7 @@ button.scroltop span {
   margin-left: 0px;
   padding: 0px;
   display: inline-block;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-size: 14px;
   font-weight: 600;
 }
@@ -6515,7 +6515,7 @@ ol.comment-list li.comment .fn {
   font-weight: 500;
   font-style: normal;
   margin-bottom: 10px;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 @media (max-width: 480px) {
   ol.comment-list li.comment .fn {
@@ -6743,7 +6743,7 @@ ol.comment-list li.comment .comment-respond .comment-form p {
   padding: 50px 80px 30px 80px;
   position: relative;
   overflow: hidden;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 @media (max-width: 400px) {
   .blog-post-single-outer .blog-post-single blockquote {
@@ -6761,7 +6761,7 @@ ol.comment-list li.comment .comment-respond .comment-form p {
   font-size: 48px;
   line-height: 40px;
   display: inline-block;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   position: absolute;
   left: -20px;
   top: -20px;
@@ -6918,7 +6918,7 @@ ol.comment-list li.comment .comment-respond .comment-form p {
   font-size: 16px;
   line-height: 24px;
   color: #17171d;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 @media (max-width: 640px) {
   .post-navigation .post-nav-links .post-nav-item .nav-post-meta a {
@@ -8876,13 +8876,13 @@ ol.comment-list li.comment .comment-respond .comment-form p {
   font-size: 38px;
   line-height: 38px;
   font-weight: 700;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .twm-explore-content-2 .twm-explore-bottom-section .counter-outer-two .counter {
   font-size: 46px;
   line-height: 50px;
   font-weight: 600;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .twm-explore-content-2 .twm-explore-bottom-section .counter-outer-two .icon-content-info {
   color: #fff;
@@ -11196,13 +11196,13 @@ ol.comment-list li.comment .comment-respond .comment-form p {
   font-size: 38px;
   line-height: 38px;
   font-weight: 700;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .twm-home1-banner-section .twm-bnr-blocks-3 .twm-content .tw-count-number .counter {
   font-size: 38px;
   line-height: 40px;
   font-weight: 600;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .twm-home1-banner-section .twm-bnr-blocks-3 .twm-content .icon-content-info {
   color: #17171d;
@@ -13848,13 +13848,13 @@ strong {
   font-size: 38px;
   line-height: 38px;
   font-weight: 700;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .twm-home3-banner-section .twm-bnr-bottom-section .twm-bnr-blocks-wrap .twm-bnr-blocks-3 .twm-content .tw-count-number .counter {
   font-size: 38px;
   line-height: 40px;
   font-weight: 600;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .twm-home3-banner-section .twm-bnr-bottom-section .twm-bnr-blocks-wrap .twm-bnr-blocks-3 .twm-content .tw-count-number.text-clr-green {
   color: #00ffc6;
@@ -14333,13 +14333,13 @@ strong {
   font-size: 38px;
   line-height: 38px;
   font-weight: 700;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .twm-for-employee-4 .twm-for-employee-content .twm-explore-right-section .counter-outer-two .counter {
   font-size: 46px;
   line-height: 50px;
   font-weight: 600;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .twm-for-employee-4 .twm-for-employee-content .twm-explore-right-section .counter-outer-two .icon-content-info {
   color: #17171d;
@@ -14885,7 +14885,7 @@ strong {
   color: #fff;
   background-color: #1967d2;
   border: none;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-weight: 600;
   padding: 9px 30px;
   border-radius: 0px 10px 10px 0px;
@@ -17086,7 +17086,7 @@ strong {
   font-size: 13px;
   color: #1967d2;
   text-transform: uppercase;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-weight: 500;
 }
 .twm-blog-post-h5-outer .wt-post-info .post-author .post-author-pic .p-a-info p {
@@ -17746,7 +17746,7 @@ strong {
   font-size: 38px;
   line-height: 38px;
   font-weight: 700;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .twm-home5-banner-section .row .twm-bnr-left-section {
   max-width: 650px;
@@ -18615,13 +18615,13 @@ strong {
   font-size: 38px;
   line-height: 38px;
   font-weight: 700;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .twm-home-6-banner-section .twm-bnr-blocks-3 .twm-content .tw-count-number .counter {
   font-size: 38px;
   line-height: 40px;
   font-weight: 600;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .twm-home-6-banner-section .twm-bnr-blocks-3 .twm-content .icon-content-info {
   color: #17171d;
@@ -18959,7 +18959,7 @@ strong {
   font-size: 14px;
   color: #1967d2;
   text-transform: uppercase;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-weight: 500;
 }
 .twm-blog-post-h-page6.with-content .post-author .post-author-pic p {
@@ -18997,7 +18997,7 @@ strong {
 }
 .twm-hpage-6-getintouch .twm-hpage-6-getintouch-title .wt-title-small {
   color: #fff;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-size: 18px;
   line-height: 40px;
   font-weight: 500;
@@ -22132,7 +22132,7 @@ Home page 11 banner
   font-size: 38px;
   line-height: 38px;
   font-weight: 700;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .twm-home-11-banner-section .row .twm-bnr-left-section {
   max-width: 750px;
@@ -22952,13 +22952,13 @@ Home page 11 banner
   font-size: 38px;
   line-height: 38px;
   font-weight: 700;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .twm-home3-banner-section.twm-bnr-hpage-14 .twm-home3-inner-section .twm-hpage-14-bnr-left-content .twm-bnr-blocks-wrap .twm-bnr-blocks-3 .twm-content .tw-count-number .counter {
   font-size: 38px;
   line-height: 40px;
   font-weight: 600;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .twm-home3-banner-section.twm-bnr-hpage-14 .twm-home3-inner-section .twm-hpage-14-bnr-left-content .twm-bnr-blocks-wrap .twm-bnr-blocks-3 .twm-content .tw-count-number.text-clr-green {
   color: #00ffc6;
@@ -23094,7 +23094,7 @@ Home page 11 banner
 }
 .twm-side-navigation-menu .nav > li {
   position: relative;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .twm-side-navigation-menu .nav > li ul {
   display: none;
@@ -23670,13 +23670,13 @@ HOME PAGE 15 START
   font-size: 38px;
   line-height: 38px;
   font-weight: 700;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .twm-home1-banner-section.twm-bnr-hpage-15 .twm-bnr-blocks-3 .twm-content .tw-count-number .counter {
   font-size: 38px;
   line-height: 40px;
   font-weight: 600;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .twm-home1-banner-section.twm-bnr-hpage-15 .twm-bnr-blocks-3 .twm-content .icon-content-info {
   color: #17171d;
@@ -24123,13 +24123,13 @@ HOME PAGE 15 START
   font-size: 38px;
   line-height: 38px;
   font-weight: 700;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .twm-home16-banner-section .row .twm-h-page-16-bnr-right-section .twm-bnr-blocks-3 .twm-content .tw-count-number .counter {
   font-size: 38px;
   line-height: 40px;
   font-weight: 600;
-  font-family: "Rubik", sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 .twm-home16-banner-section .row .twm-h-page-16-bnr-right-section .twm-bnr-blocks-3 .twm-content .icon-content-info {
   color: #17171d;

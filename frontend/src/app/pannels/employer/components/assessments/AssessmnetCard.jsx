@@ -1,12 +1,27 @@
-
-
-
 import React from "react";
 
-export default function AssessmentCard({ data, onDelete }) {
+export default function AssessmentCard({ data, onDelete, index }) {
+	const formatDate = (dateString) => {
+		const date = new Date(dateString);
+		return date.toLocaleDateString('en-US', {
+			year: 'numeric',
+			month: 'short',
+			day: 'numeric'
+		});
+	};
+
 	return (
 		<div className="card h-100 shadow-sm">
 			<div className="card-body">
+				{/* Serial Number and Created Date */}
+				<div className="d-flex justify-content-between align-items-center mb-2">
+					<small className="text-muted fw-bold">#{data.serialNumber || (index + 1)}</small>
+					<small className="text-muted">
+						<i className="fa fa-calendar me-1"></i>
+						{formatDate(data.createdAt)}
+					</small>
+				</div>
+				
 				<div className="d-flex justify-content-between align-items-start mb-2">
 					<h5 className="card-title mb-0">{data.title}</h5>
 					<span className={`badge ${data.type === 'Technical' ? 'bg-primary' : data.type === 'Soft Skill' ? 'bg-success' : 'bg-warning'}`}>
@@ -32,7 +47,7 @@ export default function AssessmentCard({ data, onDelete }) {
 						<i className="fa fa-trash"></i>
 					</button>
 				</div>
-			</div>
+				</div>
 		</div>
 	);
 }

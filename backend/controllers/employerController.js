@@ -232,6 +232,12 @@ exports.updateProfile = async (req, res) => {
           relatedId: profile._id,
           createdBy: req.user._id
         });
+        
+        // Update employer status to indicate profile is submitted for review
+        await Employer.findByIdAndUpdate(req.user._id, { 
+          profileSubmittedForReview: true,
+          profileSubmittedAt: new Date()
+        });
       } else {
         // Regular profile update notification
         await createNotification({
@@ -250,7 +256,28 @@ exports.updateProfile = async (req, res) => {
     // Clear employer-related caches when profile is updated
     cacheInvalidation.clearEmployerGridCaches();
 
-    res.json({ success: true, profile });
+    // Check if this is the first time profile is being completed
+    const employer = await Employer.findById(req.user._id);
+    const requiredFields = ['companyName', 'description', 'location', 'phone', 'email'];
+    const isProfileComplete = requiredFields.every(field => profile[field]);
+    
+    let message = 'Profile updated successfully!';
+    if (isProfileComplete && !employer.isApproved && !employer.profileSubmittedForReview) {
+      message = 'Profile completed successfully! Your profile has been submitted for admin review. You will be able to post jobs once approved.';
+    } else if (isProfileComplete && employer.profileSubmittedForReview && !employer.isApproved) {
+      message = 'Profile updated successfully! Your profile is currently under admin review.';
+    } else if (isProfileComplete && employer.isApproved) {
+      message = 'Profile updated successfully! You can now post jobs.';
+    }
+    
+    res.json({ 
+      success: true, 
+      profile,
+      message,
+      isProfileComplete,
+      isApproved: employer.isApproved,
+      profileSubmittedForReview: employer.profileSubmittedForReview
+    });
   } catch (error) {
     console.error('Profile update error:', error);
     if (error.type === 'entity.too.large') {
@@ -500,9 +527,17 @@ exports.createJob = async (req, res) => {
 
     // Check if employer is approved by admin
     if (!req.user.isApproved) {
+      const employer = await Employer.findById(req.user._id);
+      if (!employer.profileSubmittedForReview) {
+        return res.status(403).json({ 
+          success: false, 
+          message: 'Please complete and save your company profile first to submit it for admin review.',
+          requiresProfile: true
+        });
+      }
       return res.status(403).json({ 
         success: false, 
-        message: 'Your company profile is under review. Admin approval is required before you can post jobs. Please wait for approval.',
+        message: 'Your company profile is under admin review. You can post jobs once approved by admin.',
         requiresApproval: true
       });
     }
@@ -1417,42 +1452,92 @@ exports.getProfileCompletion = async (req, res) => {
         completion: 0, 
         missingFields: ['All profile fields'],
         isApproved: employer?.isApproved || false,
+        profileSubmittedForReview: employer?.profileSubmittedForReview || false,
         canPostJobs: false,
         message: 'Please complete your company profile to post jobs.'
       });
     }
     
-    // Required fields for profile completion - same logic as createJob
-    const requiredFields = ['companyName', 'description', 'location', 'phone', 'email'];
-    const completedFields = requiredFields.filter(field => {
+    // Comprehensive list of fields for profile completion calculation
+    const profileFields = {
+      // Basic required fields (weight: 2 each)
+      companyName: { weight: 2, required: true },
+      description: { weight: 2, required: true },
+      location: { weight: 2, required: true },
+      phone: { weight: 2, required: true },
+      email: { weight: 2, required: true },
+      
+      // Important additional fields (weight: 1.5 each)
+      website: { weight: 1.5, required: false },
+      establishedSince: { weight: 1.5, required: false },
+      teamSize: { weight: 1.5, required: false },
+      industrySector: { weight: 1.5, required: false },
+      companyType: { weight: 1.5, required: false },
+      corporateAddress: { weight: 1.5, required: false },
+      
+      // Optional fields (weight: 1 each)
+      whyJoinUs: { weight: 1, required: false },
+      logo: { weight: 1, required: false },
+      coverImage: { weight: 1, required: false },
+      
+      // Contact details (weight: 1 each)
+      contactFullName: { weight: 1, required: false },
+      contactDesignation: { weight: 1, required: false },
+      contactOfficialEmail: { weight: 1, required: false },
+      contactMobile: { weight: 1, required: false }
+    };
+    
+    let totalWeight = 0;
+    let completedWeight = 0;
+    const missingFields = [];
+    const missingRequiredFields = [];
+    
+    // Calculate completion based on weighted fields
+    Object.keys(profileFields).forEach(field => {
+      const fieldConfig = profileFields[field];
       const value = profile[field];
-      return value && (typeof value !== 'string' || value.trim() !== '');
+      const isCompleted = value && (typeof value !== 'string' || value.trim() !== '');
+      
+      totalWeight += fieldConfig.weight;
+      
+      if (isCompleted) {
+        completedWeight += fieldConfig.weight;
+      } else {
+        missingFields.push(field);
+        if (fieldConfig.required) {
+          missingRequiredFields.push(field);
+        }
+      }
     });
-    const completion = Math.round((completedFields.length / requiredFields.length) * 100);
-    const missingFields = requiredFields.filter(field => {
-      const value = profile[field];
-      return !value || (typeof value === 'string' && value.trim() === '');
-    });
+    
+    // Calculate percentage based on weighted completion
+    const completion = Math.round((completedWeight / totalWeight) * 100);
     
     // Log for debugging
     console.log('Profile completion check:', {
-      companyName: profile.companyName,
-      description: profile.description,
-      location: profile.location,
-      phone: profile.phone,
-      email: profile.email,
-      completedFields: completedFields.length,
-      missingFields
+      companyName: profile.companyName ? 'Present' : 'Missing',
+      description: profile.description ? 'Present' : 'Missing',
+      location: profile.location ? 'Present' : 'Missing',
+      phone: profile.phone ? 'Present' : 'Missing',
+      email: profile.email ? 'Present' : 'Missing',
+      completedWeight,
+      totalWeight,
+      completion,
+      missingRequiredFields,
+      totalMissingFields: missingFields.length
     });
     
-    const isProfileComplete = missingFields.length === 0;
+    const isProfileComplete = missingRequiredFields.length === 0;
     const isApproved = employer?.isApproved || false;
+    const profileSubmittedForReview = employer?.profileSubmittedForReview || false;
     const canPostJobs = isProfileComplete && isApproved;
     
     let message = '';
-    if (!isProfileComplete) {
-      message = 'Please complete your company profile to submit for admin approval.';
-    } else if (!isApproved) {
+    if (missingRequiredFields.length > 0) {
+      message = `Please complete required fields: ${missingRequiredFields.join(', ')}`;
+    } else if (!profileSubmittedForReview) {
+      message = 'Your profile is complete. Save your profile to submit it for admin review.';
+    } else if (profileSubmittedForReview && !isApproved) {
       message = 'Your profile is complete and under admin review. You can post jobs once approved.';
     } else {
       message = 'Your profile is approved. You can now post jobs!';
@@ -1461,9 +1546,11 @@ exports.getProfileCompletion = async (req, res) => {
     res.json({ 
       success: true, 
       completion, 
-      missingFields,
+      missingFields: missingRequiredFields, // Only return required missing fields for UI
+      allMissingFields: missingFields, // All missing fields for reference
       isProfileComplete,
       isApproved,
+      profileSubmittedForReview,
       canPostJobs,
       message
     });
@@ -1474,6 +1561,7 @@ exports.getProfileCompletion = async (req, res) => {
       completion: 0, 
       missingFields: ['Profile data'],
       isApproved: false,
+      profileSubmittedForReview: false,
       canPostJobs: false,
       message: 'Error loading profile status.'
     });

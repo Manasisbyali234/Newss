@@ -267,55 +267,55 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 								</div>
 							) : (
 								<div className="mb-3">
-									<label className="form-label small text-muted mb-2">
-										Expected Answer (Optional)
-									</label>
-									<textarea
-										className="form-control"
-										placeholder="Expected answer or key points for reference..."
-										rows={3}
-										style={{ fontSize: "14px" }}
-									/>
+									<small className="text-muted">This is a subjective question. Candidates will provide written answers.</small>
 								</div>
 							)}
-							<div className="mt-3">
-								<label className="form-label small text-muted mb-2">
-									Marks
-								</label>
-								<input
-									type="number"
-									className="form-control"
-									style={{ width: "120px" }}
-									value={q.marks}
-									onChange={(e) =>
-										handleQuestionChange(qIndex, "marks", e.target.value)
-									}
-									min="1"
-								/>
+							<div className="row">
+								<div className="col-6">
+									<label className="form-label small text-muted mb-1">Marks</label>
+									<input
+										type="number"
+										className="form-control"
+										value={q.marks}
+										onChange={(e) => handleQuestionChange(qIndex, "marks", parseInt(e.target.value) || 1)}
+										min="1"
+									/>
+								</div>
 							</div>
 						</div>
 					))}
 
 					<button
-						className="btn btn-outline-primary w-100"
+						type="button"
+						className="btn btn-outline-primary btn-sm mb-4"
 						onClick={addQuestion}
 					>
 						+ Add Question
 					</button>
 				</div>
 
-				<div className="p-3 border-top d-flex justify-content-between">
-					<button className="btn btn-outline-secondary" onClick={() => handleSubmit(true)}>
+				<div className="p-3 border-top d-flex justify-content-end gap-2">
+					<button
+						type="button"
+						className="btn btn-outline-secondary"
+						onClick={() => handleSubmit(true)}
+					>
 						Save as Draft
 					</button>
-					<div className="d-flex gap-2">
-						<button className="btn btn-light" onClick={onClose}>
-							Cancel
-						</button>
-						<button className="btn btn-dark" onClick={() => handleSubmit(false)}>
-							{editData ? 'Update Assessment' : 'Create Assessment'}
-						</button>
-					</div>
+					<button
+						type="button"
+						className="btn btn-secondary"
+						onClick={onClose}
+					>
+						Cancel
+					</button>
+					<button
+						type="button"
+						className="btn btn-primary"
+						onClick={() => handleSubmit(false)}
+					>
+						{editData ? 'Update Assessment' : 'Create Assessment'}
+					</button>
 				</div>
 			</div>
 		</div>

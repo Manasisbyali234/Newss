@@ -28,11 +28,9 @@ function AdminEmployersAllRequest() {
     const fetchEmployers = async () => {
         try {
             setLoading(true);
-            const response = await api.getAllEmployers();
+            const response = await api.getAllEmployers({ approvalStatus: 'pending' });
             if (response.success) {
-                const pendingEmployers = response.data.filter(emp => 
-                    emp.status !== 'approved' && emp.status !== 'rejected' && !emp.isApproved
-                );
+                const pendingEmployers = response.data.filter(emp => !emp.isApproved);
                 setEmployers(pendingEmployers);
                 setFilteredEmployers(pendingEmployers);
             } else {
@@ -140,7 +138,7 @@ function AdminEmployersAllRequest() {
                                         <th>Type</th>
                                         <th>Email</th>
                                         <th>Phone</th>
-                                        <th>Join Date</th>
+                                        <th>Profile Submitted</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -181,14 +179,15 @@ function AdminEmployersAllRequest() {
                                                     {employer.phone || 'N/A'}
                                                 </td>
                                                 <td style={{textAlign: 'center', fontSize: '0.85rem'}}>
-                                                    {formatDate(employer.createdAt)}
+                                                    {employer.profileSubmittedAt ? formatDate(employer.profileSubmittedAt) : 'Not submitted'}
                                                 </td>
                                                 <td style={{textAlign: 'center'}}>
                                                     <span className={`status-badge ${
-                                                        employer.status === 'approved' ? 'status-approved' :
-                                                        employer.status === 'rejected' ? 'status-rejected' : 'status-pending'
+                                                        employer.isApproved ? 'status-approved' :
+                                                        employer.profileSubmittedForReview ? 'status-pending' : 'status-incomplete'
                                                     }`}>
-                                                        {employer.status || 'Pending'}
+                                                        {employer.isApproved ? 'Approved' : 
+                                                         employer.profileSubmittedForReview ? 'Under Review' : 'Profile Incomplete'}
                                                     </span>
                                                 </td>
                                                 <td style={{textAlign: 'center'}}>

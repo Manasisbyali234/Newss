@@ -70,6 +70,7 @@ const employerProfileSchema = new mongoose.Schema({
   contactMobile: { type: String },
   companyIdCardPicture: { type: String }, // Base64 encoded image
   alternateContact: { type: String },
+  employerCode: { type: String }, // Employer code for primary contact
   
   // Gallery
   gallery: [{

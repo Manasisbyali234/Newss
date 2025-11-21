@@ -19,7 +19,7 @@ const sendWelcomeEmail = async (email, name, userType) => {
   const createPasswordUrl = `${process.env.FRONTEND_URL}/create-password?email=${encodeURIComponent(email)}&type=${userTypeParam}`;
   
   const welcomeTemplate = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa;">
+    <div style="font-family: 'Satoshi', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa;">
       <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
         <h1 style="color: #333; text-align: center; margin-bottom: 30px;">Welcome to TaleGlobal!</h1>
         
@@ -87,7 +87,7 @@ const sendResetEmail = async (email, resetToken, userType) => {
     to: email,
     subject: 'Password Reset Request',
     html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="font-family: 'Satoshi', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <h2>Password Reset Request</h2>
         <p>Click the link below to reset your password:</p>
         <a href="${resetUrl}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a>
@@ -104,7 +104,7 @@ const sendPasswordCreationEmail = async (email, name) => {
   const createPasswordUrl = `${process.env.FRONTEND_URL}/create-password?email=${encodeURIComponent(email)}&type=candidate`;
   
   const welcomeTemplate = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa;">
+    <div style="font-family: 'Satoshi', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa;">
       <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
         <h1 style="color: #333; text-align: center; margin-bottom: 30px;">Welcome to TaleGlobal!</h1>
         
@@ -175,7 +175,7 @@ const sendAssessmentNotificationEmail = async ({ email, name, jobTitle, startDat
   const supportEmail = process.env.SUPPORT_EMAIL || 'support@taleglobal.com';
 
   const template = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background-color: #f7f7f9;">
+    <div style="font-family: 'Satoshi', sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background-color: #f7f7f9;">
       <div style="background-color: #ffffff; padding: 32px; border-radius: 12px; box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);">
         <h2 style="margin-top: 0; color: #1e293b; font-size: 22px;">Hello ${name || 'Candidate'},</h2>
         <p style="color: #475569; font-size: 16px; line-height: 1.6;">${intro}</p>
@@ -211,7 +211,7 @@ const sendOTPEmail = async (email, otp, name) => {
   console.log('Recipient Name:', name);
   
   const otpTemplate = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa;">
+    <div style="font-family: 'Satoshi', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa;">
       <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
         <h1 style="color: #333; text-align: center; margin-bottom: 30px;">Password Reset OTP</h1>
         
@@ -259,7 +259,7 @@ const sendPlacementCandidateWelcomeEmail = async (email, name, password, placeme
   const supportEmail = process.env.SUPPORT_EMAIL || 'support@taleglobal.com';
 
   const welcomeTemplate = `
-    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 650px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
+    <div style="font-family: 'Satoshi', sans-serif; max-width: 650px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
       <div style="background-color: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-top: 4px solid #fd7e14;">
         <!-- Header -->
         <div style="text-align: center; margin-bottom: 30px;">
@@ -293,11 +293,11 @@ const sendPlacementCandidateWelcomeEmail = async (email, name, password, placeme
           <div style="background-color: white; padding: 20px; border-radius: 8px; border: 1px solid #28a745;">
             <div style="margin-bottom: 15px;">
               <label style="color: #666; font-size: 14px; font-weight: 600; display: block; margin-bottom: 5px;">Email Address:</label>
-              <div style="background-color: #f8f9fa; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 16px; color: #2c3e50; border: 1px solid #dee2e6;">${email}</div>
+              <div style="background-color: #f8f9fa; padding: 12px; border-radius: 6px; font-family: 'Satoshi', sans-serif; font-size: 16px; color: #2c3e50; border: 1px solid #dee2e6;">${email}</div>
             </div>
             <div>
               <label style="color: #666; font-size: 14px; font-weight: 600; display: block; margin-bottom: 5px;">Password:</label>
-              <div style="background-color: #f8f9fa; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 16px; color: #2c3e50; border: 1px solid #dee2e6; font-weight: bold;">${password}</div>
+              <div style="background-color: #f8f9fa; padding: 12px; border-radius: 6px; font-family: 'Satoshi', sans-serif; font-size: 16px; color: #2c3e50; border: 1px solid #dee2e6; font-weight: bold;">${password}</div>
             </div>
           </div>
         </div>

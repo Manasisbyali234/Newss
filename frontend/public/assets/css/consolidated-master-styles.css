@@ -44,7 +44,7 @@
 :root {
   color-scheme: light only !important;
   /* Font Family */
-  --font-family: "DM Serif Display", serif;
+  --font-family: "Satoshi', sans-serif";
   /* Primary Colors */
   --color-primary-orange: #fd7e14;
   --color-primary-orange-dark: #e8690a;
@@ -241,13 +241,13 @@ html body .new-job-card,
 [class*="home-job-card"],
 [class*="new-job-card"] {
     border-radius: 20px !important;
-    border-radius: 20px !important !important;
+    border-radius: 20px !important
 }
 
 /* Specific override for new-job-card to ensure it works */
 .new-job-card {
     border-radius: 20px !important;
-    border-radius: 20px !important !important;
+    border-radius: 20px !important 
 }
 
 /* Ensure job card pseudo-elements also have curved edges */

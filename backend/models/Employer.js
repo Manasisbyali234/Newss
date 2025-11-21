@@ -11,6 +11,8 @@ const employerSchema = new mongoose.Schema({
   isVerified: { type: Boolean, default: false },
   status: { type: String, enum: ['active', 'inactive', 'pending'], default: 'active' },
   isApproved: { type: Boolean, default: false },
+  profileSubmittedForReview: { type: Boolean, default: false },
+  profileSubmittedAt: { type: Date },
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date },
   resetPasswordOTP: { type: String },
@@ -31,10 +33,11 @@ employerSchema.methods.comparePassword = async function(password) {
 };
 
 // Optimized indexes for employer queries
-employerSchema.index({ status: 1, isApproved: 1, createdAt: -1 });
+employerSchema.index({ status: 1, isApproved: 1, profileSubmittedForReview: 1, createdAt: -1 });
 employerSchema.index({ email: 1 });
 employerSchema.index({ companyName: 1 });
 employerSchema.index({ employerType: 1 });
 employerSchema.index({ companyName: 'text' });
+employerSchema.index({ profileSubmittedAt: -1 });
 
 module.exports = mongoose.model('Employer', employerSchema);

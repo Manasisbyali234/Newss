@@ -42,11 +42,21 @@ function SectionAvailableJobsList({ employerId }) {
 	};
 
 	const formatSalary = (job) => {
-		if (job.ctc && (job.ctc.min || job.ctc.max)) {
+		if (job.ctc && typeof job.ctc === "object" && (job.ctc.min > 0 || job.ctc.max > 0)) {
+			const formatValue = (value) => {
+				if (value > 100000) {
+					return Math.floor(value / 100000);
+				}
+				return value;
+			};
+			
 			if (job.ctc.min && job.ctc.max) {
-				return `₹${job.ctc.min} - ₹${job.ctc.max} LPA`;
+				const minLPA = formatValue(job.ctc.min);
+				const maxLPA = formatValue(job.ctc.max);
+				return minLPA === maxLPA ? `₹${minLPA}LPA` : `₹${minLPA} - ${maxLPA} LPA`;
 			} else {
-				return `₹${job.ctc.min || job.ctc.max} LPA`;
+				const lpa = formatValue(job.ctc.min || job.ctc.max);
+				return `₹${lpa}LPA`;
 			}
 		}
 		if (job.salary && (job.salary.min || job.salary.max)) {
@@ -57,7 +67,7 @@ function SectionAvailableJobsList({ employerId }) {
 				return `${currency}${job.salary.min || job.salary.max}`;
 			}
 		}
-		return 'Salary not disclosed';
+		return 'Not specified';
 	};
 
 	const formatJobType = (jobType) => {
@@ -108,9 +118,15 @@ function SectionAvailableJobsList({ employerId }) {
 								</div>
 								<div className="job-card-middle" style={{padding: '4px 16px'}}>
 									<div className="ctc-info" style={{marginBottom: '4px'}}>
-										<span className="ctc-text" style={{fontSize: '14px', fontWeight: '500', color: '#1976d2'}}>
-											Annual CTC: {formatSalary(job)}
-										</span>
+										{job.ctc && typeof job.ctc === "object" && (job.ctc.min > 0 || job.ctc.max > 0) ? (
+											<span className="ctc-text" style={{fontSize: '14px', fontWeight: '500', color: '#1976d2'}}>
+												Annual CTC: {formatSalary(job)}
+											</span>
+										) : (
+											<span className="ctc-text" style={{fontSize: '14px', color: '#666'}}>
+												CTC: {formatSalary(job)}
+											</span>
+										)}
 									</div>
 									<div className="vacancy-info">
 										<span className="vacancy-text" style={{fontSize: '14px', color: '#666'}}>

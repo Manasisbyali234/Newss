@@ -59,7 +59,17 @@ function SectionJobsSidebar2 ({ _config, job }) {
 									<div className="twm-s-info-inner">
 										<i className="fas fa-clock" />
 										<span className="twm-title">Experience</span>
-										<div className="twm-s-info-discription">{job?.minExperience || 0} Year(s)</div>
+										<div className="twm-s-info-discription">
+											{job?.experienceLevel === 'freshers' ? 'Freshers' :
+											 job?.experienceLevel === 'both' ? 'Freshers & Experienced' :
+											 job?.experienceLevel === 'minimum' && job?.minExperience && job?.maxExperience ? 
+												`${job.minExperience}-${job.maxExperience} Year(s)` :
+											 job?.experienceLevel === 'minimum' && job?.minExperience ? 
+												`${job.minExperience}+ Year(s)` :
+											 job?.minExperience || job?.maxExperience ? 
+												`${job.minExperience || 0}-${job.maxExperience || job.minExperience || 0} Year(s)` :
+											 'Not specified'}
+										</div>
 									</div>
 								</li>
 
@@ -81,6 +91,26 @@ function SectionJobsSidebar2 ({ _config, job }) {
                             </li> */}
 								<li>
 									<div className="twm-s-info-inner">
+										<i className="fas fa-tags" />
+										<span className="twm-title" style={{color: '#000'}}>Job Category</span>
+										<div className="twm-s-info-discription">
+											{job?.category || 'Not specified'}
+										</div>
+									</div>
+								</li>
+
+								<li>
+									<div className="twm-s-info-inner">
+										<i className="fas fa-clock" />
+										<span className="twm-title" style={{color: '#000'}}>Job Type</span>
+										<div className="twm-s-info-discription">
+											{job?.jobType || 'Not specified'}
+										</div>
+									</div>
+								</li>
+
+								<li>
+									<div className="twm-s-info-inner">
 										<i className="fas fa-users" />
 										<span className="twm-title" style={{color: '#000'}}>Hiring Type</span>
 										<div className="twm-s-info-discription">
@@ -92,9 +122,9 @@ function SectionJobsSidebar2 ({ _config, job }) {
 								<li>
 									<div className="twm-s-info-inner">
 										<i className="fas fa-briefcase" />
-										<span className="twm-title" style={{color: '#000'}}>Employment Type</span>
+										<span className="twm-title" style={{color: '#000'}}>Type of Employment</span>
 										<div className="twm-s-info-discription">
-											{job?.typeOfEmployment || job?.jobType || 'Not specified'}
+											{job?.typeOfEmployment ? job.typeOfEmployment.charAt(0).toUpperCase() + job.typeOfEmployment.slice(1) : 'Not specified'}
 										</div>
 									</div>
 								</li>
@@ -111,19 +141,6 @@ function SectionJobsSidebar2 ({ _config, job }) {
 									</div>
 								</li>
 							</ul>
-						</div>
-					</div>
-
-					<div className="widget tw-sidebar-tags-wrap">
-						<h4 className="section-head-small mb-4" style={{fontWeight: 'bold'}}>Job Skills</h4>
-						<div className="tagcloud">
-							{job?.requiredSkills && job.requiredSkills.length > 0 ? (
-								job.requiredSkills.map((skill, index) => (
-									<a key={index} href="#">{skill}</a>
-								))
-							) : (
-								<span>No skills specified</span>
-							)}
 						</div>
 					</div>
 				</div>

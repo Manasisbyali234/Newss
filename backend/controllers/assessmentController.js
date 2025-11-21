@@ -60,8 +60,15 @@ exports.createAssessment = async (req, res) => {
       }
     }
     
+    // Generate serial number
+    const lastAssessment = await Assessment.findOne({ employerId: req.user.id })
+      .sort({ serialNumber: -1 })
+      .select('serialNumber');
+    const serialNumber = lastAssessment ? lastAssessment.serialNumber + 1 : 1;
+    
     const assessment = new Assessment({
       employerId: req.user.id,
+      serialNumber,
       title: title.trim(),
       type: type || 'Technical',
       description: description ? description.trim() : '',
@@ -90,7 +97,7 @@ exports.createAssessment = async (req, res) => {
 exports.getAssessments = async (req, res) => {
   try {
     const assessments = await Assessment.find({ employerId: req.user.id })
-      .sort({ createdAt: -1 });
+      .sort({ serialNumber: 1 });
     res.json({ success: true, assessments });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

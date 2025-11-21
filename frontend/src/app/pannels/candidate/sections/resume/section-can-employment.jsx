@@ -218,7 +218,7 @@ function SectionCanEmployment({ profile }) {
     return (
         <>
             <div className="panel-heading wt-panel-heading p-a20 panel-heading-with-btn">
-                <h4 className="panel-tittle m-a0">Employment</h4>
+                <h4 className="panel-tittle m-a0">Present Employment</h4>
                 <button
                     type="button"
                     title="Edit"
@@ -256,7 +256,7 @@ function SectionCanEmployment({ profile }) {
                         <div className="modal-content">
                             <form onSubmit={(e) => e.preventDefault()}>
                                 <div className="modal-header">
-                                    <h2 className="modal-title">Add Employment</h2>
+                                    <h2 className="modal-title">Add Present Employment Details</h2>
                                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
                                 </div>
                                 <div className="modal-body">

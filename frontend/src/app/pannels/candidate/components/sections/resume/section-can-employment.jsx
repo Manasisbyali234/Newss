@@ -2,7 +2,7 @@ function SectionCanEmployment() {
     return (
         <>
             <div className="panel-heading wt-panel-heading p-a20 panel-heading-with-btn ">
-                <h4 className="panel-tittle m-a0">Employment</h4>
+                <h4 className="panel-tittle m-a0">Present Employment</h4>
                 <a data-bs-toggle="modal" href="#Employment" role="button" title="Edit" className="site-text-primary">
                     <span className="fa fa-edit" />
                 </a>
@@ -21,7 +21,7 @@ function SectionCanEmployment() {
                     <div className="modal-content">
                         <form>
                             <div className="modal-header">
-                                <h2 className="modal-title">Add Employment</h2>
+                                <h2 className="modal-title">Add Present Employment Deatails</h2>
                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
                             </div>
                             <div className="modal-body">
