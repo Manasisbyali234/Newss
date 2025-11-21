@@ -79,7 +79,7 @@ function JobsGridPage() {
 
     return (
         <>
-            <div className="section-full py-5 site-bg-white job-grid-page" data-aos="fade-up">
+            <div className="section-full py-5 site-bg-white job-grid-page" data-aos="fade-up" style={{paddingRight: '20px'}}>
                 <Row className="mb-4">
                         <Col lg={4} md={12} className="rightSidebar" data-aos="fade-right" data-aos-delay="100">
                             <SectionJobsSidebar1 onFilterChange={handleFilterChange} />

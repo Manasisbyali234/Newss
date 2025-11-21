@@ -227,7 +227,7 @@ const EmployersGridPage = memo(() => {
     );
 
     return (
-        <div className="section-full py-5 site-bg-white emp-grid-page">
+        <div className="section-full py-5 site-bg-white emp-grid-page" style={{paddingRight: '20px'}}>
             <Row className="mb-4">
                     <Col lg={4} md={12} className="rightSidebar">
                         <SectionEmployerSidebar onFilterChange={setFilters} />
