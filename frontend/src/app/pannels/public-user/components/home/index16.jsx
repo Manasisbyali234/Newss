@@ -862,10 +862,10 @@ function Home16Page() {
                     <div className="section-content">
                         <div className="twm-jobs-grid-wrap">
                             <div style={{padding: '0 45px', background: 'transparent', width: '100%'}}>
-                                <Row style={{'--bs-gutter-x': '6px'}}>
+                                <Row style={{'--bs-gutter-x': '6px', flexWrap: 'wrap', justifyContent: 'center'}}>
                                 {jobs.length > 0 ? (
                                     jobs.map((job) => (
-                                        <Col lg={4} md={6} sm={12} xs={12} key={job._id} className="mb-2">
+                                        <Col key={job._id} style={{flex: '0 0 auto', width: '350px', maxWidth: '350px'}} className="mb-2">
                                             <div className="new-job-card" style={{borderRadius: '12px', overflow: 'hidden'}}>
                                                 {/* Top Row */}
                                                 <div className="job-card-header">
