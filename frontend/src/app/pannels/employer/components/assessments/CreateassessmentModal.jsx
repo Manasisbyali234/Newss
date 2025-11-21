@@ -9,6 +9,8 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 	const [questions, setQuestions] = useState(
 		editData?.questions || [{ question: "", type: "mcq", options: ["", "", "", ""], correctAnswer: 0, marks: 1 }]
 	);
+	const [isMinimized, setIsMinimized] = useState(false);
+	const [isMaximized, setIsMaximized] = useState(false);
 
 	const handleQuestionChange = (index, field, value) => {
 		const updated = [...questions];
@@ -53,6 +55,16 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 		} else {
 			showToast("Assessment must have at least one question", 'warning');
 		}
+	};
+
+	const handleMinimize = () => {
+		if (isMaximized) setIsMaximized(false);
+		setIsMinimized(!isMinimized);
+	};
+
+	const handleMaximize = () => {
+		if (isMinimized) setIsMinimized(false);
+		setIsMaximized(!isMaximized);
 	};
 
 	const handleSubmit = (isDraft = false) => {
@@ -109,27 +121,97 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 
 	return (
 		<div
-			className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-			style={{ background: "rgba(0,0,0,0.5)", zIndex: 1050 }}
+			className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center"
+			style={{ 
+				background: isMinimized ? "transparent" : "rgba(0,0,0,0.5)", 
+				zIndex: 1050,
+				alignItems: isMinimized ? "flex-end" : "center",
+				padding: isMinimized ? "0 0 20px 0" : "0"
+			}}
 		>
 			<div
 				className="bg-white rounded-3 shadow-lg"
 				style={{
-					width: "600px",
-					maxHeight: "90vh",
+					width: isMaximized ? "100vw" : isMinimized ? "400px" : "600px",
+					height: isMaximized ? "100vh" : isMinimized ? "60px" : "auto",
+					maxHeight: isMaximized ? "100vh" : isMinimized ? "60px" : "90vh",
+					minHeight: isMinimized ? "60px" : "auto",
 					display: "flex",
 					flexDirection: "column",
+					transition: "all 0.3s ease",
+					overflow: isMinimized ? "hidden" : "visible",
+					position: isMaximized ? "fixed" : "relative",
+					top: isMaximized ? "0" : "auto",
+					left: isMaximized ? "0" : "auto",
+					zIndex: isMaximized ? "9999" : "1050",
+					borderRadius: isMaximized ? "0" : "12px",
+					boxShadow: isMinimized ? "0 -2px 10px rgba(0,0,0,0.2)" : "0 4px 20px rgba(0,0,0,0.15)",
 				}}
 			>
-				<div className="p-3 border-bottom d-flex justify-content-between align-items-center">
+				<div className="p-3 d-flex justify-content-between align-items-center" style={{ borderBottom: isMinimized ? 'none' : '1px solid #e5e7eb' }}>
 					<h5 className="m-0 fw-bold">{editData ? 'Edit Assessment' : 'Create New Assessment'}</h5>
-					<button
-						className="btn-close"
-						onClick={onClose}
-						aria-label="Close"
-					></button>
+					<div className="d-flex gap-1">
+						<button
+							type="button"
+							style={{
+								background: 'none',
+								border: 'none',
+								width: '20px',
+								height: '20px',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								cursor: 'pointer',
+								color: '#6c757d',
+								fontSize: '14px'
+							}}
+							onClick={handleMinimize}
+							title="Minimize"
+						>
+							−
+						</button>
+						<button
+							type="button"
+							style={{
+								background: 'none',
+								border: 'none',
+								width: '20px',
+								height: '20px',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								cursor: 'pointer',
+								color: '#6c757d',
+								fontSize: '14px'
+							}}
+							onClick={handleMaximize}
+							title={isMaximized ? "Restore" : "Maximize"}
+						>
+							{isMaximized ? '❐' : '□'}
+						</button>
+						<button
+							type="button"
+							style={{
+								background: 'none',
+								border: 'none',
+								width: '20px',
+								height: '20px',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								cursor: 'pointer',
+								color: '#6c757d',
+								fontSize: '14px'
+							}}
+							onClick={onClose}
+							title="Close"
+						>
+							×
+						</button>
+					</div>
 				</div>
 
+				{!isMinimized && (
 				<div
 					className="p-4 overflow-auto"
 					style={{ flex: "1 1 auto", minHeight: 0 }}
@@ -293,7 +375,9 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 						+ Add Question
 					</button>
 				</div>
+				)}
 
+				{!isMinimized && (
 				<div className="p-3 border-top d-flex justify-content-end gap-2">
 					<button
 						type="button"
@@ -317,6 +401,7 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 						{editData ? 'Update Assessment' : 'Create Assessment'}
 					</button>
 				</div>
+				)}
 			</div>
 		</div>
 	);

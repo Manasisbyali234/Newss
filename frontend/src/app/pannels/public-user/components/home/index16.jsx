@@ -1237,7 +1237,7 @@ function Home16Page() {
                     {/* title END */}
 
                     <div className="twm-how-it-work-section3">
-                        <Row className="g-4" style={{marginLeft: '10px', marginRight: '10px'}}>
+                        <Row className="g-4" style={{marginLeft: '20px', marginRight: '20px'}}>
                             {/* Card 1: Post Your Job */}
                             <Col xl={4} lg={4} md={6} sm={12} xs={12}>
                                 <div className="twm-w-process-steps3">

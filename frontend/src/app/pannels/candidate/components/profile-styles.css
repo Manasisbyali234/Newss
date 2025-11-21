@@ -125,7 +125,6 @@ label {
 
 /* Button styling */
 .btn-primary {
-    background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
     border: none;
     border-radius: 8px;
     padding: 12px 30px;
