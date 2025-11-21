@@ -13,6 +13,14 @@ const AssessmentAttemptSchema = new mongoose.Schema({
   answers: [{
     questionIndex: { type: Number, required: true },
     selectedAnswer: { type: Number },
+    textAnswer: { type: String },
+    uploadedFile: {
+      filename: { type: String },
+      originalName: { type: String },
+      mimetype: { type: String },
+      size: { type: Number },
+      uploadedAt: { type: Date }
+    },
     timeSpent: { type: Number },
     answeredAt: { type: Date }
   }],

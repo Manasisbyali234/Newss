@@ -12,8 +12,9 @@ const AssessmentSchema = new mongoose.Schema({
   totalQuestions: { type: Number, required: true },
   questions: [{
     question: { type: String, required: true },
-    options: [{ type: String, required: true }],
-    correctAnswer: { type: Number, required: true },
+    type: { type: String, enum: ['mcq', 'subjective', 'upload'], default: 'mcq' },
+    options: [{ type: String }],
+    correctAnswer: { type: Number },
     marks: { type: Number, default: 1 },
     explanation: { type: String }
   }],

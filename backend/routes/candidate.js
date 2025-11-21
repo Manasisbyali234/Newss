@@ -281,6 +281,7 @@ router.get('/assessments/available', assessmentController.getAvailableAssessment
 router.get('/assessments/:id', assessmentController.getAssessmentForCandidate);
 router.post('/assessments/start', assessmentController.startAssessment);
 router.post('/assessments/answer', assessmentController.submitAnswer);
+router.post('/assessments/upload-answer', upload.single('answerFile'), assessmentController.uploadFileAnswer);
 router.post('/assessments/submit', assessmentController.submitAssessment);
 router.get('/assessments/result/:attemptId', assessmentController.getAssessmentResult);
 router.post('/assessments/violation', candidateController.logAssessmentViolation);

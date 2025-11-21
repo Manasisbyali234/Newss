@@ -191,8 +191,8 @@ exports.updateAssessment = async (req, res) => {
       questions: questions.map(q => ({
         question: q.question.trim(),
         type: q.type || 'mcq',
-        options: q.type === 'subjective' ? [] : q.options.map(opt => opt.trim()),
-        correctAnswer: q.type === 'subjective' ? null : q.correctAnswer,
+        options: (q.type === 'subjective' || q.type === 'upload') ? [] : q.options.map(opt => opt.trim()),
+        correctAnswer: (q.type === 'subjective' || q.type === 'upload') ? null : q.correctAnswer,
         marks: q.marks || 1,
         explanation: q.explanation ? q.explanation.trim() : ''
       })),
@@ -334,15 +334,11 @@ exports.startAssessment = async (req, res) => {
 // Candidate: Submit Answer
 exports.submitAnswer = async (req, res) => {
   try {
-    const { attemptId, questionIndex, selectedAnswer, timeSpent } = req.body;
+    const { attemptId, questionIndex, selectedAnswer, textAnswer, timeSpent } = req.body;
     
     // Validate input
     if (typeof questionIndex !== 'number' || questionIndex < 0) {
       return res.status(400).json({ success: false, message: 'Invalid question index' });
-    }
-    
-    if (typeof selectedAnswer !== 'number' || selectedAnswer < 0) {
-      return res.status(400).json({ success: false, message: 'Invalid answer format. Expected option index.' });
     }
     
     const attempt = await AssessmentAttempt.findOne({
@@ -364,17 +360,21 @@ exports.submitAnswer = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid question index' });
     }
     
-    // Validate answer option exists
     const question = assessment.questions[questionIndex];
-    if (selectedAnswer >= question.options.length) {
-      return res.status(400).json({ success: false, message: 'Invalid answer option' });
+    
+    // Validate answer based on question type
+    if (question.type === 'mcq') {
+      if (typeof selectedAnswer !== 'number' || selectedAnswer < 0 || selectedAnswer >= question.options.length) {
+        return res.status(400).json({ success: false, message: 'Invalid answer option' });
+      }
     }
     
     // Update or add answer
     const existingAnswerIndex = attempt.answers.findIndex(a => a.questionIndex === questionIndex);
     const answerData = {
       questionIndex,
-      selectedAnswer: parseInt(selectedAnswer), // Ensure it's stored as integer
+      selectedAnswer: question.type === 'mcq' ? parseInt(selectedAnswer) : null,
+      textAnswer: question.type === 'subjective' ? textAnswer : null,
       timeSpent: timeSpent || 0,
       answeredAt: new Date()
     };
@@ -389,6 +389,81 @@ exports.submitAnswer = async (req, res) => {
     await attempt.save();
     
     res.json({ success: true, attempt });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Candidate: Upload File Answer
+exports.uploadFileAnswer = async (req, res) => {
+  try {
+    const { attemptId, questionIndex, timeSpent } = req.body;
+    
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
+    
+    // Validate file type and size
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png'];
+    if (!allowedTypes.includes(req.file.mimetype)) {
+      return res.status(400).json({ success: false, message: 'Invalid file type. Only PDF, DOC, DOCX, JPG, PNG are allowed' });
+    }
+    
+    if (req.file.size > 10 * 1024 * 1024) { // 10MB limit
+      return res.status(400).json({ success: false, message: 'File size too large. Maximum 10MB allowed' });
+    }
+    
+    const attempt = await AssessmentAttempt.findOne({
+      _id: attemptId,
+      candidateId: req.user.id
+    });
+    
+    if (!attempt) {
+      return res.status(404).json({ success: false, message: 'Attempt not found' });
+    }
+    
+    if (attempt.status !== 'in_progress') {
+      return res.status(400).json({ success: false, message: 'Assessment not in progress' });
+    }
+    
+    // Validate question exists and is upload type
+    const assessment = await Assessment.findById(attempt.assessmentId);
+    if (!assessment || !assessment.questions[questionIndex]) {
+      return res.status(400).json({ success: false, message: 'Invalid question index' });
+    }
+    
+    const question = assessment.questions[questionIndex];
+    if (question.type !== 'upload') {
+      return res.status(400).json({ success: false, message: 'Question is not an upload type' });
+    }
+    
+    // Update or add answer with file info
+    const existingAnswerIndex = attempt.answers.findIndex(a => a.questionIndex === parseInt(questionIndex));
+    const answerData = {
+      questionIndex: parseInt(questionIndex),
+      selectedAnswer: null,
+      textAnswer: null,
+      uploadedFile: {
+        filename: req.file.filename,
+        originalName: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size,
+        uploadedAt: new Date()
+      },
+      timeSpent: timeSpent || 0,
+      answeredAt: new Date()
+    };
+    
+    if (existingAnswerIndex >= 0) {
+      attempt.answers[existingAnswerIndex] = answerData;
+    } else {
+      attempt.answers.push(answerData);
+    }
+    
+    attempt.currentQuestion = parseInt(questionIndex) + 1;
+    await attempt.save();
+    
+    res.json({ success: true, attempt, uploadedFile: answerData.uploadedFile });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

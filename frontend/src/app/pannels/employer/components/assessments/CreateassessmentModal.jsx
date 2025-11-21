@@ -18,7 +18,7 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 		if (field === "marks") updated[index].marks = value;
 		if (field === "type") {
 			updated[index].type = value;
-			if (value === "subjective") {
+			if (value === "subjective" || value === "upload") {
 				updated[index].options = [];
 				updated[index].correctAnswer = null;
 			} else {
@@ -290,6 +290,7 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 									>
 										<option value="mcq">MCQ</option>
 										<option value="subjective">Subjective</option>
+										<option value="upload">Upload</option>
 									</select>
 									<button
 										type="button"
@@ -346,6 +347,13 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 											/>
 										</div>
 									))}
+								</div>
+							) : q.type === "upload" ? (
+								<div className="mb-3">
+									<small className="text-muted">This is an upload question. Candidates will upload files as their answer.</small>
+									<div className="mt-2 p-2 border rounded" style={{backgroundColor: '#f8f9fa'}}>
+										<small className="text-info">📎 Accepted file types: PDF, DOC, DOCX, JPG, PNG (Max: 10MB)</small>
+									</div>
 								</div>
 							) : (
 								<div className="mb-3">
