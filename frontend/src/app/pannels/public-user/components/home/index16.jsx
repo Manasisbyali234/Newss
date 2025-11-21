@@ -860,8 +860,9 @@ function Home16Page() {
                     </div>
 
                     <div className="section-content">
-                        <div className="twm-jobs-grid-wrap" style={{marginLeft: '20px', marginRight: '20px'}}>
-                            <Row style={{'--bs-gutter-x': '6px'}}>
+                        <div className="twm-jobs-grid-wrap">
+                            <div style={{padding: '0 20px', background: 'transparent', width: '100%'}}>
+                                <Row style={{'--bs-gutter-x': '6px'}}>
                                 {jobs.length > 0 ? (
                                     jobs.map((job) => (
                                         <Col lg={4} md={6} sm={12} xs={12} key={job._id} className="mb-2">
@@ -995,7 +996,8 @@ function Home16Page() {
                                         )}
                                     </Col>
                                 )}
-                            </Row>
+                                </Row>
+                            </div>
                         </div>
                     </div>
                 </div>
