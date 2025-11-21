@@ -147,7 +147,7 @@ const EmployersGridPage = memo(() => {
         }, [employer._id, navigate]);
 
         return (
-            <Col lg={6} md={6} sm={12} xs={12} className="mb-4">
+            <Col lg={6} md={6} sm={12} xs={12} className="mb-2">
                 <div className="new-job-card" style={{borderRadius: '12px', overflow: 'hidden'}}>
                     <div className="job-card-header">
                         <div className="job-card-left">
@@ -199,9 +199,9 @@ const EmployersGridPage = memo(() => {
         );
     });
 
-    const skeletonCards = useMemo(() => 
+    const skeletonCards = useMemo(() =>
         [...Array(6)].map((_, idx) => (
-            <Col key={`skeleton-${idx}`} lg={6} md={6} sm={12} xs={12} className="mb-4">
+            <Col key={`skeleton-${idx}`} lg={6} md={6} sm={12} xs={12} className="mb-2">
                 <div className="new-job-card job-card-skeleton" style={{borderRadius: '12px', overflow: 'hidden'}}>
                     <div className="job-card-header">
                         <div className="job-card-left">
@@ -227,7 +227,7 @@ const EmployersGridPage = memo(() => {
     );
 
     return (
-        <div className="section-full py-5 site-bg-white emp-grid-page" style={{paddingRight: '20px'}}>
+        <div className="section-full py-3 site-bg-white emp-grid-page" style={{paddingLeft: '20px', paddingRight: '20px'}}>
             <Row className="mb-4">
                     <Col lg={4} md={12} className="rightSidebar">
                         <SectionEmployerSidebar onFilterChange={setFilters} />
@@ -244,7 +244,7 @@ const EmployersGridPage = memo(() => {
                         </div>
 
                         <div className="twm-employer-list-wrap">
-                            <Row>
+                            <Row style={{'--bs-gutter-x': '6px'}}>
                                 {loading && isFirstLoad && skeletonCards}
 
                                 {!loading && employers.length > 0 ? 

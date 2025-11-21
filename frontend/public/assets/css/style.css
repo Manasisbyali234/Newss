@@ -17230,7 +17230,7 @@ strong {
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  margin: 0px -10px;
+  margin: 0px -3px;
 }
 .twm-column-5 ul li {
   width: 25%;
@@ -17256,7 +17256,7 @@ strong {
   }
 }
 .twm-column-5 ul li .twm-recruiters5-box {
-  margin: 0px 10px 40px;
+  margin: 0px 3px 8px;
   position: relative;
   z-index: 1;
 }

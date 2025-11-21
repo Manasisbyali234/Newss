@@ -199,7 +199,7 @@ const SectionJobsGrid = memo(({ filters, onTotalChange }) => {
         }, [job.ctc]);
 
         return (
-            <Col key={job._id} lg={6} md={12} className="mb-4">
+            <Col key={job._id} lg={6} md={12} className="mb-2">
                 <div ref={cardRef} className="new-job-card" data-visible="true" style={{overflow: 'hidden', border: '1px solid #e0e0e0', boxShadow: '0 2px 8px rgba(0,0,0,0.1)'}}>
                     {/* Top Row */}
                     <div className="job-card-header" style={{padding: '8px 16px'}}>
@@ -301,7 +301,7 @@ const SectionJobsGrid = memo(({ filters, onTotalChange }) => {
 
     const skeletonCards = useMemo(() =>
         [...Array(4)].map((_, idx) => (
-            <Col key={`skeleton-${idx}`} lg={6} md={12} className="mb-4">
+            <Col key={`skeleton-${idx}`} lg={6} md={12} className="mb-2">
                 <div className="new-job-card job-card-skeleton" style={{borderRadius: '12px', overflow: 'hidden'}}>
                     <div className="job-card-header">
                         <div className="job-card-left">
@@ -334,7 +334,7 @@ const SectionJobsGrid = memo(({ filters, onTotalChange }) => {
 
     return (
         <>
-            <Row>
+            <Row style={{'--bs-gutter-x': '6px'}}>
                 {loading && isFirstLoad && skeletonCards}
 
                 {!loading && jobs.length > 0 ? 
