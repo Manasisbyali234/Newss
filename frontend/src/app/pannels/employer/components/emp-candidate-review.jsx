@@ -146,15 +146,43 @@ function EmpCandidateReviewPage () {
 			
 			if (response.ok) {
 				const result = await response.json();
+				
+				// Send notification to candidate
+				await sendNotificationToCandidate('interview_scheduled', 'Interview Scheduled', 
+					`Your interview has been scheduled. Please check your dashboard for details.`);
+				
 				showToast('Interview review saved successfully! Candidate will see the updated status.', 'success');
 				
 			} else {
 				const errorData = await response.json();
-				showToast(`Failed to save review: ${errorData.message || 'Unknown error'}`, 'error');
+				showToast(errorData.message || errorData.error || 'Failed to save review', 'error');
 			}
 		} catch (error) {
 			
-			showToast('Error saving review. Please try again.', 'error');
+			console.error('Error saving review:', error);
+		showToast('Network error while saving review. Please try again.', 'error');
+		}
+	};
+
+	const sendNotificationToCandidate = async (type, title, message) => {
+		try {
+			const token = localStorage.getItem('employerToken');
+			await fetch('http://localhost:5000/api/notifications/send', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`
+				},
+				body: JSON.stringify({
+					recipientId: candidate._id,
+					recipientType: 'candidate',
+					type,
+					title,
+					message
+				})
+			});
+		} catch (error) {
+			console.error('Error sending notification:', error);
 		}
 	};
 
@@ -175,11 +203,12 @@ function EmpCandidateReviewPage () {
 				setApplication(prev => ({ ...prev, status: 'shortlisted' }));
 			} else {
 				const errorData = await response.json();
-				showToast(`Failed to shortlist candidate: ${errorData.message || 'Unknown error'}`, 'error');
+				showToast(errorData.message || errorData.error || 'Failed to shortlist candidate', 'error');
 			}
 		} catch (error) {
 			
-			showToast('Error shortlisting candidate. Please try again.', 'error');
+			console.error('Error shortlisting candidate:', error);
+		showToast('Network error while shortlisting candidate. Please try again.', 'error');
 		}
 	};
 
@@ -200,11 +229,12 @@ function EmpCandidateReviewPage () {
 				setApplication(prev => ({ ...prev, status: 'rejected' }));
 			} else {
 				const errorData = await response.json();
-				showToast(`Failed to reject candidate: ${errorData.message || 'Unknown error'}`, 'error');
+				showToast(errorData.message || errorData.error || 'Failed to reject candidate', 'error');
 			}
 		} catch (error) {
 			
-			showToast('Error rejecting candidate. Please try again.', 'error');
+			console.error('Error rejecting candidate:', error);
+		showToast('Network error while rejecting candidate. Please try again.', 'error');
 		}
 	};
 
@@ -642,9 +672,68 @@ function EmpCandidateReviewPage () {
 													style={{borderColor: '#ff6600'}}
 												>
 													<option value="pending">Pending</option>
+													<option value="scheduled">Scheduled</option>
 													<option value="passed">Passed</option>
 													<option value="failed">Failed</option>
 												</select>
+											</div>
+											<div className="col-md-6">
+												<label className="form-label fw-semibold" style={{color: '#2c3e50'}}>Interview Date</label>
+												<input
+													type="date"
+													className="form-control border-2"
+													value={round.interviewDate || ''}
+													onChange={(e) => {
+														const updated = [...interviewRounds];
+														updated[index].interviewDate = e.target.value;
+														setInterviewRounds(updated);
+													}}
+													style={{borderColor: '#ff6600'}}
+												/>
+											</div>
+											<div className="col-md-6">
+												<label className="form-label fw-semibold" style={{color: '#2c3e50'}}>Interview Time</label>
+												<input
+													type="time"
+													className="form-control border-2"
+													value={round.interviewTime || ''}
+													onChange={(e) => {
+														const updated = [...interviewRounds];
+														updated[index].interviewTime = e.target.value;
+														setInterviewRounds(updated);
+													}}
+													style={{borderColor: '#ff6600'}}
+												/>
+											</div>
+											<div className="col-md-6">
+												<label className="form-label fw-semibold" style={{color: '#2c3e50'}}>Google Meet Link</label>
+												<input
+													type="url"
+													className="form-control border-2"
+													placeholder="https://meet.google.com/..."
+													value={round.meetingLink || ''}
+													onChange={(e) => {
+														const updated = [...interviewRounds];
+														updated[index].meetingLink = e.target.value;
+														setInterviewRounds(updated);
+													}}
+													style={{borderColor: '#ff6600'}}
+												/>
+											</div>
+											<div className="col-md-12">
+												<label className="form-label fw-semibold" style={{color: '#2c3e50'}}>Description</label>
+												<textarea
+													className="form-control border-2"
+													rows="2"
+													placeholder="Interview description and instructions..."
+													value={round.description || ''}
+													onChange={(e) => {
+														const updated = [...interviewRounds];
+														updated[index].description = e.target.value;
+														setInterviewRounds(updated);
+													}}
+													style={{borderColor: '#ff6600'}}
+												/>
 											</div>
 											<div className="col-md-12">
 												<label className="form-label fw-semibold" style={{color: '#2c3e50'}}>Feedback</label>

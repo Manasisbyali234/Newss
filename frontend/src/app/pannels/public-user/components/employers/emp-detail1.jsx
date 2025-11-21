@@ -104,6 +104,7 @@ function EmployersDetail1Page() {
             const data = await response.json();
             
             if (data.success) {
+                alert('Review submitted successfully! Thank you for your feedback.');
                 localStorage.setItem('reviewerEmail', reviewForm.reviewerEmail);
                 // Refresh submitted reviews from database
                 await fetchSubmittedReviews();
@@ -120,11 +121,11 @@ function EmployersDetail1Page() {
                     if (reviewPostTab) reviewPostTab.click();
                 }, 1000);
             } else {
-                alert(data.message || 'Error submitting review');
+                alert(data.message || data.error || 'Failed to submit review');
             }
         } catch (error) {
-            
-            alert('Error submitting review');
+            console.error('Error submitting review:', error);
+            alert('Network error while submitting review. Please try again.');
         }
     };
 
@@ -432,7 +433,14 @@ function EmployersDetail1Page() {
 																				alt="Review" 
 																				style={{width: '80px', height: '80px', objectFit: 'cover', cursor: 'pointer'}} 
 																				className="rounded-circle border"
-																				onClick={() => window.open(review.image, '_blank')}
+																				onClick={() => {
+																					if (review.image.startsWith('data:')) {
+																						const newWindow = window.open();
+																						newWindow.document.write(`<img src="${review.image}" style="max-width:100%;height:auto;">`);
+																					} else {
+																						window.open(review.image, '_blank');
+																					}
+																				}}
 																			/>
 																		</div>
 																	)}

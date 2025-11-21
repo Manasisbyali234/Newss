@@ -237,7 +237,7 @@ const CountryCodeSelector = ({ value, onChange, className = "" }) => {
         onClick={() => setIsOpen(!isOpen)}
         className={className}
         style={{
-          backgroundColor: 'transparent',
+          backgroundColor: 'white',
           color: '#232323',
           border: 'none',
           width: '100%',
@@ -269,7 +269,7 @@ const CountryCodeSelector = ({ value, onChange, className = "" }) => {
           marginTop: '4px',
           maxHeight: '300px',
           overflowY: 'auto',
-          zIndex: 1000,
+          zIndex: 9999,
           boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
         }}>
           <input

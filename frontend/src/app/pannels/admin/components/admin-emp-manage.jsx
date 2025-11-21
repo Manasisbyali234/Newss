@@ -193,24 +193,32 @@ function AdminEmployersAllRequest() {
                                                 </td>
                                                 <td style={{textAlign: 'center'}}>
                                                     <div className="action-buttons">
-                                                        <button
-                                                            type="button"
-                                                            className="action-btn btn-approve"
-                                                            onClick={() => handleApprove(employer._id)}
-                                                            disabled={actionLoading[employer._id]}
-                                                        >
-                                                            <i className="fa fa-check"></i>
-                                                            Approve
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            className="action-btn btn-reject"
-                                                            onClick={() => handleReject(employer._id)}
-                                                            disabled={actionLoading[employer._id]}
-                                                        >
-                                                            <i className="fa fa-times"></i>
-                                                            Reject
-                                                        </button>
+                                                        {employer.isProfileComplete ? (
+                                                            <>
+                                                                <button
+                                                                    type="button"
+                                                                    className="action-btn btn-approve"
+                                                                    onClick={() => handleApprove(employer._id)}
+                                                                    disabled={actionLoading[employer._id]}
+                                                                >
+                                                                    <i className="fa fa-check"></i>
+                                                                    Approve
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    className="action-btn btn-reject"
+                                                                    onClick={() => handleReject(employer._id)}
+                                                                    disabled={actionLoading[employer._id]}
+                                                                >
+                                                                    <i className="fa fa-times"></i>
+                                                                    Reject
+                                                                </button>
+                                                            </>
+                                                        ) : (
+                                                            <span style={{color: '#6c757d', fontSize: '0.85rem', fontStyle: 'italic'}}>
+                                                                Profile incomplete
+                                                            </span>
+                                                        )}
                                                         <button
                                                             type="button"
                                                             className="action-btn btn-view"

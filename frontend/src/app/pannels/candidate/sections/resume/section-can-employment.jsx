@@ -1,6 +1,7 @@
 import { useEffect, useState, memo } from "react";
 import { createPortal } from "react-dom";
 import { api } from "../../../../../utils/api";
+import showToast from "../../../../../utils/toastNotification";
 
 function SectionCanEmployment({ profile }) {
     const modalId = 'EmploymentModal';
@@ -108,7 +109,7 @@ function SectionCanEmployment({ profile }) {
         if (!validateForm()) {
             const errorMessages = Object.values(errors).filter(error => error);
             if (errorMessages.length > 0) {
-                alert(`Please fix the following errors:\n${errorMessages.join('\n')}`);
+                showToast(`Please fix the following errors: ${errorMessages.join(', ')}`, 'warning');
             }
             return;
         }
@@ -132,14 +133,14 @@ function SectionCanEmployment({ profile }) {
                 }
             } catch (testError) {
                 console.error('API connectivity test failed:', testError);
-                alert(`API connection failed: ${testError.message}. Please check if the backend server is running.`);
+                showToast(`API connection failed: ${testError.message}. Please check if the backend server is running.`, 'error');
                 setLoading(false);
                 return;
             }
             
             // Ensure all required fields are present and valid
             if (!formData.designation?.trim() || !formData.organization?.trim() || !formData.startDate) {
-                alert('Please fill in all required fields (Designation, Organization, Start Date)');
+                showToast('Please fill in all required fields (Designation, Organization, Start Date)', 'warning');
                 setLoading(false);
                 return;
             }
@@ -174,7 +175,7 @@ function SectionCanEmployment({ profile }) {
                 setFormData({ designation: '', organization: '', isCurrent: false, startDate: '', endDate: '', description: '' });
                 setErrors({});
                 setTotalExperience(totalExperience || '');
-                alert('Employment added successfully!');
+                showToast('Employment added successfully!', 'success');
                 
                 // Trigger profile update event
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
@@ -205,11 +206,11 @@ function SectionCanEmployment({ profile }) {
             } else {
                 console.error('Save failed:', response);
                 const errorMsg = response?.message || response?.error || 'Unknown error occurred';
-                alert(`Failed to save employment: ${errorMsg}`);
+                showToast(`Failed to save employment: ${errorMsg}`, 'error');
             }
         } catch (error) {
             console.error('Employment save error:', error);
-            alert(`Failed to save employment: ${error.message || 'Please check your connection and try again.'}`);
+            showToast(`Failed to save employment: ${error.message || 'Please check your connection and try again.'}`, 'error');
         } finally {
             setLoading(false);
         }

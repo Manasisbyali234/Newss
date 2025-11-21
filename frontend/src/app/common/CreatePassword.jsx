@@ -138,10 +138,10 @@ function CreatePassword() {
                                         required
                                     />
                                     <span
-                                        style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer' }}
+                                        style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', userSelect: 'none', pointerEvents: 'auto' }}
                                         onClick={() => setShowPassword(!showPassword)}
                                     >
-                                        <i className={showPassword ? "fas fa-eye-slash" : "fas fa-eye"} />
+                                        <i className={showPassword ? "fas fa-eye-slash" : "fas fa-eye"} style={{ pointerEvents: 'none' }} />
                                     </span>
                                 </div>
 
@@ -183,10 +183,10 @@ function CreatePassword() {
                                         required
                                     />
                                     <span
-                                        style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer' }}
+                                        style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', userSelect: 'none', pointerEvents: 'auto' }}
                                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                     >
-                                        <i className={showConfirmPassword ? "fas fa-eye-slash" : "fas fa-eye"} />
+                                        <i className={showConfirmPassword ? "fas fa-eye-slash" : "fas fa-eye"} style={{ pointerEvents: 'none' }} />
                                     </span>
                                 </div>
 

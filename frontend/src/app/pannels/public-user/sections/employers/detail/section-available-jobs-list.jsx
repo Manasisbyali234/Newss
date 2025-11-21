@@ -72,41 +72,77 @@ function SectionAvailableJobsList({ employerId }) {
 		<>
 			<h4 className="twm-s-title">Available Jobs ({jobs.length})</h4>
 
-			<div className="twm-jobs-list-wrap">
+			<div className="row">
 				{jobs.length > 0 ? (
-					<ul>
-						{jobs.map((job) => (
-							<li key={job._id}>
-								<div className="twm-jobs-list-style1 mb-2 compact-job-card">
-									<div className="job-category-badge">
-										{job.category || 'General'}
-									</div>
-									<div className="twm-mid-content">
-										<NavLink to={`/job-detail/${job._id}`} className="twm-job-title">
-											<h5>{job.title}</h5>
-										</NavLink>
-										<p className="twm-job-address">
-											<i className="feather-map-pin"></i>
-											{job.location}
-										</p>
-									</div>
-									<div className="twm-right-content">
-										<div className="twm-jobs-amount">
-											{formatSalary(job)}
+					jobs.map((job) => (
+						<div key={job._id} className="col-lg-6 col-md-12 mb-4">
+							<div className="new-job-card" style={{overflow: 'hidden', border: '1px solid #e0e0e0', boxShadow: '0 2px 8px rgba(0,0,0,0.1)'}}>
+								<div className="job-card-header" style={{padding: '8px 16px'}}>
+									<div className="job-card-left" style={{display: 'flex', alignItems: 'center', gap: '15px'}}>
+										<div className="company-logo" style={{width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0}}>
+											{job.employerProfile?.logo ? (
+												<img
+													src={job.employerProfile.logo}
+													alt="Company Logo"
+													style={{width: '100%', height: '100%', objectFit: 'cover'}}
+												/>
+											) : (
+												<div className="logo-placeholder" style={{width: '100%', height: '100%', backgroundColor: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 'bold', color: '#666'}}>
+													{(job.employerId?.companyName || job.companyName || "C").charAt(0).toUpperCase()}
+												</div>
+											)}
 										</div>
-										<NavLink
-											to={`/job-detail/${job._id}`}
-											className="view-details-btn"
-										>
-											View Details
-										</NavLink>
+										<div className="job-info" style={{flex: 1}}>
+											<h4 className="job-title" style={{margin: '0 0 4px 0', fontSize: '18px', fontWeight: '600', color: '#333', lineHeight: '1.3'}}>{job.title}</h4>
+											<div className="job-location" style={{display: 'flex', alignItems: 'center', gap: '5px', color: '#666', fontSize: '14px'}}>
+												<i className="feather-map-pin" style={{fontSize: '14px'}} />
+												{job.location || 'Location not specified'}
+											</div>
+										</div>
+									</div>
+									<div className="job-type-badge" style={{alignSelf: 'flex-start'}}>
+										<span className="job-type-pill" style={{padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: '500', backgroundColor: '#e3f2fd', color: '#1976d2'}}>
+											{formatJobType(job.jobType)}
+										</span>
 									</div>
 								</div>
-							</li>
-						))}
-					</ul>
+								<div className="job-card-middle" style={{padding: '4px 16px'}}>
+									<div className="ctc-info" style={{marginBottom: '4px'}}>
+										<span className="ctc-text" style={{fontSize: '14px', fontWeight: '500', color: '#1976d2'}}>
+											Annual CTC: {formatSalary(job)}
+										</span>
+									</div>
+									<div className="vacancy-info">
+										<span className="vacancy-text" style={{fontSize: '14px', color: '#666'}}>
+											Vacancies: {job.vacancies || "Not specified"}
+										</span>
+									</div>
+								</div>
+								<div className="job-card-footer" style={{padding: '8px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+									<div className="company-info" style={{flex: 1}}>
+										<div className="posted-by-label" style={{fontSize: '12px', color: '#999', marginBottom: '4px'}}>Posted by:</div>
+										<div className="company-name" style={{fontSize: '14px', fontWeight: '600', color: '#333', marginBottom: '2px'}}>
+											{job.employerId?.companyName || job.companyName || "Company"}
+										</div>
+										<div className="poster-type" style={{fontSize: '12px', color: '#666'}}>
+											{job.postedBy || (job.employerId?.employerType === "consultant" ? "Consultancy" : "Company")}
+										</div>
+									</div>
+									<button
+										className="apply-now-btn"
+										onClick={() => window.location.href = `/job-detail/${job._id}`}
+										style={{padding: '10px 20px', backgroundColor: '#1976d2', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.2s'}}
+										onMouseEnter={(e) => e.target.style.backgroundColor = '#1565c0'}
+										onMouseLeave={(e) => e.target.style.backgroundColor = '#1976d2'}
+									>
+										View Details
+									</button>
+								</div>
+							</div>
+						</div>
+					))
 				) : (
-					<div className="text-center p-4">
+					<div className="col-12 text-center p-4">
 						<p>No jobs available from this employer.</p>
 					</div>
 				)}

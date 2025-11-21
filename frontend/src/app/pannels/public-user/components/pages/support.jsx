@@ -152,28 +152,16 @@ function SupportPage() {
 
     if (isSubmitted) {
         return (
-            <div className="section-full twm-contact-one">
-                <div className="section-content">
-                    <div className="container">
-                        <div className="contact-one-inner">
-                            <div className="row justify-content-center">
-                                <div className="col-lg-8 col-md-10">
-                                    <div className="contact-form-outer text-center">
-                                        <div className="section-head left wt-small-separator-outer">
-                                            <h2 className="wt-title text-success">✓ Support Ticket Submitted!</h2>
-                                            <p>Thank you for contacting our support team. We have received your ticket and will respond within 24 hours.</p>
-                                            <button 
-                                                onClick={() => setIsSubmitted(false)} 
-                                                className="site-button mt-3"
-                                            >
-                                                Submit Another Ticket
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div className="d-flex align-items-center justify-content-center" style={{ height: '100vh', padding: '20px', overflow: 'hidden', position: 'fixed', width: '100%', top: 0, left: 0 }}>
+                <div className="text-center">
+                    <h2 className="text-success mb-4">✓ Support Ticket Submitted!</h2>
+                    <p className="mb-4">Thank you for contacting our support team. We have received your ticket and will respond within 24 hours.</p>
+                    <button 
+                        onClick={() => setIsSubmitted(false)} 
+                        className="site-button"
+                    >
+                        Submit Another Ticket
+                    </button>
                 </div>
             </div>
         );

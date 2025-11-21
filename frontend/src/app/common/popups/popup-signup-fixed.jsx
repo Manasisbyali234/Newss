@@ -376,7 +376,7 @@ function SignUpPopup() {
 
 							<div className="modal-body">
 								<div className="twm-tabs-style-2">
-									<ul className="nav nav-tabs" id="myTab" role="tablist">
+									<ul className="nav nav-tabs mt-n2" id="myTab" role="tablist">
 										<li className="nav-item" role="presentation">
 											<button
 												className="nav-link active"
@@ -432,7 +432,7 @@ function SignUpPopup() {
 													</div>
 												)}
 												<div className="col-lg-12">
-													<div className="form-group mb-3">
+													<div className="form-group mb-4">
 														<input
 															name="username"
 															type="text"
@@ -449,7 +449,7 @@ function SignUpPopup() {
 													</div>
 												</div>
 												<div className="col-lg-12">
-													<div className="form-group mb-3">
+													<div className="form-group mb-4">
 														<input
 															name="email"
 															type="email"
@@ -467,7 +467,7 @@ function SignUpPopup() {
 												</div>
 
 												<div className="col-lg-12">
-													<div className="form-group mb-3">
+													<div className="form-group mb-4">
 														<div style={{ position: 'relative' }}>
 															<div style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', zIndex: 10 }}>
 																<CountryCodeSelector
@@ -493,7 +493,7 @@ function SignUpPopup() {
 												</div>
 
 												<div className="col-lg-12">
-													<div className="form-group mb-3">
+													<div className="form-group mb-4">
 														<div className=" form-check">
 															<input
 																type="checkbox"
@@ -514,7 +514,7 @@ function SignUpPopup() {
 														</div>
 													</div>
 												</div>
-												<div className="col-md-12">
+												<div className="col-md-12 mt-4">
 													<button type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%" }} disabled={loading}>
 														{loading ? 'Signing Up...' : 'Sign Up'}
 													</button>
@@ -537,7 +537,7 @@ function SignUpPopup() {
 													</div>
 												)}
 												<div className="col-lg-12">
-													<div className="form-group mb-3">
+													<div className="form-group mb-4">
 														<select
 															name="employerCategory"
 															className={`form-control ${fieldErrors.employerCategory ? 'is-invalid' : ''}`}
@@ -555,7 +555,7 @@ function SignUpPopup() {
 													</div>
 												</div>
 												<div className="col-lg-12">
-													<div className="form-group mb-3">
+													<div className="form-group mb-4">
 														<input
 															name="name"
 															type="text"
@@ -572,7 +572,7 @@ function SignUpPopup() {
 													</div>
 												</div>
 												<div className="col-lg-12">
-													<div className="form-group mb-3">
+													<div className="form-group mb-4">
 														<input
 															name="email"
 															type="email"
@@ -590,7 +590,7 @@ function SignUpPopup() {
 												</div>
 
 												<div className="col-lg-12">
-													<div className="form-group mb-3">
+													<div className="form-group mb-4">
 														<div style={{ position: 'relative' }}>
 															<div style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', zIndex: 10 }}>
 																<CountryCodeSelector
@@ -616,7 +616,7 @@ function SignUpPopup() {
 												</div>
 
 												<div className="col-lg-12">
-													<div className="form-group mb-3">
+													<div className="form-group mb-4">
 														<div className=" form-check">
 															<input
 																type="checkbox"
@@ -638,7 +638,7 @@ function SignUpPopup() {
 													</div>
 												</div>
 
-												<div className="col-md-12">
+												<div className="col-md-12 mt-4">
 													<button type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%" }} disabled={loading}>
 														{loading ? 'Signing Up...' : 'Sign Up'}
 													</button>
@@ -661,7 +661,7 @@ function SignUpPopup() {
 													</div>
 												)}
 												<div className="col-lg-12">
-													<div className="form-group mb-3">
+													<div className="form-group mb-4">
 														<input
 															name="name"
 															type="text"
@@ -678,7 +678,7 @@ function SignUpPopup() {
 													</div>
 												</div>
 												<div className="col-lg-12">
-													<div className="form-group mb-3">
+													<div className="form-group mb-4">
 														<input
 															name="email"
 															type="email"
@@ -696,7 +696,7 @@ function SignUpPopup() {
 												</div>
 
 												<div className="col-lg-12">
-													<div className="form-group mb-3">
+													<div className="form-group mb-4">
 														<div style={{ position: 'relative' }}>
 															<div style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', zIndex: 10 }}>
 																<CountryCodeSelector
@@ -722,7 +722,7 @@ function SignUpPopup() {
 												</div>
 
 												<div className="col-lg-12">
-													<div className="form-group mb-3">
+													<div className="form-group mb-4">
 														<input
 															name="collegeName"
 															type="text"
@@ -739,7 +739,7 @@ function SignUpPopup() {
 												</div>
 
 												<div className="col-lg-12">
-													<div className="form-group mb-3">
+													<div className="form-group mb-4">
 														<div className=" form-check">
 															<input
 																type="checkbox"
@@ -761,7 +761,7 @@ function SignUpPopup() {
 													</div>
 												</div>
 
-												<div className="col-md-12">
+												<div className="col-md-12 mt-4">
 													<button type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%" }} disabled={loading}>
 														{loading ? 'Signing Up...' : 'Sign Up'}
 													</button>

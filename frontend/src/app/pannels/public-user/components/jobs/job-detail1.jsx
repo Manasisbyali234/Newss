@@ -236,7 +236,19 @@ function JobDetail1Page() {
                                                     <h4 className="twm-job-title">
                                                         {job.title}
                                                     </h4>
-                                                    <p className="twm-job-company"><strong>Company: {job.companyName || job.employerId?.companyName || 'Not specified'}</strong></p>
+                                                    <p className="twm-job-company">
+                                                        <strong>Company: </strong>
+                                                        {job.employerId?._id ? (
+                                                            <span 
+                                                                style={{color: '#007bff', cursor: 'pointer', textDecoration: 'underline'}}
+                                                                onClick={() => navigate(`/emp-detail/${job.employerId._id}`)}
+                                                            >
+                                                                {job.companyName || job.employerId?.companyName || 'Not specified'}
+                                                            </span>
+                                                        ) : (
+                                                            <span>{job.companyName || job.employerId?.companyName || 'Not specified'}</span>
+                                                        )}
+                                                    </p>
                                                     <p className="twm-job-address"><i className="feather-map-pin" />{job.location}</p>
                                                     
                                                     <div className="hiring-type-badge" style={{marginTop: '15px', marginBottom: '10px'}}>

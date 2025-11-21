@@ -402,6 +402,14 @@ const StartAssessment = () => {
 
 	const handleSubmit = async () => {
 		if (isSubmitted) return;
+		
+		// Check if at least one question is answered
+		const answeredCount = answers.filter(answer => answer !== null).length;
+		if (answeredCount === 0) {
+			setError("Please answer at least one question before submitting the assessment.");
+			return;
+		}
+		
 		setIsSubmitted(true);
 		const success = await submitAssessment();
 		if (!success) {

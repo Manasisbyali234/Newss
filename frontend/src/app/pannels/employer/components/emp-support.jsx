@@ -232,35 +232,30 @@ function EmpSupport() {
                 margin: 0,
                 padding: 0,
                 background: '#f7f7f7',
-                minHeight: '100vh'
+                height: '100vh',
+                overflow: 'hidden',
+                position: 'fixed',
+                top: 0,
+                left: 0
             }}>
-                {/* Header */}
                 <div style={{ padding: '2rem 2rem 2rem 2rem' }}>
                     <div className="wt-admin-right-page-header clearfix" style={{ background: 'white', borderRadius: '12px', padding: '2rem', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)' }}>
-                        <h2>Support</h2>
+                        <h2>Support Ticket Submitted</h2>
                     </div>
                 </div>
-                {/* Content */}
-                <div style={{ padding: '0 2rem 2rem 2rem' }}>
-                    <div className="panel panel-default" style={{ background: 'white', borderRadius: '12px', border: '1px solid #eef2f7', boxShadow: 'none', margin: 0 }}>
-                        <div className="panel-heading wt-panel-heading p-a20">
-                            <h4 className="panel-tittle m-a0">Support Ticket Submitted</h4>
+                <div className="d-flex align-items-center justify-content-center" style={{ minHeight: '60vh', padding: '0 2rem' }}>
+                    <div className="text-center">
+                        <div className="success-icon mb-3">
+                            <i className="fa fa-check-circle" style={{fontSize: '4rem', color: '#28a745'}}></i>
                         </div>
-                        <div className="panel-body wt-panel-body p-a20 m-b30">
-                            <div className="text-center">
-                                <div className="success-icon mb-3">
-                                    <i className="fa fa-check-circle" style={{fontSize: '4rem', color: '#28a745'}}></i>
-                                </div>
-                                <h3 className="text-success">✓ Support Ticket Submitted!</h3>
-                                <p>Thank you for contacting our support team. We have received your ticket and will respond within 24 hours.</p>
-                                <button 
-                                    onClick={() => setIsSubmitted(false)} 
-                                    className="site-button mt-3"
-                                >
-                                    Submit Another Ticket
-                                </button>
-                            </div>
-                        </div>
+                        <h3 className="text-success mb-3">✓ Support Ticket Submitted!</h3>
+                        <p className="mb-4">Thank you for contacting our support team. We have received your ticket and will respond within 24 hours.</p>
+                        <button 
+                            onClick={() => setIsSubmitted(false)} 
+                            className="site-button"
+                        >
+                            Submit Another Ticket
+                        </button>
                     </div>
                 </div>
             </div>

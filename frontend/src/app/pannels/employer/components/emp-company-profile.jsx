@@ -1591,7 +1591,7 @@ function EmpCompanyProfilePage() {
                             </div>
 
                             <div className="col-lg-4 col-md-6">
-                                <div className="form-group">
+                                <div className="form-group" style={{overflow: 'visible'}}>
                                     <label className="required-field"><Phone size={16} className="me-2" /> Mobile Number</label>
                                     <div style={{position: 'relative'}}>
                                         <div style={{position: 'absolute', left: '0', top: '0', bottom: '0', zIndex: 10}}>
@@ -1641,10 +1641,10 @@ function EmpCompanyProfilePage() {
                             </div>
 
                             <div className="col-lg-4 col-md-6">
-                                <div className="form-group">
+                                <div className="form-group" style={{overflow: 'visible'}}>
                                     <label><Phone size={16} className="me-2" /> Alternate Contact (Optional)</label>
                                     <div style={{position: 'relative'}}>
-                                        <div style={{position: 'absolute', left: '0', top: '0', bottom: '0', zIndex: 10}}>
+                                        <div style={{position: 'absolute', left: '0', top: '0', bottom: '0', zIndex: 5}}>
                                             <CountryCodeSelector
                                                 value={formData.alternateContactCountryCode}
                                                 onChange={(value) => handleInputChange('alternateContactCountryCode', value)}
@@ -1724,7 +1724,7 @@ function EmpCompanyProfilePage() {
                                                     <button 
                                                         type="button" 
                                                         className="btn btn-danger btn-sm position-absolute"
-                                                        style={{top: '5px', right: '5px', width: '25px', height: '25px', padding: '0', fontSize: '12px'}}
+                                                        style={{top: '5px', right: '5px', width: '30px', height: '30px', padding: '0', fontSize: '12px', border: '3px solid #ff6600 !important', borderRadius: '50%', backgroundColor: '#dc3545 !important', boxShadow: '0 2px 4px rgba(0,0,0,0.3)', outline: '2px solid #ff6600', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: '1 !important', visibility: 'visible !important'}}
                                                         onClick={() => handleDeleteGalleryImage(image._id || index)}
                                                         title="Delete image"
                                                     >

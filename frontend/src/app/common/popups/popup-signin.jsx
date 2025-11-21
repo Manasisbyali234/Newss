@@ -203,7 +203,7 @@ function SignInPopup() {
 
 							<div className="modal-body">
 								<div className="twm-tabs-style-2">
-									<ul className="nav nav-tabs" id="myTab2" role="tablist">
+									<ul className="nav nav-tabs mt-n2" id="myTab2" role="tablist">
 										{/*Login Candidate*/}
 										<li className="nav-item">
 											<button

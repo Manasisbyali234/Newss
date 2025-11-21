@@ -208,62 +208,33 @@ function CanSupport() {
 
     if (isSubmitted) {
         return (
-            <div className="twm-right-section-panel site-bg-gray">
-                {/* Success Header */}
+            <div className="twm-right-section-panel site-bg-gray" style={{ height: '100vh', overflow: 'hidden', position: 'fixed', width: '100%', top: 0, left: 0 }}>
                 <div style={{ padding: '2rem 2rem 0 2rem' }}>
                     <div style={{ background: 'white', borderRadius: '12px', padding: '2rem', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', marginBottom: '2rem' }}>
                         <div style={{ textAlign: 'center' }}>
                             <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111827', margin: '0 0 0.5rem 0' }}>
-                                <i className="fa fa-check-circle me-2" style={{color: '#28a745'}}></i>
+                                <i className="fa fa-headset me-2" style={{color: '#f97316'}}></i>
                                 Support Ticket Submitted
                             </h2>
-                            <p style={{ color: '#6b7280', margin: 0 }}>
-                                Your support request has been received successfully
-                            </p>
                         </div>
                     </div>
                 </div>
-                
-                {/* Success Content */}
-                <div style={{ padding: '0 2rem 2rem 2rem' }}>
-                    <div className="panel panel-default">
-                        <div className="panel-body wt-panel-body p-a20 m-b30">
-                                <div className="text-center">
-                                    <div className="success-icon mb-3">
-                                        <i className="fa fa-check-circle" style={{fontSize: '4rem', color: '#28a745'}}></i>
-                                    </div>
-                                    <p>Thank you for contacting our support team. We have received your ticket and will respond within 24 hours.</p>
-                                    <h3 className="text-success" style={{display: 'block', margin: '10px auto', textAlign: 'center'}}>✓ Support Ticket Submitted!</h3>
-                                    <button 
-                                        onClick={() => setIsSubmitted(false)} 
-                                        className="mt-3"
-                                        style={{
-                                            backgroundColor: '#FFF3E5',
-                                            color: '#FF7A00',
-                                            border: '1px solid #FF7A00',
-                                            padding: '10px 20px',
-                                            borderRadius: '5px',
-                                            fontWeight: '600',
-                                            cursor: 'pointer',
-                                            display: 'block',
-                                            margin: '10px auto 0 auto'
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.target.style.backgroundColor = '#FFF3E5';
-                                            e.target.style.color = '#FF7A00';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.target.style.backgroundColor = '#FFF3E5';
-                                            e.target.style.color = '#FF7A00';
-                                        }}
-                                    >
-                                        Submit Another Ticket
-                                    </button>
-                                </div>
-                            </div>
+                <div className="d-flex align-items-center justify-content-center" style={{ minHeight: '60vh', padding: '0 2rem' }}>
+                    <div className="text-center">
+                        <div className="success-icon mb-3">
+                            <i className="fa fa-check-circle" style={{fontSize: '4rem', color: '#28a745'}}></i>
                         </div>
+                        <h3 className="text-success mb-3">✓ Support Ticket Submitted!</h3>
+                        <p className="mb-4">Thank you for contacting our support team. We have received your ticket and will respond within 24 hours.</p>
+                        <button 
+                            onClick={() => setIsSubmitted(false)} 
+                            className="site-button"
+                        >
+                            Submit Another Ticket
+                        </button>
                     </div>
                 </div>
+            </div>
         );
     }
 

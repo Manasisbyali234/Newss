@@ -251,7 +251,7 @@ export const validateField = (fieldName, value, rules = {}) => {
   if (rules.phone) {
     const cleanNumber = value.replace(/[\s\-\(\)]/g, '');
     if (cleanNumber.length < 7 || cleanNumber.length > 15) {
-      errors.push('Phone number must be between 7-15 digits');
+      errors.push('Phone number must be between 6-10 digits');
     }
   }
   

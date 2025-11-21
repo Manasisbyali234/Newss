@@ -447,7 +447,8 @@ function SectionCanEducation({ profile, onUpdate }) {
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
                 showToast('All education details saved successfully!', 'success', 4000);
             } else {
-                showToast('Failed to save education details', 'error', 4000);
+                const errorMessage = response.message || response.error || 'Failed to save education details';
+                showToast(errorMessage, 'error', 4000);
             }
         } catch (error) {
             showToast('Failed to save education details', 'error', 4000);
@@ -868,7 +869,8 @@ function SectionCanEducation({ profile, onUpdate }) {
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
                 showToast('All education details saved successfully!', 'success', 4000);
             } else {
-                showToast('Failed to save education details. Please try again.', 'error', 4000);
+                const errorMessage = response.message || response.error || 'Failed to save education details. Please try again.';
+                showToast(errorMessage, 'error', 4000);
             }
         } catch (error) {
             showToast('Failed to save education details. Please check your connection and try again.', 'error', 4000);

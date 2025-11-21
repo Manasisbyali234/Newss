@@ -44,7 +44,7 @@ function SectionNotifications() {
 			profile_submitted: { icon: 'feather-user', color: '#8b5cf6' },
 			application_status: { icon: 'feather-briefcase', color: '#3b82f6' },
 			interview_scheduled: { icon: 'feather-calendar', color: '#f59e0b' },
-			file_validation_error: { icon: 'feather-alert-triangle', color: '#ef4444' }
+			file_validation_error: { icon: 'feather-info', color: '#6b7280' }
 		};
 		return icons[type] || { icon: 'feather-info', color: '#6b7280' };
 	};

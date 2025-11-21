@@ -29,9 +29,9 @@ function SectionRecordsFilter({ _config, onSortChange, onItemsPerPageChange, est
                         _config.total + " " + _config.type
                     }
                 </span>
-                <form className="woocommerce-ordering twm-filter-select d-flex align-items-center gap-3" method="get">
+                <form className="woocommerce-ordering twm-filter-select d-flex align-items-center gap-3" method="get" style={{ marginLeft: "auto" }}>
                     <span className="woocommerce-result-count" style={{background: 'transparent', backgroundColor: 'transparent'}}>Sort By</span>
-                    <select className="wt-select-bar-2 form-select" onChange={handleSortChange}>
+                    <select className="wt-select-bar-2 form-select" onChange={handleSortChange} style={{ width: "200px", fontSize: "14px" }}>
                         {isEmployerPage ? (
                             <>
                                 <option value="">Default</option>
@@ -51,14 +51,7 @@ function SectionRecordsFilter({ _config, onSortChange, onItemsPerPageChange, est
                             </>
                         )}
                     </select>
-                    <select className="wt-select-bar-2 form-select" onChange={handleItemsPerPageChange}>
-                        <option value="10">Show 10</option>
-                        <option value="20">Show 20</option>
-                        <option value="30">Show 30</option>
-                        <option value="40">Show 40</option>
-                        <option value="50">Show 50</option>
-                        <option value="60">Show 60</option>
-                    </select>
+
                 </form>
             </div>
         </>
