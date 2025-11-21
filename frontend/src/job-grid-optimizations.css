@@ -209,38 +209,40 @@
 }
 
 .woocommerce-ordering {
-  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: 50px !important;
   gap: 0.75rem !important;
+  flex-shrink: 0 !important;
 }
 
 .woocommerce-ordering .form-select {
-  min-width: 0 !important;
-  flex: 1 !important;
+  min-width: 200px !important;
+  width: 200px !important;
 }
 
 /* Mobile-first responsive design */
 @media (max-width: 767px) {
   .product-filter-wrap {
-    flex-direction: column !important;
-    align-items: stretch !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
     gap: 1rem !important;
   }
   
   .woocommerce-ordering {
-    flex-wrap: wrap !important;
-    width: 100% !important;
+    margin-left: auto !important;
+    flex-shrink: 0 !important;
+    width: auto !important;
     padding: 0 !important;
   }
   
   .woocommerce-result-count {
-    width: 100% !important;
-    margin-bottom: 0.5rem !important;
     font-size: 0.9rem !important;
   }
   
   .woocommerce-ordering .form-select {
-    flex: 1 1 calc(40% - 0.375rem) !important;
-    min-width: 100px !important;
+    min-width: 150px !important;
+    width: 150px !important;
     font-size: 0.875rem !important;
     padding: 0.25rem !important;
   }

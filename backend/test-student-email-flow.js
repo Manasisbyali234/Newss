@@ -125,7 +125,7 @@ async function generateTestEmailContent() {
   const createPasswordUrl = `${loginUrl}/create-password?email=${encodeURIComponent(email)}&type=candidate`;
   
   return `
-    <div style="font-family: 'Satoshi', sans-serif; max-width: 650px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
+    <div style="font-family: Satoshi, "Satoshi Fallback";max-width: 650px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
       <div style="background-color: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-top: 4px solid #fd7e14;">
         <h1 style="color: #2c3e50; margin: 0; font-size: 28px; font-weight: 600;">🎉 Welcome to TaleGlobal!</h1>
         <p style="color: #2c3e50; font-size: 18px; line-height: 1.6; margin: 0;">Dear <strong>${name}</strong>,</p>

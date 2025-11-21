@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function AssessmentCard({ data, onDelete, index }) {
+export default function AssessmentCard({ data, onDelete, onEdit, index }) {
 	const formatDate = (dateString) => {
 		const date = new Date(dateString);
 		return date.toLocaleDateString('en-US', {
@@ -42,6 +42,9 @@ export default function AssessmentCard({ data, onDelete, index }) {
 				<div className="d-flex gap-2">
 					<button className="btn btn-sm btn-outline-primary" onClick={() => window.location.href = `/employer/assessment-results/${data._id}`}>
 						<i className="fa fa-chart-bar"></i> Results
+					</button>
+					<button className="btn btn-sm btn-outline-secondary" onClick={() => onEdit(data)} title="Edit Assessment">
+						<i className="fa fa-edit"></i>
 					</button>
 					<button className="btn btn-sm btn-outline-danger" onClick={() => onDelete(data._id)}>
 						<i className="fa fa-trash"></i>

@@ -185,110 +185,6 @@ const HeroBody = ({ onSearch }) => {
             >
               Explore Jobs
             </button>
-            
-            {/* Search Bar */}
-            <div className="search-container">
-              <div className="search-field">
-                <label className="search-label">WHAT</label>
-                <select 
-                  className={`search-select${touched.what && errors.what ? ' has-error' : ''}`}
-                  value={searchData.what}
-                  onChange={(e) => handleFieldChange('what', e.target.value)}
-                  onBlur={() => handleFieldBlur('what')}
-                >
-                  <option value="">Job Title</option>
-                  <option value="Software Developer">Software Developer</option>
-                  <option value="Web Developer">Web Developer</option>
-                  <option value="Frontend Developer">Frontend Developer</option>
-                  <option value="Backend Developer">Backend Developer</option>
-                  <option value="Full Stack Developer">Full Stack Developer</option>
-                  <option value="Data Scientist">Data Scientist</option>
-                  <option value="Product Manager">Product Manager</option>
-                  <option value="UI/UX Designer">UI/UX Designer</option>
-                  <option value="Business Analyst">Business Analyst</option>
-                  <option value="DevOps Engineer">DevOps Engineer</option>
-                  <option value="QA Engineer">QA Engineer</option>
-                  <option value="Marketing Manager">Marketing Manager</option>
-                  <option value="Sales Executive">Sales Executive</option>
-                  <option value="HR Manager">HR Manager</option>
-                  <option value="Accountant">Accountant</option>
-                  <option value="Consultant">Consultant</option>
-                </select>
-                {touched.what && errors.what && (
-                  <div className="search-error">
-                    {errors.what}
-                  </div>
-                )}
-              </div>
-              
-              <div className="search-field">
-                <label className="search-label">TYPE</label>
-                <select 
-                  className={`search-select${touched.type && errors.type ? ' has-error' : ''}`}
-                  value={searchData.type}
-                  onChange={(e) => handleFieldChange('type', e.target.value)}
-                  onBlur={() => handleFieldBlur('type')}
-                >
-                  <option value="">All Category</option>
-                  <option value="Full Time">Full Time</option>
-                  <option value="Part Time">Part Time</option>
-                  <option value="Contract">Contract</option>
-                  <option value="Internship">Internship</option>
-                  <option value="Freelance">Freelance</option>
-                  <option value="Remote">Remote</option>
-                  <option value="Work From Home">Work From Home</option>
-                </select>
-                {touched.type && errors.type && (
-                  <div className="search-error">
-                    {errors.type}
-                  </div>
-                )}
-              </div>
-              
-              <div className="search-field location-field">
-                <label className="search-label">LOCATION</label>
-                <div className="location-input">
-                  <svg className="location-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <circle cx="11" cy="11" r="8" stroke="#000000" strokeWidth="2" fill="none"/>
-                    <path d="m21 21-4.35-4.35" stroke="#000000" strokeWidth="2" fill="none"/>
-                  </svg>
-                  <input
-                    type="text"
-                    className={`search-select location-select${touched.location && errors.location ? ' has-error' : ''}`}
-                    value={searchData.location}
-                    onChange={(e) => handleLocationChange(e.target.value)}
-                    onFocus={() => searchData.location && setShowSuggestions(true)}
-                    onBlur={() => {
-                      handleFieldBlur('location');
-                      setTimeout(() => setShowSuggestions(false), 200);
-                    }}
-                    placeholder="Search location..."
-                  />
-                  {showSuggestions && locationSuggestions.length > 0 && (
-                    <div className="location-suggestions">
-                      {locationSuggestions.map((location, index) => (
-                        <div
-                          key={index}
-                          className="suggestion-item"
-                          onClick={() => selectLocation(location)}
-                        >
-                          {location}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                {touched.location && errors.location && (
-                  <div className="search-error">
-                    {errors.location}
-                  </div>
-                )}
-              </div>
-              
-              <button className="search-btn" onClick={handleSearch}>
-                Find Job
-              </button>
-            </div>
           </div>
           <div className="hero-illustration">
             <img 
@@ -299,6 +195,122 @@ const HeroBody = ({ onSearch }) => {
           </div>
         </div>
 
+
+        {/* Search Bar */}
+        <div className="search-container">
+          <div className="search-field">
+            <label className="search-label">Designation</label>
+            <select 
+              className={`search-select${touched.what && errors.what ? ' has-error' : ''}`}
+              value={searchData.what}
+              onChange={(e) => handleFieldChange('what', e.target.value)}
+              onBlur={() => handleFieldBlur('what')}
+            >
+              <option value="">Enter skills</option>
+              <option value="Software Engineer">Software Engineer</option>
+              <option value="Senior Software Engineer">Senior Software Engineer</option>
+              <option value="Frontend Developer">Frontend Developer</option>
+              <option value="Backend Developer">Backend Developer</option>
+              <option value="Full Stack Developer">Full Stack Developer</option>
+              <option value="Data Scientist">Data Scientist</option>
+              <option value="Data Analyst">Data Analyst</option>
+              <option value="Product Manager">Product Manager</option>
+              <option value="Project Manager">Project Manager</option>
+              <option value="Business Analyst">Business Analyst</option>
+              <option value="UI/UX Designer">UI/UX Designer</option>
+              <option value="Graphic Designer">Graphic Designer</option>
+              <option value="Marketing Manager">Marketing Manager</option>
+              <option value="Sales Manager">Sales Manager</option>
+              <option value="Sales Executive">Sales Executive</option>
+              <option value="HR Manager">HR Manager</option>
+              <option value="HR Executive">HR Executive</option>
+              <option value="Finance Manager">Finance Manager</option>
+              <option value="Accountant">Accountant</option>
+              <option value="Content Writer">Content Writer</option>
+              <option value="Digital Marketing Specialist">Digital Marketing Specialist</option>
+              <option value="Customer Support Executive">Customer Support Executive</option>
+              <option value="Operations Manager">Operations Manager</option>
+              <option value="Quality Assurance Engineer">Quality Assurance Engineer</option>
+              <option value="DevOps Engineer">DevOps Engineer</option>
+              <option value="System Administrator">System Administrator</option>
+              <option value="Network Administrator">Network Administrator</option>
+              <option value="Telecaller">Telecaller</option>
+            </select>
+            {touched.what && errors.what && (
+              <div className="search-error">
+                {errors.what}
+              </div>
+            )}
+          </div>
+          
+          <div className="search-field">
+            <label className="search-label">TYPE</label>
+            <select 
+              className={`search-select${touched.type && errors.type ? ' has-error' : ''}`}
+              value={searchData.type}
+              onChange={(e) => handleFieldChange('type', e.target.value)}
+              onBlur={() => handleFieldBlur('type')}
+            >
+              <option value="">Employement Type</option>
+              <option value="Full Time">Full Time</option>
+              <option value="Part Time">Part Time</option>
+              <option value="Contract">Contract</option>
+              <option value="Internship">Internship</option>
+              <option value="Freelance">Freelance</option>
+              <option value="Remote">Remote</option>
+              <option value="Work From Home">Work From Home</option>
+            </select>
+            {touched.type && errors.type && (
+              <div className="search-error">
+                {errors.type}
+              </div>
+            )}
+          </div>
+          
+          <div className="search-field location-field">
+            <label className="search-label">LOCATION</label>
+            <div className="location-input">
+              <svg className="location-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <circle cx="11" cy="11" r="8" stroke="#000000" strokeWidth="2" fill="none"/>
+                <path d="m21 21-4.35-4.35" stroke="#000000" strokeWidth="2" fill="none"/>
+              </svg>
+              <input
+                type="text"
+                className={`search-select location-select${touched.location && errors.location ? ' has-error' : ''}`}
+                value={searchData.location}
+                onChange={(e) => handleLocationChange(e.target.value)}
+                onFocus={() => searchData.location && setShowSuggestions(true)}
+                onBlur={() => {
+                  handleFieldBlur('location');
+                  setTimeout(() => setShowSuggestions(false), 200);
+                }}
+                placeholder="Enter Location"
+              />
+              {showSuggestions && locationSuggestions.length > 0 && (
+                <div className="location-suggestions">
+                  {locationSuggestions.map((location, index) => (
+                    <div
+                      key={index}
+                      className="suggestion-item"
+                      onClick={() => selectLocation(location)}
+                    >
+                      {location}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            {touched.location && errors.location && (
+              <div className="search-error">
+                {errors.location}
+              </div>
+            )}
+          </div>
+          
+          <button className="search-btn" onClick={handleSearch}>
+            Find Job
+          </button>
+        </div>
 
         {/* Job Categories Carousel */}
         <div className="categories-container" style={{

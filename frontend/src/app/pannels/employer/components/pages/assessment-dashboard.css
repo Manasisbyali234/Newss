@@ -7,6 +7,31 @@
   padding: 0.5rem 1rem !important;
 }
 
+/* Assessment Card Action Buttons */
+.emp-assessment-page .card .btn-sm {
+  padding: 0.375rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  border-radius: 0.375rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.25rem !important;
+}
+
+.emp-assessment-page .card .btn-outline-secondary {
+  border-color: #6c757d !important;
+  color: #6c757d !important;
+}
+
+.emp-assessment-page .card .btn-outline-secondary:hover {
+  background-color: #6c757d !important;
+  border-color: #6c757d !important;
+  color: #fff !important;
+}
+
+.emp-assessment-page .card .d-flex.gap-2 {
+  flex-wrap: wrap !important;
+}
+
 .emp-assessment-page .btn-dark {
   display: flex !important;
   align-items: center !important;
@@ -17,6 +42,15 @@
   .emp-assessment-page .btn {
     font-size: 0.875rem !important;
     padding: 0.5rem 0.75rem !important;
+  }
+
+  .emp-assessment-page .card .btn-sm {
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  .emp-assessment-page .card .d-flex.gap-2 {
+    gap: 0.5rem !important;
   }
 
   .emp-assessment-page .d-flex.justify-content-between {

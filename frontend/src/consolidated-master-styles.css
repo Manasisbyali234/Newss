@@ -1576,7 +1576,28 @@ img[src*="logo-skin-8.png"] {
 
   /* How It Works for candidates section mobile */
   .twm-how-it-work-area {
-    padding: 40px 0 !important;
+    padding: 40px 15px !important;
+    margin: 0 !important;
+  }
+
+  .twm-w-process-steps,
+  .twm-w-process-steps3 {
+    padding: 0 10px !important;
+  }
+
+  /* Top Recruiters section mobile */
+  .twm-recruiters-area,
+  .twm-recruiters5-area {
+    padding: 40px 15px !important;
+    margin: 0 !important;
+  }
+
+  .top-recruiters-grid {
+    padding: 0 10px !important;
+  }
+
+  .twm-recruiters5-wrap {
+    padding: 0 10px !important;
   }
 
   /* Job Categories mobile */

@@ -125,9 +125,83 @@ exports.getAssessmentDetails = async (req, res) => {
 // Employer: Update Assessment
 exports.updateAssessment = async (req, res) => {
   try {
+    const { title, type, description, instructions, timer, questions } = req.body;
+    
+    // Additional server-side validation (same as create)
+    if (!title || title.trim().length === 0) {
+      return res.status(400).json({ success: false, message: 'Assessment title is required' });
+    }
+    
+    if (!questions || questions.length === 0) {
+      return res.status(400).json({ success: false, message: 'At least one question is required' });
+    }
+    
+    // Validate each question
+    for (let i = 0; i < questions.length; i++) {
+      const question = questions[i];
+      
+      if (!question.question || question.question.trim().length === 0) {
+        return res.status(400).json({ 
+          success: false, 
+          message: `Question ${i + 1} text is required` 
+        });
+      }
+      
+      if (question.type === 'mcq') {
+        if (!question.options || question.options.length < 2) {
+          return res.status(400).json({ 
+            success: false, 
+            message: `Question ${i + 1} must have at least 2 options` 
+          });
+        }
+        
+        // Check if all options are filled
+        for (let j = 0; j < question.options.length; j++) {
+          if (!question.options[j] || question.options[j].trim().length === 0) {
+            return res.status(400).json({ 
+              success: false, 
+              message: `Question ${i + 1}, Option ${String.fromCharCode(65 + j)} is required` 
+            });
+          }
+        }
+        
+        if (question.correctAnswer === undefined || question.correctAnswer < 0 || question.correctAnswer >= question.options.length) {
+          return res.status(400).json({ 
+            success: false, 
+            message: `Question ${i + 1} must have a valid correct answer selected` 
+          });
+        }
+      }
+      
+      if (!question.marks || question.marks < 1) {
+        return res.status(400).json({ 
+          success: false, 
+          message: `Question ${i + 1} must have at least 1 mark` 
+        });
+      }
+    }
+    
+    const updateData = {
+      title: title.trim(),
+      type: type || 'Technical',
+      description: description ? description.trim() : '',
+      instructions: instructions ? instructions.trim() : '',
+      timer: timer || 30,
+      totalQuestions: questions.length,
+      questions: questions.map(q => ({
+        question: q.question.trim(),
+        type: q.type || 'mcq',
+        options: q.type === 'subjective' ? [] : q.options.map(opt => opt.trim()),
+        correctAnswer: q.type === 'subjective' ? null : q.correctAnswer,
+        marks: q.marks || 1,
+        explanation: q.explanation ? q.explanation.trim() : ''
+      })),
+      updatedAt: Date.now()
+    };
+    
     const assessment = await Assessment.findOneAndUpdate(
       { _id: req.params.id, employerId: req.user.id },
-      { ...req.body, updatedAt: Date.now() },
+      updateData,
       { new: true }
     );
     
@@ -137,7 +211,8 @@ exports.updateAssessment = async (req, res) => {
     
     res.json({ success: true, assessment });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error('Assessment update error:', error);
+    res.status(500).json({ success: false, message: error.message || 'Failed to update assessment' });
   }
 };
 

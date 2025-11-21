@@ -9,6 +9,7 @@ export default function AssessmentDashboard() {
 	const [assessments, setAssessments] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	const [loading, setLoading] = useState(true);
+	const [editingAssessment, setEditingAssessment] = useState(null);
 
 	useEffect(() => {
 		fetchAssessments();
@@ -30,22 +31,37 @@ export default function AssessmentDashboard() {
 		}
 	};
 
-	const handleCreateAssessment = async (newAssessment) => {
+	const handleCreateAssessment = async (assessmentData) => {
 		try {
 			const token = localStorage.getItem('employerToken');
-			const response = await axios.post('http://localhost:5000/api/employer/assessments', newAssessment, {
-				headers: { Authorization: `Bearer ${token}` }
-			});
-			if (response.data.success) {
-				setAssessments((prev) => [response.data.assessment, ...prev]);
-				setShowModal(false);
-				showToast('Assessment created successfully!', 'success');
+			
+			if (assessmentData.id) {
+				// Update existing assessment
+				const response = await axios.put(`http://localhost:5000/api/employer/assessments/${assessmentData.id}`, assessmentData, {
+					headers: { Authorization: `Bearer ${token}` }
+				});
+				if (response.data.success) {
+					setAssessments((prev) => prev.map(a => a._id === assessmentData.id ? response.data.assessment : a));
+					setShowModal(false);
+					setEditingAssessment(null);
+					showToast('Assessment updated successfully!', 'success');
+				}
+			} else {
+				// Create new assessment
+				const response = await axios.post('http://localhost:5000/api/employer/assessments', assessmentData, {
+					headers: { Authorization: `Bearer ${token}` }
+				});
+				if (response.data.success) {
+					setAssessments((prev) => [response.data.assessment, ...prev]);
+					setShowModal(false);
+					showToast('Assessment created successfully!', 'success');
+				}
 			}
 		} catch (error) {
-			console.error('Error creating assessment:', error);
+			console.error('Error saving assessment:', error);
 			
 			// Show specific error message from server
-			let errorMessage = 'Failed to create assessment';
+			let errorMessage = assessmentData.id ? 'Failed to update assessment' : 'Failed to create assessment';
 			if (error.response?.data?.message) {
 				errorMessage = error.response.data.message;
 			} else if (error.response?.data?.errors && error.response.data.errors.length > 0) {
@@ -54,6 +70,11 @@ export default function AssessmentDashboard() {
 			
 			showToast(errorMessage, 'error');
 		}
+	};
+
+	const handleEditAssessment = (assessment) => {
+		setEditingAssessment(assessment);
+		setShowModal(true);
 	};
 
 	const handleDeleteAssessment = async (id) => {
@@ -127,6 +148,7 @@ export default function AssessmentDashboard() {
 									<AssessmentCard 
 										data={assessment} 
 										onDelete={handleDeleteAssessment}
+										onEdit={handleEditAssessment}
 										index={index}
 									/>
 								</div>
@@ -138,8 +160,12 @@ export default function AssessmentDashboard() {
 
 			{showModal && (
 				<CreateAssessmentModal
-					onClose={() => setShowModal(false)}
+					onClose={() => {
+						setShowModal(false);
+						setEditingAssessment(null);
+					}}
 					onCreate={handleCreateAssessment}
+					editData={editingAssessment}
 				/>
 			)}
 		</div>

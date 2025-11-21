@@ -15,7 +15,7 @@ function TermsConditionsPage() {
                                     <h2 className="wt-title">Terms & Conditions</h2>
                                 </div>
                                 
-                                <div className="wt-post-text" style={{fontFamily: 'Satoshi, sans-serif', lineHeight: '1.8'}}>
+                                <div className="wt-post-text" style={{fontFamily: 'Satoshi, "Satoshi Fallback"', lineHeight: '1.8'}}>
                                     <style>
                                         {`.wt-post-text h2, .wt-post-text h3 { color: #000 !important; font-weight: bold !important; }`}
                                     </style>

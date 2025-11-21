@@ -5,6 +5,19 @@
   transform: translateZ(0);
 }
 
+/* Sort By alignment for employer grid */
+.emp-grid-page .woocommerce-ordering {
+  margin-left: auto !important;
+  margin-right: 50px !important;
+  gap: 0.75rem !important;
+  flex-shrink: 0 !important;
+}
+
+.emp-grid-page .woocommerce-ordering .form-select {
+  min-width: 200px !important;
+  width: 200px !important;
+}
+
 /* Fixed sidebar */
 .emp-grid-page .rightSidebar {
   position: static;
