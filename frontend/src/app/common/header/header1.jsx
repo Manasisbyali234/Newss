@@ -96,9 +96,9 @@ const Header1 = memo(function Header1({ _config }) {
                                     </NavLink>
                                 </div>
                             </div>
-                            {/* MAIN Vav */}
+                            {/* MAIN Nav */}
                             <div className="nav-animation header-nav navbar-collapse d-flex justify-content-center" style={{display: 'flex !important'}}>
-                                <ul className="nav navbar-nav" style={{display: 'flex', listStyle: 'none', gap: '2rem'}}>
+                                <ul className="nav navbar-nav" style={{display: 'flex', listStyle: 'none', gap: '1rem', padding: '0 20px'}}>
                                     <li className="nav-item">
                                         <NavLink
                                             to="/"

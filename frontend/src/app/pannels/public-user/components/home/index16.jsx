@@ -801,7 +801,7 @@ function Home16Page() {
             {/* JOBS CATEGORIES SECTION END */}
 
             {/* JOB POST START */}
-            <div className="section-full p-t20 p-b20 twm-bg-ring-wrap2 animate-on-scroll" style={{background: 'transparent', backgroundColor: 'transparent', paddingLeft: '20px', paddingRight: '20px'}}>
+            <div className="section-full p-t20 p-b20 twm-bg-ring-wrap2 animate-on-scroll" style={{background: 'transparent', backgroundColor: 'transparent', paddingLeft: '30px', paddingRight: '30px'}}>
                 <div className="twm-bg-ring-right" />
                 <div className="twm-bg-ring-left" />
                 <div style={{background: 'transparent', backgroundColor: 'transparent'}}>
@@ -814,7 +814,7 @@ function Home16Page() {
                                 className="wt-separator-two-part-left mb-4"
                             >
                                 {/* title="" START*/}
-                                  <div className="recruiters-header-section" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', paddingLeft: '20px'}}>
+                                  <div className="recruiters-header-section" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', paddingLeft: '30px'}}>
                                   <div className="text-left">
                                   <div className="wt-small-separator site-text-primary">
                                 <div>Top Recruiters</div>
@@ -852,7 +852,7 @@ function Home16Page() {
                                         Clear Filters
                                     </button>
                                 )}
-                                <NavLink to="/job-grid" className=" site-button" style={{padding: '0.5rem 1rem', fontSize: '14px', display: 'inline-flex', width: 'auto', whiteSpace: 'nowrap', marginRight: '20px'}}>
+                                <NavLink to="/job-grid" className=" site-button" style={{padding: '0.5rem 1rem', fontSize: '14px', display: 'inline-flex', width: 'auto', whiteSpace: 'nowrap', marginRight: '30px'}}>
                                     Browse All Jobs
                                 </NavLink>
                             </Col>
@@ -860,7 +860,7 @@ function Home16Page() {
                     </div>
 
                     <div className="section-content">
-                        <div className="twm-jobs-grid-wrap" style={{marginLeft: '10px', marginRight: '10px'}}>
+                        <div className="twm-jobs-grid-wrap" style={{marginLeft: '20px', marginRight: '20px'}}>
                             <Row style={{'--bs-gutter-x': '6px'}}>
                                 {jobs.length > 0 ? (
                                     jobs.map((job) => (
@@ -1003,24 +1003,24 @@ function Home16Page() {
             {/* JOB POST END */}
 
             {/* Recruiters START */}
-            <div className="section-full p-t20 p-b20 animate-on-scroll" style={{background: 'transparent', backgroundColor: 'transparent', paddingLeft: '20px', paddingRight: '20px'}}>
+            <div className="section-full p-t20 p-b20 animate-on-scroll" style={{background: 'transparent', backgroundColor: 'transparent', paddingLeft: '30px', paddingRight: '30px'}}>
                 <div style={{background: 'transparent', backgroundColor: 'transparent'}}>
                     {/* title="" START*/}
-                    <div className="recruiters-header-section" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', background: 'transparent', paddingLeft: '20px'}}>
+                    <div className="recruiters-header-section" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', background: 'transparent', paddingLeft: '30px'}}>
                         <div className="text-left">
                             <div className="wt-small-separator site-text-primary">
                                 <div>Top Recruiters</div>
                             </div>
                             <h2 className="wt-title mb-0">Discover your next career move</h2>
                         </div>
-                        <NavLink to="/emp-grid" className="site-button" style={{padding: '0.5rem 1rem', fontSize: '14px', display: 'inline-flex', width: 'auto', whiteSpace: 'nowrap', marginRight: '20px'}}>
+                        <NavLink to="/emp-grid" className="site-button" style={{padding: '0.5rem 1rem', fontSize: '14px', display: 'inline-flex', width: 'auto', whiteSpace: 'nowrap', marginRight: '30px'}}>
                             View All
                         </NavLink>
                     </div>
                     {/* title="" END*/}
 
                     <div className="section-content">
-                        <div className="twm-recruiters5-wrap" style={{marginLeft: '10px', marginRight: '10px'}}>
+                        <div className="twm-recruiters5-wrap" style={{marginLeft: '15px', marginRight: '15px'}}>
                             <div
                                 className="twm-column-5 m-b30"
                                 style={{
