@@ -7,18 +7,16 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-top: var(--navbar-height, 72px); /* offset content below fixed/sticky header */
+  padding-top: var(--navbar-height, 72px);
   width: 100%;
   overflow: hidden;
 }
 
-/* If header is not fixed (has 'no-fixed'), don't offset and use full viewport height */
 .site-header.no-fixed + .page-content .hero-body {
   padding-top: 0;
   min-height: 100vh;
 }
 
-/* Navigation Styles */
 .navbar {
   background: white;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -104,11 +102,10 @@
   box-shadow: none;
 }
 
-/* Hero Content */
 .hero-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1.5rem; /* reduced for tighter fit */
+  padding: 2rem 1.5rem;
   text-align: center;
 }
 
@@ -173,8 +170,8 @@
 }
 
 .hero-text {
-  margin-bottom: 1.5rem; /* reduced gap */
-  margin-top: 8rem; /* move text content down more */
+  margin-bottom: 1.5rem;
+  margin-top: 0;
 }
 
 .hero-title {
@@ -196,16 +193,15 @@
   margin-bottom: 0;
 }
 
-/* Search Container */
 .search-container {
   background: white;
   border-radius: 12px;
-  padding: 1rem; /* reduced */
+  padding: 1rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   display: flex;
-  gap: 0.75rem; /* tighter */
+  gap: 0.75rem;
   align-items: end;
-  margin-bottom: 1.25rem; /* reduced */
+  margin-bottom: 1.25rem;
   max-width: 960px;
   margin-left: auto;
   margin-right: auto;
@@ -322,15 +318,18 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
-/* Categories Carousel */
 .categories-container {
   overflow: hidden;
   width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .categories-carousel {
   width: 100%;
-  overflow: hidden;
+  overflow: visible;
+  margin: 0;
+  padding: 0;
 }
 
 .categories-track {
@@ -338,7 +337,9 @@
   gap: 1.5rem;
   padding: 1rem 0;
   animation: scroll-categories 20s linear infinite;
-  width: calc(200% + 1.5rem); /* Double width for seamless loop */
+  width: calc(200% + 1.5rem);
+  will-change: transform;
+  flex-wrap: nowrap;
 }
 
 @keyframes scroll-categories {
@@ -350,18 +351,16 @@
   }
 }
 
-
-
 .hero-body .category-card {
   background: white;
   border-radius: 10px;
-  padding: 1rem 0.875rem; /* smaller */
+  padding: 1rem 0.875rem;
   box-shadow: 0 3px 14px rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
   cursor: pointer;
-  min-width: 140px; /* smaller */
+  min-width: 140px;
   max-width: 220px;
-  flex: 1 1 140px;
+  flex: 0 0 140px;
   text-align: center;
 }
 
@@ -384,7 +383,6 @@
   color: #ff9c00;
 }
 
-/* smaller variant used for hero categories */
 .category-icon.small {
   width: 40px;
   height: 40px;
@@ -395,19 +393,18 @@
 .category-jobs {
   color: #ff9c00;
   font-weight: 600;
-  font-size: 0.8rem; /* smaller */
+  font-size: 0.8rem;
   display: block;
-  margin-bottom: 0.25rem; /* tighter */
+  margin-bottom: 0.25rem;
 }
 
 .category-name {
   color: #333;
   font-weight: 700;
-  font-size: 1rem; /* smaller */
+  font-size: 1rem;
   margin: 0;
 }
 
-/* Responsive Design */
 @media (max-width: 992px) {
   :root { --navbar-height: 64px; }
 
@@ -486,7 +483,7 @@
   :root { --navbar-height: 56px; }
 
   .hero-body {
-    padding-top: calc(var(--navbar-height) + 3rem);
+    padding-top: calc(var(--navbar-height) + 0.5rem);
     min-height: auto;
   }
 
@@ -507,7 +504,7 @@
   }
 
   .hero-title {
-    font-size: 2.2rem; /* slightly smaller on mobile */
+    font-size: 2.2rem;
   }
 
   .hero-subtitle {
@@ -536,15 +533,27 @@
     width: 100%;
   }
 
+  .categories-container {
+    overflow: hidden;
+  }
+
   .categories-track {
-    animation-duration: 18s;
+    animation: scroll-categories 20s linear infinite;
+    width: calc(200% + 1.5rem);
+    padding: 1rem 0;
+    gap: 1.5rem;
+  }
+
+  .category-card {
+    flex: 0 0 140px;
+    min-width: 140px;
+    max-width: 220px;
   }
 
   .hero-image {
     max-height: 300px;
   }
 }
-
 
 @media (max-width: 576px) {
   .hero-title {
@@ -558,19 +567,34 @@
   .search-container {
     padding: 1rem;
   }
+
+  .categories-container {
+    overflow: hidden;
+  }
+
+  .categories-track {
+    animation: scroll-categories 20s linear infinite;
+    width: calc(200% + 1.5rem);
+    padding: 1rem 0;
+    gap: 1.5rem;
+  }
+
+  .category-card {
+    flex: 0 0 140px;
+    min-width: 140px;
+    max-width: 220px;
+  }
 }
 
-/* Small Mobile Portrait (576px - 767px) */
 @media (max-width: 767px) {
   :root { --navbar-height: 64px; }
 
   .hero-body {
     min-height: auto;
-    padding-top: calc(var(--navbar-height, 64px) + 2.5rem) !important;
+    padding-top: calc(var(--navbar-height, 64px) + 0.5rem) !important;
     margin-top: 0 !important;
   }
 
-  /* Force single column layout */
   .hero-content > div:first-child {
     display: flex !important;
     flex-direction: column !important;
@@ -627,19 +651,17 @@
     width: 100% !important;
   }
 
-  /* Explore Jobs button */
   .hero-content button:not(.search-btn) {
     width: 100% !important;
   }
 }
 
-/* Extra Small Mobile (< 576px) */
 @media (max-width: 575px) {
   :root { --navbar-height: 56px; }
 
   .hero-body {
     min-height: auto;
-    padding-top: calc(var(--navbar-height, 56px) + 2rem) !important;
+    padding-top: calc(var(--navbar-height, 56px) + 0.5rem) !important;
     margin-top: 0 !important;
   }
 
@@ -648,7 +670,6 @@
     max-width: 100% !important;
   }
 
-  /* Force single column layout */
   .hero-content > div:first-child {
     display: flex !important;
     flex-direction: column !important;
@@ -691,7 +712,6 @@
     margin-bottom: 0.5rem !important;
   }
 
-  /* Hero buttons */
   .hero-content button:not(.search-btn) {
     padding: 0.6rem 1rem !important;
     font-size: 0.9rem !important;
@@ -735,27 +755,31 @@
     font-size: 0.9rem !important;
   }
 
-  /* Categories scroll - ensure desktop-like appearance */
+  .categories-container {
+    overflow: hidden;
+  }
+
   .categories-track {
-    padding: 0.75rem 0.5rem !important;
-    gap: 0.75rem !important;
-    animation-duration: 15s !important; /* Faster on mobile for better UX */
+    animation: scroll-categories 20s linear infinite;
+    width: calc(200% + 1.5rem);
+    padding: 1rem 0;
+    gap: 1.5rem;
   }
 
   .category-card {
-    padding: 0.75rem 0.5rem !important;
-    min-width: 100px !important;
-    max-width: 140px !important;
-    flex: 0 0 120px !important; /* Consistent sizing */
-    background: white !important;
-    border-radius: 10px !important;
-    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.06) !important;
-    transition: all 0.3s ease !important;
+    padding: 1rem 0.875rem;
+    min-width: 140px;
+    flex: 0 0 140px;
+    max-width: 220px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
   }
 
   .category-card:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
   }
 
   .category-icon.small {
@@ -789,7 +813,6 @@
     margin: 0 !important;
   }
 
-  /* Navbar responsive */
   .nav-container {
     padding: 0.75rem !important;
   }
@@ -806,10 +829,9 @@
   }
 }
 
-/* Very Small Mobile - iPhone SE (< 375px) */
 @media (max-width: 374px) {
   .hero-body {
-    padding-top: calc(var(--navbar-height, 56px) + 1.5rem) !important;
+    padding-top: calc(var(--navbar-height, 56px) + 0.5rem) !important;
     margin-top: 0 !important;
   }
 
@@ -850,9 +872,7 @@
   }
 }
 
-/* Old 480px breakpoint - kept for compatibility */
 @media (max-width: 480px) {
-
   .hero-content {
     padding: 2rem 1rem;
   }
@@ -895,14 +915,22 @@
     padding: 0.85rem;
   }
 
-.categories-track {
-    gap: 1rem;
-    padding: 1rem;
+  .categories-container {
+    overflow: hidden;
+  }
+
+  .categories-track {
+    animation: scroll-categories 20s linear infinite;
+    width: calc(200% + 1.5rem);
+    padding: 1rem 0;
+    gap: 1.5rem;
   }
 
   .category-card {
-    min-width: 120px;
-    padding: 0.75rem 0.6rem;
+    min-width: 140px;
+    padding: 1rem 0.875rem;
+    flex: 0 0 140px;
+    max-width: 220px;
   }
 
   .category-icon.small {
@@ -932,14 +960,15 @@
   }
 
   .category-card {
-    min-width: 110px;
+    min-width: 100px;
+    flex: 0 0 100px;
   }
 
   .hero-image {
     max-height: 220px;
   }
 }
-/* Mobile-specific location icon fixes */
+
 @media (max-width: 768px) {
   .location-icon {
     left: 12px !important;
@@ -962,12 +991,4 @@
   .location-select {
     padding-left: 40px !important;
   }
-}
-
-/* Force animation to work */
-.categories-track {
-  animation-name: scroll-categories !important;
-  animation-duration: 15s !important;
-  animation-timing-function: linear !important;
-  animation-iteration-count: infinite !important;
 }

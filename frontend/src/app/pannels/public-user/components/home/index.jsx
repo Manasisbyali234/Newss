@@ -7,7 +7,7 @@ import { NavLink } from "react-router-dom";
 import MobileTestIndicator from "../../../../../components/MobileTestIndicator";
 import HomeJobCard from "../../../../../components/HomeJobCard";
 // CSS is now in public/assets/css/home-job-cards.css
-import "../../../../../clean-job-categories.css";
+import "../../../../../categories-mobile-grid-fix.css";
 
 function TopRecruitersSection() {
     const [jobs, setJobs] = useState([]);
@@ -548,25 +548,23 @@ function Home1Page() {
                             </div>
                         </div>
 
-                        {/* Mobile Vertical Layout */}
-                        <div className="job-categories-style1 m-b30 mobile-categories">
-                            <div className="mobile-categories-grid">
+                        {/* Mobile Grid Layout */}
+                        <div className="mobile-categories" style={{display: 'block', width: '100%', padding: '0 10px'}}>
+                            <div style={{display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', width: '100%', boxSizing: 'border-box'}}>
                                 {categories.map((category, index) => (
-                                    <div key={index} className="category-card mobile-category-item">
-                                        <div className="plus-badge">
+                                    <div key={index} style={{background: '#fff', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', border: '1px solid #f0f0f0', boxSizing: 'border-box'}}>
+                                        <div style={{background: 'linear-gradient(135deg, #FF9D00, #FFB84D)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '20px', marginBottom: '12px', flexShrink: 0}}>
                                             <div className={category.icon} />
                                         </div>
-                                        <div>
-                                            <div className="category-text-sub">{category.count}+ Posted new jobs</div>
-                                            <NavLink to={`${publicUser.jobs.GRID}?category=${category.name}`} className="category-text-title">{category.name}</NavLink>
-                                        </div>
+                                        <div style={{fontSize: '12px', color: '#999', marginBottom: '4px'}}>{category.count}+ Posted new jobs</div>
+                                        <NavLink to={`${publicUser.jobs.GRID}?category=${category.name}`} style={{fontSize: '16px', fontWeight: '600', color: '#333', textDecoration: 'none'}}>{category.name}</NavLink>
                                     </div>
                                 ))}
                             </div>
                         </div>
 
                         <div className="text-right job-categories-btn">
-                            <NavLink to={publicUser.jobs.GRID} className=" site-button">View All</NavLink>
+                            <NavLink to={publicUser.jobs.GRID} className="site-button">View All</NavLink>
                         </div>
                     </div>
                 </div>

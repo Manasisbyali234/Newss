@@ -2487,6 +2487,34 @@ html body input[type="submit"]:hover {
 }
 
 /* ============================================================================
+ * TRANSPARENT CONTAINER OVERRIDE - HIGHEST PRIORITY
+ * ============================================================================ */
+
+/* Force transparent backgrounds ONLY on container elements, not their children */
+.transparent-container {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+}
+
+/* Specific override for react-bootstrap Container components - only the container itself */
+div[class*="container"].transparent-container {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Ensure card backgrounds remain white - override any inherited transparency */
+.transparent-container .category-card,
+.transparent-container .new-job-card,
+.transparent-container .twm-recruiters5-box,
+.transparent-container .twm-w-process-steps3,
+.transparent-container [class*="card"],
+.transparent-container [class*="box"] {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+}
+
+/* ============================================================================
  * END OF CONSOLIDATED MASTER STYLES
  * ============================================================================
  */
