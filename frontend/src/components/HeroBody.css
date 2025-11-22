@@ -327,19 +327,23 @@
 
 .categories-carousel {
   width: 100%;
-  overflow: visible;
+  overflow: hidden;
   margin: 0;
   padding: 0;
 }
 
 .categories-track {
   display: flex;
-  gap: 1.5rem;
+  gap: 0.75rem;
   padding: 1rem 0;
-  animation: scroll-categories 20s linear infinite;
-  width: calc(200% + 1.5rem);
+  animation: scroll-categories 25s linear infinite !important;
+  width: calc(200% + 0.75rem);
   will-change: transform;
   flex-wrap: nowrap;
+}
+
+.categories-track:hover {
+  animation-play-state: paused;
 }
 
 @keyframes scroll-categories {
@@ -347,14 +351,16 @@
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-50%);
+    transform: translateX(calc(-50% - 0.75rem));
   }
 }
+
+
 
 .hero-body .category-card {
   background: white;
   border-radius: 10px;
-  padding: 1rem 0.875rem;
+  padding: 1.25rem 1rem;
   box-shadow: 0 3px 14px rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
   cursor: pointer;
@@ -362,6 +368,11 @@
   max-width: 220px;
   flex: 0 0 140px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
 }
 
 .hero-body .category-card:hover {
@@ -387,7 +398,12 @@
   width: 40px;
   height: 40px;
   margin-bottom: 0.5rem;
-  color: #ff9c00;
+  background: transparent;
+  border: none;
+  color: #FF6A00;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .category-jobs {
@@ -401,8 +417,10 @@
 .category-name {
   color: #333;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.95rem;
   margin: 0;
+  text-align: center;
+  line-height: 1.2;
 }
 
 @media (max-width: 992px) {
@@ -469,7 +487,7 @@
   .categories-track {
     padding-left: 1rem;
     padding-right: 1rem;
-    animation-duration: 20s;
+    animation: scroll-categories 20s linear infinite !important;
   }
 
   .hero-image {
@@ -535,10 +553,12 @@
 
   .categories-container {
     overflow: hidden;
+    width: 100%;
+    margin: 0;
   }
 
   .categories-track {
-    animation: scroll-categories 20s linear infinite;
+    animation: scroll-categories 20s linear infinite !important;
     width: calc(200% + 1.5rem);
     padding: 1rem 0;
     gap: 1.5rem;
@@ -570,10 +590,12 @@
 
   .categories-container {
     overflow: hidden;
+    width: 100%;
+    margin: 0;
   }
 
   .categories-track {
-    animation: scroll-categories 20s linear infinite;
+    animation: scroll-categories 20s linear infinite !important;
     width: calc(200% + 1.5rem);
     padding: 1rem 0;
     gap: 1.5rem;
@@ -757,10 +779,12 @@
 
   .categories-container {
     overflow: hidden;
+    width: 100%;
+    margin: 0;
   }
 
   .categories-track {
-    animation: scroll-categories 20s linear infinite;
+    animation: scroll-categories 20s linear infinite !important;
     width: calc(200% + 1.5rem);
     padding: 1rem 0;
     gap: 1.5rem;
@@ -917,10 +941,12 @@
 
   .categories-container {
     overflow: hidden;
+    width: 100%;
+    margin: 0;
   }
 
   .categories-track {
-    animation: scroll-categories 20s linear infinite;
+    animation: scroll-categories 20s linear infinite !important;
     width: calc(200% + 1.5rem);
     padding: 1rem 0;
     gap: 1.5rem;
@@ -990,5 +1016,51 @@
   
   .location-select {
     padding-left: 40px !important;
+  }
+}
+
+/* Mobile category card fixes */
+@media (max-width: 576px) {
+  .categories-track {
+    gap: 0.5rem !important;
+    width: calc(200% + 0.5rem) !important;
+  }
+  
+  .hero-body .category-card {
+    flex: 0 0 75px !important;
+    min-width: 75px !important;
+    max-width: 75px !important;
+    padding: 0.6rem 0.35rem !important;
+  }
+  
+  .category-icon.small {
+    width: 24px !important;
+    height: 24px !important;
+    background: transparent !important;
+    border: none !important;
+  }
+  
+  .category-name {
+    font-size: 0.65rem !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .hero-body .category-card {
+    flex: 0 0 70px !important;
+    min-width: 70px !important;
+    max-width: 70px !important;
+    padding: 0.55rem 0.3rem !important;
+  }
+  
+  .category-icon.small {
+    width: 22px !important;
+    height: 22px !important;
+    background: transparent !important;
+    border: none !important;
+  }
+  
+  .category-name {
+    font-size: 0.6rem !important;
   }
 }

@@ -4,6 +4,7 @@ import {
 import { useEffect, useState } from 'react';
 import CountUp from "react-countup";
 import './emp-dashboard.css';
+import './emp-dashboard-mobile.css';
 
 
 function EmpDashboardPage() {

@@ -40,32 +40,37 @@ All JavaScript fuctions Start
 
 	//  Job Categories Carousel function by = owl.carousel.js ========================== //
 	function job_categories_carousel() {
-		// Only initialize carousel on desktop screens (768px and above)
-		if (jQuery(window).width() >= 768) {
-			jQuery('.job-categories-carousel').owlCarousel({
-				loop: true,
-				nav: true,
-				dots: false,
-				center: false,
-				margin: 30,
-				autoplay: true,
-				autoplayTimeout: 4000,
-				autoplayHoverPause: true,
-				navText: ['<i class="feather-chevron-left"></i>', '<i class="feather-chevron-right"></i>'],
-				responsive: {
-					768: {
-						items: 4,
-						margin: 15,
-					},
-					991: {
-						items: 5,
-					},
-					1024: {
-						items: 5
-					}
+		jQuery('.job-categories-carousel').owlCarousel({
+			loop: true,
+			nav: true,
+			dots: false,
+			center: false,
+			margin: 30,
+			autoplay: true,
+			autoplayTimeout: 4000,
+			autoplayHoverPause: true,
+			navText: ['<i class="feather-chevron-left"></i>', '<i class="feather-chevron-right"></i>'],
+			responsive: {
+				0: {
+					items: 1,
+					margin: 15,
+				},
+				480: {
+					items: 2,
+					margin: 15,
+				},
+				768: {
+					items: 4,
+					margin: 15,
+				},
+				991: {
+					items: 5,
+				},
+				1024: {
+					items: 5
 				}
-			});
-		}
+			}
+		});
 	}
 
 	// > Video responsive function by = custom.js ========================= //	

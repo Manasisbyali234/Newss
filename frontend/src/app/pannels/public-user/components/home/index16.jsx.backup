@@ -454,7 +454,7 @@ function Home16Page() {
                 </div>
             </div>
 
-            {/* Error Alert */}
+            {/* Error Alert */
             {error && (
                 <div className="error-alert-container">
                     <div className="error-alert-content">

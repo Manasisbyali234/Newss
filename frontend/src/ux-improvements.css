@@ -233,13 +233,19 @@ textarea.is-valid {
 
 /* ===== Reduced Motion Support ===== */
 @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
+    *:not(.categories-track),
+    *:not(.categories-track)::before,
+    *:not(.categories-track)::after {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
+    }
+    
+    .categories-track {
+        animation: scroll-categories 25s linear infinite !important;
+        animation-duration: 25s !important;
+        animation-iteration-count: infinite !important;
     }
 }
 

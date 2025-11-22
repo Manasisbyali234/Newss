@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 import { publicUser } from "../../../../../globals/route-names";
 import CountUp from "react-countup";
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useAuth } from "../../../../../contexts/AuthContext";
 import { loadScript, updateSkinStyle } from "../../../../../globals/constants";
 import api from "../../../../../utils/api";
 import HeroBody from "../../../../../components/HeroBody";
@@ -21,8 +20,6 @@ import "../../../../../ux-improvements.css";
 import "./naukri-preview.css";
 
 function Home16Page() {
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const { user, userType, isAuthenticated } = useAuth();
     const [jobs, setJobs] = useState([]);
     const [allJobs, setAllJobs] = useState([]);
     const [filteredJobs, setFilteredJobs] = useState([]);
@@ -43,37 +40,6 @@ function Home16Page() {
         recruiters: false
     });
     const [appliedJobs, setAppliedJobs] = useState(new Set());
-
-    useEffect(() => {
-        if (mobileMenuOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
-        }
-    }, [mobileMenuOpen]);
-
-    const getDashboardRoute = () => {
-        switch (userType) {
-            case 'employer': return '/employer/dashboard';
-            case 'candidate': return '/candidate/dashboard';
-            case 'placement': return '/placement/dashboard';
-            case 'admin': return '/admin/dashboard';
-            case 'sub-admin': return '/sub-admin/dashboard';
-            default: return '/';
-        }
-    };
-
-    const getUserDisplayName = () => {
-        if (!user) return '';
-        switch (userType) {
-            case 'employer': return user.companyName || user.name || 'Dashboard';
-            case 'candidate': return user.name || user.username || 'Profile';
-            case 'placement': return user.name || 'Profile';
-            case 'admin': return user.name || 'Admin';
-            case 'sub-admin': return user.name || 'SubAdmin';
-            default: return 'User';
-        }
-    };
 
     useEffect(() => {
         updateSkinStyle("8", false, false)
@@ -402,58 +368,6 @@ function Home16Page() {
 
     return (
         <>
-            <button className="mobile-hamburger-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-                <span className={mobileMenuOpen ? 'open' : ''}></span>
-                <span className={mobileMenuOpen ? 'open' : ''}></span>
-                <span className={mobileMenuOpen ? 'open' : ''}></span>
-            </button>
-
-            <div className={`mobile-menu-overlay ${mobileMenuOpen ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}></div>
-
-            <div className={`mobile-menu-panel ${mobileMenuOpen ? 'active' : ''}`}>
-                <div className="mobile-menu-header">
-                    <h3>Menu</h3>
-                    <button className="close-btn" onClick={() => setMobileMenuOpen(false)}>
-                        <i className="fa fa-times"></i>
-                    </button>
-                </div>
-                
-                <nav className="mobile-menu-nav">
-                    <NavLink to="/" onClick={() => setMobileMenuOpen(false)}>
-                        <i className="fa fa-home"></i>
-                        <span>Home</span>
-                    </NavLink>
-                    <NavLink to="/job-grid" onClick={() => setMobileMenuOpen(false)}>
-                        <i className="fa fa-briefcase"></i>
-                        <span>Jobs</span>
-                    </NavLink>
-                    <NavLink to="/emp-grid" onClick={() => setMobileMenuOpen(false)}>
-                        <i className="fa fa-building"></i>
-                        <span>Employers</span>
-                    </NavLink>
-                </nav>
-
-                <div className="mobile-menu-footer">
-                    {isAuthenticated() ? (
-                        <NavLink to={getDashboardRoute()} className="mobile-dashboard-btn" onClick={() => setMobileMenuOpen(false)}>
-                            <i className="fa fa-user"></i>
-                            <span>{getUserDisplayName()}</span>
-                        </NavLink>
-                    ) : (
-                        <>
-                            <a className="mobile-auth-btn signup" data-bs-toggle="modal" href="#sign_up_popup" onClick={() => setMobileMenuOpen(false)}>
-                                <i className="fa fa-user-plus"></i>
-                                <span>Sign Up</span>
-                            </a>
-                            <a className="mobile-auth-btn signin" data-bs-toggle="modal" href="#sign_up_popup2" onClick={() => setMobileMenuOpen(false)}>
-                                <i className="fa fa-sign-in"></i>
-                                <span>Sign In</span>
-                            </a>
-                        </>
-                    )}
-                </div>
-            </div>
-
             {/* Error Alert */}
             {error && (
                 <div className="error-alert-container">
@@ -482,7 +396,7 @@ function Home16Page() {
 
             {/* JOBS CATEGORIES SECTION START */}
             <div className="section-full p-t20 p-b20 twm-job-categories-hpage-6-area animate-on-scroll" style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
-                <Container fluid style={{background: 'transparent !important', backgroundColor: 'transparent !important', padding: '0'}}>
+                <Container style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
                 <div className="section-head center wt-small-separator-outer mb-3">
                     <div className="wt-small-separator site-text-primary">
                         <div>Jobs by Categories</div>
@@ -490,7 +404,7 @@ function Home16Page() {
                     <h2 className="wt-title">Choose a Relevant Category</h2>
                 </div>
                 <div style={{background: 'transparent', backgroundColor: 'transparent'}}>
-                    <div className="category-cards-container" style={{marginLeft: '0', marginRight: '0', paddingLeft: '15px', paddingRight: '15px'}}>
+                    <div className="category-cards-container" style={{marginLeft: '10px', marginRight: '10px'}}>
                         <NavLink to="/job-grid?category=IT" style={{textDecoration: 'none'}}>
                             <div className="category-card" style={{
                                 background: '#ffffff',
@@ -710,7 +624,7 @@ function Home16Page() {
                     </div>
                     
                     {/* Second Row */}
-                    <div className="category-cards-container" style={{marginLeft: '0', marginRight: '0', marginTop: '20px', paddingLeft: '15px', paddingRight: '15px'}}>
+                    <div className="category-cards-container" style={{marginLeft: '10px', marginRight: '10px', marginTop: '20px'}}>
                         <NavLink to="/job-grid?category=Finance" style={{textDecoration: 'none'}}>
                             <div className="category-card" style={{
                                 background: '#ffffff',
@@ -1395,71 +1309,6 @@ function Home16Page() {
                 </div>
             </div>
             {/* HOW IT WORK FOR EMPLOYERS SECTION END */}
-
-            {/* HORIZONTAL SCROLLING CARDS SECTION START */}
-            <div className="section-full p-t50 p-b50" style={{background: '#f8f9fa'}}>
-                <Container>
-                    <div className="section-head center wt-small-separator-outer mb-4">
-                        <div className="wt-small-separator">
-                            <div>Featured</div>
-                        </div>
-                        <h2 className="wt-title">Success Stories</h2>
-                    </div>
-                    
-                    <div className="horizontal-scroll-container" style={{
-                        overflowX: 'auto',
-                        overflowY: 'hidden',
-                        paddingBottom: '10px',
-                        scrollBehavior: 'smooth'
-                    }}>
-                        <div className="horizontal-cards" style={{
-                            display: 'flex',
-                            gap: '20px',
-                            minWidth: 'max-content',
-                            paddingLeft: '20px',
-                            paddingRight: '20px'
-                        }}>
-                            {[1,2,3,4,5,6].map(item => (
-                                <div key={item} className="scroll-card" style={{
-                                    minWidth: '300px',
-                                    background: 'white',
-                                    borderRadius: '12px',
-                                    padding: '25px',
-                                    boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-                                    border: '1px solid #e9ecef',
-                                    transition: 'transform 0.3s ease'
-                                }}>
-                                    <div style={{textAlign: 'center', marginBottom: '20px'}}>
-                                        <div style={{
-                                            width: '60px',
-                                            height: '60px',
-                                            background: 'linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%)',
-                                            borderRadius: '50%',
-                                            margin: '0 auto 15px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            color: 'white',
-                                            fontSize: '24px',
-                                            fontWeight: 'bold'
-                                        }}>
-                                            {item}
-                                        </div>
-                                        <h4 style={{marginBottom: '10px', fontSize: '18px'}}>Success Story {item}</h4>
-                                        <p style={{fontSize: '14px', color: '#666', lineHeight: '1.5'}}>
-                                            "TaleGlobal helped me land my dream job in just 2 weeks. The platform is amazing!"
-                                        </p>
-                                        <div style={{marginTop: '15px', fontSize: '12px', color: '#999'}}>
-                                            - Candidate {item}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </Container>
-            </div>
-            {/* HORIZONTAL SCROLLING CARDS SECTION END */}
         </>
     );
 }
@@ -1468,267 +1317,14 @@ export default Home16Page;
 
 const navbarStyle = document.createElement('style');
 navbarStyle.textContent = `
-    html, body {
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow-x: hidden !important;
-        width: 100% !important;
-    }
-    
-    #root {
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-    }
-    
-    .navbar-transparent {
+    .navbar-transparent,
+    .navbar-transparent * {
         background: transparent !important;
         background-color: transparent !important;
     }
-    
     .navbar-scrolled {
         background: #fff !important;
         background-color: #fff !important;
-    }
-    
-    .mobile-hamburger-btn {
-        display: none;
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 10002;
-        width: 45px;
-        height: 45px;
-        background: #fff;
-        border: none;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        cursor: pointer;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 5px;
-        padding: 10px;
-    }
-    
-    .mobile-hamburger-btn span {
-        width: 25px;
-        height: 3px;
-        background: #FF6A00;
-        border-radius: 2px;
-        transition: all 0.3s ease;
-    }
-    
-    .mobile-hamburger-btn span.open:nth-child(1) {
-        transform: rotate(45deg) translate(7px, 7px);
-    }
-    
-    .mobile-hamburger-btn span.open:nth-child(2) {
-        opacity: 0;
-    }
-    
-    .mobile-hamburger-btn span.open:nth-child(3) {
-        transform: rotate(-45deg) translate(7px, -7px);
-    }
-    
-    .mobile-menu-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 10000;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-    
-    .mobile-menu-overlay.active {
-        opacity: 1;
-    }
-    
-    .mobile-menu-panel {
-        display: none;
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 280px;
-        height: 100vh;
-        background: #fff;
-        z-index: 10001;
-        box-shadow: -2px 0 20px rgba(0,0,0,0.1);
-        transition: right 0.3s ease;
-        flex-direction: column;
-    }
-    
-    .mobile-menu-panel.active {
-        right: 0;
-    }
-    
-    .mobile-menu-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px;
-        background: linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%);
-    }
-    
-    .mobile-menu-header h3 {
-        margin: 0;
-        color: #fff;
-        font-size: 20px;
-        font-weight: 600;
-    }
-    
-    .mobile-menu-header .close-btn {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        color: #fff;
-        font-size: 18px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .mobile-menu-nav {
-        flex: 1;
-        padding: 20px 0;
-        overflow-y: auto;
-    }
-    
-    .mobile-menu-nav a {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        padding: 15px 20px;
-        color: #333;
-        text-decoration: none;
-        font-size: 16px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        border-left: 3px solid transparent;
-    }
-    
-    .mobile-menu-nav a:hover,
-    .mobile-menu-nav a.active {
-        background: #fff5f0;
-        border-left-color: #FF6A00;
-        color: #FF6A00;
-    }
-    
-    .mobile-menu-nav a i {
-        font-size: 20px;
-        width: 25px;
-        text-align: center;
-    }
-    
-    .mobile-menu-footer {
-        padding: 20px;
-        border-top: 1px solid #f0f0f0;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .mobile-auth-btn,
-    .mobile-dashboard-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        padding: 12px 20px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 15px;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-    }
-    
-    .mobile-auth-btn.signup {
-        background: #fff;
-        color: #FF6A00;
-        border: 2px solid #FF6A00;
-    }
-    
-    .mobile-auth-btn.signin {
-        background: linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%);
-        color: #fff;
-    }
-    
-    .mobile-dashboard-btn {
-        background: linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%);
-        color: #fff;
-    }
-    
-    @media (max-width: 991px) {
-        .mobile-hamburger-btn {
-            display: flex;
-        }
-        
-        .mobile-menu-overlay {
-            display: block;
-        }
-        
-        .mobile-menu-panel {
-            display: flex;
-        }
-        
-        header, .site-header, .navbar, .main-header {
-            background: #fff !important;
-            background-color: #fff !important;
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            z-index: 1000 !important;
-        }
-        
-        .navbar-transparent {
-            background: #fff !important;
-            background-color: #fff !important;
-        }
-        
-        .vnav-btn, .navbar-toggler, .mobile-menu-btn, .hamburger-menu {
-            display: none !important;
-        }
-        
-        .extra-nav .extra-cell:last-child {
-            display: none !important;
-        }
-    }
-    
-    .horizontal-scroll-container {
-        scrollbar-width: thin;
-        scrollbar-color: #FF6A00 #f1f1f1;
-    }
-    
-    .horizontal-scroll-container::-webkit-scrollbar {
-        height: 8px;
-    }
-    
-    .horizontal-scroll-container::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 4px;
-    }
-    
-    .horizontal-scroll-container::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%);
-        border-radius: 4px;
-    }
-    
-    .horizontal-scroll-container::-webkit-scrollbar-thumb:hover {
-        background: #FF5500;
-    }
-    
-    .scroll-card:hover {
-        transform: translateY(-5px);
     }
 `;
 document.head.appendChild(navbarStyle);
@@ -1751,14 +1347,3 @@ const handleNavbarScroll = () => {
 
 window.addEventListener('scroll', handleNavbarScroll);
 setTimeout(handleNavbarScroll, 100);
-
-// Add smooth horizontal scrolling with mouse wheel
-const horizontalScrollContainer = document.querySelector('.horizontal-scroll-container');
-if (horizontalScrollContainer) {
-    horizontalScrollContainer.addEventListener('wheel', (e) => {
-        if (e.deltaY !== 0) {
-            e.preventDefault();
-            horizontalScrollContainer.scrollLeft += e.deltaY;
-        }
-    });
-}

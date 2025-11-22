@@ -65,6 +65,30 @@
     text-decoration: none !important;
 }
 
+/* Mobile carousel wrapper styles */
+@media (max-width: 991px) {
+    .mobile-categories {
+        overflow: hidden;
+        width: 100%;
+        padding: 0 10px;
+        box-sizing: border-box;
+    }
+    
+    .mobile-categories > div {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        width: 100%;
+        box-sizing: border-box;
+        transition: transform 0.5s ease-in-out;
+    }
+    
+    .mobile-categories > div > div {
+        flex: 0 0 calc(50% - 6px);
+        min-width: 0;
+    }
+}
+
 @media (max-width: 767px) {
     .mobile-categories-grid {
         grid-template-columns: repeat(2, 1fr);

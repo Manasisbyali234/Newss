@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo, useCallback, memo, useRef } from "react";
 import { Row, Col } from "react-bootstrap";
 import { NavLink, useNavigate } from "react-router-dom";
 import JobZImage from "../../../../common/jobz-img";
+import { useAuth } from "../../../../../contexts/AuthContext";
 import SectionEmployerSidebar from "../../sections/employers/section-employer-sidebar";
 import SectionRecordsFilter from "../../sections/common/section-records-filter";
 import SectionPagination from "../../sections/common/section-pagination";
@@ -11,8 +12,11 @@ import { performanceMonitor } from "../../../../../utils/performanceMonitor";
 import "../../../../../job-grid-optimizations.css";
 import "../../../../../emp-grid-optimizations.css";
 import "../../../../../new-job-card.css";
+import "../../../../../mobile-hamburger-menu.css";
 
 const EmployersGridPage = memo(() => {
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const { user, userType, isAuthenticated } = useAuth();
     const [employers, setEmployers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [totalEmployers, setTotalEmployers] = useState(0);
@@ -48,9 +52,40 @@ const EmployersGridPage = memo(() => {
         setItemsPerPage(value);
     }, []);
 
+    const getDashboardRoute = () => {
+        switch (userType) {
+            case 'employer': return '/employer/dashboard';
+            case 'candidate': return '/candidate/dashboard';
+            case 'placement': return '/placement/dashboard';
+            case 'admin': return '/admin/dashboard';
+            case 'sub-admin': return '/sub-admin/dashboard';
+            default: return '/';
+        }
+    };
+
+    const getUserDisplayName = () => {
+        if (!user) return '';
+        switch (userType) {
+            case 'employer': return user.companyName || user.name || 'Dashboard';
+            case 'candidate': return user.name || user.username || 'Profile';
+            case 'placement': return user.name || 'Profile';
+            case 'admin': return user.name || 'Admin';
+            case 'sub-admin': return user.name || 'SubAdmin';
+            default: return 'User';
+        }
+    };
+
     useEffect(() => {
         loadScript("js/custom.js");
     }, []);
+
+    useEffect(() => {
+        if (mobileMenuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+    }, [mobileMenuOpen]);
 
     const fetchEmployers = useCallback(async () => {
         // Cancel previous request
@@ -227,6 +262,59 @@ const EmployersGridPage = memo(() => {
     );
 
     return (
+        <>
+            <button className="mobile-hamburger-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+                <span className={mobileMenuOpen ? 'open' : ''}></span>
+                <span className={mobileMenuOpen ? 'open' : ''}></span>
+                <span className={mobileMenuOpen ? 'open' : ''}></span>
+            </button>
+
+            <div className={`mobile-menu-overlay ${mobileMenuOpen ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}></div>
+
+            <div className={`mobile-menu-panel ${mobileMenuOpen ? 'active' : ''}`}>
+                <div className="mobile-menu-header">
+                    <h3>Menu</h3>
+                    <button className="close-btn" onClick={() => setMobileMenuOpen(false)}>
+                        <i className="fa fa-times"></i>
+                    </button>
+                </div>
+                
+                <nav className="mobile-menu-nav">
+                    <NavLink to="/" onClick={() => setMobileMenuOpen(false)}>
+                        <i className="fa fa-home"></i>
+                        <span>Home</span>
+                    </NavLink>
+                    <NavLink to="/job-grid" onClick={() => setMobileMenuOpen(false)}>
+                        <i className="fa fa-briefcase"></i>
+                        <span>Jobs</span>
+                    </NavLink>
+                    <NavLink to="/emp-grid" onClick={() => setMobileMenuOpen(false)}>
+                        <i className="fa fa-building"></i>
+                        <span>Employers</span>
+                    </NavLink>
+                </nav>
+
+                <div className="mobile-menu-footer">
+                    {isAuthenticated() ? (
+                        <NavLink to={getDashboardRoute()} className="mobile-dashboard-btn" onClick={() => setMobileMenuOpen(false)}>
+                            <i className="fa fa-user"></i>
+                            <span>{getUserDisplayName()}</span>
+                        </NavLink>
+                    ) : (
+                        <>
+                            <a className="mobile-auth-btn signup" data-bs-toggle="modal" href="#sign_up_popup" onClick={() => setMobileMenuOpen(false)}>
+                                <i className="fa fa-user-plus"></i>
+                                <span>Sign Up</span>
+                            </a>
+                            <a className="mobile-auth-btn signin" data-bs-toggle="modal" href="#sign_up_popup2" onClick={() => setMobileMenuOpen(false)}>
+                                <i className="fa fa-sign-in"></i>
+                                <span>Sign In</span>
+                            </a>
+                        </>
+                    )}
+                </div>
+            </div>
+
         <div className="section-full py-3 site-bg-white emp-grid-page" style={{paddingLeft: '20px', paddingRight: '20px'}}>
             <Row className="mb-4">
                     <Col lg={4} md={12} className="rightSidebar">
@@ -264,6 +352,7 @@ const EmployersGridPage = memo(() => {
                     </Col>
                 </Row>
         </div>
+        </>
     );
 });
 
