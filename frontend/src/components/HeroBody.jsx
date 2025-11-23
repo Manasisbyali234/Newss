@@ -320,53 +320,14 @@ const HeroBody = ({ onSearch }) => {
             width: '100%',
             overflow: 'hidden'
           }}>
-            <div className="categories-track" style={{
-              display: 'flex',
-              gap: '1.5rem',
-              padding: '1rem 0',
-              animation: 'scroll-categories 15s linear infinite',
-              width: 'calc(200% + 1.5rem)',
-              willChange: 'transform'
-            }}>
+            <div className="categories-track">
               {/* Duplicate categories for seamless loop */}
               {[...jobCategories, ...jobCategories].map((category, index) => (
-                <div key={index} className="category-card" style={{
-                  background: 'white',
-                  borderRadius: '10px',
-                  padding: '1.25rem 1rem',
-                  boxShadow: '0 3px 14px rgba(0, 0, 0, 0.06)',
-                  transition: 'all 0.3s ease',
-                  cursor: 'pointer',
-                  minWidth: '140px',
-                  maxWidth: '220px',
-                  flex: '0 0 140px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.15rem'
-                }}>
-                  <div className="category-icon" style={{
-                    backgroundColor: 'rgba(255, 156, 0, 0.1)',
-                    border: '1px solid rgba(255, 156, 0, 0.3)',
-                    color: '#e68900',
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
+                <div key={index} className="category-card">
+                  <div className="category-icon small">
                     {category.icon && React.createElement(category.icon, { size: 20 })}
                   </div>
-                  <h3 className="category-name" style={{
-                    color: '#333',
-                    fontWeight: '700',
-                    fontSize: '0.95rem',
-                    margin: '0',
-                    textAlign: 'center',
-                    lineHeight: '1.2'
-                  }}>{category.name}</h3>
+                  <h3 className="category-name">{category.name}</h3>
                 </div>
               ))}
             </div>

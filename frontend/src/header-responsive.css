@@ -13,32 +13,32 @@
 }
 
 .nav-link-custom:hover {
-  color: #ff6b35 !important;
-  background-color: rgba(255, 107, 53, 0.1) !important;
-  transform: translateY(-1px) !important;
+  color: #333 !important;
+  background-color: transparent !important;
+  transform: none !important;
 }
 
 /* Active navbar link styles */
 .nav-link-custom.active {
-  color: #ff6b35 !important;
-  font-weight: 600 !important;
-  background-color: rgba(255, 107, 53, 0.1) !important;
+  color: #333 !important;
+  font-weight: 500 !important;
+  background-color: transparent !important;
 }
 
 .twm-side-navigation-menu .nav a.active {
-  color: #ff6b35 !important;
-  font-weight: 600 !important;
+  color: #333 !important;
+  font-weight: 500 !important;
 }
 
 /* Hover effect for navbar links */
 .nav-link-custom:hover {
-  color: #ff6b35 !important;
-  transition: color 0.3s ease;
+  color: #333 !important;
+  transition: none;
 }
 
 .twm-side-navigation-menu .nav a:hover {
-  color: #ff6b35 !important;
-  transition: color 0.3s ease;
+  color: #333 !important;
+  transition: none;
 }
 
 /* Desktop view - hide hamburger and mobile elements */
