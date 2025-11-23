@@ -240,7 +240,7 @@ function JobDetail1Page() {
                                                         <strong>Company: </strong>
                                                         {job.employerId?._id ? (
                                                             <span 
-                                                                style={{color: '#007bff', cursor: 'pointer', textDecoration: 'underline'}}
+                                                                style={{color: '#007bff', cursor: 'pointer'}}
                                                                 onClick={() => navigate(`/emp-detail/${job.employerId._id}`)}
                                                             >
                                                                 {job.companyName || job.employerId?.companyName || 'Not specified'}
@@ -351,33 +351,31 @@ function JobDetail1Page() {
                                     </div>
 
                                     {job.employerId?.employerType === 'consultant' && job.employerProfile && (
-                                        <div className="job-section" style={{marginBottom: '40px', padding: '25px', backgroundColor: '#fff3cd', borderRadius: '12px', border: '2px solid #f39c12'}}>
+                                        <div style={{marginBottom: '40px'}}>
                                             <h4 className="twm-s-title" style={{color: '#2c3e50', marginBottom: '20px', fontSize: '24px', fontWeight: '600'}}>
-                                                <i className="feather-users" style={{marginRight: '10px', color: '#f39c12'}}></i>
+                                                <i className="feather-users" style={{marginRight: '10px', color: '#3498db'}}></i>
                                                 About the Consultancy
                                             </h4>
-                                            <div className="consultant-info-box">
-                                                <div className="row">
-                                                    <div className="col-md-3">
-                                                        {job.employerProfile.logo && (
-                                                            <img 
-                                                                src={job.employerProfile.logo} 
-                                                                alt="Consultant Logo" 
-                                                                style={{width: '80px', height: '80px', objectFit: 'contain', borderRadius: '8px'}}
-                                                                loading="lazy"
-                                                            />
-                                                        )}
-                                                    </div>
-                                                    <div className="col-md-9">
-                                                        <h5>{job.employerId?.companyName || 'Consultant'}</h5>
-                                                        {job.employerProfile.description && <p>{job.employerProfile.description}</p>}
-                                                        {job.employerProfile.website && (
-                                                            <p><strong>Website:</strong> <a href={job.employerProfile.website} target="_blank" rel="noopener noreferrer">{job.employerProfile.website}</a></p>
-                                                        )}
-                                                        {job.employerProfile.location && (
-                                                            <p><strong>Location:</strong> {job.employerProfile.location}</p>
-                                                        )}
-                                                    </div>
+                                            <div className="row">
+                                                <div className="col-md-3">
+                                                    {job.employerProfile.logo && (
+                                                        <img 
+                                                            src={job.employerProfile.logo} 
+                                                            alt="Consultant Logo" 
+                                                            style={{width: '80px', height: '80px', objectFit: 'contain', borderRadius: '8px'}}
+                                                            loading="lazy"
+                                                        />
+                                                    )}
+                                                </div>
+                                                <div className="col-md-9">
+                                                    <h5 style={{color: '#2c3e50', fontSize: '18px', fontWeight: '600', marginBottom: '15px'}}>{job.employerId?.companyName || 'Consultant'}</h5>
+                                                    {job.employerProfile.description && <p style={{lineHeight: '1.8', fontSize: '16px', color: '#495057'}}>{job.employerProfile.description}</p>}
+                                                    {job.employerProfile.website && (
+                                                        <p style={{fontSize: '16px', color: '#495057'}}><strong>Website:</strong> <a href={job.employerProfile.website} target="_blank" rel="noopener noreferrer">{job.employerProfile.website}</a></p>
+                                                    )}
+                                                    {job.employerProfile.location && (
+                                                        <p style={{fontSize: '16px', color: '#495057'}}><strong>Location:</strong> {job.employerProfile.location}</p>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

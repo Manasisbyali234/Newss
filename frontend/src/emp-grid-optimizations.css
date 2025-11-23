@@ -3,6 +3,8 @@
 .emp-grid-page {
   contain: layout style paint;
   transform: translateZ(0);
+  padding-right: 20px !important;
+  padding-left: 20px !important;
 }
 
 /* Sort By alignment for employer grid */

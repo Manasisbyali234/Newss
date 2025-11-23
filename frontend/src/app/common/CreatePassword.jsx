@@ -128,7 +128,7 @@ function CreatePassword() {
                                     <div className="alert alert-danger">{error}</div>
                                 )}
                                 
-                                <div className="form-group mb-3 position-relative">
+                                <div className="form-group mb-3" style={{position: 'relative'}}>
                                     <input
                                         type={showPassword ? "text" : "password"}
                                         className="form-control"
@@ -136,9 +136,10 @@ function CreatePassword() {
                                         value={password}
                                         onChange={handlePasswordChange}
                                         required
+                                        style={{paddingRight: '40px'}}
                                     />
                                     <span
-                                        style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', userSelect: 'none', pointerEvents: 'auto' }}
+                                        style={{ position: 'absolute', right: '10px', top: '12px', cursor: 'pointer', userSelect: 'none', pointerEvents: 'auto', zIndex: 10 }}
                                         onClick={() => setShowPassword(!showPassword)}
                                     >
                                         <i className={showPassword ? "fas fa-eye-slash" : "fas fa-eye"} style={{ pointerEvents: 'none' }} />
@@ -173,7 +174,7 @@ function CreatePassword() {
                                     </div>
                                 )}
 
-                                <div className="form-group mb-3 position-relative">
+                                <div className="form-group mb-3" style={{position: 'relative'}}>
                                     <input
                                         type={showConfirmPassword ? "text" : "password"}
                                         className="form-control"
@@ -181,9 +182,10 @@ function CreatePassword() {
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                         required
+                                        style={{paddingRight: '40px'}}
                                     />
                                     <span
-                                        style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', userSelect: 'none', pointerEvents: 'auto' }}
+                                        style={{ position: 'absolute', right: '10px', top: '12px', cursor: 'pointer', userSelect: 'none', pointerEvents: 'auto', zIndex: 10 }}
                                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                     >
                                         <i className={showConfirmPassword ? "fas fa-eye-slash" : "fas fa-eye"} style={{ pointerEvents: 'none' }} />

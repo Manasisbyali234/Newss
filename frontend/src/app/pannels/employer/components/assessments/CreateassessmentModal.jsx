@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import showToast from "../../../../../utils/toastNotification";
+import './CreateassessmentModal.css';
 
 export default function CreateAssessmentModal({ onClose, onCreate, editData = null }) {
 	const [title, setTitle] = useState(editData?.title || "");

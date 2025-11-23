@@ -56,8 +56,8 @@ function Footer1() {
 									<div className="row g-3">
 										<div className="col-lg-6 col-md-6 col-sm-6">
 											<div className="widget widget_services ftr-list-center">
-												<h3 className="widget-title">Quick Links</h3>
-												<ul>
+												<h3 className="widget-title" style={{paddingLeft: '15px'}}>Quick Links</h3>
+												<ul style={{paddingLeft: '15px'}}>
 													<li>
 														<NavLink to={publicUser.INITIAL}>Home</NavLink>
 													</li>
@@ -85,8 +85,8 @@ function Footer1() {
 
 										<div className="col-lg-6 col-md-6 col-sm-6">
 											<div className="widget widget_services ftr-list-center">
-												<h3 className="widget-title">Helpful Links</h3>
-												<ul>
+												<h3 className="widget-title" style={{paddingLeft: '15px'}}>Helpful Links</h3>
+												<ul style={{paddingLeft: '15px'}}>
 													<li>
 														<NavLink to={publicUser.pages.LOGIN}>
 															Candidate Dashboard

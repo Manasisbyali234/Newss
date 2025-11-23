@@ -5,13 +5,19 @@ import { loadScript, setMenuActive } from "../../../../globals/constants";
 import { employer, empRoute, publicUser } from "../../../../globals/route-names";
 import { useEffect } from "react";
 
-function EmpSidebarSection({ sidebarActive, isMobile }) {
+function EmpSidebarSection({ sidebarActive, isMobile, onClose }) {
     const currentpath = useLocation().pathname;
 
     useEffect(() => {
         loadScript("js/custom.js");
         loadScript("js/emp-sidebar.js");
     });
+
+    const handleLogoutClick = () => {
+        if (isMobile && onClose) {
+            onClose();
+        }
+    };
 
     const sidebarClasses = [
         sidebarActive ? "active" : "",
@@ -70,7 +76,7 @@ function EmpSidebarSection({ sidebarActive, isMobile }) {
                         </li>
                         
                         <li>
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#logout-dash-profile" style={{display: 'flex', alignItems: 'center'}}>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#logout-dash-profile" onClick={handleLogoutClick} style={{display: 'flex', alignItems: 'center'}}>
                                 <i className="fa fa-share-square" style={{minWidth: '30px', textAlign: 'center'}} />
                                 <span className="admin-nav-text" style={{paddingLeft: '10px'}}>Logout</span>
                             </a>

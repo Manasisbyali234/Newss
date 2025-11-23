@@ -26,6 +26,49 @@
   border: 1px solid #eef2f7 !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
   transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  min-height: 180px !important;
+}
+
+/* Ensure equal height for all job cards in the row */
+.emp-posted-jobs-page .row > .col-lg-6 {
+  display: flex !important;
+}
+
+.emp-posted-jobs-page .row > .col-lg-6 > .manage-jobs-card {
+  width: 100% !important;
+}
+
+/* Standardize font sizes across all job cards */
+.emp-posted-jobs-page .manage-jobs-card h5 {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+}
+
+.emp-posted-jobs-page .manage-jobs-card p {
+  font-size: 0.9rem !important;
+}
+
+.emp-posted-jobs-page .manage-jobs-card .small {
+  font-size: 0.8rem !important;
+}
+
+.emp-posted-jobs-page .manage-jobs-card .fw-bold {
+  font-weight: 600 !important;
+}
+
+/* Fix search icon positioning for all screens */
+.emp-posted-jobs-page .position-relative .fa-search {
+  position: absolute !important;
+  left: 12px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  z-index: 10 !important;
+  color: #ff6b35 !important;
+  pointer-events: none !important;
+}
+
+.emp-posted-jobs-page .position-relative .form-control {
+  padding-left: 40px !important;
 }
 
 .emp-posted-jobs-page .manage-jobs-card:hover {
@@ -50,80 +93,139 @@
 @media (max-width: 767px) {
   .emp-posted-jobs-page {
     margin: 0 !important;
-    padding: 0 !important;
+    padding: 0.5rem !important;
     width: 100vw !important;
     max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .emp-posted-jobs-page * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .emp-posted-jobs-page .twm-right-section-panel {
+    padding: 0 !important;
+    width: 100% !important;
   }
 
   .emp-posted-jobs-page .panel {
     margin-bottom: 0.5rem !important;
+    width: 100% !important;
   }
   
   .emp-posted-jobs-page .row {
     margin: 0 !important;
+    width: 100% !important;
   }
   
-  .emp-posted-jobs-page .col-xl-4,
-  .emp-posted-jobs-page .col-lg-4,
-  .emp-posted-jobs-page .col-xl-8,
-  .emp-posted-jobs-page .col-lg-8,
-  .emp-posted-jobs-page .col-md-6,
-  .emp-posted-jobs-page .col-md-12 {
+  .emp-posted-jobs-page [class*="col-"] {
     padding: 0 0.5rem !important;
     margin-bottom: 1rem !important;
+    width: 100% !important;
   }
   
   .emp-posted-jobs-page .manage-jobs-card {
     padding: 1rem !important;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
   }
   
-  .emp-posted-jobs-page .d-flex {
+  /* Maintain desktop card structure on mobile */
+  .emp-posted-jobs-page .manage-jobs-card > .d-flex:first-child {
     flex-direction: row !important;
     align-items: center !important;
-    justify-content: space-between !important;
-    flex-wrap: wrap !important;
+    gap: 1rem !important;
+    flex: 1 !important;
+  }
+  
+  /* Keep action buttons on the right */
+  .emp-posted-jobs-page .manage-jobs-card > .d-flex:last-child {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    flex-shrink: 0 !important;
   }
   
   .emp-posted-jobs-page .btn {
     width: auto !important;
-    margin: 0.25rem !important;
+    margin: 0 !important;
     min-height: 44px !important;
-    flex-shrink: 0 !important;
-    display: inline-block !important;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+    flex: 0 0 auto !important;
+  }
+
+  /* Status filter buttons - keep horizontal */
+  /* Reduce gap between header and filter buttons */
+  .emp-posted-jobs-page .panel-heading {
+    margin-bottom: 1rem !important;
   }
   
-  .emp-posted-jobs-page .btn-group,
-  .emp-posted-jobs-page .button-container {
-    display: flex !important;
+  .emp-posted-jobs-page .panel-body .mb-4 {
+    margin-bottom: 1rem !important;
+  }
+  
+  .emp-posted-jobs-page .panel-body .d-flex.gap-2 {
     flex-direction: row !important;
+    flex-wrap: wrap !important;
     gap: 0.5rem !important;
   }
 
-  /* Keep status filter buttons horizontal on mobile */
-  .emp-posted-jobs-page .d-flex.gap-2 {
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    justify-content: flex-start !important;
-    align-items: center !important;
-  }
-
-  .emp-posted-jobs-page .d-flex.gap-2 .btn {
+  .emp-posted-jobs-page .panel-body .d-flex.gap-2 .btn {
     flex: 0 0 auto !important;
     width: auto !important;
     white-space: nowrap !important;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.8rem !important;
   }
 
-  /* Fix search icon positioning on mobile */
+  /* Fix search icon positioning */
+  .emp-posted-jobs-page .position-relative {
+    position: relative !important;
+  }
+  
   .emp-posted-jobs-page .position-relative .fa-search {
+    position: absolute !important;
     left: 12px !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
     z-index: 10 !important;
     font-size: 16px !important;
+    color: #ff6b35 !important;
+    pointer-events: none !important;
   }
 
   .emp-posted-jobs-page .position-relative .form-control {
     padding-left: 40px !important;
+    width: 100% !important;
+    position: relative !important;
+    z-index: 1 !important;
+  }
+
+  .emp-posted-jobs-page .manage-jobs-card .badge {
+    display: inline-block !important;
+    margin-right: 0.5rem !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  /* Mobile search field fixes */
+  .emp-posted-jobs-page .mb-4.d-flex {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    align-items: stretch !important;
+  }
+  
+  .emp-posted-jobs-page .position-relative {
+    max-width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+  
+  .emp-posted-jobs-page .d-flex.gap-2 {
+    justify-content: center !important;
+    flex-wrap: wrap !important;
   }
 }
 
@@ -133,6 +235,22 @@
   }
   
   .emp-posted-jobs-page .wt-admin-right-page-header h2 {
-    font-size: 1.5rem !important;
+    font-size: 1.25rem !important;
+  }
+
+  .emp-posted-jobs-page .btn {
+    font-size: 0.875rem !important;
+    padding: 0.625rem 0.875rem !important;
+  }
+  
+  /* Stack card content vertically on very small screens */
+  .emp-posted-jobs-page .manage-jobs-card {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1rem !important;
+  }
+  
+  .emp-posted-jobs-page .manage-jobs-card > .d-flex:last-child {
+    align-self: flex-end !important;
   }
 }

@@ -192,7 +192,7 @@ function AdminEmployersAllRequest() {
                                                 </td>
                                                 <td style={{textAlign: 'center'}}>
                                                     <div className="action-buttons">
-                                                        {employer.isProfileComplete ? (
+                                                        {employer.isProfileComplete && employer.profileSubmittedForReview ? (
                                                             <>
                                                                 <button
                                                                     type="button"
@@ -214,8 +214,9 @@ function AdminEmployersAllRequest() {
                                                                 </button>
                                                             </>
                                                         ) : (
-                                                            <span style={{color: '#6c757d', fontSize: '0.85rem', fontStyle: 'italic'}}>
-                                                                Profile incomplete
+                                                            <span style={{color: '#dc3545', fontSize: '0.85rem', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px'}}>
+                                                                <i className="fa fa-exclamation-circle"></i>
+                                                                Profile not completed
                                                             </span>
                                                         )}
                                                         <button

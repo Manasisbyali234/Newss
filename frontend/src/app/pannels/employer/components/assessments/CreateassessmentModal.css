@@ -1,0 +1,133 @@
+/* Mobile Responsive Styles for Create Assessment Modal */
+
+@media (max-width: 768px) {
+  /* Modal container adjustments */
+  .position-fixed.top-0.start-0.w-100.h-100 {
+    padding: 0 !important;
+  }
+
+  /* Modal content */
+  .position-fixed .bg-white.rounded-3 {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Modal header */
+  .position-fixed .bg-white.rounded-3 > div:first-child {
+    padding: 1rem !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+  }
+
+  .position-fixed .bg-white.rounded-3 h5 {
+    font-size: 1.1rem !important;
+  }
+
+  /* Hide minimize, maximize, and close buttons on mobile */
+  .position-fixed .bg-white.rounded-3 > div:first-child .d-flex.gap-1 {
+    display: none !important;
+  }
+
+  /* Move action buttons to header */
+  .position-fixed .border-top.d-flex {
+    order: -1 !important;
+    border-top: none !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    padding: 0.5rem !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+
+  /* Modal body */
+  .position-fixed .bg-white.rounded-3 .overflow-auto {
+    padding: 1rem !important;
+  }
+
+  /* Form inputs */
+  .position-fixed .form-control,
+  .position-fixed .form-select {
+    font-size: 16px !important;
+  }
+
+  /* Two column layout to single column */
+  .position-fixed .row.mb-3 {
+    margin-bottom: 0.5rem !important;
+  }
+
+  .position-fixed .row.mb-3 > .col-6 {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  /* Question cards */
+  .position-fixed .border.rounded-3.p-3 {
+    padding: 1rem !important;
+  }
+
+  /* Options grid to single column */
+  .position-fixed .row.mb-3 .col-6.mb-3 {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  /* Question header buttons */
+  .position-fixed .d-flex.justify-content-between .d-flex.gap-2 {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+
+  .position-fixed .d-flex.justify-content-between .d-flex.gap-2 select,
+  .position-fixed .d-flex.justify-content-between .d-flex.gap-2 button {
+    width: 100% !important;
+  }
+
+  /* Action buttons styling */
+  .position-fixed .border-top.d-flex .btn {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0.5rem 0.25rem !important;
+    font-size: 0.75rem !important;
+    white-space: nowrap !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Smaller text for very small screens */
+  .position-fixed .bg-white.rounded-3 h5 {
+    font-size: 1rem !important;
+  }
+
+  .position-fixed .form-label {
+    font-size: 0.875rem !important;
+  }
+
+  /* Reduce padding further */
+  .position-fixed .bg-white.rounded-3 .overflow-auto {
+    padding: 0.75rem !important;
+  }
+
+  .position-fixed .border.rounded-3.p-3 {
+    padding: 0.75rem !important;
+  }
+
+  /* Even smaller buttons on very small screens */
+  .position-fixed .border-top.d-flex {
+    padding: 0.4rem !important;
+    gap: 0.3rem !important;
+  }
+
+  .position-fixed .border-top.d-flex .btn {
+    font-size: 0.65rem !important;
+    padding: 0.4rem 0.15rem !important;
+  }
+}

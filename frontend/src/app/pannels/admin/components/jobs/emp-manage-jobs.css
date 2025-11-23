@@ -504,7 +504,23 @@
     }
     
     .header-stats {
-        justify-content: center;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        width: 100%;
+    }
+    
+    .stat-card {
+        min-width: unset;
+        padding: 15px 10px;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .stat-label {
+        font-size: 0.75rem;
     }
     
     .panel-header {
@@ -545,13 +561,23 @@
         gap: 5px;
     }
     
+    .header-stats {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
     .stat-card {
-        min-width: 80px;
-        padding: 12px;
+        min-width: unset;
+        padding: 15px;
+        width: 100%;
     }
     
     .stat-number {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
+    }
+    
+    .stat-label {
+        font-size: 0.85rem;
     }
     
     .empty-state {

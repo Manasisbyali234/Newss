@@ -120,12 +120,12 @@ function SectionRecommendedJobs() {
                 <h4 className="panel-tittle m-a0">
                     <i className="fa fa-lightbulb-o site-text-primary me-2"></i>
                     Recommended Jobs
-                    <span className="badge bg-primary ms-2" style={{ fontSize: '0.75rem' }}>
-                        {jobs.length}
-                    </span>
                 </h4>
                 <p className="text-muted mb-0" style={{ fontSize: '0.875rem' }}>
                     Based on your skills and profile
+                    <span className="badge bg-primary ms-2" style={{ fontSize: '0.75rem' }}>
+                        {jobs.length}
+                    </span>
                 </p>
             </div>
             <div className="panel-body wt-panel-body p-0">

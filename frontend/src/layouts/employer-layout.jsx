@@ -89,7 +89,7 @@ function EmployerLayout() {
                     ></div>
                 )}
                 
-                <EmpSidebarSection sidebarActive={sidebarActive} isMobile={isMobile} />
+                <EmpSidebarSection sidebarActive={sidebarActive} isMobile={isMobile} onClose={() => setSidebarActive(false)} />
 
                 <EmpHeaderSection sidebarActive={sidebarActive} onClick={handleSidebarCollapse} isMobile={isMobile} />
 

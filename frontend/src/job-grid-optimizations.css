@@ -95,6 +95,8 @@
   contain: layout style paint;
   transform: translateZ(0); /* Force GPU acceleration */
   background: transparent !important;
+  padding-right: 20px !important;
+  padding-left: 20px !important;
 }
 
 .site-bg-white {
