@@ -554,7 +554,7 @@ function SignUpPopup() {
 
 												
 												<div className="col-lg-12">
-													<div className="form-group mb-3">
+													<div className="form-group mb-1">
 														<div className=" form-check">
 															<input
 																type="checkbox"
@@ -692,7 +692,7 @@ function SignUpPopup() {
 												</div>
 
 												<div className="col-lg-12">
-													<div className="form-group mb-3">
+													<div className="form-group mb-1">
 														<div className=" form-check">
 															<input
 																type="checkbox"
@@ -830,7 +830,7 @@ function SignUpPopup() {
 												</div>
 
 												<div className="col-lg-12">
-													<div className="form-group mb-3">
+													<div className="form-group mb-1">
 														<div className=" form-check">
 															<input
 																type="checkbox"

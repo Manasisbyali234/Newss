@@ -17,6 +17,7 @@ import "../../../../../category-cards-mobile.css";
 import "../../../../../mobile-responsive-fixes.css";
 import "../../../../../employer-how-it-works.css";
 import "../../../../../ux-improvements.css";
+import "../../../../../container-fixes.css";
 import "./naukri-preview.css";
 
 function Home16Page() {

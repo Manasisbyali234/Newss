@@ -353,8 +353,16 @@ const StartAssessment = () => {
 			setAssessmentState('terms_pending');
 			return false;
 		}
+		
+		// Validate that at least one question is answered
+		const answeredCount = answers.filter(answer => answer !== null && answer !== undefined).length;
+		if (answeredCount === 0) {
+			setError("Please answer at least one question before submitting.");
+			return false;
+		}
+		
 		try {
-			const submitResponse = await api.submitAssessment(attemptId, []);
+			const submitResponse = await api.submitAssessment(attemptId, answers);
 			if (submitResponse.success) {
 				setAssessmentState('completed');
 				removeSecurityListeners();
@@ -579,7 +587,7 @@ const StartAssessment = () => {
 								key={idx}
 								style={{
 									border:
-										answers[currentQuestionIndex] === option
+										answers[currentQuestionIndex] === idx
 											? "2px solid #3498db"
 											: "1px solid #ccc",
 									borderRadius: "5px",
@@ -587,7 +595,7 @@ const StartAssessment = () => {
 									marginBottom: "8px",
 									cursor: isSubmitted ? "not-allowed" : "pointer",
 									backgroundColor:
-										answers[currentQuestionIndex] === option
+										answers[currentQuestionIndex] === idx
 											? "#ecf6fd"
 											: "#fff",
 									display: "flex",
@@ -597,9 +605,9 @@ const StartAssessment = () => {
 								<input
 									type="radio"
 									name={`q-${currentQuestionIndex}`}
-									value={option}
-									checked={answers[currentQuestionIndex] === option}
-									onChange={() => handleOptionChange(option)}
+									value={idx}
+									checked={answers[currentQuestionIndex] === idx}
+									onChange={() => handleOptionChange(idx)}
 									disabled={isSubmitted}
 									style={{ marginRight: "10px" }}
 								/>

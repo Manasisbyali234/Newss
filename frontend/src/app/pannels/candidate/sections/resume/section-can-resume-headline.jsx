@@ -12,7 +12,7 @@ function SectionCanResumeHeadline({ profile }) {
 
     const handleSave = async () => {
         if (!headline.trim()) {
-            showToast('Resume headline cannot be empty', 'warning', 4000);
+            showToast('Resume headline cannot be empty', 'error', 4000);
             return;
         }
 

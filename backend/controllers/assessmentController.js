@@ -28,28 +28,31 @@ exports.createAssessment = async (req, res) => {
         });
       }
       
-      if (!question.options || question.options.length < 2) {
-        return res.status(400).json({ 
-          success: false, 
-          message: `Question ${i + 1} must have at least 2 options` 
-        });
-      }
-      
-      // Check if all options are filled
-      for (let j = 0; j < question.options.length; j++) {
-        if (!question.options[j] || question.options[j].trim().length === 0) {
+      // Only validate options and correctAnswer for MCQ questions
+      if (question.type === 'mcq' || !question.type) {
+        if (!question.options || question.options.length < 2) {
           return res.status(400).json({ 
             success: false, 
-            message: `Question ${i + 1}, Option ${String.fromCharCode(65 + j)} is required` 
+            message: `Question ${i + 1} must have at least 2 options` 
           });
         }
-      }
-      
-      if (question.correctAnswer === undefined || question.correctAnswer < 0 || question.correctAnswer >= question.options.length) {
-        return res.status(400).json({ 
-          success: false, 
-          message: `Question ${i + 1} must have a valid correct answer selected` 
-        });
+        
+        // Check if all options are filled
+        for (let j = 0; j < question.options.length; j++) {
+          if (!question.options[j] || question.options[j].trim().length === 0) {
+            return res.status(400).json({ 
+              success: false, 
+              message: `Question ${i + 1}, Option ${String.fromCharCode(65 + j)} is required` 
+            });
+          }
+        }
+        
+        if (question.correctAnswer === undefined || question.correctAnswer === null || question.correctAnswer < 0 || question.correctAnswer >= question.options.length) {
+          return res.status(400).json({ 
+            success: false, 
+            message: `Question ${i + 1} must have a valid correct answer selected` 
+          });
+        }
       }
       
       if (!question.marks || question.marks < 1) {
@@ -64,7 +67,11 @@ exports.createAssessment = async (req, res) => {
     const lastAssessment = await Assessment.findOne({ employerId: req.user.id })
       .sort({ serialNumber: -1 })
       .select('serialNumber');
-    const serialNumber = lastAssessment ? lastAssessment.serialNumber + 1 : 1;
+    
+    let serialNumber = 1;
+    if (lastAssessment && typeof lastAssessment.serialNumber === 'number' && !isNaN(lastAssessment.serialNumber)) {
+      serialNumber = lastAssessment.serialNumber + 1;
+    }
     
     const assessment = new Assessment({
       employerId: req.user.id,
@@ -77,8 +84,9 @@ exports.createAssessment = async (req, res) => {
       totalQuestions: questions.length,
       questions: questions.map(q => ({
         question: q.question.trim(),
-        options: q.options.map(opt => opt.trim()),
-        correctAnswer: q.correctAnswer,
+        type: q.type || 'mcq',
+        options: (q.type === 'subjective' || q.type === 'upload') ? [] : q.options.map(opt => opt.trim()),
+        correctAnswer: (q.type === 'subjective' || q.type === 'upload') ? null : q.correctAnswer,
         marks: q.marks || 1,
         explanation: q.explanation ? q.explanation.trim() : ''
       })),

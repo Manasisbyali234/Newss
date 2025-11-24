@@ -109,7 +109,7 @@ function SectionCanEmployment({ profile }) {
         if (!validateForm()) {
             const errorMessages = Object.values(errors).filter(error => error);
             if (errorMessages.length > 0) {
-                showToast(`Please fix the following errors: ${errorMessages.join(', ')}`, 'warning');
+                showToast(errorMessages.join(', '), 'error', 4000);
             }
             return;
         }

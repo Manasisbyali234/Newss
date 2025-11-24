@@ -239,7 +239,8 @@ function SectionCanPersonalDetail({ profile }) {
 
     const handleSubmit = async () => {
         if (!validateAllRequiredFields()) {
-            showToast('Please fill all required fields correctly', 'error', 4000);
+            const errorMessages = Object.values(errors).join(', ');
+            showToast(errorMessages || 'Please fill all required fields correctly', 'error', 4000);
             return;
         }
         

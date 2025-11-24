@@ -100,6 +100,11 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 							return;
 						}
 					}
+					
+					if (question.correctAnswer === null || question.correctAnswer === undefined) {
+						showToast(`Please select the correct answer for Question ${i + 1}`, 'warning');
+						return;
+					}
 				}
 				
 				if (!question.marks || question.marks < 1) {

@@ -326,12 +326,13 @@ function SectionCanEducation({ profile, onUpdate }) {
 
     const handleAddEducation = () => {
         if (!selectedEducationLevel) {
-            showToast('Please select an education level first', 'warning', 4000);
+            showToast('Please select an education level first', 'error', 4000);
             return;
         }
 
         if (!validateForm()) {
-            showToast('Please correct the highlighted fields.', 'error', 4000);
+            const errorMessages = Object.values(errors).filter(e => e).join(', ');
+            showToast(errorMessages || 'Please correct the highlighted fields', 'error', 4000);
             return;
         }
 
@@ -375,7 +376,8 @@ function SectionCanEducation({ profile, onUpdate }) {
 
     const handleUpdateEducation = () => {
         if (!validateForm()) {
-            showToast('Please correct the highlighted fields.', 'error', 4000);
+            const errorMessages = Object.values(errors).filter(e => e).join(', ');
+            showToast(errorMessages || 'Please correct the highlighted fields', 'error', 4000);
             return;
         }
 
@@ -789,7 +791,8 @@ function SectionCanEducation({ profile, onUpdate }) {
         }
 
         if (hasErrors) {
-            showToast('Please correct the highlighted fields.', 'warning', 4000);
+            const errorMessages = Object.values(newErrors).concat(newAdditionalErrors.flatMap(e => Object.values(e || {}))).filter(e => e).join(', ');
+            showToast(errorMessages || 'Please correct the highlighted fields', 'error', 4000);
             return false;
         }
 
@@ -800,7 +803,8 @@ function SectionCanEducation({ profile, onUpdate }) {
         // Validate all fields before saving
         const validationResult = validateAllFields();
         if (!validationResult.isValid) {
-            showToast('Please correct the highlighted fields.', 'error', 4000);
+            const errorMessages = validationResult.errors.join(', ');
+            showToast(errorMessages || 'Please correct the highlighted fields', 'error', 4000);
             return;
         }
 
