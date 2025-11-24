@@ -26,6 +26,10 @@
     padding: 0 10px;
     margin-bottom: 20px;
   }
+
+  .category-cards-second-row {
+    padding-left: 10px !important;
+  }
 }
 
 @media (max-width: 576px) {
@@ -35,6 +39,10 @@
     padding: 0 8px;
     margin-bottom: 15px;
   }
+
+  .category-cards-second-row {
+    padding-left: 8px !important;
+  }
 }
 
 @media (max-width: 480px) {
@@ -43,6 +51,10 @@
     gap: 6px;
     padding: 0 6px;
   }
+
+  .category-cards-second-row {
+    padding-left: 6px !important;
+  }
 }
 
 @media (max-width: 360px) {
@@ -50,6 +62,10 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 5px;
     padding: 0 5px;
+  }
+
+  .category-cards-second-row {
+    padding-left: 5px !important;
   }
 }
 

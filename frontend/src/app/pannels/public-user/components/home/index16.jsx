@@ -624,7 +624,7 @@ function Home16Page() {
                     </div>
                     
                     {/* Second Row */}
-                    <div className="category-cards-container" style={{marginLeft: '10px', marginRight: '10px', marginTop: '20px', paddingLeft: '130px'}}>
+                    <div className="category-cards-container category-cards-second-row" style={{marginLeft: '10px', marginRight: '10px', marginTop: '20px', paddingLeft: '130px'}}>
                         <NavLink to="/job-grid?category=Finance" style={{textDecoration: 'none'}}>
                             <div className="category-card" style={{
                                 background: '#ffffff',
