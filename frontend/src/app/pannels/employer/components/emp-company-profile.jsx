@@ -1069,7 +1069,7 @@ function EmpCompanyProfilePage() {
                                 </div>
                             </div>
 
-                            <div className="col-md-6">
+                            <div className="col-md-12">
                                 <div className="form-group">
                                     <label><Briefcase size={16} className="me-2" /> Why Join Us</label>
                                     <RichTextEditor
