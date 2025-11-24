@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 function PlacementNotifications() {
 	const [notifications, setNotifications] = useState([]);
 	const [showAll, setShowAll] = useState(false);
+	const [hoveredId, setHoveredId] = useState(null);
 
 	useEffect(() => {
 		fetchNotifications();
@@ -131,7 +132,7 @@ function PlacementNotifications() {
 						{displayedNotifications.map((notif, idx) => {
 							const { icon, color } = getIcon(notif.type);
 							return (
-								<div key={notif._id} style={{ padding: '10px 12px', borderBottom: idx < displayedNotifications.length - 1 ? '1px solid #f1f5f9' : 'none', display: 'flex', gap: '8px' }}>
+								<div key={notif._id} onMouseEnter={() => setHoveredId(notif._id)} onMouseLeave={() => setHoveredId(null)} style={{ padding: '10px 12px', borderBottom: idx < displayedNotifications.length - 1 ? '1px solid #f1f5f9' : 'none', display: 'flex', gap: '8px' }}>
 									<div style={{ width: '28px', height: '28px', borderRadius: '50%', background: `${color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
 										<i className={icon} style={{ color, fontSize: '14px' }}></i>
 									</div>
@@ -144,9 +145,11 @@ function PlacementNotifications() {
 											{new Date(notif.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
 										</small>
 									</div>
-									<button onClick={() => dismissNotification(notif._id)} style={{ background: '#fed7aa', border: 'none', color: 'black', fontSize: '12px', cursor: 'pointer', borderRadius: '2px', padding: '2px 6px', height: 'fit-content' }}>
-										<i className="fa fa-times"></i>
-									</button>
+									{hoveredId === notif._id && (
+										<button onClick={() => dismissNotification(notif._id)} style={{ background: '#fed7aa', border: 'none', color: 'black', fontSize: '12px', cursor: 'pointer', borderRadius: '2px', padding: '2px 6px', height: 'fit-content' }}>
+											<i className="fa fa-times"></i>
+										</button>
+									)}
 								</div>
 							);
 						})}

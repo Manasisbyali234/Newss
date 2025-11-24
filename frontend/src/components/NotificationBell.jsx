@@ -8,6 +8,8 @@ const NotificationBell = ({ userRole }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [animateBell, setAnimateBell] = useState(false);
   const [animateBadge, setAnimateBadge] = useState(false);
+  const [hoveredId, setHoveredId] = useState(null);
+  const [showCloseBtn, setShowCloseBtn] = useState(false);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -106,10 +108,27 @@ const NotificationBell = ({ userRole }) => {
           'Authorization': `Bearer ${token}`
         }
       });
+      setShowCloseBtn(true);
       fetchNotifications();
     } catch (error) {
       // Silent error handling
     }
+  };
+
+  const deleteNotification = async (notificationId) => {
+    try {
+      const token = localStorage.getItem(`${userRole}Token`);
+      if (!token) return;
+      
+      await fetch(`http://localhost:5000/api/notifications/${notificationId}/dismiss`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      fetchNotifications();
+    } catch (error) {}
   };
 
   return (
@@ -194,33 +213,38 @@ const NotificationBell = ({ userRole }) => {
                   Mark all as read
                 </button>
               )}
-              <button 
-                onClick={() => setIsOpen(false)}
-                className="notification-close-btn"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#666',
-                  cursor: 'pointer',
-                  fontSize: '20px',
-                  padding: '0',
-                  borderRadius: '4px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                  lineHeight: '1',
-                  width: '24px',
-                  height: '24px',
-                  transition: 'none',
-                  overflow: 'hidden'
-                }}
-                onMouseEnter={(e) => {e.target.style.setProperty('background', 'none', 'important'); e.target.style.setProperty('color', '#666', 'important');}}
-                onMouseLeave={(e) => {e.target.style.setProperty('background', 'none', 'important'); e.target.style.setProperty('color', '#666', 'important');}}
-                title="Close notifications"
-              >
-                ×
-              </button>
+              {showCloseBtn && (
+                <button 
+                  onClick={() => {
+                    setIsOpen(false);
+                    setShowCloseBtn(false);
+                  }}
+                  className="notification-close-btn"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#666',
+                    cursor: 'pointer',
+                    fontSize: '20px',
+                    padding: '0',
+                    borderRadius: '4px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    lineHeight: '1',
+                    width: '24px',
+                    height: '24px',
+                    transition: 'none',
+                    overflow: 'hidden'
+                  }}
+                  onMouseEnter={(e) => {e.target.style.setProperty('background', 'none', 'important'); e.target.style.setProperty('color', '#666', 'important');}}
+                  onMouseLeave={(e) => {e.target.style.setProperty('background', 'none', 'important'); e.target.style.setProperty('color', '#666', 'important');}}
+                  title="Close notifications"
+                >
+                  ×
+                </button>
+              )}
             </div>
           </div>
           
@@ -229,25 +253,56 @@ const NotificationBell = ({ userRole }) => {
               notifications.map((notification) => (
                 <div
                   key={notification._id}
-                  onClick={() => !notification.isRead && markAsRead(notification._id)}
+                  onMouseEnter={() => setHoveredId(notification._id)}
+                  onMouseLeave={() => setHoveredId(null)}
                   className="notification-item"
                   style={{
                     padding: '12px 16px',
                     borderBottom: '1px solid #f0f0f0',
-                    cursor: 'pointer',
                     backgroundColor: !notification.isRead ? '#e3f2fd' : 'white',
-                    borderLeft: !notification.isRead ? '3px solid #007bff' : 'none'
+                    borderLeft: !notification.isRead ? '3px solid #007bff' : 'none',
+                    position: 'relative',
+                    display: 'flex',
+                    gap: '8px'
                   }}
                 >
-                  <h5 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: 600 }}>
-                    {notification.title}
-                  </h5>
-                  <p style={{ margin: '0 0 4px 0', fontSize: '13px', color: '#666', whiteSpace: 'pre-line' }}>
-                    {notification.message.length > 150 ? notification.message.substring(0, 150) + '...' : notification.message}
-                  </p>
-                  <small style={{ color: '#999', fontSize: '11px' }}>
-                    {new Date(notification.createdAt).toLocaleDateString()}
-                  </small>
+                  <div onClick={() => !notification.isRead && markAsRead(notification._id)} style={{ flex: 1, cursor: 'pointer' }}>
+                    <h5 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: 600 }}>
+                      {notification.title}
+                    </h5>
+                    <p style={{ margin: '0 0 4px 0', fontSize: '13px', color: '#666', whiteSpace: 'pre-line' }}>
+                      {notification.message.length > 150 ? notification.message.substring(0, 150) + '...' : notification.message}
+                    </p>
+                    <small style={{ color: '#999', fontSize: '11px' }}>
+                      {new Date(notification.createdAt).toLocaleDateString()}
+                    </small>
+                  </div>
+                  {hoveredId === notification._id && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteNotification(notification._id);
+                      }}
+                      style={{
+                        background: '#fed7aa',
+                        border: 'none',
+                        color: 'black',
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        borderRadius: '2px',
+                        padding: '2px 6px',
+                        height: 'fit-content',
+                        flexShrink: 0,
+                        width: '20px',
+                        height: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <i className="fa fa-times"></i>
+                    </button>
+                  )}
                 </div>
               ))
             ) : (

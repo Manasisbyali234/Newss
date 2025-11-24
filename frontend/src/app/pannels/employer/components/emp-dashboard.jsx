@@ -24,6 +24,7 @@ function EmpDashboardPage() {
     const [recentActivity, setRecentActivity] = useState([]);
     const [notifications, setNotifications] = useState([]);
     const [isMobile, setIsMobile] = useState(false);
+    const [hoveredId, setHoveredId] = useState(null);
 
     useEffect(() => {
         fetchDashboardData();
@@ -409,15 +410,29 @@ function EmpDashboardPage() {
                                 
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flex: '1' }}>
                                     {notifications.length > 0 ? notifications.slice(0, 5).map((notification, index) => (
-                                        <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem', background: notification.isRead ? '#f9fafb' : '#fef3c7', borderRadius: '0.5rem' }}>
+                                        <div key={index} onMouseEnter={() => setHoveredId(notification._id)} onMouseLeave={() => setHoveredId(null)} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem', background: notification.isRead ? '#f9fafb' : '#fef3c7', borderRadius: '0.5rem', position: 'relative' }}>
                                             <div style={{ width: '2rem', height: '2rem', background: (notification.type === 'profile_approved' || notification.title?.includes('Approved')) ? '#dcfce7' : '#fecaca', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                 <span style={{ fontSize: '1rem' }}>{(notification.type === 'profile_approved' || notification.title?.includes('Approved')) ? '✅' : '❌'}</span>
                                             </div>
                                             <div style={{ flex: '1' }}>
                                                 <p style={{ fontSize: '0.875rem', fontWeight: '500', color: '#111827', margin: 0 }}>{notification.title}</p>
                                                 <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>{notification.message}</p>
-                                                <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>{new Date(notification.createdAt).toLocaleDateString()}</p>
+                                                <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>{new Date(notification.createdAt).toLocaleDateAt eString()}</p>
                                             </div>
+                                            {hoveredId === notification._id && (
+                                                <button onClick={async () => {
+                                                    try {
+                                                        const token = localStorage.getItem('employerToken');
+                                                        await fetch(`http://localhost:5000/api/notifications/${notification._id}/dismiss`, {
+                                                            method: 'PUT',
+                                                            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                                                        });
+                                                        setNotifications(prev => prev.filter(n => n._id !== notification._id));
+                                                    } catch (error) {}
+                                                }} style={{ background: '#fed7aa', border: 'none', color: 'black', fontSize: '12px', cursor: 'pointer', borderRadius: '2px', padding: '2px 6px', height: 'fit-content', flexShrink: 0, width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                    <i className="fa fa-times"></i>
+                                                </button>
+                                            )}
                                         </div>
                                     )) : (
                                         <div style={{ textAlign: 'center', padding: '2rem', color: '#6b7280' }}>

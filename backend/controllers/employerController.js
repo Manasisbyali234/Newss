@@ -751,32 +751,8 @@ exports.createJob = async (req, res) => {
     // Clear job-related caches immediately
     cacheInvalidation.clearJobCaches();
 
-    // Create notification for all candidates when job is posted
-    try {
-      const { createNotification } = require('./notificationController');
-      await createNotification({
-        title: 'New Job Posted',
-        message: `New ${job.title} position available at ${req.user.companyName}`,
-        type: 'job_posted',
-        role: 'candidate',
-        relatedId: job._id,
-        createdBy: req.user._id
-      });
-      
-      // Create interview scheduled notification if rounds are scheduled
-      if (hasScheduledRounds) {
-        await createNotification({
-          title: 'Interview Rounds Scheduled',
-          message: `Interview rounds have been scheduled for ${job.title} position at ${req.user.companyName}`,
-          type: 'interview_scheduled',
-          role: 'candidate',
-          relatedId: job._id,
-          createdBy: req.user._id
-        });
-      }
-    } catch (notifError) {
-      console.error('Notification creation failed:', notifError);
-    }
+    // Notifications are sent to candidates when they apply for jobs
+    // No need to create general notifications here
 
     res.status(201).json({ success: true, job });
   } catch (error) {
@@ -979,32 +955,23 @@ exports.updateJob = async (req, res) => {
     // Also clear candidate application caches to ensure they see updated job data
     cacheInvalidation.clearCandidateApplicationCaches();
 
-    // Create notification if interview rounds are newly scheduled or updated
-    if (hasScheduledRounds && !wasScheduled) {
+    // Notify only candidates who have applied for this job
+    if (hasScheduledRounds) {
       try {
         const { createNotification } = require('./notificationController');
-        await createNotification({
-          title: 'Interview Rounds Scheduled',
-          message: `Interview rounds have been scheduled for ${job.title} position at ${req.user.companyName}`,
-          type: 'interview_scheduled',
-          role: 'candidate',
-          relatedId: job._id,
-          createdBy: req.user._id
-        });
-      } catch (notifError) {
-        console.error('Notification creation failed:', notifError);
-      }
-    } else if (hasScheduledRounds && wasScheduled) {
-      try {
-        const { createNotification } = require('./notificationController');
-        await createNotification({
-          title: 'Interview Schedule Updated',
-          message: `Interview schedule has been updated for ${job.title} position at ${req.user.companyName}`,
-          type: 'interview_updated',
-          role: 'candidate',
-          relatedId: job._id,
-          createdBy: req.user._id
-        });
+        const applications = await Application.find({ jobId: job._id }).select('candidateId');
+        
+        for (const app of applications) {
+          await createNotification({
+            title: wasScheduled ? 'Interview Schedule Updated' : 'Interview Rounds Scheduled',
+            message: wasScheduled ? `Interview schedule has been updated for ${job.title} position at ${req.user.companyName}` : `Interview rounds have been scheduled for ${job.title} position at ${req.user.companyName}`,
+            type: wasScheduled ? 'interview_updated' : 'interview_scheduled',
+            role: 'candidate',
+            relatedId: job._id,
+            candidateId: app.candidateId,
+            createdBy: req.user._id
+          });
+        }
       } catch (notifError) {
         console.error('Notification creation failed:', notifError);
       }
@@ -1755,7 +1722,7 @@ exports.scheduleInterviewRound = async (req, res) => {
       { new: true }
     );
     
-    // Create notification for candidates about the scheduled interview/assessment
+    // Notify only candidates who have applied for this job
     try {
       const { createNotification } = require('./notificationController');
       const roundNames = {
@@ -1768,15 +1735,19 @@ exports.scheduleInterviewRound = async (req, res) => {
       };
       
       const roundName = roundNames[roundType] || roundType;
+      const applications = await Application.find({ jobId: job._id }).select('candidateId');
       
-      await createNotification({
-        title: `${roundName} Scheduled`,
-        message: `${roundName} has been scheduled for ${job.title} position from ${new Date(fromDate).toLocaleDateString()} to ${new Date(toDate).toLocaleDateString()}`,
-        type: 'interview_scheduled',
-        role: 'candidate',
-        relatedId: job._id,
-        createdBy: req.user._id
-      });
+      for (const app of applications) {
+        await createNotification({
+          title: `${roundName} Scheduled`,
+          message: `${roundName} has been scheduled for ${job.title} position from ${new Date(fromDate).toLocaleDateString()} to ${new Date(toDate).toLocaleDateString()}`,
+          type: 'interview_scheduled',
+          role: 'candidate',
+          relatedId: job._id,
+          candidateId: app.candidateId,
+          createdBy: req.user._id
+        });
+      }
     } catch (notifError) {
       console.error('Notification creation failed:', notifError);
     }
