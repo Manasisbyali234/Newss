@@ -7,6 +7,7 @@ const HeroBody = ({ onSearch }) => {
   const navigate = useNavigate();
   const [searchData, setSearchData] = useState({
     what: '',
+    category: '',
     type: '',
     location: ''
   });
@@ -14,11 +15,13 @@ const HeroBody = ({ onSearch }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [errors, setErrors] = useState({
     what: '',
+    category: '',
     type: '',
     location: ''
   });
   const [touched, setTouched] = useState({
     what: false,
+    category: false,
     type: false,
     location: false
   });
@@ -40,6 +43,9 @@ const HeroBody = ({ onSearch }) => {
     let error = '';
     
     switch(name) {
+      case 'category':
+        // Category is optional, no validation needed
+        break;
       case 'what':
         if (value && value.length < 2) {
           error = 'Job title must be at least 2 characters';
@@ -71,6 +77,7 @@ const HeroBody = ({ onSearch }) => {
   const validateAllFields = () => {
     const newErrors = {
       what: validateField('what', searchData.what),
+      category: validateField('category', searchData.category),
       type: validateField('type', searchData.type),
       location: validateField('location', searchData.location)
     };
@@ -133,6 +140,7 @@ const HeroBody = ({ onSearch }) => {
     // Mark all fields as touched
     setTouched({
       what: true,
+      category: true,
       type: true,
       location: true
     });
@@ -145,6 +153,7 @@ const HeroBody = ({ onSearch }) => {
     
     const filters = {};
     if (searchData.what && searchData.what !== '') filters.search = searchData.what.trim();
+    if (searchData.category && searchData.category !== '') filters.category = searchData.category;
     if (searchData.type && searchData.type !== '') filters.jobType = searchData.type;
     if (searchData.location && searchData.location !== '') filters.location = searchData.location.trim();
     
@@ -198,7 +207,29 @@ const HeroBody = ({ onSearch }) => {
         {/* Search Bar */}
         <div className="search-container">
           <div className="search-field">
-            <label className="search-label">WHAT</label>
+            <label className="search-label">CATEGORY</label>
+            <select 
+              className={`search-select${touched.category && errors.category ? ' has-error' : ''}`}
+              value={searchData.category}
+              onChange={(e) => handleFieldChange('category', e.target.value)}
+              onBlur={() => handleFieldBlur('category')}
+            >
+              <option value="">Job Categories</option>
+              <option value="Programming">Programming</option>
+              <option value="Content Writer">Content Writer</option>
+              <option value="Sales & Marketing">Sales & Marketing</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Human Resources">Human Resources</option>
+            </select>
+            {touched.category && errors.category && (
+              <div className="search-error">
+                {errors.category}
+              </div>
+            )}
+          </div>
+          
+          <div className="search-field">
+            <label className="search-label">designation</label>
             <select 
               className={`search-select${touched.what && errors.what ? ' has-error' : ''}`}
               value={searchData.what}
@@ -243,21 +274,32 @@ const HeroBody = ({ onSearch }) => {
           </div>
           
           <div className="search-field">
-            <label className="search-label">TYPE</label>
+            <label className="search-label">EDUCATION</label>
             <select 
               className={`search-select${touched.type && errors.type ? ' has-error' : ''}`}
               value={searchData.type}
               onChange={(e) => handleFieldChange('type', e.target.value)}
               onBlur={() => handleFieldBlur('type')}
             >
-              <option value="">Employement Type</option>
-              <option value="Full Time">Full Time</option>
-              <option value="Part Time">Part Time</option>
-              <option value="Contract">Contract</option>
-              <option value="Internship">Internship</option>
-              <option value="Freelance">Freelance</option>
-              <option value="Remote">Remote</option>
-              <option value="Work From Home">Work From Home</option>
+              <option value="">Education Qualification</option>
+              <option value="10th Pass">10th Pass</option>
+              <option value="12th Pass">12th Pass</option>
+              <option value="Diploma">Diploma</option>
+              <option value="B.E">B.E</option>
+              <option value="B.Tech">B.Tech</option>
+              <option value="B.Sc">B.Sc</option>
+              <option value="BCA">BCA</option>
+              <option value="BBA">BBA</option>
+              <option value="B.Com">B.Com</option>
+              <option value="BA">BA</option>
+              <option value="M.E">M.E</option>
+              <option value="M.Tech">M.Tech</option>
+              <option value="M.Sc">M.Sc</option>
+              <option value="MCA">MCA</option>
+              <option value="MBA">MBA</option>
+              <option value="M.Com">M.Com</option>
+              <option value="MA">MA</option>
+              <option value="PhD">PhD</option>
             </select>
             {touched.type && errors.type && (
               <div className="search-error">

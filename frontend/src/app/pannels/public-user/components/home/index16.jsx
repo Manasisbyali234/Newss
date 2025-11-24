@@ -624,7 +624,7 @@ function Home16Page() {
                     </div>
                     
                     {/* Second Row */}
-                    <div className="category-cards-container" style={{marginLeft: '10px', marginRight: '10px', marginTop: '20px'}}>
+                    <div className="category-cards-container" style={{marginLeft: '10px', marginRight: '10px', marginTop: '20px', paddingLeft: '130px'}}>
                         <NavLink to="/job-grid?category=Finance" style={{textDecoration: 'none'}}>
                             <div className="category-card" style={{
                                 background: '#ffffff',
@@ -819,8 +819,8 @@ function Home16Page() {
                                 className="wt-separator-two-part-left mb-4"
                             >
                                 {/* title="" START*/}
-                                  <div className="recruiters-header-section" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', paddingLeft: '30px', flexWrap: 'wrap', gap: '1rem'}}>
-                                  <div className="text-left" style={{flex: '1', minWidth: '200px'}}>
+                                  <div className="recruiters-header-section" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', flexWrap: 'wrap', gap: '1rem', paddingLeft: '15px'}}>
+                                  <div className="text-left">
                                   <div className="wt-small-separator site-text-primary">
                                 <div>Top Recruiters</div>
                             </div>
@@ -1015,14 +1015,14 @@ function Home16Page() {
                 <div style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
                     <Container style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
                     {/* title="" START*/}
-                    <div className="recruiters-header-section" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', background: 'transparent !important', flexWrap: 'wrap', gap: '1rem'}}>
-                        <div className="text-left" style={{flex: '1', minWidth: '200px'}}>
+                    <div className="recruiters-header-section" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', background: 'transparent !important', flexWrap: 'wrap', gap: '1rem', paddingLeft: '15px', paddingRight: '15px'}}>
+                        <div className="text-left">
                             <div className="wt-small-separator site-text-primary">
                                 <div>Top Recruiters</div>
                             </div>
                             <h2 className="wt-title mb-0">Discover your next career move</h2>
                         </div>
-                        <NavLink to="/emp-grid" className="site-button" style={{padding: '0.5rem 1rem', fontSize: '14px', display: 'inline-flex', width: 'auto', whiteSpace: 'nowrap', marginRight: '30px'}}>
+                        <NavLink to="/emp-grid" className="site-button" style={{padding: '0.5rem 1rem', fontSize: '14px', whiteSpace: 'nowrap'}}>
                             View All
                         </NavLink>
                     </div>
@@ -1162,7 +1162,7 @@ function Home16Page() {
                     <div className="twm-how-it-work-section3">
                         <Row style={{marginLeft: '10px', marginRight: '10px', marginBottom: '0'}}>
                             <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4" style={{padding: '0.5rem'}}>
-                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '25px', borderRadius: '12px', minHeight: '140px'}}>
+                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '25px', borderRadius: '12px', height: '140px'}}>
                                     <div className="twm-media" style={{flexShrink: '0', marginRight: '20px'}}>
                                         <div style={{width: '60px', height: '60px', background: 'linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                                             <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1178,8 +1178,8 @@ function Home16Page() {
                                 </div>
                             </Col>
 
-                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4">
-                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '25px', borderRadius: '12px', minHeight: '140px'}}>
+                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4" style={{padding: '0.5rem'}}>
+                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '25px', borderRadius: '12px', height: '140px'}}>
                                     <div className="twm-media" style={{flexShrink: '0', marginRight: '20px'}}>
                                         <div style={{width: '60px', height: '60px', background: 'linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                                             <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1195,8 +1195,8 @@ function Home16Page() {
                                 </div>
                             </Col>
 
-                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4">
-                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '25px', borderRadius: '12px', minHeight: '140px'}}>
+                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4" style={{padding: '0.5rem'}}>
+                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '25px', borderRadius: '12px', height: '140px'}}>
                                     <div className="twm-media" style={{flexShrink: '0', marginRight: '20px'}}>
                                         <div style={{width: '60px', height: '60px', background: 'linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                                             <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1212,8 +1212,8 @@ function Home16Page() {
                                 </div>
                             </Col>
 
-                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4">
-                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '25px', borderRadius: '12px', minHeight: '140px'}}>
+                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4" style={{padding: '0.5rem'}}>
+                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '25px', borderRadius: '12px', height: '140px'}}>
                                     <div className="twm-media" style={{flexShrink: '0', marginRight: '20px'}}>
                                         <div style={{width: '60px', height: '60px', background: 'linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                                             <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1281,7 +1281,7 @@ function Home16Page() {
                                     </div>
                                     <div>
                                         <h4 className="twm-title">2. Hire the Best</h4>
-                                        <p>Get instant access to qualified candidates. Review profiles, shortlist top talent, schedule interviews, and finalize your perfect hire from one easy-to-use dashboard.</p>
+                                        <p>Get instant access to qualified candidates. Review profiles, shortlist top talent, schedule interviews, and finalize your perfect hire from one easy-to-use dashboard. Build your team efficiently.</p>
                                     </div>
                                 </div>
                             </Col>

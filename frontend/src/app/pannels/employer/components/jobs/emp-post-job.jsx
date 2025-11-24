@@ -790,6 +790,37 @@ export default function EmpPostJob({ onNext }) {
 				</p>
 			</div>
 
+			{/* Global Validation Errors */}
+			{(Object.keys(errors).length > 0 || globalErrors.length > 0) && (
+				<div style={{
+					background: '#fee2e2',
+					border: '2px solid #dc2626',
+					borderRadius: 12,
+					padding: '16px 20px',
+					marginBottom: 24,
+					boxShadow: '0 4px 12px rgba(220, 38, 38, 0.15)'
+				}}>
+					<div style={{display: 'flex', alignItems: 'flex-start', gap: 12}}>
+						<i className="fa fa-exclamation-triangle" style={{color: '#dc2626', fontSize: 20, marginTop: 2}}></i>
+						<div style={{flex: 1}}>
+							<h4 style={{margin: '0 0 8px 0', color: '#991b1b', fontSize: 16, fontWeight: 600}}>
+								Please fix the following errors:
+							</h4>
+							<ul style={{margin: 0, paddingLeft: 20, color: '#7f1d1d'}}>
+								{Object.entries(errors).map(([field, msgs]) => (
+									<li key={field} style={{marginBottom: 4}}>
+										<strong>{field}:</strong> {Array.isArray(msgs) ? msgs.join(', ') : msgs}
+									</li>
+								))}
+								{globalErrors.map((error, idx) => (
+									<li key={idx} style={{marginBottom: 4}}>{error}</li>
+								))}
+							</ul>
+						</div>
+					</div>
+				</div>
+			)}
+
 			{/* Card */}
 			<div style={card}>
 				<div style={grid}>

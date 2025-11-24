@@ -42,6 +42,9 @@
 
 .job-categories-style1 .row {
     margin: 0 -10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .job-categories-style1 .col-lg-3,
