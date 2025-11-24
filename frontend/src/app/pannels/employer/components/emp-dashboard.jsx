@@ -417,7 +417,7 @@ function EmpDashboardPage() {
                                             <div style={{ flex: '1' }}>
                                                 <p style={{ fontSize: '0.875rem', fontWeight: '500', color: '#111827', margin: 0 }}>{notification.title}</p>
                                                 <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>{notification.message}</p>
-                                                <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>{new Date(notification.createdAt).toLocaleDateAt eString()}</p>
+                                                <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>{new Date(notification.createdAt).toLocaleDateString()}</p>
                                             </div>
                                             {hoveredId === notification._id && (
                                                 <button onClick={async () => {
