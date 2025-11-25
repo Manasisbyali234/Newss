@@ -88,18 +88,18 @@ function PlacementDashboard() {
             const profileData = await api.getPlacementProfile();
             console.log('Profile data received:', profileData);
             
-            if (profileData.success) {
+            if (profileData && profileData.success) {
                 console.log('Setting placement data:', profileData.placement);
                 setPlacementData(profileData.placement);
                 setPlacementId(profileData.placement._id);
                 setProfileLoaded(true);
             } else {
-                console.error('Profile fetch failed:', profileData.message);
+                console.error('Profile fetch failed:', profileData?.message || 'Unknown error');
             }
         } catch (error) {
             console.error('Profile fetch error:', error);
             if (error.message.includes('401')) {
-                alert('Authentication failed. Please login again.');
+                showToast('Authentication failed. Please login again.', 'error');
                 localStorage.removeItem('placementToken');
                 localStorage.removeItem('placementUser');
                 window.location.href = '/placement/login';
@@ -142,24 +142,24 @@ function PlacementDashboard() {
         ];
         
         if (!allowedTypes.includes(file.type)) {
-            alert('Please upload only Excel (.xlsx, .xls) or CSV files.');
+            showToast('Please upload only Excel (.xlsx, .xls) or CSV files.', 'error');
             return false;
         }
         
         if (file.size > 5 * 1024 * 1024) {
-            alert('File size should be less than 5MB.');
+            showToast('File size should be less than 5MB.', 'error');
             return false;
         }
         
         // Check if file is empty
         if (file.size === 0) {
-            alert('The selected file is empty. Please choose a file with student data.');
+            showToast('The selected file is empty. Please choose a file with student data.', 'error');
             return false;
         }
         
         // Basic content validation for very small files
         if (file.size < 50) {
-            alert('The file appears to be too small to contain valid student data. Please check your file.');
+            showToast('The file appears to be too small to contain valid student data. Please check your file.', 'warning');
             return false;
         }
         
@@ -168,7 +168,7 @@ function PlacementDashboard() {
 
     const handleFileApprove = async (fileId, fileName) => {
         if (!placementId) {
-            alert('Placement ID not found');
+            showToast('Placement ID not found', 'error');
             return;
         }
         if (!window.confirm(`Approve file "${fileName}"?`)) return;
@@ -185,13 +185,13 @@ function PlacementDashboard() {
             });
             const data = await response.json();
             if (data.success) {
-                alert('File approved successfully!');
+                showToast('File approved successfully!', 'success');
                 fetchPlacementDetails();
             } else {
-                alert('Failed to approve file');
+                showToast('Failed to approve file', 'error');
             }
         } catch (error) {
-            alert('Error approving file');
+            showToast('Error approving file', 'error');
         } finally {
             setProcessingFiles(prev => ({...prev, [fileId]: null}));
         }
@@ -199,7 +199,7 @@ function PlacementDashboard() {
 
     const handleFileReject = async (fileId, fileName) => {
         if (!placementId) {
-            alert('Placement ID not found');
+            showToast('Placement ID not found', 'error');
             return;
         }
         if (!window.confirm(`Reject file "${fileName}"?`)) return;
@@ -216,13 +216,13 @@ function PlacementDashboard() {
             });
             const data = await response.json();
             if (data.success) {
-                alert('File rejected successfully!');
+                showToast('File rejected successfully!', 'success');
                 fetchPlacementDetails();
             } else {
-                alert('Failed to reject file');
+                showToast('Failed to reject file', 'error');
             }
         } catch (error) {
-            alert('Error rejecting file');
+            showToast('Error rejecting file', 'error');
         } finally {
             setProcessingFiles(prev => ({...prev, [fileId]: null}));
         }
@@ -249,14 +249,28 @@ function PlacementDashboard() {
                     });
                     setStudentData(cleanedData);
                 } else {
-                    alert('File data not available or file not processed yet.');
+                    showToast('File data not available or file not processed yet.', 'warning');
                 }
             } else {
-                alert('Unable to view file. Please try again.');
+                showToast('Unable to view file. Please try again.', 'error');
             }
         } catch (error) {
             console.error('Error viewing file:', error);
-            alert('Error viewing file. Please try again.');
+            showToast('Error viewing file. Please try again.', 'error');
+        }
+    };
+
+    const resetFileUploadState = () => {
+        setSelectedFile(null);
+        setCustomFileName('');
+        setUniversity('');
+        setBatch('');
+        setPendingFile(null);
+        setShowNameModal(false);
+        // Clear the file input
+        const fileInput = document.getElementById('fileInput');
+        if (fileInput) {
+            fileInput.value = '';
         }
     };
 
@@ -264,15 +278,15 @@ function PlacementDashboard() {
         if (!file) return;
         
         if (!await validateFileFormat(file)) {
-            setSelectedFile(null);
-            document.getElementById('fileInput').value = '';
+            resetFileUploadState();
             return;
         }
 
         // Check authentication before upload
         const token = localStorage.getItem('placementToken');
         if (!token) {
-            alert('Authentication token missing. Please login again.');
+            showToast('Authentication token missing. Please login again.', 'error');
+            resetFileUploadState();
             return;
         }
 
@@ -294,31 +308,30 @@ function PlacementDashboard() {
             
             if (data.success) {
                 showToast('Student data uploaded successfully! Waiting for admin approval.', 'success');
-                setSelectedFile(null);
-                setCustomFileName('');
-                setUniversity('');
-                setBatch('');
-                setPendingFile(null);
-                document.getElementById('fileInput').value = '';
+                resetFileUploadState();
                 fetchPlacementDetails();
             } else {
                 // Show specific error message from backend
-                if (data.message && (data.message.includes('empty') || data.message.includes('no data'))) {
+                if (data.message && data.message.includes('Duplicate emails found')) {
+                    showToast(data.message, 'error', 5000); // Show for 5 seconds for duplicate emails
+                } else if (data.message && (data.message.includes('empty') || data.message.includes('no data'))) {
                     showToast(`Upload failed: ${data.message}. Please ensure your file contains actual student data, not just headers.`, 'error');
                 } else {
                     showToast(data.message || 'Upload failed', 'error');
                 }
+                resetFileUploadState();
             }
         } catch (error) {
             
             if (error.message.includes('401') || error.message.includes('authentication')) {
-                alert('Authentication failed. Please login again.');
+                showToast('Authentication failed. Please login again.', 'error');
                 localStorage.removeItem('placementToken');
                 localStorage.removeItem('placementUser');
                 window.location.href = '/placement/login';
             } else {
-                alert(error.message || 'Upload failed. Please try again.');
+                showToast(error.message || 'Upload failed. Please try again.', 'error');
             }
+            resetFileUploadState();
         } finally {
             setUploadingFile(false);
         }
@@ -336,7 +349,6 @@ function PlacementDashboard() {
 
     const handleConfirmUpload = () => {
         if (pendingFile) {
-            setShowNameModal(false);
             handleFileUpload(pendingFile, customFileName, university, batch);
         }
     };
@@ -346,12 +358,12 @@ function PlacementDashboard() {
         if (!file) return;
         
         if (!file.type.startsWith('image/')) {
-            alert('Please select an image file');
+            showToast('Please select an image file', 'error');
             return;
         }
         
         if (file.size > 2 * 1024 * 1024) {
-            alert('Image size should be less than 2MB');
+            showToast('Image size should be less than 2MB', 'error');
             return;
         }
         
@@ -373,13 +385,13 @@ function PlacementDashboard() {
                 
                 const data = await response.json();
                 if (data.success) {
-                    alert('Logo uploaded successfully!');
+                    showToast('Logo uploaded successfully!', 'success');
                     fetchPlacementDetails();
                 } else {
-                    alert('Failed to upload logo');
+                    showToast('Failed to upload logo', 'error');
                 }
             } catch (error) {
-                alert('Error uploading logo');
+                showToast('Error uploading logo', 'error');
             }
         };
         reader.readAsDataURL(file);
@@ -390,12 +402,12 @@ function PlacementDashboard() {
         if (!file) return;
         
         if (!file.type.startsWith('image/')) {
-            alert('Please select an image file');
+            showToast('Please select an image file', 'error');
             return;
         }
         
         if (file.size > 2 * 1024 * 1024) {
-            alert('Image size should be less than 2MB');
+            showToast('Image size should be less than 2MB', 'error');
             return;
         }
         
@@ -417,23 +429,35 @@ function PlacementDashboard() {
                 
                 const data = await response.json();
                 if (data.success) {
-                    alert('ID card uploaded successfully!');
+                    showToast('ID card uploaded successfully!', 'success');
                     fetchPlacementDetails();
                 } else {
-                    alert('Failed to upload ID card');
+                    showToast('Failed to upload ID card', 'error');
                 }
             } catch (error) {
-                alert('Error uploading ID card');
+                showToast('Error uploading ID card', 'error');
             }
         };
         reader.readAsDataURL(file);
     };
 
     const handleEditProfile = () => {
+        console.log('Frontend: Opening edit modal with placement data:', placementData);
+        
+        // Parse name into firstName and lastName if they don't exist
+        let firstName = placementData?.firstName || '';
+        let lastName = placementData?.lastName || '';
+        
+        if (!firstName && !lastName && placementData?.name) {
+            const nameParts = placementData.name.split(' ');
+            firstName = nameParts[0] || '';
+            lastName = nameParts.slice(1).join(' ') || '';
+        }
+        
         setEditFormData({
             name: placementData?.name || '',
-            firstName: placementData?.firstName || '',
-            lastName: placementData?.lastName || '',
+            firstName: firstName,
+            lastName: lastName,
             phone: placementData?.phone || '',
             collegeName: placementData?.collegeName || ''
         });
@@ -443,24 +467,32 @@ function PlacementDashboard() {
 
     const handleUpdateProfile = async () => {
         if (!editFormData.firstName.trim() || !editFormData.lastName.trim() || !editFormData.phone.trim() || !editFormData.collegeName.trim()) {
-            alert('First Name, Last Name, Phone, and College Name are required');
+            showToast('First Name, Last Name, Phone, and College Name are required', 'warning');
             return;
         }
 
         setUpdating(true);
         try {
+            console.log('Frontend: Updating profile with data:', editFormData);
+            console.log('Frontend: Token exists:', !!localStorage.getItem('placementToken'));
+            
             const response = await api.updatePlacementProfile(editFormData);
-            if (response.success) {
+            console.log('Frontend: Update response:', response);
+            
+            if (response && response.success) {
                 showToast('Profile updated successfully!', 'success');
                 setShowEditModal(false);
                 document.body.classList.remove('modal-open');
-                fetchPlacementDetails();
+                await fetchPlacementDetails(); // Wait for profile refresh
             } else {
-                showToast(response.message || 'Failed to update profile', 'error');
+                const errorMessage = response?.message || 'Failed to update profile';
+                console.error('Frontend: Update failed:', errorMessage);
+                showToast(errorMessage, 'error');
             }
         } catch (error) {
-            
-            alert('Error updating profile. Please try again.');
+            console.error('Frontend: Profile update error:', error);
+            const errorMessage = error.message || 'Error updating profile. Please try again.';
+            showToast(errorMessage, 'error');
         } finally {
             setUpdating(false);
         }
@@ -735,6 +767,7 @@ function PlacementDashboard() {
                                     handleFileSelect(file);
                                 }
                             }}
+                            key={selectedFile ? selectedFile.name : 'empty'}
                         />
                         <div className="mt-3">
                             <div className="d-flex justify-content-between align-items-center mb-2">
@@ -767,6 +800,7 @@ function PlacementDashboard() {
                                 <li className="mb-1"><i className="fa fa-check text-success mr-2"></i>Include all 8 required columns</li>
                                 <li className="mb-1"><i className="fa fa-times text-danger mr-2"></i>Empty files or files with only headers will be rejected</li>
                                 <li className="mb-1"><i className="fa fa-check text-success mr-2"></i>File must contain actual student data rows</li>
+                                <li className="mb-1"><i className="fa fa-times text-danger mr-2"></i>No duplicate email addresses allowed</li>
                                 <li className="mb-1"><i className="fa fa-check text-success mr-2"></i>Course field must contain degree names</li>
                                 <li className="mb-1"><i className="fa fa-check text-success mr-2"></i>File size should be under 5MB</li>
                                 <li className="mb-0"><i className="fa fa-check text-success mr-2"></i>Admin approval required</li>
@@ -1086,7 +1120,10 @@ function PlacementDashboard() {
                                 <button 
                                     type="button" 
                                     className="btn btn-secondary" 
-                                    onClick={() => setShowNameModal(false)}
+                                    onClick={() => {
+                                        setShowNameModal(false);
+                                        resetFileUploadState();
+                                    }}
                                 >
                                     Cancel
                                 </button>
@@ -1129,7 +1166,7 @@ function PlacementDashboard() {
                                     <input
                                         type="text"
                                         className="form-control"
-                                        value={editFormData.firstName}
+                                        value={editFormData.firstName || ''}
                                         onChange={(e) => setEditFormData({...editFormData, firstName: e.target.value})}
                                         placeholder="Enter your first name"
                                         maxLength="50"
@@ -1141,7 +1178,7 @@ function PlacementDashboard() {
                                     <input
                                         type="text"
                                         className="form-control"
-                                        value={editFormData.lastName}
+                                        value={editFormData.lastName || ''}
                                         onChange={(e) => setEditFormData({...editFormData, lastName: e.target.value})}
                                         placeholder="Enter your last name"
                                         maxLength="50"
@@ -1153,7 +1190,7 @@ function PlacementDashboard() {
                                     <input
                                         type="tel"
                                         className="form-control"
-                                        value={editFormData.phone}
+                                        value={editFormData.phone || ''}
                                         onChange={(e) => setEditFormData({...editFormData, phone: e.target.value})}
                                         placeholder="Enter your phone number"
                                         maxLength="15"
@@ -1164,7 +1201,7 @@ function PlacementDashboard() {
                                     <input
                                         type="text"
                                         className="form-control"
-                                        value={editFormData.collegeName}
+                                        value={editFormData.collegeName || ''}
                                         onChange={(e) => setEditFormData({...editFormData, collegeName: e.target.value})}
                                         placeholder="Enter your college name"
                                         maxLength="200"

@@ -41,6 +41,15 @@ function SectionCanEmployment({ profile }) {
     const validateForm = () => {
         const newErrors = {};
 
+        // Total Experience validation
+        if (!totalExperience || !totalExperience.trim()) {
+            newErrors.totalExperience = 'Total Experience is required';
+        } else if (totalExperience.trim().length < 2) {
+            newErrors.totalExperience = 'Total Experience must be at least 2 characters long';
+        } else if (totalExperience.trim().length > 50) {
+            newErrors.totalExperience = 'Total Experience cannot exceed 50 characters';
+        }
+
         // Designation validation
         if (!formData.designation || !formData.designation.trim()) {
             newErrors.designation = 'Designation is required';
@@ -139,8 +148,8 @@ function SectionCanEmployment({ profile }) {
             }
             
             // Ensure all required fields are present and valid
-            if (!formData.designation?.trim() || !formData.organization?.trim() || !formData.startDate) {
-                showToast('Please fill in all required fields (Designation, Organization, Start Date)', 'warning');
+            if (!totalExperience?.trim() || !formData.designation?.trim() || !formData.organization?.trim() || !formData.startDate) {
+                showToast('Please fill in all required fields (Total Experience, Designation, Organization, Start Date)', 'warning');
                 setLoading(false);
                 return;
             }
@@ -263,11 +272,17 @@ function SectionCanEmployment({ profile }) {
                                     <div className="row">
                                         <div className="col-xl-12 col-lg-12">
                                             <div className="form-group">
-                                                <label>Total Experience</label>
+                                                <label>Total Experience *</label>
                                                 <div className="ls-inputicon-box">
-                                                    <input className="form-control" type="text" placeholder="e.g., 2 years, 6 months" value={totalExperience} onChange={(e) => setTotalExperience(e.target.value)} style={{paddingLeft: '40px'}} />
+                                                    <input className={`form-control ${errors.totalExperience ? 'is-invalid' : ''}`} type="text" placeholder="e.g., 2 years, 6 months" value={totalExperience} onChange={(e) => {
+                                                        setTotalExperience(e.target.value);
+                                                        if (errors.totalExperience) {
+                                                            setErrors(prev => ({ ...prev, totalExperience: null }));
+                                                        }
+                                                    }} style={{paddingLeft: '40px'}} />
                                                     <i className="fs-input-icon fa fa-clock" />
                                                 </div>
+                                                {errors.totalExperience && <div className="invalid-feedback d-block">{errors.totalExperience}</div>}
                                             </div>
                                         </div>
                                         <div className="col-xl-12 col-lg-12">

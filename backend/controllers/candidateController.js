@@ -245,9 +245,9 @@ exports.uploadResume = async (req, res) => {
     }
 
     // Additional file validation
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    const maxSize = 15 * 1024 * 1024; // 15MB
     if (req.file.size > maxSize) {
-      return res.status(400).json({ success: false, message: 'File size must be less than 5MB' });
+      return res.status(400).json({ success: false, message: 'File size must be less than 15MB' });
     }
 
     const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
@@ -287,7 +287,7 @@ exports.uploadResume = async (req, res) => {
   } catch (error) {
     console.error('Resume upload error:', error);
     if (error.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({ success: false, message: 'File size must be less than 5MB' });
+      return res.status(400).json({ success: false, message: 'File size must be less than 15MB' });
     }
     res.status(500).json({ success: false, message: error.message });
   }

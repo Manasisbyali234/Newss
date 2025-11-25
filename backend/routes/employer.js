@@ -1,4 +1,5 @@
 const express = require('express');
+const multer = require('multer');
 const { body, validationResult } = require('express-validator');
 const router = express.Router();
 const employerController = require('../controllers/employerController');
@@ -65,7 +66,35 @@ router.post('/profile/document', upload.single('document'), employerController.u
 router.post('/profile/authorization-letter', upload.single('document'), employerController.uploadAuthorizationLetter);
 router.delete('/profile/authorization-letter/:documentId', employerController.deleteAuthorizationLetter);
 router.put('/profile/update-authorization-companies', employerController.updateAuthorizationCompanies);
-router.post('/profile/gallery', uploadGallery.array('gallery', 10), employerController.uploadGallery);
+router.post('/profile/gallery', uploadGallery.array('gallery', 5), (error, req, res, next) => {
+  if (error instanceof multer.MulterError) {
+    if (error.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'File too large. Maximum size is 2MB per image.' 
+      });
+    }
+    if (error.code === 'LIMIT_FILE_COUNT') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Too many files. Maximum 5 images per batch allowed.' 
+      });
+    }
+    if (error.code === 'LIMIT_FIELD_VALUE') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Request too large. Please upload fewer files at once.' 
+      });
+    }
+  }
+  if (error) {
+    return res.status(400).json({ 
+      success: false, 
+      message: error.message || 'Upload failed' 
+    });
+  }
+  next();
+}, employerController.uploadGallery);
 router.delete('/profile/gallery/:imageId', employerController.deleteGalleryImage);
 
 // Job Management Routes

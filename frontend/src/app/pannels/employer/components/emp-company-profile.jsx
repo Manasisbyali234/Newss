@@ -552,7 +552,53 @@ function EmpCompanyProfilePage() {
     };
 
     const handleDeleteAuthorizationLetter = async (documentId) => {
-        if (!window.confirm('Are you sure you want to delete this authorization letter?')) {
+        // Show confirmation toast instead of window.confirm
+        const confirmDelete = () => {
+            return new Promise((resolve) => {
+                showToast('Click "Delete" to confirm or wait 5 seconds to cancel', 'warning', 5000);
+                
+                // Create confirmation buttons
+                const container = document.getElementById('toast-container');
+                if (container) {
+                    const lastToast = container.lastElementChild;
+                    if (lastToast) {
+                        const buttonContainer = document.createElement('div');
+                        buttonContainer.style.cssText = 'margin-top: 10px; display: flex; gap: 10px;';
+                        
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.textContent = 'Delete';
+                        deleteBtn.style.cssText = 'background: #dc3545; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer;';
+                        deleteBtn.onclick = () => {
+                            lastToast.remove();
+                            resolve(true);
+                        };
+                        
+                        const cancelBtn = document.createElement('button');
+                        cancelBtn.textContent = 'Cancel';
+                        cancelBtn.style.cssText = 'background: #6c757d; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer;';
+                        cancelBtn.onclick = () => {
+                            lastToast.remove();
+                            resolve(false);
+                        };
+                        
+                        buttonContainer.appendChild(deleteBtn);
+                        buttonContainer.appendChild(cancelBtn);
+                        lastToast.appendChild(buttonContainer);
+                        
+                        // Auto-cancel after 5 seconds
+                        setTimeout(() => {
+                            if (lastToast.parentNode) {
+                                lastToast.remove();
+                                resolve(false);
+                            }
+                        }, 5000);
+                    }
+                }
+            });
+        };
+        
+        const shouldDelete = await confirmDelete();
+        if (!shouldDelete) {
             return;
         }
 
@@ -598,33 +644,118 @@ function EmpCompanyProfilePage() {
             return;
         }
 
-        const formDataObj = new FormData();
-        files.forEach(file => formDataObj.append('gallery', file));
+        // Validate each file before upload
+        const maxSize = 2 * 1024 * 1024; // 2MB
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml'];
+        
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            if (file.size > maxSize) {
+                showToast(`File "${file.name}" is too large. Maximum size is 2MB.`, 'error');
+                return;
+            }
+            if (!allowedTypes.includes(file.type)) {
+                showToast(`File "${file.name}" has invalid type. Only JPG, PNG, and SVG are allowed.`, 'error');
+                return;
+            }
+        }
+
+        // Upload files in smaller batches to avoid request size limits
+        const batchSize = 5; // Upload max 5 files at a time
+        const batches = [];
+        for (let i = 0; i < files.length; i += batchSize) {
+            batches.push(files.slice(i, i + batchSize));
+        }
+
+        let totalUploaded = 0;
+        let hasError = false;
 
         try {
             const token = localStorage.getItem('employerToken');
-            const response = await fetch('http://localhost:5000/api/employer/profile/gallery', {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` },
-                body: formDataObj
-            });
             
-            const data = await response.json();
+            for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
+                const batch = batches[batchIndex];
+                const formDataObj = new FormData();
+                batch.forEach(file => formDataObj.append('gallery', file));
+
+                showToast(`Uploading batch ${batchIndex + 1} of ${batches.length}...`, 'info', 2000);
+
+                const response = await fetch('http://localhost:5000/api/employer/profile/gallery', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formDataObj
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    setFormData(prev => ({ ...prev, gallery: data.gallery }));
+                    totalUploaded += batch.length;
+                } else {
+                    showToast(data.message || `Batch ${batchIndex + 1} upload failed`, 'error');
+                    hasError = true;
+                    break;
+                }
+            }
             
-            if (data.success) {
-                setFormData(prev => ({ ...prev, gallery: data.gallery }));
-                showToast(`Uploaded ${files.length} images successfully!`, 'success');
+            if (!hasError) {
+                showToast(`Successfully uploaded ${totalUploaded} images!`, 'success');
                 e.target.value = '';
-            } else {
-                showToast(data.message || 'Upload failed', 'error');
             }
         } catch (error) {
-            showToast('Upload failed', 'error');
+            console.error('Gallery upload error:', error);
+            showToast('Upload failed. Please try again.', 'error');
         }
     };
 
     const handleDeleteGalleryImage = async (imageId) => {
-        if (!window.confirm('Delete this image?')) return;
+        // Show confirmation toast instead of window.confirm
+        const confirmDelete = () => {
+            return new Promise((resolve) => {
+                showToast('Delete this image? Click "Delete" to confirm', 'warning', 5000);
+                
+                // Create confirmation buttons
+                const container = document.getElementById('toast-container');
+                if (container) {
+                    const lastToast = container.lastElementChild;
+                    if (lastToast) {
+                        const buttonContainer = document.createElement('div');
+                        buttonContainer.style.cssText = 'margin-top: 10px; display: flex; gap: 10px;';
+                        
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.textContent = 'Delete';
+                        deleteBtn.style.cssText = 'background: #dc3545; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer;';
+                        deleteBtn.onclick = () => {
+                            lastToast.remove();
+                            resolve(true);
+                        };
+                        
+                        const cancelBtn = document.createElement('button');
+                        cancelBtn.textContent = 'Cancel';
+                        cancelBtn.style.cssText = 'background: #6c757d; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer;';
+                        cancelBtn.onclick = () => {
+                            lastToast.remove();
+                            resolve(false);
+                        };
+                        
+                        buttonContainer.appendChild(deleteBtn);
+                        buttonContainer.appendChild(cancelBtn);
+                        lastToast.appendChild(buttonContainer);
+                        
+                        // Auto-cancel after 5 seconds
+                        setTimeout(() => {
+                            if (lastToast.parentNode) {
+                                lastToast.remove();
+                                resolve(false);
+                            }
+                        }, 5000);
+                    }
+                }
+            });
+        };
+        
+        const shouldDelete = await confirmDelete();
+        if (!shouldDelete) return;
 
         try {
             const token = localStorage.getItem('employerToken');
@@ -1707,6 +1838,10 @@ function EmpCompanyProfilePage() {
                                             </p>
                                             <p className="text-muted small">
                                                 Upload up to {10 - (formData.gallery?.length || 0)} more images (JPG, PNG, SVG). Max 2MB per image.
+                                            </p>
+                                            <p className="text-info small">
+                                                <i className></i>
+                                                <strong>Tip:</strong> When uploading many files, they will be processed in batches of 5 for better reliability.
                                             </p>
                                             {formData.gallery?.length >= 10 && (
                                                 <p className="text-warning small">

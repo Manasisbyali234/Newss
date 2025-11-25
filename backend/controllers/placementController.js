@@ -181,6 +181,46 @@ exports.uploadStudentData = async (req, res) => {
     
     console.log(`File validation passed: ${validation.rowCount} rows found`);
 
+    // Check for duplicate emails in the uploaded file
+    const XLSX = require('xlsx');
+    let workbook;
+    if (req.file.mimetype.includes('csv')) {
+      const csvData = req.file.buffer.toString('utf8');
+      workbook = XLSX.read(csvData, { type: 'string' });
+    } else {
+      workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
+    }
+    
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+    
+    // Extract emails and check for duplicates
+    const emails = [];
+    const duplicateEmails = [];
+    
+    jsonData.forEach((row, index) => {
+      const email = (row.Email || row.email || row.EMAIL || '').toString().trim().toLowerCase();
+      if (email) {
+        if (emails.includes(email)) {
+          if (!duplicateEmails.includes(email)) {
+            duplicateEmails.push(email);
+          }
+        } else {
+          emails.push(email);
+        }
+      }
+    });
+    
+    // If duplicates found, return error with specific message
+    if (duplicateEmails.length > 0) {
+      return res.status(400).json({ 
+        success: false, 
+        message: `Duplicate emails found in your file: ${duplicateEmails.join(', ')}. Please fix the duplicates and upload again.`,
+        duplicateEmails: duplicateEmails
+      });
+    }
+
     const { fileToBase64 } = require('../middlewares/upload');
     const studentData = fileToBase64(req.file);
     
@@ -829,6 +869,30 @@ exports.processFileApproval = async (req, res) => {
     const errors = [];
     const createdCandidates = [];
     
+    // Check for duplicate emails within the file before processing
+    const emailsInFile = [];
+    const duplicatesInFile = [];
+    
+    jsonData.forEach((row, index) => {
+      const email = (row.Email || row.email || row.EMAIL || '').toString().trim().toLowerCase();
+      if (email) {
+        if (emailsInFile.includes(email)) {
+          if (!duplicatesInFile.includes(email)) {
+            duplicatesInFile.push(email);
+          }
+        } else {
+          emailsInFile.push(email);
+        }
+      }
+    });
+    
+    if (duplicatesInFile.length > 0) {
+      return res.status(400).json({ 
+        success: false, 
+        message: `Cannot process file: Duplicate emails found within the file: ${duplicatesInFile.join(', ')}. Please fix the duplicates and re-upload the file.`
+      });
+    }
+
     // Process each row from Excel
     for (let index = 0; index < jsonData.length; index++) {
       try {
@@ -1279,30 +1343,82 @@ exports.updateProfile = async (req, res) => {
     const placementId = req.user.id;
     const { name, firstName, lastName, phone, collegeName } = req.body;
     
+    console.log('=== PROFILE UPDATE REQUEST ===');
+    console.log('Placement ID:', placementId);
+    console.log('Request body:', { name, firstName, lastName, phone, collegeName });
+    console.log('User object:', req.user);
+    
+    // Validate required fields
+    if (!firstName || !lastName || !phone || !collegeName) {
+      console.log('Validation failed: Missing required fields');
+      return res.status(400).json({ 
+        success: false, 
+        message: 'First name, last name, phone, and college name are required' 
+      });
+    }
+    
     const updateData = {};
-    if (name) updateData.name = name.trim();
-    if (firstName) updateData.firstName = firstName.trim();
-    if (lastName) updateData.lastName = lastName.trim();
+    
+    // Handle name field - construct from firstName and lastName if provided
+    if (firstName && lastName) {
+      updateData.name = `${firstName.trim()} ${lastName.trim()}`;
+      updateData.firstName = firstName.trim();
+      updateData.lastName = lastName.trim();
+    } else if (name) {
+      updateData.name = name.trim();
+    }
+    
     if (phone) updateData.phone = phone.trim();
     if (collegeName) updateData.collegeName = collegeName.trim();
+    
+    console.log('Constructed update data:', updateData);
+    
+    // Check if placement exists first
+    const existingPlacement = await Placement.findById(placementId);
+    if (!existingPlacement) {
+      console.log('Placement not found:', placementId);
+      return res.status(404).json({ success: false, message: 'Placement officer not found' });
+    }
+    
+    console.log('Found existing placement:', existingPlacement.name);
     
     const placement = await Placement.findByIdAndUpdate(
       placementId,
       { $set: updateData },
-      { new: true }
+      { new: true, runValidators: true }
     ).select('-password');
     
-    if (!placement) {
-      return res.status(404).json({ success: false, message: 'Placement officer not found' });
-    }
+    console.log('Profile updated successfully:', {
+      id: placement._id,
+      name: placement.name,
+      firstName: placement.firstName,
+      lastName: placement.lastName,
+      phone: placement.phone,
+      collegeName: placement.collegeName
+    });
     
     res.json({ 
       success: true, 
       message: 'Profile updated successfully',
-      placement
+      placement: {
+        _id: placement._id,
+        name: placement.name,
+        firstName: placement.firstName,
+        lastName: placement.lastName,
+        email: placement.email,
+        phone: placement.phone,
+        collegeName: placement.collegeName,
+        status: placement.status,
+        logo: placement.logo,
+        idCard: placement.idCard,
+        fileHistory: placement.fileHistory,
+        credits: placement.credits
+      }
     });
   } catch (error) {
-    console.error('Error updating profile:', error);
+    console.error('=== PROFILE UPDATE ERROR ===');
+    console.error('Error details:', error);
+    console.error('Stack trace:', error.stack);
     res.status(500).json({ success: false, message: error.message });
   }
 };

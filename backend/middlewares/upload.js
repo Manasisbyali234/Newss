@@ -67,15 +67,21 @@ const upload = multer({
 const uploadGallery = multer({
   storage,
   fileFilter: (req, file, cb) => {
-    if (file.fieldname === 'gallery' && file.mimetype.startsWith('image/')) {
-      cb(null, true);
+    if (file.fieldname === 'gallery') {
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml'];
+      if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
+      } else {
+        cb(new Error(`Invalid file type: ${file.originalname}. Only JPG, PNG, and SVG files are allowed for gallery.`), false);
+      }
     } else {
-      cb(new Error('Only image files allowed'), false);
+      cb(new Error('Invalid field name for gallery upload'), false);
     }
   },
   limits: { 
-    fileSize: 2 * 1024 * 1024,
-    files: 10
+    fileSize: 2 * 1024 * 1024, // 2MB per file
+    files: 5, // Reduced to 5 files per batch to avoid memory issues
+    fieldSize: 10 * 1024 * 1024 // 10MB total field size
   }
 });
 
@@ -165,6 +171,31 @@ const validateExcelContent = (buffer, mimetype) => {
     
     if (!hasValidData) {
       return { valid: false, message: 'Your file only contains headers. Please add student data rows' };
+    }
+    
+    // Check for duplicate emails within the file
+    const emails = [];
+    const duplicateEmails = [];
+    
+    jsonData.forEach((row, index) => {
+      const email = (row.Email || row.email || row.EMAIL || '').toString().trim().toLowerCase();
+      if (email) {
+        if (emails.includes(email)) {
+          if (!duplicateEmails.includes(email)) {
+            duplicateEmails.push(email);
+          }
+        } else {
+          emails.push(email);
+        }
+      }
+    });
+    
+    if (duplicateEmails.length > 0) {
+      return { 
+        valid: false, 
+        message: `Duplicate emails found in your file: ${duplicateEmails.join(', ')}. Please fix the duplicates and upload again.`,
+        duplicateEmails: duplicateEmails
+      };
     }
     
     return { valid: true, rowCount: jsonData.length };

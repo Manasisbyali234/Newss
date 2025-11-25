@@ -285,9 +285,21 @@ export const api = {
   },
 
   getPlacementProfile: () => {
+    console.log('API: Getting placement profile');
+    const headers = getAuthHeaders('placement');
+    console.log('API: Request headers for profile fetch:', headers);
+    
     return fetch(`${API_BASE_URL}/placement/profile`, {
-      headers: getAuthHeaders('placement'),
-    }).then(handleApiResponse);
+      headers: headers,
+    }).then(async (response) => {
+      console.log('API: Profile fetch response status:', response.status);
+      const result = await handleApiResponse(response);
+      console.log('API: Profile fetch result:', result);
+      return result;
+    }).catch(error => {
+      console.error('API: Profile fetch error:', error);
+      throw error;
+    });
   },
 
   getPlacementDashboard: () => {
@@ -460,11 +472,37 @@ export const api = {
   },
 
   updatePlacementProfile: (data) => {
+    console.log('API: Updating placement profile with data:', data);
+    const headers = getAuthHeaders('placement');
+    console.log('API: Request headers:', headers);
+    console.log('API: Request URL:', `${API_BASE_URL}/placement/profile`);
+    
     return fetch(`${API_BASE_URL}/placement/profile`, {
       method: 'PUT',
-      headers: getAuthHeaders('placement'),
+      headers: headers,
       body: JSON.stringify(data),
-    }).then(handleApiResponse);
+    }).then(async (response) => {
+      console.log('API: Profile update response status:', response.status);
+      console.log('API: Response headers:', Object.fromEntries(response.headers.entries()));
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('API: Error response body:', errorText);
+        try {
+          const errorJson = JSON.parse(errorText);
+          throw new Error(errorJson.message || `HTTP ${response.status}`);
+        } catch (parseError) {
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+      }
+      
+      const result = await response.json();
+      console.log('API: Profile update result:', result);
+      return result;
+    }).catch(error => {
+      console.error('API: Profile update fetch error:', error);
+      throw error;
+    });
   },
 
   // Assessment APIs

@@ -51,17 +51,40 @@ router.get('/profile', auth(['placement']), async (req, res) => {
   try {
     const Placement = require('../models/Placement');
     const placementId = req.user._id || req.user.id;
+    
+    console.log('=== GET PROFILE REQUEST ===');
+    console.log('Placement ID:', placementId);
+    console.log('User object:', req.user);
+    
     const placement = await Placement.findById(placementId)
       .select('name firstName lastName email phone collegeName status logo idCard fileHistory credits')
       .lean();
     
     if (!placement) {
+      console.log('Placement not found:', placementId);
       return res.status(404).json({ success: false, message: 'Placement officer not found' });
+    }
+    
+    // Ensure firstName and lastName are populated from name if they don't exist
+    if (placement.name && (!placement.firstName || !placement.lastName)) {
+      const nameParts = placement.name.split(' ');
+      if (nameParts.length >= 2) {
+        placement.firstName = placement.firstName || nameParts[0];
+        placement.lastName = placement.lastName || nameParts.slice(1).join(' ');
+      } else {
+        placement.firstName = placement.firstName || placement.name;
+        placement.lastName = placement.lastName || '';
+      }
     }
     
     console.log('Placement profile data:', {
       id: placement._id,
       name: placement.name,
+      firstName: placement.firstName,
+      lastName: placement.lastName,
+      email: placement.email,
+      phone: placement.phone,
+      collegeName: placement.collegeName,
       hasLogo: !!placement.logo,
       hasIdCard: !!placement.idCard,
       fileHistoryCount: placement.fileHistory?.length || 0
@@ -69,7 +92,8 @@ router.get('/profile', auth(['placement']), async (req, res) => {
     
     res.json({ success: true, placement });
   } catch (error) {
-    console.error('Error getting placement profile:', error);
+    console.error('=== GET PROFILE ERROR ===');
+    console.error('Error details:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 });
@@ -114,7 +138,7 @@ router.put('/profile', auth(['placement']), [
   body('firstName').optional().notEmpty().withMessage('First name cannot be empty'),
   body('lastName').optional().notEmpty().withMessage('Last name cannot be empty'),
   body('collegeName').optional().notEmpty().withMessage('College name cannot be empty'),
-  ...phoneValidationRules()
+  body('phone').optional().isLength({ min: 10, max: 15 }).withMessage('Phone number must be between 10-15 digits')
 ], handleValidationErrors, placementController.updateProfile);
 
 module.exports = router;

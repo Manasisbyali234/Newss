@@ -5,6 +5,7 @@ import JobZImage from "../../../../common/jobz-img";
 import ApplyJobPopup from "../../../../common/popups/popup-apply-job";
 import SectionShareProfile from "../../sections/common/section-share-profile";
 import SectionJobsSidebar2 from "../../sections/jobs/sidebar/section-jobs-sidebar2";
+import showToast from "../../../../../utils/toastNotification";
 import "./job-detail.css";
 import "../../../../../job-detail-spacing.css";
 
@@ -141,10 +142,10 @@ function JobDetail1Page() {
     const handleApplyClick = async () => {
         if (isEnded) return;
         if (!isLoggedIn) {
-            alert('Please login first to apply for jobs!');
+            showToast('Please login first to apply for jobs!', 'warning');
             return;
         } else if (hasApplied) {
-            alert('You have already applied for this job!');
+            showToast('You have already applied for this job!', 'info');
         } else {
             try {
                 const token = localStorage.getItem('candidateToken');
@@ -157,7 +158,7 @@ function JobDetail1Page() {
                 if (statsData.success && statsData.candidate.registrationMethod === 'placement') {
                     const credits = statsData.candidate.credits || 0;
                     if (credits <= 0) {
-                        alert('You have insufficient credits to apply for jobs. Please contact your placement coordinator to get more credits.');
+                        showToast('You have insufficient credits to apply for jobs. Please contact your placement coordinator to get more credits.', 'error');
                         return;
                     }
                     
@@ -173,7 +174,7 @@ function JobDetail1Page() {
                 const profileData = await profileResponse.json();
                 
                 if (!profileData.success || !profileData.profile?.resume) {
-                    alert('Please upload your resume first before applying for jobs. Go to My Resume section to upload.');
+                    showToast('Please upload your resume first before applying for jobs. Go to My Resume section to upload.', 'warning');
                     navigate('/candidate/my-resume');
                     return;
                 }
@@ -189,13 +190,13 @@ function JobDetail1Page() {
                 const data = await response.json();
                 if (data.success) {
                     setHasApplied(true);
-                    alert('Application submitted successfully!');
+                    showToast('Application submitted successfully!', 'success');
                 } else {
-                    alert(data.message || 'Failed to submit application');
+                    showToast(data.message || 'Failed to submit application', 'error');
                 }
             } catch (error) {
                 console.error('Error applying for job:', error);
-                alert('Failed to submit application');
+                showToast('Failed to submit application', 'error');
             }
         }
     };

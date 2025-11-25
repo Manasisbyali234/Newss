@@ -26,10 +26,10 @@ function SectionCanAttachment({ profile }) {
 
         const file = e.target.files[0];
         if (file) {
-            // Check file size (5MB limit to match backend)
-            const maxSize = 5 * 1024 * 1024; // 5MB
+            // Check file size (15MB limit to match backend)
+            const maxSize = 15 * 1024 * 1024; // 15MB
             if (file.size > maxSize) {
-                showToast('File size must be less than 5MB. Please choose a smaller file.', 'error', 4000);
+                showToast('File size must be less than 15MB. Please choose a smaller file.', 'error', 4000);
                 e.target.value = ''; // Clear the input
                 return;
             }
@@ -80,16 +80,91 @@ function SectionCanAttachment({ profile }) {
         }
     };
 
-    const handleDelete = async () => {
-        if (!resumeFile) {
-            showToast('No resume to delete', 'warning', 4000);
-            return;
+    const showConfirmationToast = () => {
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            container.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                max-width: 400px;
+                pointer-events: none;
+            `;
+            document.body.appendChild(container);
         }
 
-        if (!window.confirm('Are you sure you want to delete your current resume? This action cannot be undone.')) {
-            return;
-        }
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            background-color: white;
+            color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 1px solid #ddd;
+            font-size: 14px;
+            font-weight: 500;
+            animation: slideIn 0.3s ease-out;
+            pointer-events: auto;
+        `;
 
+        toast.innerHTML = `
+            <div style="margin-bottom: 15px; font-weight: 600;">Are you sure you want to delete your resume?</div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button id="confirm-yes" style="
+                    background: #dc3545;
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 13px;
+                ">Yes</button>
+                <button id="confirm-no" style="
+                    background: #6c757d;
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 13px;
+                ">No</button>
+            </div>
+        `;
+
+        container.appendChild(toast);
+
+        const yesBtn = toast.querySelector('#confirm-yes');
+        const noBtn = toast.querySelector('#confirm-no');
+
+        const removeToast = () => {
+            toast.style.animation = 'slideOut 0.3s ease-out forwards';
+            setTimeout(() => {
+                toast.remove();
+                if (container.children.length === 0) {
+                    container.remove();
+                }
+            }, 300);
+        };
+
+        yesBtn.onclick = () => {
+            removeToast();
+            performDelete();
+        };
+
+        noBtn.onclick = () => {
+            removeToast();
+        };
+
+        setTimeout(removeToast, 10000);
+    };
+
+    const performDelete = async () => {
         setDeleting(true);
         try {
             const response = await api.deleteResume();
@@ -97,7 +172,6 @@ function SectionCanAttachment({ profile }) {
                 showToast('Resume deleted successfully!', 'success', 4000);
                 setResumeFile(null);
                 setSelectedFile(null);
-                // Clear the file input
                 const fileInput = document.querySelector('input[type="file"]');
                 if (fileInput) fileInput.value = '';
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
@@ -114,6 +188,14 @@ function SectionCanAttachment({ profile }) {
         } finally {
             setDeleting(false);
         }
+    };
+
+    const handleDelete = () => {
+        if (!resumeFile) {
+            showToast('No resume to delete', 'warning', 4000);
+            return;
+        }
+        showConfirmationToast();
     };
 
     return (
@@ -188,11 +270,11 @@ function SectionCanAttachment({ profile }) {
                         <div className="text-muted small">
                             <p className="mb-1">
                                 <i className="fa fa-info-circle me-1"></i>
-                                Upload Resume File size max 5 MB (PDF, DOC, DOCX only)
+                                Upload Resume File size max 15 MB (PDF, DOC, DOCX only)
                             </p>
                             {resumeFile && (
                                 <p className="mb-0 text-warning">
-                                    <i className="fa fa-exclamation-triangle me-1"></i>
+                                    <i className></i>
                                     To update your resume, first delete the current one, then upload a new file.
                                 </p>
                             )}
