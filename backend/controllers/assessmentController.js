@@ -302,7 +302,11 @@ exports.startAssessment = async (req, res) => {
     });
     
     if (attempt && attempt.status === 'completed') {
-      return res.status(400).json({ success: false, message: 'Assessment already completed' });
+      return res.status(400).json({ success: false, message: 'Assessment already completed. You cannot retake this assessment.' });
+    }
+    
+    if (attempt && attempt.status === 'expired') {
+      return res.status(400).json({ success: false, message: 'Assessment time expired. You cannot retake this assessment.' });
     }
     
     const assessment = await Assessment.findById(assessmentId);
@@ -529,10 +533,15 @@ exports.submitAssessment = async (req, res) => {
     const percentage = (score / attempt.totalMarks) * 100;
     const result = percentage >= assessment.passingPercentage ? 'pass' : 'fail';
     
+    // Check if time expired
+    const timeElapsed = (new Date() - new Date(attempt.startTime)) / 1000; // in seconds
+    const timeLimit = assessment.timer * 60; // in seconds
+    const isExpired = timeElapsed > timeLimit;
+    
     attempt.score = score;
     attempt.percentage = percentage;
     attempt.result = result;
-    attempt.status = 'completed';
+    attempt.status = isExpired ? 'expired' : 'completed';
     attempt.endTime = new Date();
     
     if (violations && violations.length > 0) {

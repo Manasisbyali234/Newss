@@ -410,8 +410,8 @@ function Home1Page() {
                         <div className="col-lg-8 col-md-12">
                             <div className="twm-w-process-steps-2-wrap">
                                 <div className="row">
-                                    <div className="col-xl-6 col-lg-6 col-md-6">
-                                        <div className="twm-w-process-steps-2">
+                                    <div className="col-xl-6 col-lg-6 col-md-6" style={{paddingLeft: '8px', paddingRight: '8px'}}>
+                                        <div className="twm-w-process-steps-2" style={{minHeight: '280px', padding: '25px 20px'}}>
                                             <div className="twm-w-pro-top bg-clr-sky-light bg-sky-light-shadow">
                                                 <span className="twm-large-number text-clr-sky">01</span>
                                                 <div className="twm-media">
@@ -422,8 +422,8 @@ function Home1Page() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-xl-6 col-lg-6 col-md-6">
-                                        <div className="twm-w-process-steps-2">
+                                    <div className="col-xl-6 col-lg-6 col-md-6" style={{paddingLeft: '8px', paddingRight: '8px'}}>
+                                        <div className="twm-w-process-steps-2" style={{minHeight: '280px', padding: '25px 20px'}}>
                                             <div className="twm-w-pro-top bg-clr-yellow-light bg-yellow-light-shadow">
                                                 <span className="twm-large-number text-clr-yellow">02</span>
                                                 <div className="twm-media">
@@ -435,8 +435,8 @@ function Home1Page() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-xl-6 col-lg-6 col-md-6">
-                                        <div className="twm-w-process-steps-2">
+                                    <div className="col-xl-6 col-lg-6 col-md-6" style={{paddingLeft: '8px', paddingRight: '8px'}}>
+                                        <div className="twm-w-process-steps-2" style={{minHeight: '280px', padding: '25px 20px'}}>
                                             <div className="twm-w-pro-top bg-clr-pink-light bg-pink-light-shadow">
                                                 <span className="twm-large-number text-clr-pink">03</span>
                                                 <div className="twm-media">
@@ -447,8 +447,8 @@ function Home1Page() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-xl-6 col-lg-6 col-md-6">
-                                        <div className="twm-w-process-steps-2">
+                                    <div className="col-xl-6 col-lg-6 col-md-6" style={{paddingLeft: '8px', paddingRight: '8px'}}>
+                                        <div className="twm-w-process-steps-2" style={{minHeight: '280px', padding: '25px 20px'}}>
                                             <div className="twm-w-pro-top bg-clr-green-light bg-clr-light-shadow">
                                                 <span className="twm-large-number text-clr-green">04</span>
                                                 <div className="twm-media">

@@ -2,7 +2,6 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { canRoute, candidate, empRoute, employer, placementRoute, placement, pubRoute, publicUser } from "../../../globals/route-names";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
-import { disableBodyScroll, enableBodyScroll } from "../../../utils/scrollUtils";
 
 function SignInPopup() {
 
@@ -36,11 +35,6 @@ function SignInPopup() {
         const handleModalShow = () => {
             setError('');
             setSuccess('');
-            disableBodyScroll();
-        };
-
-        const handleModalHide = () => {
-            enableBodyScroll();
         };
 
         // Clear messages when tabs change
@@ -51,7 +45,6 @@ function SignInPopup() {
 
         if (modal) {
             modal.addEventListener('show.bs.modal', handleModalShow);
-            modal.addEventListener('hide.bs.modal', handleModalHide);
             
             // Add event listeners for tab changes
             const tabButtons = modal.querySelectorAll('[data-bs-toggle="tab"]');
@@ -61,7 +54,6 @@ function SignInPopup() {
 
             return () => {
                 modal.removeEventListener('show.bs.modal', handleModalShow);
-                modal.removeEventListener('hide.bs.modal', handleModalHide);
                 tabButtons.forEach(button => {
                     button.removeEventListener('click', handleTabChange);
                 });
@@ -111,7 +103,6 @@ function SignInPopup() {
         const modal = document.getElementById('sign_up_popup2');
         const bootstrapModal = window.bootstrap?.Modal?.getInstance(modal);
         bootstrapModal?.hide();
-        enableBodyScroll();
         navigate(canRoute(candidate.DASHBOARD));
     }
 
@@ -119,7 +110,6 @@ function SignInPopup() {
         const modal = document.getElementById('sign_up_popup2');
         const bootstrapModal = window.bootstrap?.Modal?.getInstance(modal);
         bootstrapModal?.hide();
-        enableBodyScroll();
         navigate(empRoute(employer.DASHBOARD));
     }
 
@@ -146,7 +136,6 @@ function SignInPopup() {
         const modal = document.getElementById('sign_up_popup2');
         const bootstrapModal = window.bootstrap?.Modal?.getInstance(modal);
         bootstrapModal?.hide();
-        enableBodyScroll();
         navigate(placementRoute(placement.DASHBOARD));
     }
 
@@ -154,7 +143,6 @@ function SignInPopup() {
         const modal = document.getElementById('sign_up_popup2');
         const bootstrapModal = window.bootstrap?.Modal?.getInstance(modal);
         bootstrapModal?.hide();
-        enableBodyScroll();
         navigate(pubRoute(publicUser.pages.FORGOT));
     }
 
@@ -197,7 +185,7 @@ function SignInPopup() {
 					aria-labelledby="sign_up_popupLabel2"
 					tabIndex={-1}
 				>
-					<div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+					<div className="modal-dialog modal-dialog-centered">
 						<div className="modal-content">
 							{/* <form> */}
 							<div className="modal-header">
@@ -213,7 +201,7 @@ function SignInPopup() {
 								/>
 							</div>
 
-							<div className="modal-body" style={{maxHeight: 'calc(100vh - 200px)', overflowY: 'auto'}}>
+							<div className="modal-body" style={{paddingTop: '10px', paddingBottom: '10px'}}>
 								<div className="twm-tabs-style-2">
 									<ul className="nav nav-tabs mt-n2" id="myTab2" role="tablist">
 										{/*Login Candidate*/}

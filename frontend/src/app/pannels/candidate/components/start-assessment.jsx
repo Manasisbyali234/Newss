@@ -57,7 +57,11 @@ const StartAssessment = () => {
 			}
 		} catch (error) {
 			console.error('Error starting assessment:', error);
-			alert('Failed to start assessment');
+			const errorMessage = error.response?.data?.message || 'Failed to start assessment';
+			alert(errorMessage);
+			if (errorMessage.includes('already completed') || errorMessage.includes('time expired')) {
+				navigate('/candidate/dashboard');
+			}
 		}
 	};
 

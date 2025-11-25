@@ -51,6 +51,7 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
     const timer = setInterval(() => {
       setTimeRemaining(prev => {
         if (prev <= 1) {
+          alert('⏰ Scheduled Time Expired! Your assessment has been submitted automatically.');
           handleSubmit();
           return 0;
         }
@@ -119,8 +120,8 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
       return;
     }
     
-    if (question.type === 'subjective' && !textAnswer.trim()) {
-      alert('Please provide a written answer');
+    if (question.type === 'subjective' && !textAnswer.trim() && !uploadedFile) {
+      alert('Please provide a written answer or upload a file');
       return;
     }
     
@@ -156,6 +157,32 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
   };
 
   const handleSubmit = async () => {
+    const question = assessment.questions[currentQuestion];
+    
+    // Submit current answer if provided
+    if ((question.type === 'mcq' && selectedAnswer !== null) ||
+        (question.type === 'subjective' && textAnswer.trim()) ||
+        (question.type === 'upload' && uploadedFile)) {
+      try {
+        const token = localStorage.getItem('candidateToken');
+        
+        if (question.type !== 'upload') {
+          await axios.post('/api/candidate/assessments/answer', {
+            attemptId,
+            questionIndex: currentQuestion,
+            selectedAnswer: question.type === 'mcq' ? selectedAnswer : null,
+            textAnswer: question.type === 'subjective' ? textAnswer : null,
+            timeSpent: Date.now() - startTime
+          }, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+        }
+      } catch (error) {
+        console.error('Error submitting final answer:', error);
+      }
+    }
+    
+    // Submit assessment
     try {
       const token = localStorage.getItem('candidateToken');
       const response = await axios.post('/api/candidate/assessments/submit', {
@@ -228,7 +255,42 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
                 value={textAnswer}
                 onChange={(e) => setTextAnswer(e.target.value)}
               />
-              <small className="text-muted">Provide a detailed written answer to the question above.</small>
+              <small className="text-muted d-block mb-3">Provide a detailed written answer to the question above.</small>
+              
+              <div className="border rounded p-3 bg-light">
+                <label className="form-label fw-semibold">📎 Optional: Upload supporting files (diagrams, images, etc.)</label>
+                {!uploadedFile ? (
+                  <>
+                    <input
+                      type="file"
+                      className="form-control"
+                      accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                      onChange={(e) => handleFileUpload(e.target.files[0])}
+                      disabled={uploading}
+                    />
+                    <small className="text-muted d-block mt-2">
+                      Accepted: PDF, DOC, DOCX, JPG, PNG (Max: 10MB)
+                    </small>
+                    {uploading && (
+                      <div className="mt-2">
+                        <div className="spinner-border spinner-border-sm me-2" role="status"></div>
+                        Uploading...
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="alert alert-success mb-0">
+                    <i className="fa fa-check-circle me-2"></i>
+                    File uploaded: {uploadedFile.originalName}
+                    <button 
+                      className="btn btn-sm btn-outline-danger ms-2"
+                      onClick={() => setUploadedFile(null)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
           
@@ -267,19 +329,30 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
           )}
         </div>
         <div className="card-footer text-end">
-          <button 
-            className="btn btn-primary"
-            onClick={currentQuestion === assessment.questions.length - 1 ? handleSubmit : handleNext}
-            disabled={
-              (question.type === 'mcq' && selectedAnswer === null) ||
-              (question.type === 'subjective' && !textAnswer.trim()) ||
-              (question.type === 'upload' && !uploadedFile) ||
-              uploading
-            }
-          >
-            {currentQuestion === assessment.questions.length - 1 ? 'Submit Assessment' : 'Next Question'}
-            <i className="fa fa-arrow-right ms-2"></i>
-          </button>
+          {currentQuestion === assessment.questions.length - 1 ? (
+            <button 
+              className="btn btn-success"
+              onClick={handleSubmit}
+              disabled={uploading}
+            >
+              Submit Assessment
+              <i className="fa fa-check ms-2"></i>
+            </button>
+          ) : (
+            <button 
+              className="btn btn-primary"
+              onClick={handleNext}
+              disabled={
+                (question.type === 'mcq' && selectedAnswer === null) ||
+                (question.type === 'subjective' && !textAnswer.trim() && !uploadedFile) ||
+                (question.type === 'upload' && !uploadedFile) ||
+                uploading
+              }
+            >
+              Next Question
+              <i className="fa fa-arrow-right ms-2"></i>
+            </button>
+          )}
         </div>
       </div>
     </div>
