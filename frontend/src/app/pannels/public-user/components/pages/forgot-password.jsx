@@ -15,6 +15,24 @@ function ForgotPassword() {
     number: false,
     specialChars: false
   });
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [canResend, setCanResend] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const startResendCooldown = () => {
+    setCanResend(false);
+    setResendCooldown(60);
+    const timer = setInterval(() => {
+      setResendCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setCanResend(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
 
   const handleSendOTP = async (e) => {
     e.preventDefault();
@@ -47,6 +65,7 @@ function ForgotPassword() {
         if (response.ok && result.success) {
           setSuccess(`OTP sent to ${email} successfully!`);
           setOtpSent(true);
+          startResendCooldown();
           otpSentSuccess = true;
           break;
         }
@@ -57,6 +76,45 @@ function ForgotPassword() {
       }
     } catch (error) {
       setError('Unable to send OTP. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendOTP = async () => {
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const endpoints = [
+        'http://localhost:5000/api/candidate/password/send-otp',
+        'http://localhost:5000/api/employer/password/send-otp',
+        'http://localhost:5000/api/placement/password/send-otp'
+      ];
+      
+      let otpSentSuccess = false;
+      for (const endpoint of endpoints) {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+          setSuccess(`OTP resent to ${email} successfully!`);
+          startResendCooldown();
+          otpSentSuccess = true;
+          break;
+        }
+      }
+      
+      if (!otpSentSuccess) {
+        setError('Failed to resend OTP. Please try again.');
+      }
+    } catch (error) {
+      setError('Unable to resend OTP. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -159,25 +217,44 @@ function ForgotPassword() {
           </div>
           <div className="mb-3">
             <label className="form-label">New Password</label>
-            <input
-              type="password"
-              className="form-control"
-              placeholder="Enter new password"
-              value={newPassword}
-              onChange={(e) => {
-                const pwd = e.target.value;
-                setNewPassword(pwd);
-                const specialChars = pwd.match(/[@#!%$*?]/g) || [];
-                setPasswordValidation({
-                  length: pwd.length >= 10 && pwd.length <= 25,
-                  uppercase: /[A-Z]/.test(pwd),
-                  lowercase: /[a-z]/.test(pwd),
-                  number: /[0-9]/.test(pwd),
-                  specialChars: specialChars.length >= 3
-                });
-              }}
-              required
-            />
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                className="form-control"
+                placeholder="Enter new password"
+                value={newPassword}
+                onChange={(e) => {
+                  const pwd = e.target.value;
+                  setNewPassword(pwd);
+                  const specialChars = pwd.match(/[@#!%$*?]/g) || [];
+                  setPasswordValidation({
+                    length: pwd.length >= 10 && pwd.length <= 25,
+                    uppercase: /[A-Z]/.test(pwd),
+                    lowercase: /[a-z]/.test(pwd),
+                    number: /[0-9]/.test(pwd),
+                    specialChars: specialChars.length >= 3
+                  });
+                }}
+                required
+                style={{ paddingRight: '40px' }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  border: 'none',
+                  background: 'none',
+                  cursor: 'pointer',
+                  color: '#6c757d'
+                }}
+              >
+                <i className={`fa ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+              </button>
+            </div>
             {newPassword && (
               <div style={{ marginTop: '10px', padding: '15px', background: '#f8f9fa', borderRadius: '8px', border: '1px solid #dee2e6' }}>
                 <h6 style={{ marginBottom: '12px', fontSize: '14px', fontWeight: '600', color: '#495057' }}>Password Requirements:</h6>
@@ -217,6 +294,22 @@ function ForgotPassword() {
           }}>
             {loading ? 'Resetting Password...' : 'Reset Password'}
           </button>
+          <div className="mt-3 text-center">
+            <p className="mb-2 text-muted">Didn't receive the OTP?</p>
+            <button 
+              type="button" 
+              className="btn btn-link p-0" 
+              onClick={handleResendOTP}
+              disabled={!canResend || loading}
+              style={{ 
+                color: canResend ? '#FF7A00' : '#6c757d',
+                textDecoration: 'none',
+                fontWeight: '500'
+              }}
+            >
+              {resendCooldown > 0 ? `Resend OTP in ${resendCooldown}s` : 'Resend OTP'}
+            </button>
+          </div>
         </form>
       )}
     </div>

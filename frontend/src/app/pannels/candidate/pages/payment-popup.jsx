@@ -1,7 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./payment-popup.css";
+import { disableBodyScroll, enableBodyScroll } from "../../../../utils/scrollUtils";
 
 export default function PaymentPopup({ isOpen, onClose, onPay }) {
+	useEffect(() => {
+		if (isOpen) {
+			disableBodyScroll();
+		} else {
+			enableBodyScroll();
+		}
+		return () => enableBodyScroll();
+	}, [isOpen]);
+
 	if (!isOpen) return null;
 
 	return (
@@ -44,10 +54,10 @@ export default function PaymentPopup({ isOpen, onClose, onPay }) {
 
 				{/* Action Buttons */}
 				<div className="action-row">
-					<button onClick={onClose} className="cancel-btn">
+					<button onClick={() => { enableBodyScroll(); onClose(); }} className="cancel-btn">
 						Cancel
 					</button>
-					<button onClick={onPay} className="pay-btn">
+					<button onClick={() => { enableBodyScroll(); onPay(); }} className="pay-btn">
 						Pay ₹299
 					</button>
 				</div>

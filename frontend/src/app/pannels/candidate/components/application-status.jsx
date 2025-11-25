@@ -468,7 +468,7 @@ function CanStatusPage() {
 							})}
 							title="View Assessment Results"
 						>
-							<i className="fa fa-trophy" style={{color: 'white', width: '14px'}}></i>
+							<i className="fa fa-trophy" style={{color: '#ff6b35', width: '14px'}}></i>
 							<span>Results</span>
 						</button>
 						{dateDisplay && (

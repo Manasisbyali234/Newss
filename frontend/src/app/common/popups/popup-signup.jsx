@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { pubRoute, publicUser } from '../../../globals/route-names';
 import { validatePhoneNumber, handlePhoneInputChange, validatePhoneOnBlur } from '../../../utils/phoneValidation';
+import { disableBodyScroll, enableBodyScroll } from '../../../utils/scrollUtils';
 
 function SignUpPopup() {
     const [candidateData, setCandidateData] = useState({
@@ -45,6 +46,11 @@ function SignUpPopup() {
             setError('');
             setSuccess('');
             setFieldErrors({});
+            disableBodyScroll();
+        };
+
+        const handleModalHide = () => {
+            enableBodyScroll();
         };
 
         // Clear messages when tabs change
@@ -56,6 +62,7 @@ function SignUpPopup() {
 
         if (modal) {
             modal.addEventListener('show.bs.modal', handleModalShow);
+            modal.addEventListener('hide.bs.modal', handleModalHide);
             
             // Add event listeners for tab changes
             const tabButtons = modal.querySelectorAll('[data-bs-toggle="tab"]');
@@ -65,6 +72,7 @@ function SignUpPopup() {
 
             return () => {
                 modal.removeEventListener('show.bs.modal', handleModalShow);
+                modal.removeEventListener('hide.bs.modal', handleModalHide);
                 tabButtons.forEach(button => {
                     button.removeEventListener('click', handleTabChange);
                 });
@@ -402,7 +410,7 @@ function SignUpPopup() {
 					aria-labelledby="sign_up_popupLabel"
 					tabIndex={-1}
 				>
-					<div className="modal-dialog modal-dialog-centered">
+					<div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 						<div className="modal-content">
 							<div className="modal-header">
 								<h2 className="modal-title" id="sign_up_popupLabel">
@@ -419,7 +427,7 @@ function SignUpPopup() {
 								/>
 							</div>
 
-							<div className="modal-body" style={{paddingTop: '10px', paddingBottom: '10px'}}>
+							<div className="modal-body" style={{maxHeight: 'calc(100vh - 200px)', overflowY: 'auto'}}>
 								<div className="twm-tabs-style-2">
 									<ul className="nav nav-tabs" id="myTab" role="tablist">
 										<li className="nav-item" role="presentation">

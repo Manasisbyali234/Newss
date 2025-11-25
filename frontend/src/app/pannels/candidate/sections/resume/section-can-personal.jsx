@@ -91,10 +91,22 @@ function SectionCanPersonalDetail({ profile }) {
         
         switch (field) {
             case 'location':
+                if (!value || !value.trim()) {
+                    newErrors[field] = 'Location is required';
+                } else {
+                    delete newErrors[field];
+                }
+                break;
             case 'pincode':
+                if (!value || !value.trim()) {
+                    newErrors[field] = 'Pincode is required';
+                } else {
+                    delete newErrors[field];
+                }
+                break;
             case 'gender':
                 if (!value || !value.trim()) {
-                    newErrors[field] = 'This field is required';
+                    newErrors[field] = 'Gender is required';
                 } else {
                     delete newErrors[field];
                 }
@@ -130,9 +142,19 @@ function SectionCanPersonalDetail({ profile }) {
                 break;
             
             case 'fatherName':
+                if (!value || !value.trim()) {
+                    newErrors[field] = "Father's/Husband's Name is required";
+                } else if (value.length < 2 || value.length > 50) {
+                    newErrors[field] = 'Name must be between 2 and 50 characters';
+                } else if (!/^[a-zA-Z\s]+$/.test(value)) {
+                    newErrors[field] = 'Name can only contain letters and spaces';
+                } else {
+                    delete newErrors[field];
+                }
+                break;
             case 'motherName':
                 if (!value || !value.trim()) {
-                    newErrors[field] = 'This field is required';
+                    newErrors[field] = "Mother's Name is required";
                 } else if (value.length < 2 || value.length > 50) {
                     newErrors[field] = 'Name must be between 2 and 50 characters';
                 } else if (!/^[a-zA-Z\s]+$/.test(value)) {
@@ -143,10 +165,26 @@ function SectionCanPersonalDetail({ profile }) {
                 break;
             
             case 'residentialAddress':
+                if (!value || !value.trim()) {
+                    newErrors[field] = 'Residential Address is required';
+                } else if (value.length > 200) {
+                    newErrors[field] = 'Address cannot exceed 200 characters';
+                } else {
+                    delete newErrors[field];
+                }
+                break;
             case 'permanentAddress':
+                if (!value || !value.trim()) {
+                    newErrors[field] = 'Permanent Address is required';
+                } else if (value.length > 200) {
+                    newErrors[field] = 'Address cannot exceed 200 characters';
+                } else {
+                    delete newErrors[field];
+                }
+                break;
             case 'correspondenceAddress':
                 if (!value || !value.trim()) {
-                    newErrors[field] = 'This field is required';
+                    newErrors[field] = 'Correspondence Address is required';
                 } else if (value.length > 200) {
                     newErrors[field] = 'Address cannot exceed 200 characters';
                 } else {

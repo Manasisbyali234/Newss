@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { loadScript } from "../../../../../globals/constants";
 import "../jobs/job-detail.css";
+import "../../../../../employer-detail-tabs.css";
 
 function EmployersDetail1Page() {
     const { id } = useParams();
@@ -25,6 +26,7 @@ function EmployersDetail1Page() {
 
     const [submittedReviews, setSubmittedReviews] = useState([]);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
 
     useEffect(()=>{
         loadScript("js/custom.js");
@@ -279,9 +281,9 @@ function EmployersDetail1Page() {
 												role="tabpanel"
 											>
 												<h4 className="twm-s-title">About Company</h4>
-												<p>
-													{employer.description || employer.companyDescription || 'No company description available.'}
-												</p>
+												<div dangerouslySetInnerHTML={{
+													__html: employer.description || employer.companyDescription || 'No company description available.'
+												}} />
 
 												<h4 className="twm-s-title">Why Join Us</h4>
 												<div dangerouslySetInnerHTML={{
@@ -313,7 +315,7 @@ function EmployersDetail1Page() {
 																		transition: 'transform 0.3s ease',
 																		border: '1px solid #ddd'
 																	}}
-																	onClick={() => window.open(image.url, '_blank')}
+																	onClick={() => setSelectedImage(image.url)}
 																	onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
 																	onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
 																/>
@@ -325,7 +327,73 @@ function EmployersDetail1Page() {
 														<p className="text-muted">No gallery images available.</p>
 													</div>
 												)}
+												
+												{/* Image Modal */}
+												{selectedImage && (
+													<div 
+														style={{
+															position: 'fixed',
+															top: 0,
+															left: 0,
+															width: '100vw',
+															height: '100vh',
+															backgroundColor: 'rgba(0,0,0,0.5)',
+															zIndex: 2147483647,
+															display: 'flex',
+															alignItems: 'center',
+															justifyContent: 'center'
+														}}
+														onClick={() => setSelectedImage(null)}
+													>
+														<div 
+															style={{
+																background: 'white',
+																borderRadius: '8px',
+																padding: '20px',
+																maxWidth: '500px',
+																maxHeight: '600px',
+																position: 'relative',
+																boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+																zIndex: 100000
+															}}
+															onClick={(e) => e.stopPropagation()}
+														>
+															<button
+																style={{
+																	position: 'absolute',
+																	top: '10px',
+																	right: '10px',
+																	background: '#f8f9fa',
+																	border: '1px solid #dee2e6',
+																	borderRadius: '50%',
+																	width: '30px',
+																	height: '30px',
+																	fontSize: '16px',
+																	cursor: 'pointer',
+																	color: '#6c757d',
+																	zIndex: 100001
+																}}
+																onClick={() => setSelectedImage(null)}
+															>
+																×
+															</button>
+															<img 
+																src={selectedImage}
+																alt="Gallery"
+																style={{
+																	width: '100%',
+																	height: 'auto',
+																	maxHeight: '500px',
+																	objectFit: 'contain',
+																	borderRadius: '4px'
+																}}
+															/>
+														</div>
+													</div>
+												)}
 											</div>
+											
+
 											
 											{isLoggedIn && (
 												<div className="tab-pane fade" id="reviews" role="tabpanel">
@@ -433,14 +501,7 @@ function EmployersDetail1Page() {
 																				alt="Review" 
 																				style={{width: '80px', height: '80px', objectFit: 'cover', cursor: 'pointer'}} 
 																				className="rounded-circle border"
-																				onClick={() => {
-																					if (review.image.startsWith('data:')) {
-																						const newWindow = window.open();
-																						newWindow.document.write(`<img src="${review.image}" style="max-width:100%;height:auto;">`);
-																					} else {
-																						window.open(review.image, '_blank');
-																					}
-																				}}
+																				onClick={() => setSelectedImage(review.image)}
 																			/>
 																		</div>
 																	)}

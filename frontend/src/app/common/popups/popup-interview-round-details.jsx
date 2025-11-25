@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, Clock, FileText, Award, BookOpen } from 'lucide-react';
 import { api } from '../../../utils/api';
+import { disableBodyScroll, enableBodyScroll } from '../../../utils/scrollUtils';
 
 const PopupInterviewRoundDetails = ({ isOpen, onClose, roundDetails, roundType, assessmentId }) => {
     const [assessmentData, setAssessmentData] = useState(null);
@@ -11,6 +12,15 @@ const PopupInterviewRoundDetails = ({ isOpen, onClose, roundDetails, roundType, 
             fetchAssessmentDetails();
         }
     }, [isOpen, roundType, assessmentId]);
+
+    useEffect(() => {
+        if (isOpen) {
+            disableBodyScroll();
+        } else {
+            enableBodyScroll();
+        }
+        return () => enableBodyScroll();
+    }, [isOpen]);
     
     const fetchAssessmentDetails = async () => {
         setLoadingAssessment(true);
@@ -70,7 +80,7 @@ const PopupInterviewRoundDetails = ({ isOpen, onClose, roundDetails, roundType, 
                         <button 
                             type="button" 
                             className="btn-close btn-close-white" 
-                            onClick={onClose}
+                            onClick={() => { enableBodyScroll(); onClose(); }}
                             style={{ filter: 'invert(1)' }}
                         ></button>
                     </div>
@@ -296,7 +306,7 @@ const PopupInterviewRoundDetails = ({ isOpen, onClose, roundDetails, roundType, 
                         <button 
                             type="button" 
                             className="btn btn-secondary" 
-                            onClick={onClose}
+                            onClick={() => { enableBodyScroll(); onClose(); }}
                         >
                             Close
                         </button>

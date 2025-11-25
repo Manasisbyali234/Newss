@@ -904,6 +904,37 @@ body.modal-open {
     }
 }
 
+/* Radio button styling for employment form */
+.twm-form-radio-inline .form-check-input[type="radio"] {
+    appearance: auto !important;
+    -webkit-appearance: radio !important;
+    -moz-appearance: radio !important;
+    width: 16px !important;
+    height: 16px !important;
+    margin-right: 8px !important;
+    margin-top: 2px !important;
+    cursor: pointer !important;
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+.twm-form-radio-inline .form-check-label {
+    cursor: pointer !important;
+    display: inline-block !important;
+    margin-left: 4px !important;
+    font-weight: 500 !important;
+    color: #333 !important;
+}
+
+.twm-form-radio-inline .col-md-6 {
+    display: flex !important;
+    align-items: center !important;
+    margin-bottom: 8px !important;
+}
+
 /* General mobile improvements for all screen sizes */
 @media (max-width: 1200px) {
     /* Ensure touch targets are adequate */

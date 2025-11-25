@@ -267,9 +267,11 @@ function AdminSubAdmin() {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this sub admin?')) {
-            return;
-        }
+        showToast('Click delete again to confirm sub admin deletion', 'warning', 3000);
+        return;
+    };
+    
+    const confirmDelete = async (id) => {
         
         try {
             const token = localStorage.getItem('adminToken');

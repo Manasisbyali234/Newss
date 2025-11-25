@@ -291,7 +291,7 @@ function JobDetail1Page() {
                                             <i className="feather-file-text" style={{marginRight: '10px', color: '#3498db'}}></i>
                                             Job Description
                                         </h4>
-                                        <div style={{lineHeight: '1.8', fontSize: '16px', color: '#495057'}} dangerouslySetInnerHTML={{__html: job.description}}>
+                                        <div style={{lineHeight: '1.8', fontSize: '16px', color: '#495057'}} dangerouslySetInnerHTML={{__html: job.description || 'No job description available.'}}>
                                         </div>
                                     </div>
 

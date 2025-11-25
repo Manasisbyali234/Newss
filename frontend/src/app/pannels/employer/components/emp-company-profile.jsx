@@ -552,9 +552,11 @@ function EmpCompanyProfilePage() {
     };
 
     const handleDeleteAuthorizationLetter = async (documentId) => {
-        if (!window.confirm('Are you sure you want to delete this authorization letter?')) {
-            return;
-        }
+        showToast('Click delete again to confirm authorization letter deletion', 'warning', 3000);
+        return;
+    };
+    
+    const confirmDeleteAuthorizationLetter = async (documentId) => {
 
         try {
             const token = localStorage.getItem('employerToken');
@@ -624,7 +626,11 @@ function EmpCompanyProfilePage() {
     };
 
     const handleDeleteGalleryImage = async (imageId) => {
-        if (!window.confirm('Delete this image?')) return;
+        showToast('Click delete again to confirm image deletion', 'warning', 3000);
+        return;
+    };
+    
+    const confirmDeleteGalleryImage = async (imageId) => {
 
         try {
             const token = localStorage.getItem('employerToken');

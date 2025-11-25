@@ -16,6 +16,8 @@ const EmployersGridPage = memo(() => {
     const [employers, setEmployers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [totalEmployers, setTotalEmployers] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [sortBy, setSortBy] = useState("");
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [isFirstLoad, setIsFirstLoad] = useState(true);
@@ -32,13 +34,17 @@ const EmployersGridPage = memo(() => {
     const abortControllerRef = useRef(null);
     const debounceTimerRef = useRef(null);
 
-    const _filterConfig = useMemo(() => ({
-        prefix: "Showing",
-        type: "employers",
-        total: totalEmployers.toString(),
-        showRange: false,
-        showingUpto: ""
-    }), [totalEmployers]);
+    const _filterConfig = useMemo(() => {
+        const startItem = (currentPage - 1) * itemsPerPage + 1;
+        const endItem = Math.min(currentPage * itemsPerPage, totalEmployers);
+        return {
+            prefix: "Showing",
+            type: "employers",
+            total: totalEmployers.toString(),
+            showRange: true,
+            showingUpto: `${startItem}-${endItem} of ${totalEmployers}`
+        };
+    }, [totalEmployers, currentPage, itemsPerPage]);
 
     const handleSortChange = useCallback((value) => {
         setSortBy(value);
@@ -46,6 +52,12 @@ const EmployersGridPage = memo(() => {
 
     const handleItemsPerPageChange = useCallback((value) => {
         setItemsPerPage(value);
+        setCurrentPage(1);
+    }, []);
+
+    const handlePageChange = useCallback((page) => {
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
     useEffect(() => {
@@ -74,14 +86,20 @@ const EmployersGridPage = memo(() => {
                 const params = new URLSearchParams({
                     sortBy,
                     limit: itemsPerPage.toString(),
-                    page: '1'
+                    page: currentPage.toString()
                 });
                 
                 if (filters.keyword) params.append('keyword', filters.keyword);
                 if (filters.location) params.append('location', filters.location);
-                if (filters.industry) params.append('industry', filters.industry);
-                if (filters.teamSize) params.append('teamSize', filters.teamSize);
-                if (filters.companyType) params.append('companyType', filters.companyType);
+                if (filters.industry && filters.industry.length > 0) {
+                    filters.industry.forEach(ind => params.append('industry', ind));
+                }
+                if (filters.teamSize && filters.teamSize.length > 0) {
+                    filters.teamSize.forEach(size => params.append('teamSize', size));
+                }
+                if (filters.companyType && filters.companyType.length > 0) {
+                    filters.companyType.forEach(type => params.append('companyType', type));
+                }
                 if (filters.establishedSince) params.append('establishedSince', filters.establishedSince);
 
                 const url = `http://localhost:5000/api/public/employers?${params.toString()}`;
@@ -100,6 +118,7 @@ const EmployersGridPage = memo(() => {
                 if (data.success) {
                     setEmployers(data.employers || []);
                     setTotalEmployers(data.totalCount || data.employers?.length || 0);
+                    setTotalPages(Math.ceil((data.totalCount || 0) / itemsPerPage));
                     
                     // Extract unique established years
                     const years = [...new Set(
@@ -112,6 +131,7 @@ const EmployersGridPage = memo(() => {
                 } else {
                     setEmployers([]);
                     setTotalEmployers(0);
+                    setTotalPages(1);
                     setEstablishedYears([]);
                 }
             } catch (error) {
@@ -119,13 +139,14 @@ const EmployersGridPage = memo(() => {
                     
                     setEmployers([]);
                     setTotalEmployers(0);
+                    setTotalPages(1);
                 }
             } finally {
                 setLoading(false);
                 setIsFirstLoad(false);
             }
         }, 200); // 200ms debounce for employers
-    }, [sortBy, itemsPerPage, filters]);
+    }, [sortBy, itemsPerPage, currentPage, filters]);
 
     useEffect(() => {
         fetchEmployers();
@@ -260,7 +281,15 @@ const EmployersGridPage = memo(() => {
                             </Row>
                         </div>
 
-                        <SectionPagination />
+                        {totalPages > 1 && (
+                            <div className="d-flex justify-content-center mt-4">
+                                <SectionPagination 
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    onPageChange={handlePageChange}
+                                />
+                            </div>
+                        )}
                     </Col>
                 </Row>
         </div>

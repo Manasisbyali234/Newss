@@ -6,7 +6,7 @@ const validatePhoneNumber = (phoneNumber) => {
   // Remove all spaces and special characters
   const cleanNumber = phoneNumber.replace(/[\s\-\(\)\+]/g, '');
   
-  // Check if it's between 7-15 digits
+  // Check if it's between 6-10 digits
   if (!/^\d{7,15}$/.test(cleanNumber)) {
     return { 
       isValid: false, 

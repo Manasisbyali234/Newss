@@ -232,12 +232,18 @@ function SectionCanEducation({ profile, onUpdate }) {
         const newErrors = {};
         let isValid = true;
 
-        // Required fields for all levels
-        const requiredFields = ['schoolCollegeName', 'boardUniversityName', 'registrationNumber', 'state', 'result'];
+        // Required fields for all levels with specific error messages
+        const requiredFields = {
+            schoolCollegeName: 'School/College Name is required',
+            boardUniversityName: 'Board/University Name is required', 
+            registrationNumber: 'Enrollment Number is required',
+            state: 'State is required',
+            result: 'Result is required'
+        };
 
-        requiredFields.forEach(field => {
+        Object.entries(requiredFields).forEach(([field, errorMessage]) => {
             if (!formData[field] || !formData[field].trim()) {
-                newErrors[field] = 'This field is required';
+                newErrors[field] = errorMessage;
                 isValid = false;
             }
         });
@@ -292,7 +298,7 @@ function SectionCanEducation({ profile, onUpdate }) {
         }
 
         setErrors(newErrors);
-        return isValid;
+        return { isValid, errors: newErrors };
     };
 
     const uploadDocument = async (file) => {
@@ -330,9 +336,14 @@ function SectionCanEducation({ profile, onUpdate }) {
             return;
         }
 
-        if (!validateForm()) {
-            const errorMessages = Object.values(errors).filter(e => e).join(', ');
-            showToast(errorMessages || 'Please correct the highlighted fields', 'error', 4000);
+        const validation = validateForm();
+        if (!validation.isValid) {
+            const errorMessages = Object.values(validation.errors).filter(e => e);
+            if (errorMessages.length > 0) {
+                showToast(errorMessages.join(', '), 'error', 4000);
+            } else {
+                showToast('Please fill in all required fields', 'error', 4000);
+            }
             return;
         }
 
@@ -375,9 +386,14 @@ function SectionCanEducation({ profile, onUpdate }) {
     };
 
     const handleUpdateEducation = () => {
-        if (!validateForm()) {
-            const errorMessages = Object.values(errors).filter(e => e).join(', ');
-            showToast(errorMessages || 'Please correct the highlighted fields', 'error', 4000);
+        const validation = validateForm();
+        if (!validation.isValid) {
+            const errorMessages = Object.values(validation.errors).filter(e => e);
+            if (errorMessages.length > 0) {
+                showToast(errorMessages.join(', '), 'error', 4000);
+            } else {
+                showToast('Please fill in all required fields', 'error', 4000);
+            }
             return;
         }
 

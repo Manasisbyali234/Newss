@@ -1,6 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { disableBodyScroll, enableBodyScroll } from '../../../../utils/scrollUtils';
 
 const ViolationModal = ({ isOpen, violationType, timestamp, onAcknowledge }) => {
+    useEffect(() => {
+        if (isOpen) {
+            disableBodyScroll();
+        } else {
+            enableBodyScroll();
+        }
+        return () => enableBodyScroll();
+    }, [isOpen]);
+
     if (!isOpen) return null;
 
     const getViolationMessage = (type) => {
@@ -76,7 +86,7 @@ const ViolationModal = ({ isOpen, violationType, timestamp, onAcknowledge }) => 
                     <div className="modal-footer">
                         <button
                             type="button"
-                            onClick={onAcknowledge}
+                            onClick={() => { enableBodyScroll(); onAcknowledge(); }}
                             style={{
                                 background: "#e74c3c",
                                 color: "#fff",

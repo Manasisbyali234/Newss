@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./document.css";
+import { disableBodyScroll, enableBodyScroll } from "../../../../utils/scrollUtils";
 
 export default function DocumentPopup({ isOpen, onClose, onSubmit }) {
 	const [form, setForm] = useState({
@@ -8,6 +9,15 @@ export default function DocumentPopup({ isOpen, onClose, onSubmit }) {
 		noticePeriod: "",
 		coverLetter: "",
 	});
+
+	useEffect(() => {
+		if (isOpen) {
+			disableBodyScroll();
+		} else {
+			enableBodyScroll();
+		}
+		return () => enableBodyScroll();
+	}, [isOpen]);
 
 	const [files, setFiles] = useState({
 		resume: null,
@@ -113,10 +123,10 @@ export default function DocumentPopup({ isOpen, onClose, onSubmit }) {
 
 				{/* Actions */}
 				<div className="action-row">
-					<button className="cancel-btn" onClick={onClose}>
+					<button className="cancel-btn" onClick={() => { enableBodyScroll(); onClose(); }}>
 						Cancel
 					</button>
-					<button className="submit-btn" onClick={handleSubmit}>
+					<button className="submit-btn" onClick={() => { enableBodyScroll(); handleSubmit(); }}>
 						Submit & Continue
 					</button>
 				</div>

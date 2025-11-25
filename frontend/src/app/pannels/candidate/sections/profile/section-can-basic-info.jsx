@@ -174,8 +174,8 @@ function SectionCandicateBasicInfo() {
             case 'phone':
                 if (!value || !value.trim()) {
                     newErrors.phone = 'Mobile number is required';
-                } else if (!/^\d{7,15}$/.test(value.replace(/\s/g, ''))) {
-                    newErrors.phone = 'Mobile number must be 7-15 digits';
+                } else if (!/^\d{10}$/.test(value.replace(/\s/g, ''))) {
+                    newErrors.phone = 'Mobile number must be exactly 10 digits';
                 } else {
                     delete newErrors.phone;
                 }
@@ -509,7 +509,7 @@ function SectionCandicateBasicInfo() {
                                 />
                             </div>
                             {errors.phone && <div className="invalid-feedback d-block">{errors.phone}</div>}
-                            <small className="text-muted">Enter 7-15 digit mobile number</small>
+                            <small className="text-muted">Enter 10 digit mobile number</small>
                         </div>
                         <div className="col-md-4 mb-3">
                             <label className="form-label"><i className="fa fa-envelope me-2" style={{color: '#ff6b35'}}></i>Email Address *</label>

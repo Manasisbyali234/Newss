@@ -1734,7 +1734,7 @@ class PHPMailer
             //PHP config has a sender address we can use
             $this->Sender = ini_get('sendmail_from');
         }
-        //CVE-2016-10033, CVE-2016-10045: Don't pass -f if characters will be escaped.
+        //CVE-2016-10 033, CVE-2016-10 045: Don't pass -f if characters will be escaped.
         if (!empty($this->Sender) && static::validateAddress($this->Sender) && self::isShellSafe($this->Sender)) {
             if ($this->Mailer === 'qmail') {
                 $sendmailFmt = '%s -f%s';
@@ -1811,10 +1811,10 @@ class PHPMailer
     }
 
     /**
-     * Fix CVE-2016-10033 and CVE-2016-10045 by disallowing potentially unsafe shell characters.
+     * Fix CVE-2016-10 033 and CVE-2016-10 045 by disallowing potentially unsafe shell characters.
      * Note that escapeshellarg and escapeshellcmd are inadequate for our purposes, especially on Windows.
      *
-     * @see https://github.com/PHPMailer/PHPMailer/issues/924 CVE-2016-10045 bug report
+     * @see https://github.com/PHPMailer/PHPMailer/issues/924 CVE-2016-10 045 bug report
      *
      * @param string $string The string to be validated
      *
@@ -1924,7 +1924,7 @@ class PHPMailer
         //Sendmail docs: http://www.sendmail.org/~ca/email/man/sendmail.html
         //Qmail docs: http://www.qmail.org/man/man8/qmail-inject.html
         //Example problem: https://www.drupal.org/node/1057954
-        //CVE-2016-10033, CVE-2016-10045: Don't pass -f if characters will be escaped.
+        //CVE-2016-10 033, CVE-2016-10 045: Don't pass -f if characters will be escaped.
 
         //PHP 5.6 workaround
         $sendmail_from_value = ini_get('sendmail_from');

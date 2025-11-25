@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { disableBodyScroll, enableBodyScroll } from '../../utils/scrollUtils';
 
 function CreatePasswordModal({ modalId = 'createPasswordModal', userType = 'candidate' }) {
     const [email, setEmail] = useState('');
@@ -16,6 +17,22 @@ function CreatePasswordModal({ modalId = 'createPasswordModal', userType = 'cand
         number: false,
         specialChars: false
     });
+
+    useEffect(() => {
+        const modal = document.getElementById(modalId);
+        const handleModalShow = () => disableBodyScroll();
+        const handleModalHide = () => enableBodyScroll();
+
+        if (modal) {
+            modal.addEventListener('show.bs.modal', handleModalShow);
+            modal.addEventListener('hide.bs.modal', handleModalHide);
+
+            return () => {
+                modal.removeEventListener('show.bs.modal', handleModalShow);
+                modal.removeEventListener('hide.bs.modal', handleModalHide);
+            };
+        }
+    }, [modalId]);
 
     const validatePassword = (pwd) => {
         const specialChars = pwd.match(/[@#!%$*?]/g) || [];
@@ -114,7 +131,7 @@ function CreatePasswordModal({ modalId = 'createPasswordModal', userType = 'cand
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title" id={`${modalId}Label`}>Create Your Password - {userType.charAt(0).toUpperCase() + userType.slice(1)}</h5>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={resetForm}></button>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={() => { enableBodyScroll(); resetForm(); }}></button>
                     </div>
                     <div className="modal-body">
                         <form onSubmit={handleSubmit}>

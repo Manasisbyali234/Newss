@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import showToast from "../../../../../utils/toastNotification";
 import './CreateassessmentModal.css';
+import { disableBodyScroll, enableBodyScroll } from "../../../../../utils/scrollUtils";
 
 export default function CreateAssessmentModal({ onClose, onCreate, editData = null }) {
 	const [title, setTitle] = useState(editData?.title || "");
@@ -12,6 +13,11 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 	);
 	const [isMinimized, setIsMinimized] = useState(false);
 	const [isMaximized, setIsMaximized] = useState(false);
+
+	useEffect(() => {
+		disableBodyScroll();
+		return () => enableBodyScroll();
+	}, []);
 
 	const handleQuestionChange = (index, field, value) => {
 		const updated = [...questions];
@@ -209,7 +215,7 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 								color: '#6c757d',
 								fontSize: '14px'
 							}}
-							onClick={onClose}
+							onClick={() => { enableBodyScroll(); onClose(); }}
 							title="Close"
 						>
 							×
@@ -403,7 +409,7 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 					<button
 						type="button"
 						className="btn btn-secondary"
-						onClick={onClose}
+						onClick={() => { enableBodyScroll(); onClose(); }}
 					>
 						Cancel
 					</button>

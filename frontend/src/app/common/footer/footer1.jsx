@@ -53,7 +53,7 @@ function Footer1() {
 								</div>
 
 								<div className="col-lg-8 col-md-12">
-									<div className="row g-3">
+									<div className="row" style={{margin: '0', '--bs-gutter-x': '5px'}}>
 										<div className="col-lg-6 col-md-6 col-sm-6">
 											<div className="widget widget_services ftr-list-center">
 												<h3 className="widget-title" style={{paddingLeft: '15px'}}>Quick Links</h3>
