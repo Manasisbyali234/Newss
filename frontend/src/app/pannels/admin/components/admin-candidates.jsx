@@ -32,8 +32,33 @@ function AdminCandidates() {
     };
 
     const handleDelete = async (candidateId) => {
-        if (!window.confirm('Are you sure you want to delete this candidate?')) return;
+        // Show confirmation toast instead of alert
+        showToast('Click delete again to confirm candidate deletion', 'warning', 3000);
         
+        // Add a confirmation flag to prevent accidental deletion
+        const confirmDelete = () => {
+            performDelete(candidateId);
+        };
+        
+        // Set a timeout to allow user to click delete again
+        setTimeout(() => {
+            const deleteButton = document.querySelector(`[data-candidate-id="${candidateId}"]`);
+            if (deleteButton) {
+                deleteButton.onclick = confirmDelete;
+                deleteButton.style.backgroundColor = '#dc3545';
+                deleteButton.innerHTML = '<span class="far fa-trash-alt" /> Confirm Delete';
+                
+                // Reset after 5 seconds
+                setTimeout(() => {
+                    deleteButton.onclick = () => handleDelete(candidateId);
+                    deleteButton.style.backgroundColor = '';
+                    deleteButton.innerHTML = '<span class="far fa-trash-alt" />';
+                }, 5000);
+            }
+        }, 100);
+    };
+    
+    const performDelete = async (candidateId) => {
         try {
             const token = localStorage.getItem('adminToken');
             const response = await fetch(`http://localhost:5000/api/admin/users/${candidateId}/candidate`, {
@@ -147,6 +172,7 @@ function AdminCandidates() {
                                                                             title="Delete" 
                                                                             data-bs-toggle="tooltip" 
                                                                             data-bs-placement="top"
+                                                                            data-candidate-id={candidate._id}
                                                                             onClick={() => handleDelete(candidate._id)}
                                                                         >
                                                                             <span className="far fa-trash-alt" />

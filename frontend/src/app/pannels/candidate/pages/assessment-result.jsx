@@ -295,13 +295,13 @@ const AssessmentResults = () => {
 								display: "inline-block",
 								padding: "10px 20px",
 								borderRadius: "25px",
-								background: resultStatus === 'pass' ? "#d4edda" : "#f8d7da",
-								color: resultStatus === 'pass' ? "#155724" : "#721c24",
+								background: (resultStatus === 'pass' || percentage >= 60) ? "#d4edda" : "#f8d7da",
+								color: (resultStatus === 'pass' || percentage >= 60) ? "#155724" : "#721c24",
 								fontWeight: "bold",
 								fontSize: "18px",
 							}}
 						>
-							{resultStatus === 'pass' ? "PASSED" : "FAILED"}
+							{(resultStatus === 'pass' || percentage >= 60) ? "PASSED" : "FAILED"}
 						</span>
 					</div>
 				</div>

@@ -1,6 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { disableBodyScroll, enableBodyScroll } from "../../../../utils/scrollUtils";
 
 export default function QuestionModal({ assessment, onClose }) {
+	useEffect(() => {
+		if (assessment) {
+			disableBodyScroll();
+		} else {
+			enableBodyScroll();
+		}
+		return () => enableBodyScroll();
+	}, [assessment]);
+
 	if (!assessment) return null; // no data yet
 
 	return (
@@ -54,7 +64,7 @@ export default function QuestionModal({ assessment, onClose }) {
 				))}
 
 				<button
-					onClick={onClose}
+					onClick={() => { enableBodyScroll(); onClose(); }}
 					style={{
 						background: "#007bff",
 						color: "#fff",

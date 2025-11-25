@@ -73,6 +73,11 @@ const SectionJobsGrid = memo(({ filters, onTotalChange }) => {
                     page: currentPage.toString()
                 };
                 
+                // Add exact match flag for more precise search
+                if (filters.search) {
+                    params.append('searchType', 'title');
+                }
+                
                 Object.entries(paramMap).forEach(([key, value]) => {
                     if (value && value !== '') params.append(key, value);
                 });

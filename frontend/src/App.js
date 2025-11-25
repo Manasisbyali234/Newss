@@ -18,6 +18,8 @@ import "./remove-button-hover-effects.css";
 import "./remove-resume-card-hover.css";
 // TAB ICON FIX - Remove orange color from tab icons
 import "./tab-icon-fix.css";
+// SCROLL LOCK STYLES - Disable background scrolling when modals are open
+import "./styles/scroll-lock.css";
 
 function App() {
 

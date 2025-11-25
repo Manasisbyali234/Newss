@@ -47,6 +47,7 @@
 .rich-text-editor-wrapper .ql-toolbar .ql-active {
     background: #ff6b35 !important;
     border-radius: 4px;
+    color: white !important;
 }
 
 .rich-text-editor-wrapper .ql-toolbar .ql-active svg .ql-stroke {
@@ -54,6 +55,19 @@
 }
 
 .rich-text-editor-wrapper .ql-toolbar .ql-active svg .ql-fill {
+    fill: white !important;
+}
+
+.rich-text-editor-wrapper .ql-toolbar .ql-active svg {
+    color: white !important;
+}
+
+.rich-text-editor-wrapper .ql-toolbar .ql-active .ql-picker-label {
+    color: white !important;
+}
+
+.rich-text-editor-wrapper .ql-toolbar .ql-active .ql-picker-label svg {
+    stroke: white !important;
     fill: white !important;
 }
 

@@ -1,6 +1,24 @@
 import SectionApplyJob from "../../pannels/public-user/sections/jobs/section-apply-job";
+import { useEffect } from "react";
+import { disableBodyScroll, enableBodyScroll } from "../../../utils/scrollUtils";
 
 function ApplyJobPopup() {
+    useEffect(() => {
+        const modal = document.getElementById('apply_job_popup');
+        const handleModalShow = () => disableBodyScroll();
+        const handleModalHide = () => enableBodyScroll();
+
+        if (modal) {
+            modal.addEventListener('show.bs.modal', handleModalShow);
+            modal.addEventListener('hide.bs.modal', handleModalHide);
+
+            return () => {
+                modal.removeEventListener('show.bs.modal', handleModalShow);
+                modal.removeEventListener('hide.bs.modal', handleModalHide);
+            };
+        }
+    }, []);
+
     return (
         <>
             <div className="modal fade" id="apply_job_popup" aria-hidden="true" tabIndex={-1}>

@@ -1,6 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { disableBodyScroll, enableBodyScroll } from '../../../../utils/scrollUtils';
 
 const TermsModal = ({ isOpen, onAccept, onDecline, assessment }) => {
+    useEffect(() => {
+        if (isOpen) {
+            disableBodyScroll();
+        } else {
+            enableBodyScroll();
+        }
+        return () => enableBodyScroll();
+    }, [isOpen]);
+
     if (!isOpen) return null;
     const timeLimit = assessment?.timer ?? assessment?.timeLimit ?? '--';
 
@@ -74,7 +84,7 @@ const TermsModal = ({ isOpen, onAccept, onDecline, assessment }) => {
                         <button
                             type="button"
                             className="btn btn-outline-secondary px-4"
-                            onClick={onDecline}
+                            onClick={() => { enableBodyScroll(); onDecline(); }}
                             style={{
                                 backgroundColor: 'transparent',
                                 borderColor: '#6c757d',
@@ -86,7 +96,7 @@ const TermsModal = ({ isOpen, onAccept, onDecline, assessment }) => {
                         <button
                             type="button"
                             className="btn btn-outline-primary px-4"
-                            onClick={onAccept}
+                            onClick={() => { enableBodyScroll(); onAccept(); }}
                             style={{
                                 backgroundColor: 'transparent',
                                 borderColor: '#ff6b35',

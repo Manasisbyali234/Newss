@@ -107,7 +107,13 @@ export const parseValidationErrors = (apiResponse) => {
   if (apiResponse.errors && Array.isArray(apiResponse.errors)) {
     apiResponse.errors.forEach(error => {
       const field = error.path || error.param || error.field;
-      const message = error.msg || error.message || 'Invalid value';
+      let message = error.msg || error.message || 'Invalid value';
+      
+      // Replace field names in error messages with user-friendly labels
+      if (field && message.includes(field)) {
+        const fieldLabel = getFieldLabel(field);
+        message = message.replace(field, fieldLabel);
+      }
       
       if (field) {
         if (!errors[field]) {
@@ -120,7 +126,12 @@ export const parseValidationErrors = (apiResponse) => {
   
   // Handle single field error
   if (apiResponse.field && apiResponse.message) {
-    errors[apiResponse.field] = [apiResponse.message];
+    let message = apiResponse.message;
+    if (message.includes(apiResponse.field)) {
+      const fieldLabel = getFieldLabel(apiResponse.field);
+      message = message.replace(apiResponse.field, fieldLabel);
+    }
+    errors[apiResponse.field] = [message];
   }
   
   return errors;
@@ -226,14 +237,45 @@ export const safeApiCall = async (url, options = {}) => {
 };
 
 /**
+ * Field name mappings for user-friendly error messages
+ */
+const fieldLabels = {
+  // Basic Information
+  companyName: 'Company Name',
+  phone: 'Phone Number',
+  email: 'Email Address',
+  website: 'Website',
+  establishedSince: 'Established Since',
+  
+  // Company Details
+  corporateAddress: 'Corporate Address',
+  officialEmail: 'Official Email',
+  officialMobile: 'Official Mobile Number',
+  cin: 'CIN Number',
+  gstNumber: 'GST Number',
+  panNumber: 'PAN Number',
+  
+  // Primary Contact
+  contactFullName: 'First Name',
+  contactLastName: 'Last Name',
+  contactDesignation: 'Designation',
+  contactOfficialEmail: 'Official Email',
+  contactMobile: 'Mobile Number',
+  alternateContact: 'Alternate Contact'
+};
+
+
+
+/**
  * Validate form field and return error message
  */
 export const validateField = (fieldName, value, rules = {}) => {
   const errors = [];
+  const fieldLabel = getFieldLabel(fieldName);
   
   // Required validation
   if (rules.required && (!value || (typeof value === 'string' && !value.trim()))) {
-    errors.push(`${fieldName} is required`);
+    errors.push(`${fieldLabel} is required`);
     return errors;
   }
   
@@ -251,7 +293,7 @@ export const validateField = (fieldName, value, rules = {}) => {
   if (rules.phone) {
     const cleanNumber = value.replace(/[\s\-\(\)]/g, '');
     if (cleanNumber.length < 7 || cleanNumber.length > 15) {
-      errors.push('Phone number must be between 6-10 digits');
+      errors.push('Phone number must be between 7-15 digits');
     }
   }
   
@@ -299,6 +341,16 @@ export const validateForm = (formData, validationRules) => {
 };
 
 /**
+ * Export getFieldLabel for use in other components
+ */
+export const getFieldLabel = (fieldName) => {
+  return fieldLabels[fieldName] || fieldName
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, str => str.toUpperCase())
+    .trim();
+};
+
+/**
  * Get user-friendly error message for common scenarios
  */
 export const getErrorMessage = (error, context = '') => {
@@ -342,5 +394,6 @@ export default {
   safeApiCall,
   validateField,
   validateForm,
-  getErrorMessage
+  getErrorMessage,
+  getFieldLabel
 };
