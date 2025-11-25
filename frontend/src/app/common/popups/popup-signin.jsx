@@ -201,7 +201,7 @@ function SignInPopup() {
 								/>
 							</div>
 
-							<div className="modal-body">
+							<div className="modal-body" style={{paddingTop: '10px', paddingBottom: '10px'}}>
 								<div className="twm-tabs-style-2">
 									<ul className="nav nav-tabs mt-n2" id="myTab2" role="tablist">
 										{/*Login Candidate*/}

@@ -419,7 +419,7 @@ function SignUpPopup() {
 								/>
 							</div>
 
-							<div className="modal-body">
+							<div className="modal-body" style={{paddingTop: '10px', paddingBottom: '10px'}}>
 								<div className="twm-tabs-style-2">
 									<ul className="nav nav-tabs" id="myTab" role="tablist">
 										<li className="nav-item" role="presentation">
