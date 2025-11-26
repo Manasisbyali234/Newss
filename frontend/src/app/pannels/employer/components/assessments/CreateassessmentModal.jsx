@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import showToast from "../../../../../utils/toastNotification";
 import './CreateassessmentModal.css';
 import { disableBodyScroll, enableBodyScroll } from "../../../../../utils/scrollUtils";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 export default function CreateAssessmentModal({ onClose, onCreate, editData = null }) {
 	const [title, setTitle] = useState(editData?.title || "");
@@ -13,6 +15,34 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 	);
 	const [isMinimized, setIsMinimized] = useState(false);
 	const [isMaximized, setIsMaximized] = useState(false);
+
+	const quillModules = useMemo(() => ({
+		toolbar: [
+			[{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+			[{ 'font': [] }],
+			[{ 'size': ['small', false, 'large', 'huge'] }],
+			['bold', 'italic', 'underline', 'strike'],
+			[{ 'color': [] }, { 'background': [] }],
+			[{ 'script': 'sub' }, { 'script': 'super' }],
+			[{ 'list': 'ordered' }, { 'list': 'bullet' }],
+			[{ 'indent': '-1' }, { 'indent': '+1' }],
+			[{ 'align': [] }],
+			['blockquote', 'code-block'],
+			['link', 'image'],
+			['clean']
+		]
+	}), []);
+
+	const quillFormats = [
+		'header', 'font', 'size',
+		'bold', 'italic', 'underline', 'strike',
+		'color', 'background',
+		'script',
+		'list', 'bullet', 'indent',
+		'align',
+		'blockquote', 'code-block',
+		'link', 'image'
+	];
 
 	useEffect(() => {
 		disableBodyScroll();
@@ -315,14 +345,14 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 									</button>
 								</div>
 							</div>
-							<input
-								type="text"
-								className="form-control mb-3"
+							<ReactQuill
+								theme="snow"
+								value={q.question || ''}
+								onChange={(value) => handleQuestionChange(qIndex, "question", value)}
+								modules={quillModules}
+								formats={quillFormats}
 								placeholder="Enter your question here..."
-								value={q.question}
-								onChange={(e) =>
-									handleQuestionChange(qIndex, "question", e.target.value)
-								}
+								style={{ marginBottom: '1rem' }}
 							/>
 							{q.type === "mcq" ? (
 								<div className="row mb-3">

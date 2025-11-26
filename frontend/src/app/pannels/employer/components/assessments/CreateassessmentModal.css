@@ -1,3 +1,130 @@
+/* React Quill Editor Styles */
+.quill {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+}
+
+.quill .ql-toolbar {
+  border: none;
+  border-bottom: 1px solid #dee2e6;
+  background: #f8f9fa;
+  padding: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.quill .ql-toolbar button {
+  width: 32px !important;
+  height: 32px !important;
+  margin: 0 2px;
+  padding: 4px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+}
+
+.quill .ql-toolbar button svg {
+  width: 18px !important;
+  height: 18px !important;
+  display: block !important;
+}
+
+.quill .ql-toolbar button:hover {
+  background: #e9ecef !important;
+  border-radius: 4px;
+  border-color: #d1d5db;
+}
+
+.quill .ql-toolbar .ql-active {
+  background: #ff6b35 !important;
+  border-radius: 4px;
+  color: white !important;
+}
+
+.quill .ql-toolbar .ql-active svg .ql-stroke {
+  stroke: white !important;
+}
+
+.quill .ql-toolbar .ql-active svg .ql-fill {
+  fill: white !important;
+}
+
+.quill .ql-toolbar .ql-picker {
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.quill .ql-toolbar .ql-picker-label {
+  padding: 4px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.quill .ql-toolbar .ql-picker-label:hover {
+  background: #e9ecef;
+}
+
+.quill .ql-stroke {
+  stroke: #444 !important;
+}
+
+.quill .ql-fill {
+  fill: #444 !important;
+}
+
+.quill .ql-toolbar button:hover .ql-stroke {
+  stroke: #06c !important;
+}
+
+.quill .ql-toolbar button:hover .ql-fill {
+  fill: #06c !important;
+}
+
+.quill .ql-container {
+  border: none;
+  min-height: 100px;
+  font-size: 1rem;
+}
+
+.quill .ql-editor {
+  min-height: 100px;
+  padding: 12px;
+  line-height: 1.6;
+  color: #000000 !important;
+}
+
+/* Force all text to be black */
+.quill .ql-editor *,
+.quill .ql-editor p,
+.quill .ql-editor span,
+.quill .ql-editor div,
+.quill .ql-editor h1,
+.quill .ql-editor h2,
+.quill .ql-editor h3,
+.quill .ql-editor h4,
+.quill .ql-editor h5,
+.quill .ql-editor h6,
+.quill .ql-editor li,
+.quill .ql-editor ul,
+.quill .ql-editor ol,
+.quill .ql-editor strong,
+.quill .ql-editor em,
+.quill .ql-editor u {
+  color: #000000 !important;
+}
+
+.quill .ql-editor.ql-blank::before {
+  color: #6c757d;
+  font-style: normal;
+}
+
 /* Mobile Responsive Styles for Create Assessment Modal */
 
 @media (max-width: 768px) {
@@ -54,6 +181,25 @@
   .position-fixed .form-control,
   .position-fixed .form-select {
     font-size: 16px !important;
+  }
+
+  /* React Quill on mobile */
+  .position-fixed .quill .ql-toolbar {
+    padding: 8px !important;
+  }
+
+  .position-fixed .quill .ql-toolbar button {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .position-fixed .quill .ql-container {
+    min-height: 80px !important;
+  }
+
+  .position-fixed .quill .ql-editor {
+    min-height: 80px !important;
+    padding: 10px !important;
   }
 
   /* Two column layout to single column */
