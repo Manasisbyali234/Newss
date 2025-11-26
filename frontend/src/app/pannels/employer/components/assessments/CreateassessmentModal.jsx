@@ -176,7 +176,7 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 			<div
 				className="bg-white rounded-3 shadow-lg"
 				style={{
-					width: isMaximized ? "100vw" : isMinimized ? "400px" : "600px",
+					width: isMaximized ? "100vw" : isMinimized ? "400px" : "800px",
 					height: isMaximized ? "100vh" : isMinimized ? "60px" : "auto",
 					maxHeight: isMaximized ? "100vh" : isMinimized ? "60px" : "90vh",
 					minHeight: isMinimized ? "60px" : "auto",
@@ -354,6 +354,22 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 
 					<h6 className="fw-semibold mb-3 mt-2">Questions ({questions.length})</h6>
 
+					<div style={{
+						background: '#e3f2fd',
+						border: '1px solid #2196f3',
+						borderRadius: 6,
+						padding: '8px 12px',
+						marginBottom: 16,
+						display: 'flex',
+						alignItems: 'center',
+						gap: 8
+					}}>
+						<i className="fa fa-info-circle" style={{color: '#2196f3', fontSize: 14}}></i>
+						<small style={{color: '#1565c0', fontSize: 12, margin: 0}}>
+							Select the correct answer by clicking the radio button next to the option
+						</small>
+					</div>
+
 					{questions.map((q, qIndex) => (
 						<div
 							key={qIndex}
@@ -397,21 +413,6 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 							/>
 							{q.type === "mcq" ? (
 								<>
-									<div style={{
-										background: '#e3f2fd',
-										border: '1px solid #2196f3',
-										borderRadius: 6,
-										padding: '8px 12px',
-										marginBottom: 12,
-										display: 'flex',
-										alignItems: 'center',
-										gap: 8
-									}}>
-										<i className="fa fa-info-circle" style={{color: '#2196f3', fontSize: 14}}></i>
-										<small style={{color: '#1565c0', fontSize: 12, margin: 0}}>
-											Select the correct answer by clicking the radio button next to the option
-										</small>
-									</div>
 									<div className="row mb-3">
 										{q.options.map((opt, optIndex) => (
 										<div
