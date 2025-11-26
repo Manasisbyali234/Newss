@@ -355,8 +355,24 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 								style={{ marginBottom: '1rem' }}
 							/>
 							{q.type === "mcq" ? (
-								<div className="row mb-3">
-									{q.options.map((opt, optIndex) => (
+								<>
+									<div style={{
+										background: '#e3f2fd',
+										border: '1px solid #2196f3',
+										borderRadius: 6,
+										padding: '8px 12px',
+										marginBottom: 12,
+										display: 'flex',
+										alignItems: 'center',
+										gap: 8
+									}}>
+										<i className="fa fa-info-circle" style={{color: '#2196f3', fontSize: 14}}></i>
+										<small style={{color: '#1565c0', fontSize: 12, margin: 0}}>
+											Select the correct answer by clicking the radio button next to the option
+										</small>
+									</div>
+									<div className="row mb-3">
+										{q.options.map((opt, optIndex) => (
 										<div
 											key={optIndex}
 											className="col-6 mb-3 d-flex align-items-center"
@@ -388,8 +404,9 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 												}
 											/>
 										</div>
-									))}
-								</div>
+										))}
+									</div>
+								</>
 							) : q.type === "upload" ? (
 								<div className="mb-3">
 									<small className="text-muted">This is an upload question. Candidates will upload files as their answer.</small>
