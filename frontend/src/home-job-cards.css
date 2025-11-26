@@ -1,8 +1,10 @@
 /* Home Jobs Grid */
 .home-jobs-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 20px;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 30px !important;
+    max-width: 1400px !important;
+    margin: 0 auto !important;
 }
 
 /* Home Job Card */
@@ -10,7 +12,7 @@
     position: relative !important;
     background: #ffffff !important;
     border-radius: 16px !important;
-    padding: 24px !important;
+    padding: 28px !important;
     box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08) !important;
     transition: all 0.3s ease !important;
     border: 1px solid rgba(148, 163, 184, 0.2) !important;

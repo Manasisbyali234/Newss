@@ -82,6 +82,7 @@ export default function EmpPostJob({ onNext }) {
 	const [errors, setErrors] = useState({});
 	const [globalErrors, setGlobalErrors] = useState([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [showConfirmModal, setShowConfirmModal] = useState(false);
 	const [validationRules] = useState({
 		jobTitle: { required: true, minLength: 3 },
 		category: { required: true },
@@ -505,29 +506,34 @@ export default function EmpPostJob({ onNext }) {
 		return Object.keys(newErrors).length === 0 && errorMessages.length === 0;
 	};
 
-	const submitNext = async () => {
+	const handleSubmitClick = () => {
 		if (isSubmitting) return;
+		
+		// Validate form first
+		if (!validateJobForm()) {
+			const allErrors = [...Object.entries(errors).map(([field, msgs]) => `${field}: ${msgs.join(', ')}`), ...globalErrors];
+			if (allErrors.length > 0) {
+				showToast(`Validation Errors:\n${allErrors.join('\n')}`, 'error', 8000);
+			}
+			const firstErrorField = document.querySelector('.is-invalid');
+			if (firstErrorField) {
+				firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				firstErrorField.focus();
+			}
+			return;
+		}
+		
+		// Show confirmation modal
+		setShowConfirmModal(true);
+	};
+	
+	const submitNext = async () => {
+		setShowConfirmModal(false);
 		
 		try {
 			const token = localStorage.getItem('employerToken');
 			if (!token) {
 				showToast('Please login first', 'warning');
-				return;
-			}
-
-			// Validate form
-			if (!validateJobForm()) {
-				// Display all validation errors
-				const allErrors = [...Object.entries(errors).map(([field, msgs]) => `${field}: ${msgs.join(', ')}`), ...globalErrors];
-				if (allErrors.length > 0) {
-					showToast(`Validation Errors:\n${allErrors.join('\n')}`, 'error', 8000);
-				}
-				// Scroll to first error
-				const firstErrorField = document.querySelector('.is-invalid');
-				if (firstErrorField) {
-					firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-					firstErrorField.focus();
-				}
 				return;
 			}
 
@@ -2430,7 +2436,7 @@ export default function EmpPostJob({ onNext }) {
 				gap: 16,
 			}}>
 				<button
-					onClick={submitNext}
+					onClick={handleSubmitClick}
 					style={{
 						background: "transparent",
 						color: "#ff6b35",
@@ -2472,6 +2478,90 @@ export default function EmpPostJob({ onNext }) {
 					)}
 				</button>
 			</div>
+			
+			{/* Confirmation Modal */}
+			{showConfirmModal && (
+				<div style={{
+					position: 'fixed',
+					top: 0,
+					left: 0,
+					right: 0,
+					bottom: 0,
+					background: 'rgba(0, 0, 0, 0.5)',
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
+					zIndex: 9999
+				}}>
+					<div style={{
+						background: '#fff',
+						borderRadius: 12,
+						padding: '32px',
+						maxWidth: '500px',
+						width: '90%',
+						boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+					}}>
+						<div style={{textAlign: 'center', marginBottom: 24}}>
+							<div style={{
+								width: 60,
+								height: 60,
+								background: '#fff3cd',
+								borderRadius: '50%',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								margin: '0 auto 16px'
+							}}>
+								<i className="fa fa-exclamation-triangle" style={{fontSize: 28, color: '#ff6b35'}}></i>
+							</div>
+							<h3 style={{margin: 0, fontSize: 22, color: '#1f2937', fontWeight: 700}}>Confirm Submission</h3>
+						</div>
+						<p style={{fontSize: 15, color: '#4b5563', lineHeight: 1.6, marginBottom: 24, textAlign: 'center'}}>
+							{isEditMode 
+								? "Are you sure you want to update this job? Once updated, the changes will be reflected immediately."
+								: "Are you sure you want to submit this job? Once you submit, you won't be able to edit it. Please review all details carefully before proceeding."}
+						</p>
+						<div style={{display: 'flex', gap: 12, justifyContent: 'center'}}>
+							<button
+								onClick={() => setShowConfirmModal(false)}
+								style={{
+									background: '#e5e7eb',
+									color: '#374151',
+									border: 'none',
+									padding: '12px 24px',
+									borderRadius: 8,
+									cursor: 'pointer',
+									fontSize: 15,
+									fontWeight: 600,
+									transition: 'all 0.2s'
+								}}
+								onMouseEnter={(e) => e.currentTarget.style.background = '#d1d5db'}
+								onMouseLeave={(e) => e.currentTarget.style.background = '#e5e7eb'}
+							>
+								Cancel
+							</button>
+							<button
+								onClick={submitNext}
+								style={{
+									background: '#ff6b35',
+									color: '#fff',
+									border: 'none',
+									padding: '12px 24px',
+									borderRadius: 8,
+									cursor: 'pointer',
+									fontSize: 15,
+									fontWeight: 600,
+									transition: 'all 0.2s'
+								}}
+								onMouseEnter={(e) => e.currentTarget.style.background = '#e55a2b'}
+								onMouseLeave={(e) => e.currentTarget.style.background = '#ff6b35'}
+							>
+								{isEditMode ? 'Yes, Update' : 'Yes, Submit'}
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }

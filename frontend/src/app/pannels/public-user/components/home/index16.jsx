@@ -868,8 +868,8 @@ function Home16Page() {
 
                     <div className="section-content">
                         <div className="twm-jobs-grid-wrap">
-                            <div style={{padding: '0 15px', background: 'transparent', width: '100%'}}>
-                                <Row style={{'--bs-gutter-x': '6px', marginLeft: '0', marginRight: '0'}}>
+                            <div style={{padding: '0 15px', background: 'transparent', width: '100%', maxWidth: '1800px', margin: '0 auto'}}>
+                                <Row style={{'--bs-gutter-x': '20px', marginLeft: '0', marginRight: '0'}}>
                                 {jobs.length > 0 ? (
                                     jobs.map((job) => (
                                         <Col lg={4} md={6} sm={12} xs={12} key={job._id} className="mb-2" style={{padding: '0.3rem'}}>
@@ -1031,7 +1031,7 @@ function Home16Page() {
                     {/* title="" END*/}
 
                     <div className="section-content">
-                        <div className="twm-recruiters5-wrap" style={{marginLeft: '15px', marginRight: '15px'}}>
+                        <div className="twm-recruiters5-wrap" style={{marginLeft: '15px', marginRight: '15px', maxWidth: '1600px', margin: '0 auto', padding: '0 15px'}}>
                             <div
                                 className="twm-column-5 m-b30"
                                 style={{

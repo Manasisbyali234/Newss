@@ -41,45 +41,42 @@ function CanHeaderSection(props) {
                 {/* Header Start */}
                 <div id="header-admin" className={props.sidebarActive ? "" : "active"}>
                     <div className="container">
-                        {/* Left Side Content */}
-                        <div className="header-left">
-                            <div className="nav-btn-wrap">
-                                <a className="nav-btn-admin" id="sidebarCollapse" onClick={props.onClick}>
-                                    <span className="fa fa-angle-left" />
-                                </a>
+                        {/* Left Side Content - Hidden on mobile */}
+                        {!props.isMobile && (
+                            <div className="header-left">
+                                <div className="nav-btn-wrap">
+                                    <a className="nav-btn-admin" id="sidebarCollapse" onClick={props.onClick}>
+                                        <span className="fa fa-angle-left" />
+                                    </a>
+                                </div>
                             </div>
-                        </div>
+                        )}
                         {/* Left Side Content End */}
 
                         {/* Right Side Content */}
                         <div className="header-right">
                             <ul className="header-widget-wrap">
-                                
                                 {/*Notification*/}
                                 <li className="header-widget dashboard-noti-dropdown">
                                     <NotificationBell userRole="candidate" />
                                 </li>
                                 {/*Account*/}
-                                
                                 <li className="header-widget">
                                     <div className="dashboard-user-section">
                                         <div className="listing-user">
-                                            <div className="">
-                                                <span>
-                                                    {profileData?.profilePicture ? (
-                                                        <img 
-                                                            src={profileData.profilePicture} 
-                                                            alt="Profile" 
-                                                            style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }}
-                                                        />
-                                                    ) : (
-                                                        <JobZImage src="images/user-avtar/pic4.jpg" alt="" />
-                                                    )}
-                                                </span>
-                                            </div>
-                                            </div>
+                                            <span>
+                                                {profileData?.profilePicture ? (
+                                                    <img 
+                                                        src={profileData.profilePicture} 
+                                                        alt="Profile" 
+                                                        style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }}
+                                                    />
+                                                ) : (
+                                                    <JobZImage src="images/user-avtar/pic4.jpg" alt="" />
+                                                )}
+                                            </span>
                                         </div>
-                                    {/* </div> */}
+                                    </div>
                                 </li>
                             </ul>
                         </div>

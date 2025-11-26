@@ -20,6 +20,8 @@ import "./remove-resume-card-hover.css";
 import "./tab-icon-fix.css";
 // SCROLL LOCK STYLES - Disable background scrolling when modals are open
 import "./styles/scroll-lock.css";
+// CANDIDATE HEADER MOBILE FIX - Fix header display on mobile screens
+import "./candidate-header-mobile-fix.css";
 
 function App() {
 

@@ -79,14 +79,49 @@
 
 /* Mobile view - hide desktop auth, show hamburger */
 @media (max-width: 991px) {
+  /* Fix header container to prevent cutoff */
+  .site-header .main-bar {
+    padding: 10px 0 !important;
+  }
+
+  .site-header .container-fluid {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 15px !important;
+  }
+
+  /* Logo section - prevent cutoff */
+  .logo-header {
+    flex-shrink: 0 !important;
+    max-width: 150px !important;
+  }
+
+  .logo-header img {
+    max-height: 40px !important;
+    width: auto !important;
+    object-fit: contain !important;
+  }
+
   /* Hide desktop auth buttons */
   .extra-nav.header-2-nav .extra-cell:first-child {
     display: none !important;
   }
 
-  /* Show hamburger button */
+  /* Show only hamburger button - hide any other navigation */
+  .extra-nav.header-2-nav {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0 !important;
+  }
+
   .extra-nav.header-2-nav .extra-cell:last-child {
     display: flex !important;
+  }
+
+  /* Hide any arrow or other navigation elements */
+  .extra-nav.header-2-nav .extra-cell:not(:last-child) {
+    display: none !important;
   }
 
   /* Ensure hamburger menu is always visible */
@@ -96,6 +131,11 @@
     padding: 8px 12px !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
     transition: all 0.3s ease !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   .vnav-btn:hover {
@@ -116,7 +156,7 @@
   }
 
   .site-header .vnav-btn {
-    display: block !important;
+    display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
   }
@@ -143,5 +183,18 @@
   .twm-side-navigation-menu .twm-nav-post-a-job {
     width: 100%;
     text-align: center;
+  }
+
+  /* Fix profile image in authenticated state */
+  .site-header.authenticated-user .extra-nav.header-2-nav .extra-cell:first-child {
+    display: none !important;
+  }
+
+  /* Ensure no overflow on header */
+  .site-header,
+  .sticky-header,
+  .main-bar-wraper,
+  .main-bar {
+    overflow: visible !important;
   }
 }

@@ -40,7 +40,7 @@ function Footer3 () {
 											</li>
 											<li>
 												<p>
-													<span>Email :</span> <a href="mailto:example@metromindz.com" style={{color: '#f97316', textDecoration: 'underline', cursor: 'pointer'}}>example@metromindz.com</a>
+													<span>Email :</span> <a href="mailto:info@taleglobal.net" style={{color: '#f97316', textDecoration: 'underline', cursor: 'pointer'}}>info@taleglobal.net</a>
 												</p>
 											</li>
 											<li>

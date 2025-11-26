@@ -82,7 +82,7 @@ function ContactUsPage() {
             <>
                 <div className="section-full twm-contact-one">
                     <div className="section-content">
-                        <div className="contact-one-inner">
+                        <div className="contact-one-inner" style={{ paddingLeft: '3rem', paddingRight: '3rem' }}>
                                 <div className="row justify-content-center">
                                     <div className="col-lg-8 col-md-10">
                                         <div className="contact-form-outer text-center">
@@ -111,7 +111,7 @@ function ContactUsPage() {
             <div className="section-full twm-contact-one">
                 <div className="section-content">
                     {/* CONTACT FORM*/}
-                    <div className="contact-one-inner">
+                    <div className="contact-one-inner" style={{ paddingLeft: '3rem', paddingRight: '3rem' }}>
                             <div className="row">
                                 <div className="col-lg-6 col-md-12">
                                     <div className="contact-form-outer">
@@ -227,11 +227,6 @@ function ContactUsPage() {
                                         <div className="contact-info">
                                             <div className="contact-info-section">
                                                 <div className="c-info-column">
-                                                    <div className="c-info-icon"><i className=" fas fa-map-marker-alt" /></div>
-                                                    <h3 className="twm-title">In the bay area?</h3>
-                                                    <p>#56 Sunset Blvd Sahakar Nagar, Bengaluru, 560902</p>
-                                                </div>
-                                                <div className="c-info-column">
                                                     <div className="c-info-icon custome-size"><i className="fas fa-mobile-alt" /></div>
                                                     <h3 className="twm-title">Feel free to contact us</h3>
                                                     <p><a href="tel:+919876543210">+91 9876543210</a></p>
@@ -240,8 +235,8 @@ function ContactUsPage() {
                                                 <div className="c-info-column">
                                                     <div className="c-info-icon"><i className="fas fa-envelope" /></div>
                                                     <h3 className="twm-title">Support</h3>
-                                                    <p><a href="mailto:metromindz@gmail.com" style={{color: '#1976d2 !important', textDecoration: 'underline !important', cursor: 'pointer !important', pointerEvents: 'auto !important', position: 'relative', zIndex: 999}}>metromindz@gmail.com</a></p>
-                                                    <p><a href="mailto:support12@gmail.com" style={{color: '#1976d2 !important', textDecoration: 'underline !important', cursor: 'pointer !important', pointerEvents: 'auto !important', position: 'relative', zIndex: 999}}>support12@gmail.com</a></p>
+                                                    <p><a href="mailto:info@taleglobal.net" style={{color: '#1976d2 !important', textDecoration: 'underline !important', cursor: 'pointer !important', pointerEvents: 'auto !important', position: 'relative', zIndex: 999}}>info@taleglobal.net</a></p>
+                                                    <p><a href="mailto:info@taleglobal.net" style={{color: '#1976d2 !important', textDecoration: 'underline !important', cursor: 'pointer !important', pointerEvents: 'auto !important', position: 'relative', zIndex: 999}}>info@taleglobal.net</a></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -251,13 +246,7 @@ function ContactUsPage() {
                         </div>
                 </div>
             </div>
-            <div className="gmap-outline">
-                <div className="google-map">
-                    <div style={{ width: '100%' }}>
-                        <iframe height={460} src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3304.8534521658976!2d-118.2533646842856!3d34.073270780600225!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c6fd9829c6f3%3A0x6ecd11bcf4b0c23a!2s1363%20Sunset%20Blvd%2C%20Los%20Angeles%2C%20CA%2090026%2C%20USA!5e0!3m2!1sen!2sin!4v1620815366832!5m2!1sen!2sin" />
-                    </div>
-                </div>
-            </div>
+
         </>
     )
 }
