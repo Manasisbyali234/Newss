@@ -44,7 +44,8 @@
 :root {
   color-scheme: light only !important;
   /* Font Family */
-  --font-family: "Satoshi', sans-serif";
+  --font-family: "Poppins", sans-serif;
+
   /* Primary Colors */
   --color-primary-orange: #fd7e14;
   --color-primary-orange-dark: #e8690a;
