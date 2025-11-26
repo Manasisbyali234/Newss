@@ -49,7 +49,7 @@ export default function QuestionModal({ assessment, onClose }) {
 						}}
 					>
 						<strong>
-							{i + 1}. {q.question}
+							{i + 1}. <span dangerouslySetInnerHTML={{ __html: q.question }} />
 						</strong>
 						<div style={{ marginTop: "8px" }}>
 							{q.options?.map((opt, idx) => (
