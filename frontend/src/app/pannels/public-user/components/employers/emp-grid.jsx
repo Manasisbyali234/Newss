@@ -40,9 +40,10 @@ const EmployersGridPage = memo(() => {
         return {
             prefix: "Showing",
             type: "employers",
-            total: totalEmployers.toString(),
             showRange: true,
-            showingUpto: `${startItem}-${endItem} of ${totalEmployers}`
+            rangeStart: startItem,
+            rangeEnd: endItem,
+            total: totalEmployers
         };
     }, [totalEmployers, currentPage, itemsPerPage]);
 

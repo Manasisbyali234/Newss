@@ -23,7 +23,7 @@ function SectionRecordsFilter({ _config, onSortChange, onItemsPerPageChange, est
                         _config.prefix
                     }
                     {
-                        _config.showRange ? (" 1-" + _config.showingUpto + " of ") : " "
+                        _config.showRange ? (` ${_config.rangeStart}-${_config.rangeEnd} of `) : " "
                     }
                     {
                         _config.total + " " + _config.type
