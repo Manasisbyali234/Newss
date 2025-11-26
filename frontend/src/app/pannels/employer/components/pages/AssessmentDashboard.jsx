@@ -144,7 +144,7 @@ export default function AssessmentDashboard() {
 					) : (
 						<div className="row">
 							{assessments.map((assessment, index) => (
-								<div key={assessment._id} className="col-md-6 col-lg-4 mb-3">
+								<div key={assessment._id} className="col-md-6 mb-4">
 									<AssessmentCard 
 										data={assessment} 
 										onDelete={handleDeleteAssessment}

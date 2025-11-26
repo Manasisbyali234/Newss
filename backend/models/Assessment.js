@@ -6,6 +6,7 @@ const AssessmentSchema = new mongoose.Schema({
   serialNumber: { type: Number, required: true },
   title: { type: String, required: true },
   type: { type: String, enum: ['Technical', 'Soft Skill', 'General'], default: 'Technical' },
+  designation: { type: String },
   description: { type: String },
   instructions: { type: String },
   timer: { type: Number, default: 30 },

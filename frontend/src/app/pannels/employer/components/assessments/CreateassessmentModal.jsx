@@ -8,6 +8,7 @@ import 'react-quill/dist/quill.snow.css';
 export default function CreateAssessmentModal({ onClose, onCreate, editData = null }) {
 	const [title, setTitle] = useState(editData?.title || "");
 	const [type, setType] = useState(editData?.type || "Technical");
+	const [designation, setDesignation] = useState(editData?.designation || "");
 	const [timeLimit, setTimeLimit] = useState(editData?.timer || 30);
 	const [description, setDescription] = useState(editData?.description || "");
 	const [questions, setQuestions] = useState(
@@ -154,6 +155,7 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 			id: editData?._id,
 			title,
 			type,
+			designation,
 			timer: timeLimit,
 			description,
 			questions,
@@ -296,6 +298,45 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 								min="1"
 							/>
 						</div>
+					</div>
+
+					<div className="mb-3">
+						<label className="form-label small text-muted mb-2">Designation</label>
+						<select
+							className="form-select"
+							value={designation}
+							onChange={(e) => setDesignation(e.target.value)}
+						>
+							<option value="">Select Designation</option>
+							<option value="Software Engineer">Software Engineer</option>
+							<option value="Senior Software Engineer">Senior Software Engineer</option>
+							<option value="Frontend Developer">Frontend Developer</option>
+							<option value="Backend Developer">Backend Developer</option>
+							<option value="Full Stack Developer">Full Stack Developer</option>
+							<option value="Data Scientist">Data Scientist</option>
+							<option value="Data Analyst">Data Analyst</option>
+							<option value="Product Manager">Product Manager</option>
+							<option value="Project Manager">Project Manager</option>
+							<option value="Business Analyst">Business Analyst</option>
+							<option value="UI/UX Designer">UI/UX Designer</option>
+							<option value="Graphic Designer">Graphic Designer</option>
+							<option value="Marketing Manager">Marketing Manager</option>
+							<option value="Sales Manager">Sales Manager</option>
+							<option value="Sales Executive">Sales Executive</option>
+							<option value="HR Manager">HR Manager</option>
+							<option value="HR Executive">HR Executive</option>
+							<option value="Finance Manager">Finance Manager</option>
+							<option value="Accountant">Accountant</option>
+							<option value="Content Writer">Content Writer</option>
+							<option value="Digital Marketing Specialist">Digital Marketing Specialist</option>
+							<option value="Customer Support Executive">Customer Support Executive</option>
+							<option value="Operations Manager">Operations Manager</option>
+							<option value="Quality Assurance Engineer">Quality Assurance Engineer</option>
+							<option value="DevOps Engineer">DevOps Engineer</option>
+							<option value="System Administrator">System Administrator</option>
+							<option value="Network Administrator">Network Administrator</option>
+							<option value="Telecaller">Telecaller</option>
+						</select>
 					</div>
 
 					<div className="mb-4">

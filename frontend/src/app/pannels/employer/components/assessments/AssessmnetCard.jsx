@@ -24,9 +24,16 @@ export default function AssessmentCard({ data, onDelete, onEdit, index }) {
 				
 				<div className="d-flex justify-content-between align-items-start mb-2">
 					<h5 className="card-title mb-0">{data.title}</h5>
-					<span className={`badge ${data.type === 'Technical' ? 'bg-primary' : data.type === 'Soft Skill' ? 'bg-success' : 'bg-warning'}`}>
-						{data.type}
-					</span>
+					<div className="d-flex flex-column align-items-end gap-1">
+						<span className="btn btn-sm btn-outline-primary" style={{pointerEvents: 'none', cursor: 'default', fontSize: '10px', padding: '1px 6px', lineHeight: '1.2'}}>
+							{data.type}
+						</span>
+						{data.designation && (
+							<span className="btn btn-sm btn-outline-primary" style={{pointerEvents: 'none', cursor: 'default', fontSize: '10px', padding: '1px 6px', lineHeight: '1.2'}}>
+								{data.designation}
+							</span>
+						)}
+					</div>
 				</div>
 				{data.description && (
 					<p className="card-text text-muted small">{data.description}</p>

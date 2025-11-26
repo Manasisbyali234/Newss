@@ -6,7 +6,7 @@ const Job = require('../models/Job');
 // Employer: Create Assessment
 exports.createAssessment = async (req, res) => {
   try {
-    const { title, type, description, instructions, timer, questions } = req.body;
+    const { title, type, designation, description, instructions, timer, questions } = req.body;
     
     // Additional server-side validation
     if (!title || title.trim().length === 0) {
@@ -78,6 +78,7 @@ exports.createAssessment = async (req, res) => {
       serialNumber,
       title: title.trim(),
       type: type || 'Technical',
+      designation: designation ? designation.trim() : '',
       description: description ? description.trim() : '',
       instructions: instructions ? instructions.trim() : '',
       timer: timer || 30,
@@ -133,7 +134,7 @@ exports.getAssessmentDetails = async (req, res) => {
 // Employer: Update Assessment
 exports.updateAssessment = async (req, res) => {
   try {
-    const { title, type, description, instructions, timer, questions } = req.body;
+    const { title, type, designation, description, instructions, timer, questions } = req.body;
     
     // Additional server-side validation (same as create)
     if (!title || title.trim().length === 0) {
@@ -192,6 +193,7 @@ exports.updateAssessment = async (req, res) => {
     const updateData = {
       title: title.trim(),
       type: type || 'Technical',
+      designation: designation ? designation.trim() : '',
       description: description ? description.trim() : '',
       instructions: instructions ? instructions.trim() : '',
       timer: timer || 30,
