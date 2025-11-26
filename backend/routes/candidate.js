@@ -277,13 +277,24 @@ router.delete('/education/:educationId', candidateController.deleteEducation);
 
 // Assessment Routes
 const assessmentController = require('../controllers/assessmentController');
+
+// Debug middleware for assessment routes
+const assessmentDebugMiddleware = (req, res, next) => {
+  console.log(`[${new Date().toISOString()}] Assessment API: ${req.method} ${req.path}`);
+  console.log('Headers:', req.headers.authorization ? 'Bearer token present' : 'No auth token');
+  if (req.body && Object.keys(req.body).length > 0) {
+    console.log('Body:', JSON.stringify(req.body, null, 2));
+  }
+  next();
+};
+
 router.get('/assessments/available', assessmentController.getAvailableAssessments);
 router.get('/assessments/:id', assessmentController.getAssessmentForCandidate);
-router.post('/assessments/start', assessmentController.startAssessment);
-router.post('/assessments/answer', assessmentController.submitAnswer);
+router.post('/assessments/start', assessmentDebugMiddleware, assessmentController.startAssessment);
+router.post('/assessments/answer', assessmentDebugMiddleware, assessmentController.submitAnswer);
 router.post('/assessments/upload-answer', upload.single('answerFile'), assessmentController.uploadFileAnswer);
-router.post('/assessments/submit', assessmentController.submitAssessment);
+router.post('/assessments/submit', assessmentDebugMiddleware, assessmentController.submitAssessment);
 router.get('/assessments/result/:attemptId', assessmentController.getAssessmentResult);
-router.post('/assessments/violation', candidateController.logAssessmentViolation);
+router.post('/assessments/violation', assessmentDebugMiddleware, assessmentController.recordViolation);
 
 module.exports = router;

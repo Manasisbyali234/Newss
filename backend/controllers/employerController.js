@@ -1501,13 +1501,13 @@ exports.getProfileCompletion = async (req, res) => {
     
     let message = '';
     if (missingRequiredFields.length > 0) {
-      message = `Please complete required fields: ${missingRequiredFields.join(', ')}`;
+      message = "Kindly complete your profile and wait for the admin's approval.";
     } else if (!profileSubmittedForReview) {
       message = 'Your profile is complete. Save your profile to submit it for admin review.';
     } else if (profileSubmittedForReview && !isApproved) {
-      message = 'Your profile is complete and under admin review. You can post jobs once approved.';
+      message = 'Thank you for completing your profile! Your profile has been submitted for admin review.';
     } else {
-      message = 'Your profile is approved. You can now post jobs!';
+      message = 'Thank you for completing your profile! Your profile is approved and you can now post jobs.';
     }
     
     res.json({ 

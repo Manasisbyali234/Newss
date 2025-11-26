@@ -329,20 +329,20 @@ function EmpDashboardPage() {
                                         )}
                                         
                                         {/* Show profile completion message */}
-                                        {profileCompletion.message && (
-                                            <div style={{ 
-                                                marginBottom: '1.5rem',
-                                                padding: '0.75rem',
-                                                borderRadius: '0.5rem',
-                                                background: profileCompletion.isProfileComplete ? '#f0f9ff' : '#fef3c7',
-                                                border: `1px solid ${profileCompletion.isProfileComplete ? '#bae6fd' : '#fde68a'}`,
-                                                color: profileCompletion.isProfileComplete ? '#0369a1' : '#92400e'
-                                            }}>
-                                                <p style={{ margin: 0, fontSize: '0.875rem' }}>
-                                                    {profileCompletion.message}
-                                                </p>
-                                            </div>
-                                        )}
+                                        <div style={{ 
+                                            marginBottom: '1.5rem',
+                                            padding: '0.75rem',
+                                            borderRadius: '0.5rem',
+                                            background: profileCompletion.completion === 100 ? '#f0f9ff' : '#fef3c7',
+                                            border: `1px solid ${profileCompletion.completion === 100 ? '#bae6fd' : '#fde68a'}`,
+                                            color: profileCompletion.completion === 100 ? '#0369a1' : '#92400e'
+                                        }}>
+                                            <p style={{ margin: 0, fontSize: '0.875rem' }}>
+                                                {profileCompletion.completion === 100 
+                                                    ? "Thank you for completing your profile!" 
+                                                    : "Kindly complete your profile and wait for the admin's approval."}
+                                            </p>
+                                        </div>
                                         
                                         <div style={{ 
                                             display: 'flex', 

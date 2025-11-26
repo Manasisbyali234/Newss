@@ -115,36 +115,50 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
   const handleNext = async () => {
     const question = assessment.questions[currentQuestion];
     
+    // Validate answers before proceeding
     if (question.type === 'mcq' && selectedAnswer === null) {
-      alert('Please select an answer');
+      alert('Please select an answer before proceeding to the next question.');
       return;
     }
     
     if (question.type === 'subjective' && !textAnswer.trim() && !uploadedFile) {
-      alert('Please provide a written answer or upload a file');
+      alert('Please provide a written answer or upload a file before proceeding.');
       return;
     }
     
     if (question.type === 'upload' && !uploadedFile) {
-      alert('Please upload a file');
+      alert('Please upload a file before proceeding to the next question.');
       return;
     }
 
     try {
       const token = localStorage.getItem('candidateToken');
       
+      if (!token) {
+        alert('Authentication token not found. Please login again.');
+        return;
+      }
+      
       if (question.type !== 'upload') {
-        await axios.post('/api/candidate/assessments/answer', {
+        const response = await axios.post('/api/candidate/assessments/answer', {
           attemptId,
           questionIndex: currentQuestion,
           selectedAnswer: question.type === 'mcq' ? selectedAnswer : null,
           textAnswer: question.type === 'subjective' ? textAnswer : null,
           timeSpent: Date.now() - startTime
         }, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
+          timeout: 15000 // 15 second timeout
         });
+        
+        if (!response.data.success) {
+          console.error('Failed to save answer:', response.data.message);
+          alert(`Failed to save answer: ${response.data.message}. Please try again.`);
+          return;
+        }
       }
 
+      // Move to next question
       if (currentQuestion < assessment.questions.length - 1) {
         setCurrentQuestion(prev => prev + 1);
         setSelectedAnswer(null);
@@ -153,6 +167,18 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
       }
     } catch (error) {
       console.error('Error submitting answer:', error);
+      
+      let errorMessage = 'Failed to save answer. ';
+      
+      if (error.response) {
+        errorMessage += error.response.data?.message || `Server error: ${error.response.status}`;
+      } else if (error.request) {
+        errorMessage += 'No response from server. Please check your internet connection.';
+      } else {
+        errorMessage += error.message || 'Unknown error occurred.';
+      }
+      
+      alert(errorMessage + ' Please try again.');
     }
   };
 
@@ -167,7 +193,7 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
         const token = localStorage.getItem('candidateToken');
         
         if (question.type !== 'upload') {
-          await axios.post('/api/candidate/assessments/answer', {
+          const answerResponse = await axios.post('/api/candidate/assessments/answer', {
             attemptId,
             questionIndex: currentQuestion,
             selectedAnswer: question.type === 'mcq' ? selectedAnswer : null,
@@ -176,28 +202,63 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
           }, {
             headers: { Authorization: `Bearer ${token}` }
           });
+          
+          if (!answerResponse.data.success) {
+            console.error('Failed to save final answer:', answerResponse.data.message);
+          }
         }
       } catch (error) {
         console.error('Error submitting final answer:', error);
+        // Continue with submission even if final answer fails
       }
     }
     
     // Submit assessment
     try {
       const token = localStorage.getItem('candidateToken');
+      
+      if (!token) {
+        alert('Authentication token not found. Please login again.');
+        return;
+      }
+      
+      if (!attemptId) {
+        alert('Assessment attempt ID not found. Please restart the assessment.');
+        return;
+      }
+      
       const response = await axios.post('/api/candidate/assessments/submit', {
         attemptId,
-        violations
+        violations: violations || []
       }, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
+        timeout: 30000 // 30 second timeout
       });
 
       if (response.data.success) {
+        console.log('Assessment submitted successfully:', response.data);
         onComplete(response.data.result);
+      } else {
+        console.error('Assessment submission failed:', response.data.message);
+        alert(`Failed to submit assessment: ${response.data.message || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Error submitting assessment:', error);
-      alert('Failed to submit assessment');
+      
+      let errorMessage = 'Failed to submit assessment. ';
+      
+      if (error.response) {
+        // Server responded with error status
+        errorMessage += error.response.data?.message || `Server error: ${error.response.status}`;
+      } else if (error.request) {
+        // Request was made but no response received
+        errorMessage += 'No response from server. Please check your internet connection.';
+      } else {
+        // Something else happened
+        errorMessage += error.message || 'Unknown error occurred.';
+      }
+      
+      alert(errorMessage + ' Please try again or contact support if the problem persists.');
     }
   };
 
