@@ -294,6 +294,11 @@ exports.startAssessment = async (req, res) => {
   try {
     const { assessmentId, jobId, applicationId } = req.body;
     
+    // Validate input
+    if (!assessmentId || !jobId || !applicationId) {
+      return res.status(400).json({ success: false, message: 'Assessment ID, Job ID, and Application ID are required' });
+    }
+    
     // Check if already attempted
     let attempt = await AssessmentAttempt.findOne({
       assessmentId,
@@ -314,13 +319,26 @@ exports.startAssessment = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Assessment not found' });
     }
     
+    // Verify application exists and belongs to candidate
+    const application = await Application.findOne({
+      _id: applicationId,
+      candidateId: req.user.id
+    });
+    
+    if (!application) {
+      return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+    
     if (!attempt) {
+      const totalMarks = assessment.questions.reduce((sum, q) => sum + (q.marks || 1), 0);
       attempt = new AssessmentAttempt({
         assessmentId,
         candidateId: req.user.id,
         jobId,
         applicationId,
-        totalMarks: assessment.questions.reduce((sum, q) => sum + q.marks, 0)
+        totalMarks,
+        answers: [],
+        violations: []
       });
     }
     
@@ -329,17 +347,37 @@ exports.startAssessment = async (req, res) => {
     attempt.timeRemaining = assessment.timer * 60;
     attempt.termsAccepted = true;
     attempt.termsAcceptedAt = new Date();
+    attempt.currentQuestion = 0;
     
     await attempt.save();
     
     // Update application status
     await Application.findByIdAndUpdate(applicationId, {
-      assessmentStatus: 'in_progress'
+      assessmentStatus: 'in_progress',
+      assessmentAttemptId: attempt._id
     });
     
-    res.json({ success: true, attempt });
+    console.log(`Assessment started for candidate ${req.user.id}, attempt ${attempt._id}`);
+    
+    res.json({ 
+      success: true, 
+      message: 'Assessment started successfully',
+      attempt: {
+        _id: attempt._id,
+        assessmentId: attempt.assessmentId,
+        startTime: attempt.startTime,
+        timeRemaining: attempt.timeRemaining,
+        totalMarks: attempt.totalMarks,
+        currentQuestion: attempt.currentQuestion
+      }
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error('Start assessment error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to start assessment. Please try again.',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
@@ -349,6 +387,10 @@ exports.submitAnswer = async (req, res) => {
     const { attemptId, questionIndex, selectedAnswer, textAnswer, timeSpent } = req.body;
     
     // Validate input
+    if (!attemptId) {
+      return res.status(400).json({ success: false, message: 'Attempt ID is required' });
+    }
+    
     if (typeof questionIndex !== 'number' || questionIndex < 0) {
       return res.status(400).json({ success: false, message: 'Invalid question index' });
     }
@@ -359,25 +401,32 @@ exports.submitAnswer = async (req, res) => {
     });
     
     if (!attempt) {
-      return res.status(404).json({ success: false, message: 'Attempt not found' });
+      return res.status(404).json({ success: false, message: 'Assessment attempt not found' });
     }
     
     if (attempt.status !== 'in_progress') {
-      return res.status(400).json({ success: false, message: 'Assessment not in progress' });
+      return res.status(400).json({ success: false, message: 'Assessment is not in progress' });
     }
     
     // Validate question exists
     const assessment = await Assessment.findById(attempt.assessmentId);
     if (!assessment || !assessment.questions[questionIndex]) {
-      return res.status(400).json({ success: false, message: 'Invalid question index' });
+      return res.status(400).json({ success: false, message: 'Question not found' });
     }
     
     const question = assessment.questions[questionIndex];
     
     // Validate answer based on question type
     if (question.type === 'mcq') {
+      if (selectedAnswer === null || selectedAnswer === undefined) {
+        return res.status(400).json({ success: false, message: 'Please select an answer' });
+      }
       if (typeof selectedAnswer !== 'number' || selectedAnswer < 0 || selectedAnswer >= question.options.length) {
-        return res.status(400).json({ success: false, message: 'Invalid answer option' });
+        return res.status(400).json({ success: false, message: 'Invalid answer option selected' });
+      }
+    } else if (question.type === 'subjective') {
+      if (!textAnswer || !textAnswer.trim()) {
+        return res.status(400).json({ success: false, message: 'Please provide a text answer' });
       }
     }
     
@@ -386,7 +435,7 @@ exports.submitAnswer = async (req, res) => {
     const answerData = {
       questionIndex,
       selectedAnswer: question.type === 'mcq' ? parseInt(selectedAnswer) : null,
-      textAnswer: question.type === 'subjective' ? textAnswer : null,
+      textAnswer: question.type === 'subjective' ? textAnswer?.trim() : null,
       timeSpent: timeSpent || 0,
       answeredAt: new Date()
     };
@@ -397,12 +446,28 @@ exports.submitAnswer = async (req, res) => {
       attempt.answers.push(answerData);
     }
     
-    attempt.currentQuestion = questionIndex + 1;
+    attempt.currentQuestion = Math.max(attempt.currentQuestion || 0, questionIndex + 1);
+    attempt.markModified('answers');
     await attempt.save();
     
-    res.json({ success: true, attempt });
+    console.log(`Answer submitted for question ${questionIndex} in attempt ${attemptId}`);
+    
+    res.json({ 
+      success: true, 
+      message: 'Answer saved successfully',
+      attempt: {
+        _id: attempt._id,
+        currentQuestion: attempt.currentQuestion,
+        answersCount: attempt.answers.length
+      }
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error('Submit answer error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to save answer. Please try again.',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
@@ -486,13 +551,23 @@ exports.submitAssessment = async (req, res) => {
   try {
     const { attemptId, violations } = req.body;
     
+    // Validate input
+    if (!attemptId) {
+      return res.status(400).json({ success: false, message: 'Attempt ID is required' });
+    }
+    
     const attempt = await AssessmentAttempt.findOne({
       _id: attemptId,
       candidateId: req.user.id
     });
     
     if (!attempt) {
-      return res.status(404).json({ success: false, message: 'Attempt not found' });
+      return res.status(404).json({ success: false, message: 'Assessment attempt not found' });
+    }
+    
+    // Check if already completed
+    if (attempt.status === 'completed') {
+      return res.status(400).json({ success: false, message: 'Assessment already completed' });
     }
     
     const assessment = await Assessment.findById(attempt.assessmentId);
@@ -515,34 +590,56 @@ exports.submitAssessment = async (req, res) => {
       
       totalAnswered++;
       
-      // Ensure both values are integers for accurate comparison
-      const selectedAnswer = parseInt(answer.selectedAnswer);
-      const correctAnswer = parseInt(question.correctAnswer);
-      
-      // Validate answer is within valid range
-      if (selectedAnswer >= 0 && selectedAnswer < question.options.length) {
-        if (selectedAnswer === correctAnswer) {
+      // Handle different question types
+      if (question.type === 'mcq') {
+        // Ensure both values are integers for accurate comparison
+        const selectedAnswer = parseInt(answer.selectedAnswer);
+        const correctAnswer = parseInt(question.correctAnswer);
+        
+        // Validate answer is within valid range and not null/undefined
+        if (!isNaN(selectedAnswer) && selectedAnswer >= 0 && selectedAnswer < question.options.length) {
+          if (selectedAnswer === correctAnswer) {
+            score += (question.marks || 1);
+            correctAnswers++;
+          }
+        } else {
+          console.warn(`Invalid MCQ answer ${selectedAnswer} for question ${answer.questionIndex}`);
+        }
+      } else if (question.type === 'subjective') {
+        // For subjective questions, just add marks (manual evaluation needed)
+        if (answer.textAnswer && answer.textAnswer.trim()) {
+          // For now, give full marks for answered subjective questions
+          // This should be manually evaluated later
           score += (question.marks || 1);
           correctAnswers++;
         }
-      } else {
-        console.warn(`Invalid answer ${selectedAnswer} for question ${answer.questionIndex}`);
+      } else if (question.type === 'upload') {
+        // For upload questions, give marks if file is uploaded
+        if (answer.uploadedFile) {
+          score += (question.marks || 1);
+          correctAnswers++;
+        }
       }
     }
     
-    const percentage = (score / attempt.totalMarks) * 100;
-    const result = percentage >= assessment.passingPercentage ? 'pass' : 'fail';
+    // Ensure totalMarks is valid
+    const totalMarks = attempt.totalMarks || assessment.questions.reduce((sum, q) => sum + (q.marks || 1), 0);
+    const percentage = totalMarks > 0 ? (score / totalMarks) * 100 : 0;
+    const passingPercentage = assessment.passingPercentage || 60; // Default 60%
+    const result = percentage >= passingPercentage ? 'pass' : 'fail';
     
     // Check if time expired
     const timeElapsed = (new Date() - new Date(attempt.startTime)) / 1000; // in seconds
     const timeLimit = assessment.timer * 60; // in seconds
     const isExpired = timeElapsed > timeLimit;
     
+    // Update attempt with results
     attempt.score = score;
-    attempt.percentage = percentage;
+    attempt.percentage = Math.round(percentage * 100) / 100; // Round to 2 decimal places
     attempt.result = result;
     attempt.status = isExpired ? 'expired' : 'completed';
     attempt.endTime = new Date();
+    attempt.totalMarks = totalMarks; // Ensure totalMarks is set
     
     if (violations && violations.length > 0) {
       attempt.violations = violations;
@@ -550,29 +647,48 @@ exports.submitAssessment = async (req, res) => {
     
     await attempt.save();
     
-    // Update application
-    await Application.findByIdAndUpdate(attempt.applicationId, {
+    // Update application with assessment results
+    const updateData = {
       assessmentStatus: 'completed',
       assessmentScore: score,
-      assessmentPercentage: percentage,
-      assessmentResult: result
+      assessmentPercentage: attempt.percentage,
+      assessmentResult: result,
+      assessmentAttemptId: attempt._id
+    };
+    
+    await Application.findByIdAndUpdate(attempt.applicationId, updateData);
+    
+    console.log(`Assessment submitted successfully for attempt ${attemptId}:`, {
+      score,
+      totalMarks,
+      percentage: attempt.percentage,
+      result,
+      correctAnswers,
+      totalAnswered
     });
     
     res.json({ 
       success: true, 
+      message: 'Assessment submitted successfully',
       result: {
         score,
-        totalMarks: attempt.totalMarks,
-        percentage: Math.round(percentage * 100) / 100, // Round to 2 decimal places
+        totalMarks,
+        percentage: attempt.percentage,
         result,
         correctAnswers,
         totalQuestions: assessment.totalQuestions,
         totalAnswered,
-        unanswered: assessment.totalQuestions - totalAnswered
+        unanswered: assessment.totalQuestions - totalAnswered,
+        attemptId: attempt._id
       }
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error('Assessment submission error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to submit assessment. Please try again.',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
@@ -614,25 +730,46 @@ exports.recordViolation = async (req, res) => {
   try {
     const { attemptId, type, details } = req.body;
     
+    if (!attemptId || !type) {
+      return res.status(400).json({ success: false, message: 'Attempt ID and violation type are required' });
+    }
+    
     const attempt = await AssessmentAttempt.findOne({
       _id: attemptId,
       candidateId: req.user.id
     });
     
     if (!attempt) {
-      return res.status(404).json({ success: false, message: 'Attempt not found' });
+      return res.status(404).json({ success: false, message: 'Assessment attempt not found' });
+    }
+    
+    if (attempt.status !== 'in_progress') {
+      return res.status(400).json({ success: false, message: 'Assessment is not in progress' });
     }
     
     attempt.violations.push({
       type,
       timestamp: new Date(),
-      details
+      details: details || `${type} violation detected`
     });
     
+    attempt.markModified('violations');
     await attempt.save();
-    res.json({ success: true });
+    
+    console.log(`Violation recorded for attempt ${attemptId}: ${type}`);
+    
+    res.json({ 
+      success: true, 
+      message: 'Violation recorded',
+      violationCount: attempt.violations.length
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error('Record violation error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to record violation',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 

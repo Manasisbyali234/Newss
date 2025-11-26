@@ -354,15 +354,8 @@ const StartAssessment = () => {
 			return false;
 		}
 		
-		// Validate that at least one question is answered
-		const answeredCount = answers.filter(answer => answer !== null && answer !== undefined).length;
-		if (answeredCount === 0) {
-			setError("Please answer at least one question before submitting.");
-			return false;
-		}
-		
 		try {
-			const submitResponse = await api.submitAssessment(attemptId, answers);
+			const submitResponse = await api.submitAssessment(attemptId, []);
 			if (submitResponse.success) {
 				setAssessmentState('completed');
 				removeSecurityListeners();
@@ -375,11 +368,11 @@ const StartAssessment = () => {
 				});
 				return true;
 			}
-			setError("Failed to submit assessment");
+			setError(submitResponse.message || "Failed to submit assessment");
 			return false;
 		} catch (err) {
 			console.error("Error submitting assessment:", err);
-			setError("Failed to submit assessment");
+			setError(err.message || "Failed to submit assessment");
 			return false;
 		}
 	};
@@ -410,13 +403,6 @@ const StartAssessment = () => {
 
 	const handleSubmit = async () => {
 		if (isSubmitted) return;
-		
-		// Check if at least one question is answered
-		const answeredCount = answers.filter(answer => answer !== null).length;
-		if (answeredCount === 0) {
-			setError("Please answer at least one question before submitting the assessment.");
-			return;
-		}
 		
 		setIsSubmitted(true);
 		const success = await submitAssessment();
