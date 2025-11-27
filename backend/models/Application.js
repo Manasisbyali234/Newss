@@ -53,6 +53,27 @@ const applicationSchema = new mongoose.Schema({
   isSelectedForProcess: { type: Boolean, default: false },
   reviewedAt: { type: Date },
   
+  // Interview invite fields
+  interviewInvite: {
+    sentAt: { type: Date },
+    proposedDate: { type: String },
+    proposedTime: { type: String },
+    meetingLink: { type: String },
+    instructions: { type: String },
+    status: { type: String, enum: ['pending', 'confirmed', 'rejected'], default: 'pending' },
+    confirmedDate: { type: String },
+    confirmedTime: { type: String },
+    confirmedAt: { type: Date }
+  },
+  
+  // Candidate response to interview invite
+  candidateResponse: {
+    availableDate: { type: String },
+    availableTime: { type: String },
+    message: { type: String },
+    respondedAt: { type: Date }
+  },
+  
   statusHistory: [{
     status: String,
     changedAt: { type: Date, default: Date.now },

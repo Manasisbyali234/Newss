@@ -163,6 +163,17 @@ router.put('/applications/:applicationId/interview-process/stages/:stageIndex/sc
   body('toDate').optional().isISO8601().withMessage('Valid to date is required')
 ], handleValidationErrors, interviewController.scheduleInterviewStage);
 
+// Interview Email Routes
+router.post('/send-interview-invite/:applicationId', [
+  body('interviewDate').notEmpty().withMessage('Interview date is required'),
+  body('interviewTime').notEmpty().withMessage('Interview time is required')
+], handleValidationErrors, employerController.sendInterviewInvite);
+router.post('/confirm-interview/:applicationId', [
+  body('confirmedDate').notEmpty().withMessage('Confirmed date is required'),
+  body('confirmedTime').notEmpty().withMessage('Confirmed time is required')
+], handleValidationErrors, employerController.confirmInterview);
+router.get('/interview-responses/:applicationId', employerController.getInterviewResponse);
+
 // Assessment Routes
 const assessmentController = require('../controllers/assessmentController');
 router.post('/assessments', [

@@ -1762,3 +1762,150 @@ exports.scheduleInterviewRound = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
+// Interview Email Controllers
+exports.sendInterviewInvite = async (req, res) => {
+  try {
+    const { applicationId } = req.params;
+    const { interviewDate, interviewTime, meetingLink, instructions } = req.body;
+    
+    const application = await Application.findOne({
+      _id: applicationId,
+      employerId: req.user._id
+    })
+    .populate('candidateId', 'name email')
+    .populate('jobId', 'title');
+    
+    if (!application) {
+      return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+    
+    // Send email using nodemailer
+    const nodemailer = require('nodemailer');
+    const transporter = nodemailer.createTransporter({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+    
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: application.candidateId.email,
+      subject: `Interview Invitation - ${application.jobId.title}`,
+      html: `
+        <h2>Interview Invitation</h2>
+        <p>Dear ${application.candidateId.name},</p>
+        <p>We would like to invite you for an interview for the position of <strong>${application.jobId.title}</strong>.</p>
+        <p><strong>Preferred Date:</strong> ${new Date(interviewDate).toLocaleDateString()}</p>
+        <p><strong>Preferred Time:</strong> ${interviewTime}</p>
+        ${meetingLink ? `<p><strong>Meeting Link:</strong> <a href="${meetingLink}">${meetingLink}</a></p>` : ''}
+        ${instructions ? `<p><strong>Instructions:</strong> ${instructions}</p>` : ''}
+        <p>Please reply with your available time slots if the suggested time doesn't work for you.</p>
+        <p>Best regards,<br>${req.user.companyName}</p>
+      `
+    };
+    
+    await transporter.sendMail(mailOptions);
+    
+    // Save interview invite details to application
+    await Application.findByIdAndUpdate(applicationId, {
+      interviewInvite: {
+        sentAt: new Date(),
+        proposedDate: interviewDate,
+        proposedTime: interviewTime,
+        meetingLink,
+        instructions,
+        status: 'pending'
+      }
+    });
+    
+    res.json({ success: true, message: 'Interview invite sent successfully' });
+  } catch (error) {
+    console.error('Send interview invite error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.confirmInterview = async (req, res) => {
+  try {
+    const { applicationId } = req.params;
+    const { confirmedDate, confirmedTime } = req.body;
+    
+    const application = await Application.findOne({
+      _id: applicationId,
+      employerId: req.user._id
+    })
+    .populate('candidateId', 'name email')
+    .populate('jobId', 'title');
+    
+    if (!application) {
+      return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+    
+    // Send confirmation email
+    const nodemailer = require('nodemailer');
+    const transporter = nodemailer.createTransporter({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+    
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: application.candidateId.email,
+      subject: `Interview Confirmed - ${application.jobId.title}`,
+      html: `
+        <h2>Interview Confirmed</h2>
+        <p>Dear ${application.candidateId.name},</p>
+        <p>Your interview for the position of <strong>${application.jobId.title}</strong> has been confirmed.</p>
+        <p><strong>Date:</strong> ${new Date(confirmedDate).toLocaleDateString()}</p>
+        <p><strong>Time:</strong> ${confirmedTime}</p>
+        <p>We look forward to meeting you!</p>
+        <p>Best regards,<br>${req.user.companyName}</p>
+      `
+    };
+    
+    await transporter.sendMail(mailOptions);
+    
+    // Update application with confirmed schedule
+    await Application.findByIdAndUpdate(applicationId, {
+      'interviewInvite.status': 'confirmed',
+      'interviewInvite.confirmedDate': confirmedDate,
+      'interviewInvite.confirmedTime': confirmedTime,
+      'interviewInvite.confirmedAt': new Date()
+    });
+    
+    res.json({ success: true, message: 'Interview schedule confirmed and email sent' });
+  } catch (error) {
+    console.error('Confirm interview error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getInterviewResponse = async (req, res) => {
+  try {
+    const { applicationId } = req.params;
+    
+    const application = await Application.findOne({
+      _id: applicationId,
+      employerId: req.user._id
+    }).select('interviewInvite candidateResponse');
+    
+    if (!application) {
+      return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+    
+    res.json({ 
+      success: true, 
+      interviewInvite: application.interviewInvite,
+      candidateResponse: application.candidateResponse 
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

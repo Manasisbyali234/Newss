@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Save, Plus, Trash2, Edit3 } from 'lucide-react';
-import { api } from '../../../../utils/api';
+import { Calendar, Clock, Save, Plus, Trash2, Edit3, Mail, Send } from 'lucide-react';
+import api from '../../../../utils/api';
 import showToast from '../../../../utils/toastNotification';
 
 const InterviewProcessManager = ({ applicationId, onSave }) => {
@@ -8,6 +8,15 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
   const [stages, setStages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailData, setEmailData] = useState({
+    interviewDate: '',
+    interviewTime: '',
+    meetingLink: '',
+    instructions: ''
+  });
+  const [candidateResponse, setCandidateResponse] = useState(null);
+  const [sendingEmail, setSendingEmail] = useState(false);
 
   const stageTypes = [
     { value: 'assessment', label: 'Assessment Schedule', icon: '📝' },
@@ -82,6 +91,68 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
     setStages(updatedStages);
   };
 
+  const sendInterviewInvite = async () => {
+    if (!emailData.interviewDate || !emailData.interviewTime) {
+      showToast('Please provide interview date and time', 'error');
+      return;
+    }
+
+    setSendingEmail(true);
+    try {
+      const token = localStorage.getItem('employerToken');
+      const response = await fetch(`http://localhost:5000/api/employer/send-interview-invite/${applicationId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(emailData)
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        showToast('Interview invite sent successfully!', 'success');
+        setShowEmailModal(false);
+        setEmailData({ interviewDate: '', interviewTime: '', meetingLink: '', instructions: '' });
+      } else {
+        showToast(data.message || 'Failed to send invite', 'error');
+      }
+    } catch (error) {
+      console.error('Error sending invite:', error);
+      showToast('Error sending invite. Please try again.', 'error');
+    } finally {
+      setSendingEmail(false);
+    }
+  };
+
+  const confirmSchedule = async () => {
+    try {
+      const token = localStorage.getItem('employerToken');
+      const response = await fetch(`http://localhost:5000/api/employer/confirm-interview/${applicationId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          confirmedDate: candidateResponse.availableDate,
+          confirmedTime: candidateResponse.availableTime
+        })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        showToast('Interview schedule confirmed!', 'success');
+        setCandidateResponse(null);
+      } else {
+        showToast(data.message || 'Failed to confirm schedule', 'error');
+      }
+    } catch (error) {
+      console.error('Error confirming schedule:', error);
+      showToast('Error confirming schedule. Please try again.', 'error');
+    }
+  };
+
   const saveInterviewProcess = async () => {
     setSaving(true);
     try {
@@ -119,33 +190,126 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
   return (
     <div className="card border-0 shadow-sm" style={{ borderRadius: '15px' }}>
       <div className="card-header border-0" style={{ background: '#f8f9fa', borderRadius: '15px 15px 0 0' }}>
-        <div className="d-flex justify-content-between align-items-center">
-          <h5 className="mb-0 fw-bold" style={{ color: '#000' }}>
+        <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <h5 className="mb-0 fw-bold" style={{ color: '#000', flex: '1 1 auto' }}>
             Interview Process Management
           </h5>
           <button
             className="btn btn-sm"
-            style={{ backgroundColor: '#ff6600', color: 'white', border: 'none' }}
-            onClick={addStage}
+            style={{ backgroundColor: '#ff6600', color: 'white', border: 'none', whiteSpace: 'nowrap', flexShrink: 0 }}
+            onClick={() => setShowEmailModal(true)}
           >
-            <Plus size={16} className="me-1" />
-            Add Stage
+            <Mail size={16} className="me-1" />
+            Send Invite
           </button>
         </div>
       </div>
       
       <div className="card-body p-4">
+        {/* Email Modal */}
+        {showEmailModal && (
+          <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content" style={{ borderRadius: '15px' }}>
+                <div className="modal-header" style={{ borderBottom: '2px solid #ff6600' }}>
+                  <h5 className="modal-title fw-bold">Send Interview Invite</h5>
+                  <button type="button" className="btn-close" onClick={() => setShowEmailModal(false)}></button>
+                </div>
+                <div className="modal-body p-4">
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold">Preferred Interview Date</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={emailData.interviewDate}
+                      onChange={(e) => setEmailData({...emailData, interviewDate: e.target.value})}
+                      style={{ borderColor: '#ff6600' }}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold">Preferred Interview Time</label>
+                    <input
+                      type="time"
+                      className="form-control"
+                      value={emailData.interviewTime}
+                      onChange={(e) => setEmailData({...emailData, interviewTime: e.target.value})}
+                      style={{ borderColor: '#ff6600' }}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold">Meeting Link (Optional)</label>
+                    <input
+                      type="url"
+                      className="form-control"
+                      placeholder="https://meet.google.com/..."
+                      value={emailData.meetingLink}
+                      onChange={(e) => setEmailData({...emailData, meetingLink: e.target.value})}
+                      style={{ borderColor: '#ff6600' }}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold">Additional Instructions</label>
+                    <textarea
+                      className="form-control"
+                      rows="3"
+                      placeholder="Enter any additional instructions..."
+                      value={emailData.instructions}
+                      onChange={(e) => setEmailData({...emailData, instructions: e.target.value})}
+                      style={{ borderColor: '#ff6600' }}
+                    />
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => setShowEmailModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="btn"
+                    style={{ backgroundColor: '#ff6600', color: 'white', border: 'none' }}
+                    onClick={sendInterviewInvite}
+                    disabled={sendingEmail}
+                  >
+                    {sendingEmail ? (
+                      <>
+                        <div className="spinner-border spinner-border-sm me-2" role="status"></div>
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send size={16} className="me-2" />
+                        Send Invite
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Candidate Response Display */}
+        {candidateResponse && (
+          <div className="alert alert-info mb-4" style={{ backgroundColor: '#e3f2fd', borderColor: '#2196f3' }}>
+            <h6 className="fw-bold mb-2">Candidate's Available Time Slots:</h6>
+            <p className="mb-2"><strong>Date:</strong> {candidateResponse.availableDate}</p>
+            <p className="mb-2"><strong>Time:</strong> {candidateResponse.availableTime}</p>
+            <p className="mb-3"><strong>Message:</strong> {candidateResponse.message}</p>
+            <button
+              className="btn btn-sm"
+              style={{ backgroundColor: '#ff6600', color: 'white', border: 'none' }}
+              onClick={confirmSchedule}
+            >
+              Confirm Schedule
+            </button>
+          </div>
+        )}
+
         {stages.length === 0 ? (
           <div className="text-center py-4">
-            <p className="text-muted mb-3">No interview stages configured yet.</p>
-            <button
-              className="btn"
-              style={{ backgroundColor: '#ff6600', color: 'white', border: 'none' }}
-              onClick={addStage}
-            >
-              <Plus size={16} className="me-1" />
-              Add First Stage
-            </button>
+            <p className="text-muted mb-3">No interview stages configured yet. Use "Send Invite" button to schedule interviews.</p>
           </div>
         ) : (
           <div className="row g-4">
