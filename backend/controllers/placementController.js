@@ -897,29 +897,14 @@ exports.processFileApproval = async (req, res) => {
     for (let index = 0; index < jsonData.length; index++) {
       try {
         const row = jsonData[index];
-        let email = row.Email || row.email || row.EMAIL;
-        let password = row.Password || row.password || row.PASSWORD;
-        let name = row['Candidate Name'] || row['candidate name'] || row['CANDIDATE NAME'] || row.Name || row.name || row.NAME || row['Full Name'] || row['full name'] || row['FULL NAME'] || row['Student Name'] || row['student name'] || row['STUDENT NAME'];
+        const email = row.Email || row.email || row.EMAIL;
+        const password = row.Password || row.password || row.PASSWORD;
+        const name = row['Candidate Name'] || row['candidate name'] || row['CANDIDATE NAME'] || row.Name || row.name || row.NAME || row['Full Name'] || row['full name'] || row['FULL NAME'] || row['Student Name'] || row['student name'] || row['STUDENT NAME'];
         const phone = row.Phone || row.phone || row.PHONE || row.Mobile || row.mobile || row.MOBILE;
         const course = row.Course || row.course || row.COURSE || row.Branch || row.branch || row.BRANCH;
         const collegeName = row['College Name'] || row['college name'] || row['COLLEGE NAME'] || row.College || row.college || row.COLLEGE || placement.collegeName;
         
-        // Auto-generate missing fields with proper validation
-        if (!email || email.trim() === '') {
-          email = `student${index + 1}@${placement.collegeName.toLowerCase().replace(/\s+/g, '')}.edu`;
-        }
-        if (!password || password.trim() === '') {
-          password = `pwd${Math.random().toString(36).substr(2, 8)}`;
-        }
-        if (!name || name.trim() === '') {
-          name = `Student ${index + 1}`;
-        }
-        
-        // Validate required fields
-        if (!email || !password || !name) {
-          errors.push(`Row ${index + 1}: Missing required fields (email, password, or name)`);
-          continue;
-        }
+
         
         // Check if candidate already exists
         const existingCandidate = await Candidate.findOne({ email: email.trim().toLowerCase() });
@@ -934,9 +919,9 @@ exports.processFileApproval = async (req, res) => {
         
         // Create candidate with plain text password for placement method
         const candidate = await Candidate.create({
-          name: name.trim(),
-          email: email.trim().toLowerCase(),
-          password: password.trim(), // Store as plain text for placement candidates
+          name: name ? name.trim() : '',
+          email: email ? email.trim().toLowerCase() : '',
+          password: password ? password.trim() : '', // Store as plain text for placement candidates
           phone: phone ? phone.toString().trim() : '',
           course: course ? course.trim() : '',
           credits: finalCredits,
@@ -979,33 +964,35 @@ exports.processFileApproval = async (req, res) => {
           originalRowData: row
         });
         
-        // Send welcome email with login credentials
-        try {
-          await sendPlacementCandidateWelcomeEmail(
-            email.trim().toLowerCase(),
-            name.trim(),
-            password.trim(),
-            placement.name,
-            placement.collegeName
-          );
+        // Send welcome email with login credentials only if password exists
+        if (password && password.trim()) {
+          try {
+            await sendPlacementCandidateWelcomeEmail(
+              email.trim().toLowerCase(),
+              name.trim(),
+              password.trim(),
+              placement.name,
+              placement.collegeName
+            );
           
-          // Update placement candidate record to mark email as sent
-          await PlacementCandidate.findOneAndUpdate(
-            { candidateId: candidate._id },
-            { 
-              welcomeEmailSent: true,
-              welcomeEmailSentAt: new Date()
-            }
-          );
-        } catch (emailError) {
-          console.error(`Failed to send welcome email to ${email}:`, emailError);
-          // Continue processing even if email fails
+            // Update placement candidate record to mark email as sent
+            await PlacementCandidate.findOneAndUpdate(
+              { candidateId: candidate._id },
+              { 
+                welcomeEmailSent: true,
+                welcomeEmailSentAt: new Date()
+              }
+            );
+          } catch (emailError) {
+            console.error(`Failed to send welcome email to ${email}:`, emailError);
+            // Continue processing even if email fails
+          }
         }
         
         createdCandidates.push({
           name: candidate.name,
           email: candidate.email,
-          password: password.trim(), // Include password in response for admin reference
+          password: password ? password.trim() : 'N/A', // Show actual password from Excel or N/A
           credits: finalCredits
         });
         

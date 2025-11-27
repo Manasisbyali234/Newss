@@ -469,8 +469,8 @@ function EmpCandidateReviewPage () {
 													<small className="text-muted d-block">Result:</small>
 													<div className="mt-1">
 														<span className={`badge ${
-															application.assessmentAttempt.result === 'pass' ? 'bg-success' :
-															application.assessmentAttempt.result === 'fail' ? 'bg-danger' :
+															application.assessmentAttempt.result.toLowerCase() === 'pass' ? 'bg-success' :
+															application.assessmentAttempt.result.toLowerCase() === 'fail' ? 'bg-danger' :
 															'bg-warning'
 														}`}>
 															{application.assessmentAttempt.result.toUpperCase()}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { api } from '../../../../utils/api';
 import { useWebSocket } from '../../../../contexts/WebSocketContext';
+import showToast from '../../../../utils/toastNotification';
 import './placement-details.css';
 import '../../../../table-id-fix.css';
 
@@ -80,10 +81,10 @@ function PlacementDetails() {
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
             } else {
-                alert('Failed to download file');
+                showToast('Failed to download file', 'error');
             }
         } catch (error) {
-            alert('Error downloading file');
+            showToast('Error downloading file', 'error');
             
         }
     };
@@ -102,13 +103,13 @@ function PlacementDetails() {
             });
             const data = await response.json();
             if (data.success) {
-                alert('Placement officer approved successfully!');
+                showToast('Placement officer approved successfully!', 'success');
                 fetchPlacementDetails();
             } else {
-                alert('Failed to approve placement officer');
+                showToast('Failed to approve placement officer', 'error');
             }
         } catch (error) {
-            alert('Error approving placement officer');
+            showToast('Error approving placement officer', 'error');
             
         }
     };
@@ -135,7 +136,7 @@ function PlacementDetails() {
             const data = await response.json();
             if (data.success) {
                 const displayName = placement?.fileHistory?.find(f => f._id === fileId)?.customName || fileName;
-                alert(`File "${displayName}" approved and processed successfully!\n${data.message}`);
+                showToast(`File "${displayName}" approved and processed successfully! ${data.message}`, 'success', 5000);
                 // Force immediate refresh
                 setTimeout(() => {
                     fetchPlacementDetails();
@@ -147,10 +148,10 @@ function PlacementDetails() {
                     }, 1000);
                 }
             } else {
-                alert(`Failed to approve file: ${data.message}`);
+                showToast(`Failed to approve file: ${data.message}`, 'error');
             }
         } catch (error) {
-            alert(`Error approving file: ${error.message}`);
+            showToast(`Error approving file: ${error.message}`, 'error');
         } finally {
             setProcessingFiles(prev => ({...prev, [fileId]: null}));
         }
@@ -175,16 +176,16 @@ function PlacementDetails() {
             const data = await response.json();
             if (data.success) {
                 const displayName = placement?.fileHistory?.find(f => f._id === fileId)?.customName || fileName;
-                alert(`File "${displayName}" rejected successfully!`);
+                showToast(`File "${displayName}" rejected successfully!`, 'success');
                 // Force immediate refresh
                 setTimeout(() => {
                     fetchPlacementDetails();
                 }, 500);
             } else {
-                alert(`Failed to reject file: ${data.message}`);
+                showToast(`Failed to reject file: ${data.message}`, 'error');
             }
         } catch (error) {
-            alert(`Error rejecting file: ${error.message}`);
+            showToast(`Error rejecting file: ${error.message}`, 'error');
         } finally {
             setProcessingFiles(prev => ({...prev, [fileId]: null}));
         }
@@ -202,13 +203,13 @@ function PlacementDetails() {
             });
             const data = await response.json();
             if (data.success) {
-                alert('Placement officer rejected successfully!');
+                showToast('Placement officer rejected successfully!', 'success');
                 fetchPlacementDetails();
             } else {
-                alert('Failed to reject placement officer');
+                showToast('Failed to reject placement officer', 'error');
             }
         } catch (error) {
-            alert('Error rejecting placement officer');
+            showToast('Error rejecting placement officer', 'error');
             
         }
     };
@@ -232,6 +233,14 @@ function PlacementDetails() {
                 console.log('Student data received:', data.students);
                 console.log('First student sample:', data.students?.[0]);
                 setStudentData(data.students || []);
+                
+                // Scroll to student records table
+                setTimeout(() => {
+                    const tableElement = document.querySelector('.modern-card.p-4:last-of-type');
+                    if (tableElement) {
+                        tableElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 100);
             } else {
                 console.error('Failed to load student data:', data);
                 setStudentData([]);
@@ -253,7 +262,7 @@ function PlacementDetails() {
     const handleUpdateFileCredits = async () => {
         // Check if file is rejected
         if (selectedFile.status === 'rejected') {
-            alert('Cannot update credits for rejected files.');
+            showToast('Cannot update credits for rejected files', 'warning');
             return;
         }
         
@@ -269,7 +278,7 @@ function PlacementDetails() {
             
             const data = await response.json();
             if (data.success) {
-                alert(`File credits updated successfully!\n${data.message}\n\nAll candidates from this file will see the updated credits in their dashboard immediately.`);
+                showToast(`File credits updated successfully! ${data.message}. All candidates will see updated credits immediately.`, 'success', 5000);
                 setShowCreditsModal(false);
                 fetchPlacementDetails();
                 // Refresh student data if currently viewing this file
@@ -279,10 +288,10 @@ function PlacementDetails() {
                     }, 500);
                 }
             } else {
-                alert(`Failed to update credits: ${data.message}`);
+                showToast(`Failed to update credits: ${data.message}`, 'error');
             }
         } catch (error) {
-            alert(`Error updating credits: ${error.message}`);
+            showToast(`Error updating credits: ${error.message}`, 'error');
         }
     };
 
@@ -310,23 +319,7 @@ function PlacementDetails() {
             const data = await response.json();
             
             if (data.success) {
-                let alertMessage = `✅ File processed successfully!\n\n${data.message}\n\n`;
-                
-                if (data.createdCandidates && data.createdCandidates.length > 0) {
-                    alertMessage += `📋 Sample Created Candidates (first ${Math.min(5, data.createdCandidates.length)}):\n`;
-                    data.createdCandidates.slice(0, 5).forEach((candidate, index) => {
-                        alertMessage += `${index + 1}. ${candidate.name} (${candidate.email})\n`;
-                    });
-                    alertMessage += `\n`;
-                }
-                
-                if (data.loginInstructions) {
-                    alertMessage += `🔐 Login Instructions:\n• URL: http://localhost:3000/ (Sign In → Candidate tab)\n• ${data.loginInstructions.message}\n\n`;
-                }
-                
-                alertMessage += `📊 Statistics:\n• Created: ${data.stats.created} candidates\n• Skipped: ${data.stats.skipped} (already exist)\n• Errors: ${data.stats.errors}`;
-                
-                alert(alertMessage);
+                showToast(`File processed successfully! Created: ${data.stats.created}, Skipped: ${data.stats.skipped}. Candidates can now login.`, 'success', 5000);
                 
                 fetchPlacementDetails();
                 if (currentViewingFileId === fileId) {
@@ -335,10 +328,10 @@ function PlacementDetails() {
                     }, 1000);
                 }
             } else {
-                alert(`❌ Failed to process file: ${data.message}`);
+                showToast(`Failed to process file: ${data.message}`, 'error');
             }
         } catch (error) {
-            alert(`❌ Error processing file: ${error.message}`);
+            showToast(`Error processing file: ${error.message}`, 'error');
         } finally {
             setProcessingFiles(prev => ({...prev, [fileId]: null}));
         }
@@ -358,12 +351,11 @@ function PlacementDetails() {
             const data = await response.json();
             if (data.success) {
                 const rejectedCount = placement?.fileHistory?.filter(f => f.status === 'rejected').length || 0;
-                let message = `Bulk credits updated successfully!\n${data.message}`;
+                let message = `Bulk credits updated successfully! ${data.message}`;
                 if (rejectedCount > 0) {
-                    message += `\n\nNote: ${rejectedCount} rejected file(s) were excluded from the update.`;
+                    message += ` Note: ${rejectedCount} rejected file(s) excluded.`;
                 }
-                message += `\n\nAll candidates from non-rejected files will see the updated credits in their dashboard immediately.`;
-                alert(message);
+                showToast(message, 'success', 5000);
                 setShowBulkCreditsModal(false);
                 fetchPlacementDetails();
                 // Refresh student data if currently viewing a file
@@ -376,10 +368,10 @@ function PlacementDetails() {
                     }
                 }
             } else {
-                alert(`Failed to update bulk credits: ${data.message}`);
+                showToast(`Failed to update bulk credits: ${data.message}`, 'error');
             }
         } catch (error) {
-            alert(`Error updating bulk credits: ${error.message}`);
+            showToast(`Error updating bulk credits: ${error.message}`, 'error');
         }
     };
 
@@ -400,13 +392,13 @@ function PlacementDetails() {
             
             const data = await response.json();
             if (data.success) {
-                alert(`Excel data stored successfully in MongoDB!\n\nFiles processed: ${data.stats.totalFilesProcessed}\nTotal records stored: ${data.stats.totalRecordsStored}\n\nData is now available in structured format in the database.`);
+                showToast(`Excel data stored successfully! Files: ${data.stats.totalFilesProcessed}, Records: ${data.stats.totalRecordsStored}`, 'success', 5000);
                 fetchPlacementDetails();
             } else {
-                alert(`Failed to store Excel data: ${data.message}`);
+                showToast(`Failed to store Excel data: ${data.message}`, 'error');
             }
         } catch (error) {
-            alert(`Error storing Excel data: ${error.message}`);
+            showToast(`Error storing Excel data: ${error.message}`, 'error');
         } finally {
             setProcessing(false);
         }
@@ -427,11 +419,11 @@ function PlacementDetails() {
             if (data.success) {
                 setStoredData(data.data || []);
             } else {
-                alert(`Failed to load stored data: ${data.message}`);
+                showToast(`Failed to load stored data: ${data.message}`, 'error');
                 setStoredData([]);
             }
         } catch (error) {
-            alert(`Error loading stored data: ${error.message}`);
+            showToast(`Error loading stored data: ${error.message}`, 'error');
             setStoredData([]);
         } finally {
             setLoadingStoredData(false);
@@ -1036,16 +1028,21 @@ function PlacementDetails() {
                             </button>
                         </h5>
                         <div className="d-flex flex-wrap gap-2 mb-3">
-                            {placement.status !== 'rejected' && (
+                            {placement.status === 'pending' && (
                                 <button
                                     className="btn btn-success"
                                     onClick={handleApprove}
-                                    disabled={placement.status === 'approved'}
                                     style={{borderRadius: '8px'}}
                                 >
                                     <i className="fa fa-check mr-1"></i>
                                     Approve Officer
                                 </button>
+                            )}
+                            {placement.status === 'approved' && (
+                                <div className="alert alert-success mb-0" style={{borderRadius: '8px', padding: '10px 15px'}}>
+                                    <i className="fa fa-check-circle mr-2"></i>
+                                    Officer Approved - Can now login and upload files
+                                </div>
                             )}
 
                             {placement.fileHistory && placement.fileHistory.filter(f => f.status !== 'rejected').length > 1 && (
@@ -1096,7 +1093,7 @@ function PlacementDetails() {
             </div>
 
             {/* Student Data */}
-            <div className="modern-card p-4">
+            <div className="modern-card p-4" id="studentRecordsTable">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <h5 className="mb-0" style={{color: '#2c3e50'}}>
                         <i className="fa fa-graduation-cap mr-2"></i>
@@ -1185,17 +1182,20 @@ function PlacementDetails() {
                                         <td>
                                             {student.course || '-'}
                                         </td>
-                                        <td>
-                                            <code style={{
-                                                background: '#f8f9fa',
+                                        <td style={{verticalAlign: 'top', paddingTop: '12px'}}>
+                                            <span className="status-badge status-approved" style={{
+                                                fontSize: '0.75rem',
                                                 padding: '4px 8px',
-                                                borderRadius: '4px',
-                                                fontSize: '0.8rem'
-                                            }}>
+                                                display: 'inline-block',
+                                                maxWidth: '100px',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                whiteSpace: 'nowrap'
+                                            }} title={student.password || 'N/A'}>
                                                 {student.password || 'N/A'}
-                                            </code>
+                                            </span>
                                         </td>
-                                        <td>
+                                        <td style={{verticalAlign: 'top', paddingTop: '12px'}}>
                                             <span className="status-badge status-approved">
                                                 {student.credits || (() => {
                                                     if (currentViewingFileId) {

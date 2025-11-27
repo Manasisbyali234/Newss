@@ -200,6 +200,39 @@ const validateExcelContent = (buffer, mimetype) => {
       };
     }
     
+    // Validate required fields in each row
+    const missingFields = [];
+    jsonData.forEach((row, index) => {
+      const rowNum = index + 2; // +2 because Excel rows start at 1 and we have a header row
+      const name = row['Candidate Name'] || row['candidate name'] || row['CANDIDATE NAME'] || row.Name || row.name || row.NAME || row['Full Name'] || row['Student Name'] || '';
+      const email = row.Email || row.email || row.EMAIL || '';
+      const password = row.Password || row.password || row.PASSWORD || '';
+      const phone = row.Phone || row.phone || row.PHONE || row.Mobile || row.mobile || row.MOBILE || '';
+      const collegeName = row['College Name'] || row['college name'] || row['COLLEGE NAME'] || row.College || row.college || row.COLLEGE || '';
+      const course = row.Course || row.course || row.COURSE || row.Branch || row.branch || row.BRANCH || '';
+      
+      const missing = [];
+      if (!name || String(name).trim() === '') missing.push('Candidate Name');
+      if (!email || String(email).trim() === '') missing.push('Email');
+      if (!password || String(password).trim() === '') missing.push('Password');
+      if (!phone || String(phone).trim() === '') missing.push('Phone');
+      if (!collegeName || String(collegeName).trim() === '') missing.push('College Name');
+      if (!course || String(course).trim() === '') missing.push('Course');
+      
+      if (missing.length > 0) {
+        missingFields.push(`Row ${rowNum}: Missing ${missing.join(', ')}`);
+      }
+    });
+    
+    if (missingFields.length > 0) {
+      const errorMsg = missingFields.slice(0, 5).join('; ');
+      const moreMsg = missingFields.length > 5 ? ` and ${missingFields.length - 5} more rows` : '';
+      return { 
+        valid: false, 
+        message: `Required fields are missing in your Excel file: ${errorMsg}${moreMsg}. Please ensure all rows have Candidate Name, Email, Password, Phone, College Name, and Course filled.`
+      };
+    }
+    
     return { valid: true, rowCount: jsonData.length };
   } catch (error) {
     return { valid: false, message: 'Invalid file format or corrupted file' };

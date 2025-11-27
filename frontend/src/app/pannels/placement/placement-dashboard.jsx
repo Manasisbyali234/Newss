@@ -248,6 +248,14 @@ function PlacementDashboard() {
                         };
                     });
                     setStudentData(cleanedData);
+                    
+                    // Scroll to student data table
+                    setTimeout(() => {
+                        const tableElement = document.querySelector('.col-lg-8.mb-4');
+                        if (tableElement) {
+                            tableElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }, 100);
                 } else {
                     showToast('File data not available or file not processed yet.', 'warning');
                 }
@@ -741,8 +749,12 @@ function PlacementDashboard() {
                                     <i className="fa fa-file-excel-o fa-3x text-primary mb-3"></i>
                                     <h5 className="text-primary mb-2">Drop your file here or click to browse</h5>
                                     <p className="text-muted mb-2">Supported formats: .xlsx, .xls, .csv (Max 5MB)</p>
-                                    <p className="text-muted mb-2" style={{fontSize: '0.85rem'}}>
-                                        Required: ID | Candidate Name | College Name | Email | Phone | Course | Password | Credits Assigned
+                                    <p className="text-danger mb-2" style={{fontSize: '0.85rem', fontWeight: '600'}}>
+                                        <i className="fa fa-exclamation-circle mr-1"></i>
+                                        Required Fields (All Must Be Filled): Candidate Name | College Name | Email | Phone | Course | Password
+                                    </p>
+                                    <p className="text-muted mb-2" style={{fontSize: '0.8rem'}}>
+                                        Optional: ID | Credits Assigned
                                     </p>
                                     <p className="text-warning mb-3" style={{fontSize: '0.8rem'}}>
                                         <i className="fa fa-exclamation-triangle mr-1"></i>
@@ -771,9 +783,9 @@ function PlacementDashboard() {
                         />
                         <div className="mt-3">
                             <div className="d-flex justify-content-between align-items-center mb-2">
-                                <small className="text-muted">
-                                    <i className="fa fa-info-circle mr-1"></i>
-                                    Required columns: ID, Candidate Name, College Name, Email, Phone, Course, Password, Credits Assigned
+                                <small className="text-danger" style={{fontWeight: '600'}}>
+                                    <i className="fa fa-exclamation-circle mr-1"></i>
+                                    Required columns (must be filled): Candidate Name, College Name, Email, Phone, Course, Password
                                 </small>
                                 <div className="d-flex" style={{gap: '8px'}}>
                                     <a 
@@ -797,11 +809,10 @@ function PlacementDashboard() {
                             </h6>
                             <ul className="list-unstyled mb-0 small">
                                 <li className="mb-1"><i className="fa fa-check text-success mr-2"></i>Use Excel (.xlsx) or CSV format</li>
-                                <li className="mb-1"><i className="fa fa-check text-success mr-2"></i>Include all 8 required columns</li>
+                                <li className="mb-1"><i className="fa fa-exclamation-triangle text-danger mr-2"></i>All rows must have: Candidate Name, Email, Password, Phone, College Name, Course</li>
+                                <li className="mb-1"><i className="fa fa-times text-danger mr-2"></i>Empty fields in required columns will be rejected</li>
                                 <li className="mb-1"><i className="fa fa-times text-danger mr-2"></i>Empty files or files with only headers will be rejected</li>
-                                <li className="mb-1"><i className="fa fa-check text-success mr-2"></i>File must contain actual student data rows</li>
                                 <li className="mb-1"><i className="fa fa-times text-danger mr-2"></i>No duplicate email addresses allowed</li>
-                                <li className="mb-1"><i className="fa fa-check text-success mr-2"></i>Course field must contain degree names</li>
                                 <li className="mb-1"><i className="fa fa-check text-success mr-2"></i>File size should be under 5MB</li>
                                 <li className="mb-0"><i className="fa fa-check text-success mr-2"></i>Admin approval required</li>
                             </ul>
@@ -922,7 +933,7 @@ function PlacementDashboard() {
                     </div>
                 </div>
 
-                <div className="col-lg-8 mb-4">
+                <div className="col-lg-8 mb-4" id="studentDataTable">
                     <div className="modern-card p-4 h-100">
                         <div className="d-flex justify-content-between align-items-center mb-3">
                             <h5 className="mb-0" style={{color: '#2c3e50'}}>

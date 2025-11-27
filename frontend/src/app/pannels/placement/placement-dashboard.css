@@ -184,6 +184,13 @@ img {
     }
 }
 
+/* Prevent horizontal scroll on placement dashboard */
+body,
+html {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+}
+
 /* Prevent body scroll when modal is open */
 body.modal-open,
 body.modal-open * {

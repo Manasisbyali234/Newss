@@ -910,11 +910,8 @@ exports.updatePasswordReset = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Candidate not found' });
     }
     
-    // For placement candidates, change to signup method so password gets hashed
-    if (candidate.registrationMethod === 'placement') {
-      candidate.registrationMethod = 'signup';
-    }
-    
+    // Always change to signup method so password gets hashed
+    candidate.registrationMethod = 'signup';
     candidate.password = newPassword;
     candidate.markModified('password');
     await candidate.save();
@@ -964,10 +961,8 @@ exports.verifyOTPAndResetPassword = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
     }
 
-    if (candidate.registrationMethod === 'placement') {
-      candidate.registrationMethod = 'signup';
-    }
-
+    // Always change to signup method for password hashing
+    candidate.registrationMethod = 'signup';
     candidate.password = newPassword;
     candidate.resetPasswordOTP = undefined;
     candidate.resetPasswordOTPExpires = undefined;

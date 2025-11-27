@@ -714,8 +714,8 @@ function AdminCandidateReviewPage() {
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <span className={`status-badge ${application.selected ? 'selected' : 'not-selected'}`}>
-                                                        {application.selected ? 'Selected' : 'Not Selected'}
+                                                    <span className={`status-badge ${application.status === 'shortlisted' || application.shortlistedStatus || application.selected || application.isSelectedForProcess ? 'selected' : 'not-selected'}`}>
+                                                        {application.status === 'shortlisted' || application.shortlistedStatus || application.selected || application.isSelectedForProcess ? 'Selected' : 'Not Selected'}
                                                     </span>
                                                 </td>
                                                 <td>
