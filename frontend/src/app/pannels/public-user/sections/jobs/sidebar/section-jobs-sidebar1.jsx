@@ -66,17 +66,11 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                     }
                 });
                 
-                // Add IT category if it doesn't exist
-                if (!categoryCounts['IT']) {
-                    categoryCounts['IT'] = 4; // Default count
-                }
-                
                 setCategories(Object.entries(categoryCounts));
             }
         } catch (error) {
             console.error('Error fetching categories:', error);
-            // Set default categories
-            setCategories([['IT', 4]]);
+            setCategories([]);
         }
     };
 
