@@ -31,6 +31,7 @@ function SectionCanAttachment({ profile }) {
             if (file.size > maxSize) {
                 showToast('File size must be less than 15MB. Please choose a smaller file.', 'error', 4000);
                 e.target.value = ''; // Clear the input
+                setSelectedFile(null); // Ensure no file is selected
                 return;
             }
             
@@ -39,6 +40,7 @@ function SectionCanAttachment({ profile }) {
             if (!allowedTypes.includes(file.type)) {
                 showToast('Only PDF, DOC, and DOCX files are allowed.', 'error', 4000);
                 e.target.value = ''; // Clear the input
+                setSelectedFile(null); // Ensure no file is selected
                 return;
             }
         }
@@ -48,6 +50,16 @@ function SectionCanAttachment({ profile }) {
     const handleSubmit = async () => {
         if (!selectedFile) {
             showToast('Please select a file first', 'warning', 4000);
+            return;
+        }
+
+        // Double-check file size before upload
+        const maxSize = 15 * 1024 * 1024; // 15MB
+        if (selectedFile.size > maxSize) {
+            showToast('File size must be less than 15MB. Please choose a smaller file.', 'error', 4000);
+            setSelectedFile(null);
+            const fileInput = document.querySelector('input[type="file"]');
+            if (fileInput) fileInput.value = '';
             return;
         }
 

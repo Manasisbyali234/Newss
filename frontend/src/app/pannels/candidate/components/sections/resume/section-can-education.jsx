@@ -348,15 +348,32 @@ function SectionCanEducation({ profile }) {
                             </div>
                             <div className="col-md-12">
                                 <div className="form-group mb-3">
-                                    <label>Upload Marksheet</label>
+                                    <label>Upload Marksheet (PDF only, max 50MB)</label>
                                     <input 
                                         className="form-control" 
                                         name="marksheet" 
                                         type="file" 
-                                        accept=".pdf,.jpg,.jpeg,.png"
-                                        onChange={(e) => setFormData(prev => ({ ...prev, marksheet: e.target.files[0] }))}
+                                        accept=".pdf"
+                                        onChange={(e) => {
+                                            const file = e.target.files[0];
+                                            if (file) {
+                                                // Validate file type
+                                                if (file.type !== 'application/pdf') {
+                                                    alert('Only PDF files are allowed');
+                                                    e.target.value = '';
+                                                    return;
+                                                }
+                                                // Validate file size (50MB limit)
+                                                if (file.size > 50 * 1024 * 1024) {
+                                                    alert('File size must be less than 50MB');
+                                                    e.target.value = '';
+                                                    return;
+                                                }
+                                                setFormData(prev => ({ ...prev, marksheet: file }));
+                                            }
+                                        }}
                                     />
-                                    <small className="text-muted">Upload your 10th standard marksheet (PDF, JPG, PNG)</small>
+                                    <small className="text-muted">Upload your marksheet (PDF only, max 50MB)</small>
                                 </div>
                             </div>
                             <div className="col-md-12">
