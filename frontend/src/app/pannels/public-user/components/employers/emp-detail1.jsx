@@ -6,6 +6,7 @@ import SectionOfficeVideo1 from "../../sections/common/section-office-video1";
 import SectionAvailableJobsList from "../../sections/employers/detail/section-available-jobs-list";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { createPortal } from "react-dom";
 import { loadScript } from "../../../../../globals/constants";
 import showToast from "../../../../../utils/toastNotification";
 import "../jobs/job-detail.css";
@@ -330,7 +331,7 @@ function EmployersDetail1Page() {
 												)}
 												
 												{/* Image Modal */}
-												{selectedImage && (
+												{selectedImage && createPortal(
 													<div 
 														style={{
 															position: 'fixed',
@@ -338,8 +339,8 @@ function EmployersDetail1Page() {
 															left: 0,
 															width: '100vw',
 															height: '100vh',
-															backgroundColor: 'rgba(0,0,0,0.5)',
-															zIndex: 2147483647,
+															backgroundColor: 'rgba(0,0,0,0.8)',
+															zIndex: 9999999,
 															display: 'flex',
 															alignItems: 'center',
 															justifyContent: 'center'
@@ -351,11 +352,10 @@ function EmployersDetail1Page() {
 																background: 'white',
 																borderRadius: '8px',
 																padding: '20px',
-																maxWidth: '500px',
-																maxHeight: '600px',
+																maxWidth: '90vw',
+																maxHeight: '90vh',
 																position: 'relative',
-																boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
-																zIndex: 100000
+																boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
 															}}
 															onClick={(e) => e.stopPropagation()}
 														>
@@ -371,8 +371,7 @@ function EmployersDetail1Page() {
 																	height: '30px',
 																	fontSize: '16px',
 																	cursor: 'pointer',
-																	color: '#6c757d',
-																	zIndex: 100001
+																	color: '#6c757d'
 																}}
 																onClick={() => setSelectedImage(null)}
 															>
@@ -384,13 +383,14 @@ function EmployersDetail1Page() {
 																style={{
 																	width: '100%',
 																	height: 'auto',
-																	maxHeight: '500px',
+																	maxHeight: 'calc(90vh - 40px)',
 																	objectFit: 'contain',
 																	borderRadius: '4px'
 																}}
 															/>
 														</div>
-													</div>
+													</div>,
+													document.body
 												)}
 											</div>
 											

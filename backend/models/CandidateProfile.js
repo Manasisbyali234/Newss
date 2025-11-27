@@ -24,6 +24,7 @@ const candidateProfileSchema = new mongoose.Schema({
   correspondenceAddress: { type: String },
   collegeName: { type: String }, // College name from Excel data
   education: [{
+    educationLevel: String,
     degreeName: String,
     specialization: String,
     collegeName: String,

@@ -106,12 +106,12 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 	};
 
 	const handleSubmit = (isDraft = false) => {
+		if (!title.trim()) {
+			showToast("Please enter an assessment title", 'warning');
+			return;
+		}
+		
 		if (!isDraft) {
-			if (!title.trim()) {
-				showToast("Please enter an assessment title", 'warning');
-				return;
-			}
-			
 			if (!timeLimit || timeLimit < 1) {
 				showToast("Please enter a valid time limit (at least 1 minute)", 'warning');
 				return;
@@ -125,7 +125,8 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 			for (let i = 0; i < questions.length; i++) {
 				const question = questions[i];
 				
-				if (!question.question.trim()) {
+				const questionText = question.question.replace(/<[^>]*>/g, '').trim();
+				if (!questionText) {
 					showToast(`Please enter text for Question ${i + 1}`, 'warning');
 					return;
 				}

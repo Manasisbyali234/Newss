@@ -121,17 +121,9 @@ function SectionCanEducation({ profile, onUpdate }) {
     useEffect(() => {
         if (profile && profile.education) {
             const entries = profile.education.map((edu, index) => {
-                // Map old structure to new structure
-                let educationLevel = 'degree'; // default
-                if (index === 0) educationLevel = 'sslc';
-                else if (index === 1) educationLevel = 'puc';
-                else if (index === 2) educationLevel = 'degree';
-                else if (index === 3) educationLevel = 'masters';
-                else if (index === 4) educationLevel = 'phd';
-
                 return {
-                    id: Date.now() + index,
-                    educationLevel,
+                    id: `edu_${index}_${Date.now()}`,
+                    educationLevel: edu.educationLevel || 'degree',
                     schoolCollegeName: edu.degreeName || '',
                     boardUniversityName: edu.collegeName || '',
                     registrationNumber: edu.registrationNumber || '',
@@ -148,6 +140,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                     documentName: edu.marksheet ? 'Uploaded Document' : ''
                 };
             });
+            console.log('Loaded education entries from profile:', entries);
             setEducationEntries(entries);
 
             // Initialize educationData for table-based management
@@ -421,11 +414,16 @@ function SectionCanEducation({ profile, onUpdate }) {
         }
 
         const newEntry = {
-            id: Date.now(),
+            id: `edu_new_${Date.now()}`,
             ...formData
         };
 
-        setEducationEntries(prev => [...prev, newEntry]);
+        console.log('Adding education entry:', newEntry);
+        setEducationEntries(prev => {
+            const updated = [...prev, newEntry];
+            console.log('Updated education entries:', updated);
+            return updated;
+        });
 
         // Reset form
         setFormData({
@@ -449,7 +447,7 @@ function SectionCanEducation({ profile, onUpdate }) {
         setSelectedEducationLevel('');
         setErrors({});
 
-        showToast('Education entry added successfully!', 'success', 4000);
+        showToast('Education entry added successfully! Remember to click "Save All Education Details" to save to database.', 'success', 5000);
     };
 
     const handleEditEntry = (entry) => {
@@ -520,6 +518,7 @@ function SectionCanEducation({ profile, onUpdate }) {
 
             // Convert to backend format
             const educationArray = educationEntries.map(entry => ({
+                educationLevel: entry.educationLevel,
                 degreeName: entry.schoolCollegeName,
                 collegeName: entry.boardUniversityName,
                 passYear: entry.yearOfPassing,
@@ -532,17 +531,21 @@ function SectionCanEducation({ profile, onUpdate }) {
                 marksheet: entry.documentBase64
             }));
 
+            console.log('Saving education data:', educationArray);
             const response = await api.updateCandidateProfile({ education: educationArray });
+            console.log('Save response:', response);
 
             if (response.success) {
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
                 showToast('All education details saved successfully!', 'success', 4000);
             } else {
                 const errorMessage = response.message || response.error || 'Failed to save education details';
+                console.error('Save failed:', errorMessage);
                 showToast(errorMessage, 'error', 4000);
             }
         } catch (error) {
-            showToast('Failed to save education details', 'error', 4000);
+            console.error('Save error:', error);
+            showToast('Failed to save education details: ' + (error.message || 'Unknown error'), 'error', 4000);
         } finally {
             setLoading(false);
         }

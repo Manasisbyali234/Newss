@@ -207,6 +207,41 @@ const HeroBody = ({ onSearch }) => {
         {/* Search Bar */}
         <div className="search-container">
           <div className="search-field">
+            <label className="search-label">EDUCATION</label>
+            <select 
+              className={`search-select${touched.type && errors.type ? ' has-error' : ''}`}
+              value={searchData.type}
+              onChange={(e) => handleFieldChange('type', e.target.value)}
+              onBlur={() => handleFieldBlur('type')}
+            >
+              <option value="">Select Education</option>
+              <option value="10th Pass">10th Pass</option>
+              <option value="12th Pass">12th Pass</option>
+              <option value="Diploma">Diploma</option>
+              <option value="B.E">B.E</option>
+              <option value="B.Tech">B.Tech</option>
+              <option value="B.Sc">B.Sc</option>
+              <option value="BCA">BCA</option>
+              <option value="BBA">BBA</option>
+              <option value="B.Com">B.Com</option>
+              <option value="BA">BA</option>
+              <option value="M.E">M.E</option>
+              <option value="M.Tech">M.Tech</option>
+              <option value="M.Sc">M.Sc</option>
+              <option value="MCA">MCA</option>
+              <option value="MBA">MBA</option>
+              <option value="M.Com">M.Com</option>
+              <option value="MA">MA</option>
+              <option value="PhD">PhD</option>
+            </select>
+            {touched.type && errors.type && (
+              <div className="search-error">
+                {errors.type}
+              </div>
+            )}
+          </div>
+          
+          <div className="search-field">
             <label className="search-label">CATEGORY</label>
             <select 
               className={`search-select${touched.category && errors.category ? ' has-error' : ''}`}
@@ -338,41 +373,6 @@ const HeroBody = ({ onSearch }) => {
             {touched.what && errors.what && (
               <div className="search-error">
                 {errors.what}
-              </div>
-            )}
-          </div>
-          
-          <div className="search-field">
-            <label className="search-label">EDUCATION</label>
-            <select 
-              className={`search-select${touched.type && errors.type ? ' has-error' : ''}`}
-              value={searchData.type}
-              onChange={(e) => handleFieldChange('type', e.target.value)}
-              onBlur={() => handleFieldBlur('type')}
-            >
-              <option value="">Select Education</option>
-              <option value="10th Pass">10th Pass</option>
-              <option value="12th Pass">12th Pass</option>
-              <option value="Diploma">Diploma</option>
-              <option value="B.E">B.E</option>
-              <option value="B.Tech">B.Tech</option>
-              <option value="B.Sc">B.Sc</option>
-              <option value="BCA">BCA</option>
-              <option value="BBA">BBA</option>
-              <option value="B.Com">B.Com</option>
-              <option value="BA">BA</option>
-              <option value="M.E">M.E</option>
-              <option value="M.Tech">M.Tech</option>
-              <option value="M.Sc">M.Sc</option>
-              <option value="MCA">MCA</option>
-              <option value="MBA">MBA</option>
-              <option value="M.Com">M.Com</option>
-              <option value="MA">MA</option>
-              <option value="PhD">PhD</option>
-            </select>
-            {touched.type && errors.type && (
-              <div className="search-error">
-                {errors.type}
               </div>
             )}
           </div>

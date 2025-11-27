@@ -6,3 +6,13 @@
   -ms-filter: none !important;
   -o-filter: none !important;
 }
+
+.twm-s-map-iframe {
+  position: relative;
+  z-index: 1;
+}
+
+.twm-s-map-iframe iframe {
+  position: relative;
+  z-index: 1;
+}

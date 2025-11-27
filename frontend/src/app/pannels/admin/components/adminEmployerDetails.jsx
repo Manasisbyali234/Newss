@@ -376,7 +376,7 @@ function EmployerDetails() {
 
                 <div className="description-section" data-aos="fade-up" data-aos-delay="800">
                     <h6><i className="fa fa-align-left"></i>Company Description</h6>
-                    <p className="description-text">{profile.description || 'No description provided'}</p>
+                    <div className="description-text" dangerouslySetInnerHTML={{ __html: profile.description || 'No description provided' }} />
                 </div>
 
 
@@ -536,14 +536,13 @@ function EmployerDetails() {
                         Company Gallery
                     </h4>
                     <div className="gallery-preview mt-3">
-                        <div className="d-flex flex-wrap gap-3">
+                        <div className="gallery-container">
                             {profile.gallery.map((image, index) => (
-                                <div key={image._id || index} className="gallery-item position-relative" style={{width: '150px', height: '150px'}}>
+                                <div key={image._id || index} className="gallery-item">
                                     <img 
                                         src={image.url} 
                                         alt={`Gallery ${index + 1}`}
-                                        className="img-fluid rounded cursor-pointer"
-                                        style={{width: '100%', height: '100%', objectFit: 'cover', border: '1px solid #ddd'}}
+                                        className="gallery-image"
                                         onClick={() => {
                                             setCurrentImage(image.url);
                                             setShowImageModal(true);

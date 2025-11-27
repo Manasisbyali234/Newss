@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { isAuthenticated, redirectToLogin } from '../utils/auth';
+import { formatCategory } from '../utils/formatCategory';
 import '../job-card-buttons.css';
 
 const JobCard = ({ job }) => {
@@ -42,7 +43,7 @@ const JobCard = ({ job }) => {
                         job.ctc.min === job.ctc.max ? `₹${Math.floor(job.ctc.min/100000)}LPA` : `₹${Math.floor(job.ctc.min/100000)} - ${Math.floor(job.ctc.max/100000)} LPA` :
                         'Not specified'}</span>
                     <span>Type: {job.jobType || job.type}</span>
-                    {job.category && <span>Category: {job.category}</span>}
+                    {job.category && <span>Category: {formatCategory(job.category)}</span>}
                 </div>
             </div>
 

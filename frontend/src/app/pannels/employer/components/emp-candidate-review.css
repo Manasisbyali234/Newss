@@ -264,6 +264,16 @@
   }
 }
 
+/* Action buttons consistent width */
+.emp-candidate-review-page .action-btn-consistent {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  display: flex !important;
+  height: 48px !important;
+  min-height: 48px !important;
+}
+
 /* Improve overall spacing and readability */
 .emp-candidate-review-page .mb-4 {
   margin-bottom: 1.5rem !important;
