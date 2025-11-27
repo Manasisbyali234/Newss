@@ -1095,7 +1095,9 @@ exports.updateApplicationStatus = async (req, res) => {
         shortlisted: 'Shortlisted',
         interviewed: 'Interviewed',
         hired: 'Hired',
-        rejected: 'Rejected'
+        rejected: 'Rejected',
+        not_attended: 'Not Attended',
+        offer_shared: 'Offer Shared'
       };
       const statusLabel = statusLabels[status] || status;
       const trimmedNotes = typeof notes === 'string' ? notes.trim() : '';

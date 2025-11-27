@@ -116,6 +116,8 @@ function EmpCandidateReviewPage () {
 			case 'interviewed': return 'twm-bg-orange';
 			case 'hired': return 'twm-bg-green';
 			case 'rejected': return 'twm-bg-red';
+			case 'not_attended': return 'twm-bg-red';
+			case 'offer_shared': return 'twm-bg-green';
 			default: return 'twm-bg-light-blue';
 		}
 	};
@@ -242,6 +244,31 @@ function EmpCandidateReviewPage () {
 		}
 	};
 
+	const hireCandidate = async () => {
+		try {
+			const token = localStorage.getItem('employerToken');
+			const response = await fetch(`http://localhost:5000/api/employer/applications/${applicationId}/status`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`
+				},
+				body: JSON.stringify({ status: 'hired' })
+			});
+			
+			if (response.ok) {
+				showToast('Offer letter shared with candidate! Status updated for candidate.', 'success');
+				setApplication(prev => ({ ...prev, status: 'hired' }));
+			} else {
+				const errorData = await response.json();
+				showToast(errorData.message || errorData.error || 'Failed to share offer letter', 'error');
+			}
+		} catch (error) {
+			console.error('Error sharing offer letter:', error);
+			showToast('Network error while sharing offer letter. Please try again.', 'error');
+		}
+	};
+
 	const rejectCandidate = async () => {
 		try {
 			const token = localStorage.getItem('employerToken');
@@ -262,9 +289,8 @@ function EmpCandidateReviewPage () {
 				showToast(errorData.message || errorData.error || 'Failed to reject candidate', 'error');
 			}
 		} catch (error) {
-			
 			console.error('Error rejecting candidate:', error);
-		showToast('Network error while rejecting candidate. Please try again.', 'error');
+			showToast('Network error while rejecting candidate. Please try again.', 'error');
 		}
 	};
 
@@ -337,9 +363,20 @@ function EmpCandidateReviewPage () {
 								<p className="text-muted mb-0 fs-6">Comprehensive candidate evaluation & assessment</p>
 							</div>
 						</div>
-						<span className={`badge ${getStatusBadge(application.status)} text-capitalize fs-6 px-4 py-2 rounded-pill`} style={{fontSize: '0.9rem !important'}}>
-							{application.status}
-						</span>
+						<div className="d-flex gap-2">
+							{application?.status === 'not_attended' ? (
+								<span className="badge bg-danger text-capitalize fs-6 px-4 py-2 rounded-pill" style={{fontSize: '0.9rem !important'}}>
+									Not Attended
+								</span>
+							) : (
+								<span className="badge bg-success text-capitalize fs-6 px-4 py-2 rounded-pill" style={{fontSize: '0.9rem !important'}}>
+									Attended
+								</span>
+							)}
+							<span className={`badge ${getStatusBadge(application?.status)} text-capitalize fs-6 px-4 py-2 rounded-pill`} style={{fontSize: '0.9rem !important'}}>
+								{application?.status === 'not_attended' ? 'Not Attended' : (application?.status || 'pending').replace('_', ' ')}
+							</span>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -627,7 +664,7 @@ function EmpCandidateReviewPage () {
 							</div>
 
 							<div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
-								<button className="btn" style={{width: '100%', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '50px', fontSize: '14px', fontWeight: '600', padding: '12px 16px', minHeight: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box'}} onClick={() => updateApplicationStatus('offer_shared')}>
+								<button className="btn" style={{width: '100%', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '50px', fontSize: '14px', fontWeight: '600', padding: '12px 16px', minHeight: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box'}} onClick={hireCandidate}>
 									Offer Letter Shared
 								</button>
 								<button className="btn" style={{width: '100%', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '50px', fontSize: '14px', fontWeight: '600', padding: '12px 16px', minHeight: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box'}} onClick={() => updateApplicationStatus('not_attended')}>
