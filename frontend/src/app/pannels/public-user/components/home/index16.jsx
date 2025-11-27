@@ -1130,9 +1130,9 @@ function Home16Page() {
                                             );
                                         })
                                     ) : (
-                                        <li>
-                                            <div className="text-center py-4">
-                                                <p className="text-muted">No recruiters available at the moment.</p>
+                                        <li style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
+                                            <div className="text-center py-4" style={{width: '100%', textAlign: 'center'}}>
+                                                <p className="text-muted" style={{margin: '0 auto', textAlign: 'center'}}>No recruiters available at the moment.</p>
                                             </div>
                                         </li>
                                     )}
