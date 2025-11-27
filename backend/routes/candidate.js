@@ -297,4 +297,10 @@ router.post('/assessments/submit', assessmentDebugMiddleware, assessmentControll
 router.get('/assessments/result/:attemptId', assessmentController.getAssessmentResult);
 router.post('/assessments/violation', assessmentDebugMiddleware, assessmentController.recordViolation);
 
+// Interview Response Routes
+router.post('/respond-interview/:applicationId', [
+  body('availableDate').notEmpty().withMessage('Available date is required'),
+  body('availableTime').notEmpty().withMessage('Available time is required')
+], handleValidationErrors, candidateController.respondToInterviewInvite);
+
 module.exports = router;

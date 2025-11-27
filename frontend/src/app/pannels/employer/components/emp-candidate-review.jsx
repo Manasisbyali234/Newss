@@ -406,217 +406,100 @@ function EmpCandidateReviewPage () {
 						</div>
 					)}
 
-
-
-					{/* Interview Rounds */}
-					{(interviewRounds.length > 0 || application?.jobId?.assessmentId) && (
+					{/* Assessment Results */}
+					{application?.jobId?.assessmentId && (
 						<div className="card border-0 shadow-sm mb-4" style={{borderRadius: '15px'}}>
 							<div className="card-header border-0" style={{background: '#f8f9fa', borderRadius: '15px 15px 0 0'}}>
 								<h5 className="mb-0 d-flex align-items-center gap-2 fw-bold" style={{color: '#000'}}>
 									<UserCircle2 size={22} />
-									Interview Rounds ({interviewRounds.length + (application?.jobId?.assessmentId ? 1 : 0)})
+									Assessment Results
 								</h5>
 							</div>
 							<div className="card-body p-4">
-								{/* Assessment Round - Show first if job has assessment */}
-								{application?.jobId?.assessmentId && (
-									<div className="mb-4 p-3 border rounded-3" style={{borderColor: '#e9ecef', backgroundColor: '#fafafa'}}>
-										<div className="d-flex align-items-center justify-content-between mb-3">
-											<h6 className="mb-0 fw-bold" style={{color: '#2c3e50'}}>
-												{application.assessmentAttempt?.assessmentId?.title || 'Technical Assessment'}
-											</h6>
-											<span className={`badge ${
-												application.assessmentAttempt?.status === 'completed' ? 'bg-success' :
-												application.assessmentAttempt?.status === 'in_progress' ? 'bg-warning' :
-												application.assessmentAttempt?.status === 'expired' ? 'bg-danger' :
-												'bg-secondary'
-											}`}>
-												{application.assessmentAttempt?.status ? 
-													application.assessmentAttempt.status.charAt(0).toUpperCase() + application.assessmentAttempt.status.slice(1) : 
-													'Not Attempted'
-												}
-											</span>
-										</div>
-										
-										{application.assessmentAttempt ? (
-											<div className="row g-3">
-												{application.assessmentAttempt.startTime && (
-													<div className="col-md-6">
-														<small className="text-muted d-block">Started:</small>
-														<div className="fw-semibold">{new Date(application.assessmentAttempt.startTime).toLocaleString()}</div>
-													</div>
-												)}
-												{application.assessmentAttempt.endTime && (
-													<div className="col-md-6">
-														<small className="text-muted d-block">Completed:</small>
-														<div className="fw-semibold">{new Date(application.assessmentAttempt.endTime).toLocaleString()}</div>
-													</div>
-												)}
-												{application.assessmentAttempt.score !== undefined && (
-													<div className="col-md-4">
-														<small className="text-muted d-block">Score:</small>
-														<div className="fw-semibold">{application.assessmentAttempt.score}/{application.assessmentAttempt.totalMarks || 'N/A'}</div>
-													</div>
-												)}
-												{application.assessmentAttempt.percentage !== undefined && (
-													<div className="col-md-4">
-														<small className="text-muted d-block">Percentage:</small>
-														<div className="fw-semibold">{application.assessmentAttempt.percentage.toFixed(1)}%</div>
-													</div>
-												)}
-												{application.assessmentAttempt.result && (
-													<div className="col-md-4">
-														<small className="text-muted d-block">Result:</small>
-														<div className="mt-1">
-															<span className={`badge ${
-																application.assessmentAttempt.result === 'pass' ? 'bg-success' :
-																application.assessmentAttempt.result === 'fail' ? 'bg-danger' :
-																'bg-warning'
-															}`}>
-																{application.assessmentAttempt.result.toUpperCase()}
-															</span>
-														</div>
-													</div>
-												)}
-												{application.assessmentAttempt.startTime && application.assessmentAttempt.endTime && (
-													<div className="col-md-6">
-														<small className="text-muted d-block">Time Taken:</small>
-														<div className="fw-semibold">{Math.round((new Date(application.assessmentAttempt.endTime) - new Date(application.assessmentAttempt.startTime)) / (1000 * 60))} minutes</div>
-													</div>
-												)}
-												{application.assessmentAttempt.violations && application.assessmentAttempt.violations.length > 0 && (
-													<div className="col-md-6">
-														<small className="text-muted d-block">Violations:</small>
-														<div className="mt-1">
-															<span className="badge bg-danger me-2">{application.assessmentAttempt.violations.length}</span>
-															<small className="text-muted">
-																{application.assessmentAttempt.violations.map(v => v.type).join(', ')}
-															</small>
-														</div>
-													</div>
-												)}
-											</div>
-										) : (
-											<div className="text-center py-3">
-												<p className="text-muted mb-2">Assessment not yet attempted by candidate</p>
-												<span className="badge bg-warning">Pending</span>
-											</div>
-										)}
+								<div className="mb-4 p-3 border rounded-3" style={{borderColor: '#e9ecef', backgroundColor: '#fafafa'}}>
+									<div className="d-flex align-items-center justify-content-between mb-3">
+										<h6 className="mb-0 fw-bold" style={{color: '#2c3e50'}}>
+											{application.assessmentAttempt?.assessmentId?.title || 'Technical Assessment'}
+										</h6>
+										<span className={`badge ${
+											application.assessmentAttempt?.status === 'completed' ? 'bg-success' :
+											application.assessmentAttempt?.status === 'in_progress' ? 'bg-warning' :
+											application.assessmentAttempt?.status === 'expired' ? 'bg-danger' :
+											'bg-secondary'
+										}`}>
+											{application.assessmentAttempt?.status ? 
+												application.assessmentAttempt.status.charAt(0).toUpperCase() + application.assessmentAttempt.status.slice(1) : 
+												'Not Attempted'
+											}
+										</span>
 									</div>
-								)}
-								
-								{/* Interview Rounds */}
-								{interviewRounds.map((round, index) => (
-									<div key={index} className="mb-4 p-3 border rounded-3" style={{borderColor: '#e9ecef', backgroundColor: '#fafafa'}}>
-										<div className="d-flex align-items-center justify-content-between mb-3">
-											<h6 className="mb-0 fw-bold" style={{color: '#2c3e50'}}>
-												<span className="badge me-2" style={{backgroundColor: '#ff6600', color: 'white'}}>{round.round}</span>
-												{round.name}
-											</h6>
-											<span className={`badge ${
-												round.status === 'passed' ? 'bg-success' :
-												round.status === 'failed' ? 'bg-danger' :
-												'bg-warning'
-											}`}>
-												{round.status.charAt(0).toUpperCase() + round.status.slice(1)}
-											</span>
-										</div>
-										
+									
+									{application.assessmentAttempt ? (
 										<div className="row g-3">
-											<div className="col-md-6">
-												<label className="form-label fw-semibold" style={{color: '#2c3e50'}}>Status</label>
-												<select 
-													className="form-select border-2"
-													value={round.status}
-													onChange={(e) => {
-														const updated = [...interviewRounds];
-														updated[index].status = e.target.value;
-														setInterviewRounds(updated);
-													}}
-													style={{borderColor: '#ff6600'}}
-												>
-													<option value="pending">Pending</option>
-													<option value="scheduled">Scheduled</option>
-													<option value="passed">Passed</option>
-													<option value="failed">Failed</option>
-												</select>
-											</div>
-											<div className="col-md-6">
-												<label className="form-label fw-semibold" style={{color: '#2c3e50'}}>Interview Date</label>
-												<input
-													type="date"
-													className="form-control border-2"
-													value={round.interviewDate || ''}
-													onChange={(e) => {
-														const updated = [...interviewRounds];
-														updated[index].interviewDate = e.target.value;
-														setInterviewRounds(updated);
-													}}
-													style={{borderColor: '#ff6600'}}
-												/>
-											</div>
-											<div className="col-md-6">
-												<label className="form-label fw-semibold" style={{color: '#2c3e50'}}>Interview Time</label>
-												<input
-													type="time"
-													className="form-control border-2"
-													value={round.interviewTime || ''}
-													onChange={(e) => {
-														const updated = [...interviewRounds];
-														updated[index].interviewTime = e.target.value;
-														setInterviewRounds(updated);
-													}}
-													style={{borderColor: '#ff6600'}}
-												/>
-											</div>
-											<div className="col-md-6">
-												<label className="form-label fw-semibold" style={{color: '#2c3e50'}}>Google Meet Link</label>
-												<input
-													type="url"
-													className="form-control border-2"
-													placeholder="https://meet.google.com/..."
-													value={round.meetingLink || ''}
-													onChange={(e) => {
-														const updated = [...interviewRounds];
-														updated[index].meetingLink = e.target.value;
-														setInterviewRounds(updated);
-													}}
-													style={{borderColor: '#ff6600'}}
-												/>
-											</div>
-											<div className="col-md-12">
-												<label className="form-label fw-semibold" style={{color: '#2c3e50'}}>Description</label>
-												<textarea
-													className="form-control border-2"
-													rows="2"
-													placeholder="Interview description and instructions..."
-													value={round.description || ''}
-													onChange={(e) => {
-														const updated = [...interviewRounds];
-														updated[index].description = e.target.value;
-														setInterviewRounds(updated);
-													}}
-													style={{borderColor: '#ff6600'}}
-												/>
-											</div>
-											<div className="col-md-12">
-												<label className="form-label fw-semibold" style={{color: '#2c3e50'}}>Feedback</label>
-												<textarea
-													className="form-control border-2"
-													rows="2"
-													placeholder="Enter feedback for this round..."
-													value={round.feedback}
-													onChange={(e) => {
-														const updated = [...interviewRounds];
-														updated[index].feedback = e.target.value;
-														setInterviewRounds(updated);
-													}}
-													style={{borderColor: '#ff6600'}}
-												/>
-											</div>
+											{application.assessmentAttempt.startTime && (
+												<div className="col-md-6">
+													<small className="text-muted d-block">Started:</small>
+													<div className="fw-semibold">{new Date(application.assessmentAttempt.startTime).toLocaleString()}</div>
+												</div>
+											)}
+											{application.assessmentAttempt.endTime && (
+												<div className="col-md-6">
+													<small className="text-muted d-block">Completed:</small>
+													<div className="fw-semibold">{new Date(application.assessmentAttempt.endTime).toLocaleString()}</div>
+												</div>
+											)}
+											{application.assessmentAttempt.score !== undefined && (
+												<div className="col-md-4">
+													<small className="text-muted d-block">Score:</small>
+													<div className="fw-semibold">{application.assessmentAttempt.score}/{application.assessmentAttempt.totalMarks || 'N/A'}</div>
+												</div>
+											)}
+											{application.assessmentAttempt.percentage !== undefined && (
+												<div className="col-md-4">
+													<small className="text-muted d-block">Percentage:</small>
+													<div className="fw-semibold">{application.assessmentAttempt.percentage.toFixed(1)}%</div>
+												</div>
+											)}
+											{application.assessmentAttempt.result && (
+												<div className="col-md-4">
+													<small className="text-muted d-block">Result:</small>
+													<div className="mt-1">
+														<span className={`badge ${
+															application.assessmentAttempt.result === 'pass' ? 'bg-success' :
+															application.assessmentAttempt.result === 'fail' ? 'bg-danger' :
+															'bg-warning'
+														}`}>
+															{application.assessmentAttempt.result.toUpperCase()}
+														</span>
+													</div>
+												</div>
+											)}
+											{application.assessmentAttempt.startTime && application.assessmentAttempt.endTime && (
+												<div className="col-md-6">
+													<small className="text-muted d-block">Time Taken:</small>
+													<div className="fw-semibold">{Math.round((new Date(application.assessmentAttempt.endTime) - new Date(application.assessmentAttempt.startTime)) / (1000 * 60))} minutes</div>
+												</div>
+											)}
+											{application.assessmentAttempt.violations && application.assessmentAttempt.violations.length > 0 && (
+												<div className="col-md-6">
+													<small className="text-muted d-block">Violations:</small>
+													<div className="mt-1">
+														<span className="badge bg-danger me-2">{application.assessmentAttempt.violations.length}</span>
+														<small className="text-muted">
+															{application.assessmentAttempt.violations.map(v => v.type).join(', ')}
+														</small>
+													</div>
+												</div>
+	
+										)}
 										</div>
-									</div>
-								))}
+									) : (
+										<div className="text-center py-3">
+											<p className="text-muted mb-2">Assessment not yet attempted by candidate</p>
+											<span className="badge bg-warning">Pending</span>
+										</div>
+									)}
+								</div>
 							</div>
 						</div>
 					)}

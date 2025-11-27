@@ -1785,7 +1785,7 @@ exports.sendInterviewInvite = async (req, res) => {
     
     // Send email using nodemailer
     const nodemailer = require('nodemailer');
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: process.env.EMAIL_USER,
@@ -1805,7 +1805,13 @@ exports.sendInterviewInvite = async (req, res) => {
         <p><strong>Preferred Time:</strong> ${interviewTime}</p>
         ${meetingLink ? `<p><strong>Meeting Link:</strong> <a href="${meetingLink}">${meetingLink}</a></p>` : ''}
         ${instructions ? `<p><strong>Instructions:</strong> ${instructions}</p>` : ''}
-        <p>Please reply with your available time slots if the suggested time doesn't work for you.</p>
+        <p>Please log in to your dashboard to confirm your availability or suggest alternative time slots.</p>
+        <p style="margin-top: 20px;">
+          <a href="http://localhost:3000/candidate/status" 
+             style="background-color: #ff6600; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
+            Respond to Invitation
+          </a>
+        </p>
         <p>Best regards,<br>${req.user.companyName}</p>
       `
     };
@@ -1849,7 +1855,7 @@ exports.confirmInterview = async (req, res) => {
     
     // Send confirmation email
     const nodemailer = require('nodemailer');
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: process.env.EMAIL_USER,
@@ -1857,18 +1863,42 @@ exports.confirmInterview = async (req, res) => {
       }
     });
     
+    const formattedDate = new Date(confirmedDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: application.candidateId.email,
-      subject: `Interview Confirmed - ${application.jobId.title}`,
+      subject: `✓ Interview Confirmed - ${application.jobId.title}`,
       html: `
-        <h2>Interview Confirmed</h2>
-        <p>Dear ${application.candidateId.name},</p>
-        <p>Your interview for the position of <strong>${application.jobId.title}</strong> has been confirmed.</p>
-        <p><strong>Date:</strong> ${new Date(confirmedDate).toLocaleDateString()}</p>
-        <p><strong>Time:</strong> ${confirmedTime}</p>
-        <p>We look forward to meeting you!</p>
-        <p>Best regards,<br>${req.user.companyName}</p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 2px solid #28a745; border-radius: 10px;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <h2 style="color: #28a745; margin: 0;">✓ Interview Confirmed!</h2>
+          </div>
+          <p style="font-size: 16px; color: #333;">Dear <strong>${application.candidateId.name}</strong>,</p>
+          <p style="font-size: 16px; color: #333;">Great news! We are pleased to confirm your interview for the position of <strong style="color: #ff6600;">${application.jobId.title}</strong> at <strong>${req.user.companyName}</strong>.</p>
+          <div style="background-color: #d4edda; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #28a745;">
+            <h3 style="color: #155724; margin-top: 0;">Interview Details:</h3>
+            <p style="margin: 10px 0; font-size: 16px;"><strong>📅 Date:</strong> ${formattedDate}</p>
+            <p style="margin: 10px 0; font-size: 16px;"><strong>🕐 Time:</strong> ${confirmedTime}</p>
+            ${application.interviewInvite?.meetingLink ? `<p style="margin: 10px 0; font-size: 16px;"><strong>🔗 Meeting Link:</strong> <a href="${application.interviewInvite.meetingLink}" style="color: #ff6600;">${application.interviewInvite.meetingLink}</a></p>` : ''}
+          </div>
+          ${application.interviewInvite?.instructions ? `<div style="background-color: #fff3cd; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ffc107;"><h4 style="color: #856404; margin-top: 0;">📋 Important Instructions:</h4><p style="color: #856404; margin: 0;">${application.interviewInvite.instructions}</p></div>` : ''}
+          <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <h4 style="color: #333; margin-top: 0;">💡 Preparation Tips:</h4>
+            <ul style="color: #666; margin: 0; padding-left: 20px;">
+              <li>Join the meeting 5 minutes early</li>
+              <li>Ensure stable internet connection</li>
+              <li>Test your camera and microphone beforehand</li>
+              <li>Keep your resume and relevant documents ready</li>
+              <li>Prepare questions about the role and company</li>
+            </ul>
+          </div>
+          <p style="font-size: 16px; color: #333;">We are excited to meet you and discuss this opportunity further. If you have any questions or need to reschedule, please contact us immediately.</p>
+          <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+            <p style="color: #666; margin: 5px 0;">Best regards,</p>
+            <p style="color: #333; font-weight: bold; margin: 5px 0;">${req.user.companyName}</p>
+          </div>
+        </div>
       `
     };
     

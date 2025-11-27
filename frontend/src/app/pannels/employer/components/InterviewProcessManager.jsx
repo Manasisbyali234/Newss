@@ -36,10 +36,38 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
   const fetchInterviewProcess = async () => {
     setLoading(true);
     try {
+      const token = localStorage.getItem('employerToken');
+      
+      // Fetch interview process
       const data = await api.getEmployerInterviewProcess(applicationId);
       if (data.interviewProcess) {
         setInterviewProcess(data.interviewProcess);
         setStages(data.interviewProcess.stages || []);
+      }
+      
+      // Fetch application details including interview invite and candidate response
+      try {
+        const appResponse = await fetch(`http://localhost:5000/api/employer/applications/${applicationId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (appResponse.ok) {
+          const appData = await appResponse.json();
+          if (appData.application) {
+            // Set interview invite details
+            if (appData.application.interviewInvite) {
+              setInterviewProcess(prev => ({
+                ...prev,
+                interviewInvite: appData.application.interviewInvite
+              }));
+            }
+            // Set candidate response
+            if (appData.application.candidateResponse) {
+              setCandidateResponse(appData.application.candidateResponse);
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching application details:', err);
       }
     } catch (error) {
       console.error('Error fetching interview process:', error);
@@ -114,6 +142,8 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
         showToast('Interview invite sent successfully!', 'success');
         setShowEmailModal(false);
         setEmailData({ interviewDate: '', interviewTime: '', meetingLink: '', instructions: '' });
+        // Refresh to show the sent invitation
+        fetchInterviewProcess();
       } else {
         showToast(data.message || 'Failed to send invite', 'error');
       }
@@ -144,6 +174,8 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
       if (response.ok) {
         showToast('Interview schedule confirmed!', 'success');
         setCandidateResponse(null);
+        // Refresh to show updated status
+        fetchInterviewProcess();
       } else {
         showToast(data.message || 'Failed to confirm schedule', 'error');
       }
@@ -206,6 +238,46 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
       </div>
       
       <div className="card-body p-4">
+        {/* Interview Invitation Details */}
+        {interviewProcess?.interviewInvite && (
+          <div className="mb-4 p-3" style={{ backgroundColor: '#fff3e0', borderRadius: '10px', border: '2px solid #ff6600' }}>
+            <h6 className="fw-bold mb-3" style={{ color: '#ff6600' }}>
+              <i className="fa fa-paper-plane me-2"></i>
+              Interview Invitation Sent
+            </h6>
+            <div className="row">
+              <div className="col-md-6 mb-2">
+                <small className="text-muted d-block">Proposed Date:</small>
+                <strong>{new Date(interviewProcess.interviewInvite.proposedDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</strong>
+              </div>
+              <div className="col-md-6 mb-2">
+                <small className="text-muted d-block">Proposed Time:</small>
+                <strong>{interviewProcess.interviewInvite.proposedTime}</strong>
+              </div>
+              {interviewProcess.interviewInvite.meetingLink && (
+                <div className="col-12 mb-2">
+                  <small className="text-muted d-block">Meeting Link:</small>
+                  <a href={interviewProcess.interviewInvite.meetingLink} target="_blank" rel="noopener noreferrer" style={{ color: '#ff6600' }}>
+                    {interviewProcess.interviewInvite.meetingLink}
+                  </a>
+                </div>
+              )}
+              {interviewProcess.interviewInvite.instructions && (
+                <div className="col-12 mb-2">
+                  <small className="text-muted d-block">Instructions:</small>
+                  <p className="mb-0" style={{ backgroundColor: '#fff', padding: '10px', borderRadius: '5px', border: '1px solid #ffe0b2' }}>
+                    {interviewProcess.interviewInvite.instructions}
+                  </p>
+                </div>
+              )}
+              <div className="col-12 mt-2">
+                <small className="text-muted d-block">Sent on:</small>
+                <strong>{new Date(interviewProcess.interviewInvite.sentAt).toLocaleString()}</strong>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Email Modal */}
         {showEmailModal && (
           <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
@@ -292,18 +364,65 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
 
         {/* Candidate Response Display */}
         {candidateResponse && (
-          <div className="alert alert-info mb-4" style={{ backgroundColor: '#e3f2fd', borderColor: '#2196f3' }}>
-            <h6 className="fw-bold mb-2">Candidate's Available Time Slots:</h6>
-            <p className="mb-2"><strong>Date:</strong> {candidateResponse.availableDate}</p>
-            <p className="mb-2"><strong>Time:</strong> {candidateResponse.availableTime}</p>
-            <p className="mb-3"><strong>Message:</strong> {candidateResponse.message}</p>
+          <div className="alert alert-success mb-4" style={{ backgroundColor: '#d4edda', borderColor: '#28a745', borderRadius: '10px' }}>
+            <h6 className="fw-bold mb-3" style={{ color: '#155724' }}>
+              <i className="fa fa-check-circle me-2"></i>
+              Candidate Has Responded!
+            </h6>
+            <div className="row">
+              <div className="col-md-6 mb-2">
+                <small className="text-muted d-block">Available Date:</small>
+                <strong>{new Date(candidateResponse.availableDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</strong>
+              </div>
+              <div className="col-md-6 mb-2">
+                <small className="text-muted d-block">Available Time:</small>
+                <strong>{candidateResponse.availableTime}</strong>
+              </div>
+              {candidateResponse.message && (
+                <div className="col-12 mb-2">
+                  <small className="text-muted d-block">Message:</small>
+                  <p className="mb-0" style={{ backgroundColor: '#fff', padding: '10px', borderRadius: '5px', border: '1px solid #c3e6cb' }}>
+                    {candidateResponse.message}
+                  </p>
+                </div>
+              )}
+              <div className="col-12 mt-2">
+                <small className="text-muted d-block">Responded on:</small>
+                <strong>{new Date(candidateResponse.respondedAt).toLocaleString()}</strong>
+              </div>
+            </div>
             <button
-              className="btn btn-sm"
-              style={{ backgroundColor: '#ff6600', color: 'white', border: 'none' }}
+              className="btn btn-sm mt-3"
+              style={{ backgroundColor: '#28a745', color: 'white', border: 'none' }}
               onClick={confirmSchedule}
             >
-              Confirm Schedule
+              <i className="fa fa-check me-2"></i>
+              Confirm This Schedule
             </button>
+          </div>
+        )}
+
+        {/* Confirmed Interview Display */}
+        {interviewProcess?.interviewInvite?.status === 'confirmed' && (
+          <div className="alert alert-info mb-4" style={{ backgroundColor: '#cfe2ff', borderColor: '#0d6efd', borderRadius: '10px' }}>
+            <h6 className="fw-bold mb-3" style={{ color: '#084298' }}>
+              <i className="fa fa-calendar-check-o me-2"></i>
+              Interview Confirmed
+            </h6>
+            <div className="row">
+              <div className="col-md-6 mb-2">
+                <small className="text-muted d-block">Confirmed Date:</small>
+                <strong>{new Date(interviewProcess.interviewInvite.confirmedDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</strong>
+              </div>
+              <div className="col-md-6 mb-2">
+                <small className="text-muted d-block">Confirmed Time:</small>
+                <strong>{interviewProcess.interviewInvite.confirmedTime}</strong>
+              </div>
+              <div className="col-12 mt-2">
+                <small className="text-muted d-block">Confirmed on:</small>
+                <strong>{new Date(interviewProcess.interviewInvite.confirmedAt).toLocaleString()}</strong>
+              </div>
+            </div>
           </div>
         )}
 

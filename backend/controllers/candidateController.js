@@ -685,6 +685,72 @@ exports.sendMessage = async (req, res) => {
   }
 };
 
+exports.respondToInterviewInvite = async (req, res) => {
+  try {
+    const { applicationId } = req.params;
+    const { availableDate, availableTime, message } = req.body;
+    
+    const application = await Application.findOne({
+      _id: applicationId,
+      candidateId: req.user._id
+    })
+    .populate('jobId', 'title')
+    .populate('employerId', 'companyName email');
+    
+    if (!application) {
+      return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+    
+    // Update application with candidate response
+    await Application.findByIdAndUpdate(applicationId, {
+      candidateResponse: {
+        availableDate,
+        availableTime,
+        message,
+        respondedAt: new Date()
+      },
+      'interviewInvite.status': 'responded'
+    });
+    
+    // Send email notification to employer
+    try {
+      const nodemailer = require('nodemailer');
+      const transporter = nodemailer.createTransporter({
+        service: 'gmail',
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS
+        }
+      });
+      
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: application.employerId.email,
+        subject: `Interview Response - ${application.jobId.title}`,
+        html: `
+          <h2>Candidate Interview Response</h2>
+          <p>Dear ${application.employerId.companyName},</p>
+          <p>The candidate <strong>${req.user.name}</strong> has responded to your interview invitation for the position of <strong>${application.jobId.title}</strong>.</p>
+          <p><strong>Candidate's Available Date:</strong> ${new Date(availableDate).toLocaleDateString()}</p>
+          <p><strong>Candidate's Available Time:</strong> ${availableTime}</p>
+          ${message ? `<p><strong>Message:</strong> ${message}</p>` : ''}
+          <p>Please log in to your dashboard to confirm the interview schedule.</p>
+          <p>Best regards,<br>Job Portal Team</p>
+        `
+      };
+      
+      await transporter.sendMail(mailOptions);
+    } catch (emailError) {
+      console.error('Email notification failed:', emailError);
+    }
+    
+    res.json({ success: true, message: 'Response sent successfully' });
+  } catch (error) {
+    console.error('Error responding to interview invite:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 exports.getMessages = async (req, res) => {
   try {
     const { conversationId } = req.params;
