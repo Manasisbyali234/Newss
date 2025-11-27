@@ -246,7 +246,15 @@ function EmployerDetails() {
                             <h6><i className="fa fa-user"></i>Contact Full Name</h6>
                             <p>{profile.contactFullName || 'N/A'}</p>
                         </div>
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="275">
+                            <h6><i className="fa fa-user"></i>Contact Middle Name</h6>
+                            <p>{profile.contactMiddleName || 'N/A'}</p>
+                        </div>
                         <div className="profile-field" data-aos="fade-right" data-aos-delay="300">
+                            <h6><i className="fa fa-user"></i>Contact Last Name</h6>
+                            <p>{profile.contactLastName || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="325">
                             <h6><i className="fa fa-envelope"></i>Email</h6>
                             <p>{profile.email || 'N/A'}</p>
                         </div>
@@ -254,39 +262,39 @@ function EmployerDetails() {
                             <h6><i className="fa fa-phone"></i>Phone</h6>
                             <p>{profile.phone || 'N/A'}</p>
                         </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="400">
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="375">
                             <h6><i className="fa fa-envelope-open"></i>Official Email</h6>
                             <p>{profile.officialEmail || 'N/A'}</p>
                         </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="450">
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="400">
                             <h6><i className="fa fa-mobile-alt"></i>Official Mobile</h6>
                             <p>{profile.officialMobile || 'N/A'}</p>
                         </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="500">
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="425">
                             <h6><i className="fa fa-phone-alt"></i>Alternate Contact</h6>
                             <p>{profile.alternateContact || 'N/A'}</p>
                         </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="550">
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="450">
                             <h6><i className="fa fa-id-badge"></i>Contact Designation</h6>
                             <p>{profile.contactDesignation || 'N/A'}</p>
                         </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="600">
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="475">
                             <h6><i className="fa fa-mobile"></i>Contact Mobile</h6>
                             <p>{profile.contactMobile || 'N/A'}</p>
                         </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="625">
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="500">
                             <h6><i className="fa fa-id-badge"></i>Employer Code</h6>
                             <p>{profile.employerCode || 'N/A'}</p>
                         </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="650">
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="525">
                             <h6><i className="fa fa-globe"></i>Website</h6>
                             <p>{profile.website || 'N/A'}</p>
                         </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="700">
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="550">
                             <h6><i className="fa fa-calendar"></i>Established Since</h6>
                             <p>{profile.establishedSince || 'N/A'}</p>
                         </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="750">
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="575">
                             <h6><i className="fa fa-users"></i>Team Size</h6>
                             <p>{profile.teamSize || 'N/A'}</p>
                         </div>

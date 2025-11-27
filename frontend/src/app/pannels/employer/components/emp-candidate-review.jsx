@@ -649,7 +649,7 @@ function EmpCandidateReviewPage () {
 									</div>
 								</div>
 								<div className="col-md-6">
-									<h6 className="text-primary mb-3 d-flex align-items-center gap-2"><User size={16} style={{ color: "#ff6600" }} />Family Information</h6>
+
 									<div className="info-item mb-3">
 										<div className="d-flex align-items-center gap-2 mb-1">
 											<User size={16} style={{ color: "#ff6600" }} />
@@ -665,7 +665,7 @@ function EmpCandidateReviewPage () {
 										<p className="text-muted mb-0 ms-4">{candidate.motherName || 'Not provided'}</p>
 									</div>
 
-									<h6 className="text-primary mb-3 mt-4 d-flex align-items-center gap-2"><MapPin size={16} style={{ color: "#ff6600" }} />Address Information</h6>
+
 									<div className="info-item mb-3">
 										<div className="d-flex align-items-center gap-2 mb-1">
 											<MapPin size={16} style={{ color: "#ff6600" }} />
@@ -680,13 +680,7 @@ function EmpCandidateReviewPage () {
 										</div>
 										<p className="text-muted mb-0 ms-4">{candidate.permanentAddress || 'Not provided'}</p>
 									</div>
-									<div className="info-item mb-3">
-										<div className="d-flex align-items-center gap-2 mb-1">
-											<MapPin size={16} style={{ color: "#ff6600" }} />
-											<strong>Correspondence Address:</strong>
-										</div>
-										<p className="text-muted mb-0 ms-4">{candidate.correspondenceAddress || 'Not provided'}</p>
-									</div>
+
 								</div>
 							</div>
 						</div>

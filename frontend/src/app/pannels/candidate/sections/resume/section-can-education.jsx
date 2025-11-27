@@ -19,6 +19,7 @@ function SectionCanEducation({ profile, onUpdate }) {
         degree: { schoolName: '', location: '', passoutYear: '', registrationNumber: '', state: '', specialization: '', percentage: '', cgpa: '', grade: '', marksheet: null, marksheetBase64: null }
     });
     const [additionalErrors, setAdditionalErrors] = useState([]);
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
     const educationLevels = [
         { value: '10th_pass', label: '10th Pass / SSLC' },
@@ -426,6 +427,7 @@ function SectionCanEducation({ profile, onUpdate }) {
         };
 
         setEducationEntries(prev => [...prev, newEntry]);
+        setHasUnsavedChanges(true);
 
         // Reset form
         setFormData({
@@ -449,7 +451,7 @@ function SectionCanEducation({ profile, onUpdate }) {
         setSelectedEducationLevel('');
         setErrors({});
 
-        showToast('Education entry added successfully!', 'success', 4000);
+        showToast('Education entry added successfully! Please click "Save All Education Details" to save changes.', 'success', 4000);
     };
 
     const handleEditEntry = (entry) => {
@@ -477,6 +479,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                     : entry
             )
         );
+        setHasUnsavedChanges(true);
 
         // Reset form
         setFormData({
@@ -501,12 +504,13 @@ function SectionCanEducation({ profile, onUpdate }) {
         setEditingEntry(null);
         setErrors({});
 
-        showToast('Education entry updated successfully!', 'success', 4000);
+        showToast('Education entry updated successfully! Please click "Save All Education Details" to save changes.', 'success', 4000);
     };
 
     const handleDeleteEntry = (id) => {
         setEducationEntries(prev => prev.filter(entry => entry.id !== id));
-        showToast('Education entry deleted successfully!', 'success', 4000);
+        setHasUnsavedChanges(true);
+        showToast('Education entry deleted successfully! Please click "Save All Education Details" to save changes.', 'success', 4000);
     };
 
     const handleSaveAll = async () => {
@@ -535,6 +539,7 @@ function SectionCanEducation({ profile, onUpdate }) {
             const response = await api.updateCandidateProfile({ education: educationArray });
 
             if (response.success) {
+                setHasUnsavedChanges(false);
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
                 showToast('All education details saved successfully!', 'success', 4000);
             } else {
@@ -1419,15 +1424,29 @@ function SectionCanEducation({ profile, onUpdate }) {
                         </div>
                     )}
 
+                    {/* Unsaved Changes Warning */}
+                    {hasUnsavedChanges && (
+                        <div className="alert alert-warning mt-4" role="alert">
+                            <i className="fa fa-exclamation-triangle me-2"></i>
+                            <strong>You have unsaved changes!</strong> Please click "Save All Education Details" button to save your changes.
+                        </div>
+                    )}
+
                     {/* Save All Button */}
                     {educationEntries.length > 0 && (
                         <div className="mt-4 text-center">
                             <button
                                 type="button"
-                                className="site-button"
+                                className={`site-button ${hasUnsavedChanges ? 'btn-warning' : ''}`}
                                 onClick={handleSaveAll}
                                 disabled={loading}
-                                style={{padding: '12px 24px', fontSize: '16px'}}
+                                style={{
+                                    padding: '12px 24px', 
+                                    fontSize: '16px',
+                                    backgroundColor: hasUnsavedChanges ? '#ff6600' : '',
+                                    border: hasUnsavedChanges ? '2px solid #ff6600' : '',
+                                    animation: hasUnsavedChanges ? 'pulse 2s infinite' : 'none'
+                                }}
                             >
                                 {loading ? (
                                     <>
@@ -1438,11 +1457,20 @@ function SectionCanEducation({ profile, onUpdate }) {
                                     <>
                                         <i className="fa fa-save me-2"></i>
                                         Save All Education Details
+                                        {hasUnsavedChanges && <span className="ms-2 badge bg-light text-dark">Required</span>}
                                     </>
                                 )}
                             </button>
                         </div>
                     )}
+
+                    <style>{`
+                        @keyframes pulse {
+                            0% { box-shadow: 0 0 0 0 rgba(255, 102, 0, 0.7); }
+                            70% { box-shadow: 0 0 0 10px rgba(255, 102, 0, 0); }
+                            100% { box-shadow: 0 0 0 0 rgba(255, 102, 0, 0); }
+                        }
+                    `}</style>
                 </div>
             </div>
         </>

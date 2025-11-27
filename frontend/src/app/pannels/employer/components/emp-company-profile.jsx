@@ -74,6 +74,7 @@ function EmpCompanyProfilePage() {
     const [errors, setErrors] = useState({});
     const [globalErrors, setGlobalErrors] = useState([]);
     const [fetchingCity, setFetchingCity] = useState(false);
+    const [deleteConfirmation, setDeleteConfirmation] = useState(null);
     const [validationRules] = useState({
         companyName: { required: true, minLength: 2 },
         phone: { required: true, phone: true },
@@ -742,55 +743,11 @@ function EmpCompanyProfilePage() {
         }
     };
 
-    const handleDeleteGalleryImage = async (imageId) => {
-        // Show confirmation toast instead of window.confirm
-        const confirmDelete = () => {
-            return new Promise((resolve) => {
-                showToast('Delete this image? Click "Delete" to confirm', 'warning', 5000);
-                
-                // Create confirmation buttons
-                const container = document.getElementById('toast-container');
-                if (container) {
-                    const lastToast = container.lastElementChild;
-                    if (lastToast) {
-                        const buttonContainer = document.createElement('div');
-                        buttonContainer.style.cssText = 'margin-top: 10px; display: flex; gap: 10px;';
-                        
-                        const deleteBtn = document.createElement('button');
-                        deleteBtn.textContent = 'Delete';
-                        deleteBtn.style.cssText = 'background: #dc3545; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer;';
-                        deleteBtn.onclick = () => {
-                            lastToast.remove();
-                            resolve(true);
-                        };
-                        
-                        const cancelBtn = document.createElement('button');
-                        cancelBtn.textContent = 'Cancel';
-                        cancelBtn.style.cssText = 'background: #6c757d; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer;';
-                        cancelBtn.onclick = () => {
-                            lastToast.remove();
-                            resolve(false);
-                        };
-                        
-                        buttonContainer.appendChild(deleteBtn);
-                        buttonContainer.appendChild(cancelBtn);
-                        lastToast.appendChild(buttonContainer);
-                        
-                        // Auto-cancel after 5 seconds
-                        setTimeout(() => {
-                            if (lastToast.parentNode) {
-                                lastToast.remove();
-                                resolve(false);
-                            }
-                        }, 5000);
-                    }
-                }
-            });
-        };
-        
-        const shouldDelete = await confirmDelete();
-        if (!shouldDelete) return;
+    const handleDeleteGalleryImage = (imageId) => {
+        setDeleteConfirmation(imageId);
+    };
 
+    const confirmDeleteImage = async (imageId) => {
         try {
             const token = localStorage.getItem('employerToken');
             const response = await fetch(`http://localhost:5000/api/employer/profile/gallery/${imageId}`, {
@@ -807,6 +764,11 @@ function EmpCompanyProfilePage() {
         } catch (error) {
             showToast('Delete failed', 'error');
         }
+        setDeleteConfirmation(null);
+    };
+
+    const cancelDeleteImage = () => {
+        setDeleteConfirmation(null);
     };
 
     const addNewAuthSection = () => {
@@ -1888,6 +1850,30 @@ function EmpCompanyProfilePage() {
                                     </div>
                                 </div>
                             </div>
+                            
+                            {deleteConfirmation && (
+                                <div className="col-md-12">
+                                    <div className="alert alert-warning d-flex justify-content-between align-items-center" style={{backgroundColor: '#ffffff', border: '1px solid #dee2e6', color: '#333333'}}>
+                                        <span>Delete this image? Click "Delete" to confirm</span>
+                                        <div>
+                                            <button 
+                                                type="button" 
+                                                className="btn btn-danger btn-sm me-2"
+                                                onClick={() => confirmDeleteImage(deleteConfirmation)}
+                                            >
+                                                Delete
+                                            </button>
+                                            <button 
+                                                type="button" 
+                                                className="btn btn-secondary btn-sm"
+                                                onClick={cancelDeleteImage}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                             
                             {formData.gallery && formData.gallery.length > 0 && (
                                 <div className="col-md-12">
