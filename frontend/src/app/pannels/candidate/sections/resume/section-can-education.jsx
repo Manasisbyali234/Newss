@@ -419,17 +419,8 @@ function SectionCanEducation({ profile, onUpdate }) {
             ...formData
         };
 
-<<<<<<< HEAD
-        console.log('Adding education entry:', newEntry);
-        setEducationEntries(prev => {
-            const updated = [...prev, newEntry];
-            console.log('Updated education entries:', updated);
-            return updated;
-        });
-=======
         setEducationEntries(prev => [...prev, newEntry]);
         setHasUnsavedChanges(true);
->>>>>>> a16934361a151c611625c55ae0f4c40ac5059f29
 
         // Reset form
         setFormData({
@@ -453,11 +444,7 @@ function SectionCanEducation({ profile, onUpdate }) {
         setSelectedEducationLevel('');
         setErrors({});
 
-<<<<<<< HEAD
-        showToast('Education entry added successfully! Remember to click "Save All Education Details" to save to database.', 'success', 5000);
-=======
         showToast('Education entry added successfully! Please click "Save All Education Details" to save changes.', 'success', 4000);
->>>>>>> a16934361a151c611625c55ae0f4c40ac5059f29
     };
 
     const handleEditEntry = (entry) => {
