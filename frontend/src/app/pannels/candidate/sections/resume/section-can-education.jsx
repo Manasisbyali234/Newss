@@ -254,14 +254,16 @@ function SectionCanEducation({ profile, onUpdate }) {
         if (name === 'document') {
             const file = files[0];
             if (file) {
+                // Validate file type first
+                if (file.type !== 'application/pdf') {
+                    showToast('Only PDF files are allowed', 'error', 4000);
+                    e.target.value = ''; // Clear the input
+                    return;
+                }
                 // Validate file size (50MB limit)
                 if (file.size > 50 * 1024 * 1024) {
                     showToast('File size must be less than 50MB', 'error', 4000);
-                    return;
-                }
-                // Validate file type
-                if (file.type !== 'application/pdf') {
-                    showToast('Only PDF files are allowed', 'error', 4000);
+                    e.target.value = ''; // Clear the input
                     return;
                 }
 
@@ -678,13 +680,16 @@ function SectionCanEducation({ profile, onUpdate }) {
             return;
         }
 
-        // Check file size (no minimum, no maximum)
-        // File size restrictions removed to allow any size
-
-        // Check file type
-        const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+        // Check file type first
+        const allowedTypes = ['application/pdf'];
         if (!allowedTypes.includes(file.type)) {
-            showToast('Only PDF, JPG, JPEG, and PNG files are allowed.', 'error', 4000);
+            showToast('Only PDF files are allowed.', 'error', 4000);
+            return;
+        }
+
+        // Check file size (50MB limit)
+        if (file.size > 50 * 1024 * 1024) {
+            showToast('File size must be less than 50MB', 'error', 4000);
             return;
         }
 

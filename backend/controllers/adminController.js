@@ -745,7 +745,8 @@ exports.getCandidateDetails = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Candidate not found' });
     }
 
-    const profile = await CandidateProfile.findOne({ candidateId });
+    // Fetch fresh profile data without caching
+    const profile = await CandidateProfile.findOne({ candidateId }).lean();
     
     // Get candidate's job applications with company details
     const applications = await Application.find({ candidateId })
@@ -771,12 +772,41 @@ exports.getCandidateDetails = async (req, res) => {
       createdAt: app.createdAt
     }));
     
+    // Ensure education data is properly formatted with the latest updates
+    let formattedEducation = [];
+    if (profile && profile.education && Array.isArray(profile.education)) {
+      formattedEducation = profile.education.map((edu, index) => ({
+        ...edu,
+        // Ensure passYear is properly mapped for admin display
+        passYear: edu.passYear || edu.yearOfPassing || edu.year,
+        // Map different field names to consistent format
+        degreeName: edu.degreeName || edu.schoolName || edu.degree,
+        collegeName: edu.collegeName || edu.location || edu.institution,
+        percentage: edu.percentage || edu.score,
+        cgpa: edu.cgpa || edu.gpa,
+        grade: edu.grade || edu.result,
+        specialization: edu.specialization || edu.courseName || edu.stream,
+        registrationNumber: edu.registrationNumber || edu.enrollmentNumber,
+        state: edu.state || edu.location,
+        marksheet: edu.marksheet || edu.document
+      }));
+    }
+    
     const candidateWithProfile = {
       ...candidate.toObject(),
-      ...profile?.toObject(),
+      ...profile,
+      // Override education with properly formatted data
+      education: formattedEducation,
       hasProfile: !!profile,
       applications: formattedApplications
     };
+
+    // Set cache headers to prevent stale data
+    res.set({
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    });
 
     res.json({ success: true, candidate: candidateWithProfile });
   } catch (error) {

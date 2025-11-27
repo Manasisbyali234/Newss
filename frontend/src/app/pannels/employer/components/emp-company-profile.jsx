@@ -1877,9 +1877,7 @@ function EmpCompanyProfilePage() {
                                                 <strong>Tip:</strong> Large files are uploaded in batches of 3 for better reliability.
                                             </p>
                                             <p className="text-info small">
-                                                <i className></i>
-                                                <strong>Tip:</strong> When uploading many files, they will be processed in batches of 5 for better reliability.
-                                            </p>
+                                                <i className></i></p>
                                             {formData.gallery?.length >= 10 && (
                                                 <p className="text-warning small">
                                                     <i className="fas fa-exclamation-triangle me-1"></i>

@@ -103,9 +103,15 @@ function CanSupport() {
     const handleFileChange = (e) => {
         const selectedFiles = Array.from(e.target.files);
         
+        // Clear file input to prevent partial uploads
+        const clearFileInput = () => {
+            e.target.value = '';
+        };
+        
         // Check file count
         if (selectedFiles.length > 3) {
-            setErrors(prev => ({ ...prev, files: 'Maximum 3 files allowed' }));
+            setErrors(prev => ({ ...prev, files: 'Too many files selected. Please choose maximum 3 files only.' }));
+            clearFileInput();
             return;
         }
         
@@ -113,7 +119,12 @@ function CanSupport() {
         const maxSize = 15 * 1024 * 1024; // 15MB
         const oversizedFiles = selectedFiles.filter(file => file.size > maxSize);
         if (oversizedFiles.length > 0) {
-            setErrors(prev => ({ ...prev, files: `File(s) too large: ${oversizedFiles.map(f => f.name).join(', ')}. Max 15MB per file.` }));
+            const fileList = oversizedFiles.map(f => `"${f.name}" (${(f.size / 1024 / 1024).toFixed(1)}MB)`).join(', ');
+            setErrors(prev => ({ 
+                ...prev, 
+                files: `File size too large: ${fileList}. Each file must be under 15MB. Please compress or choose smaller files.` 
+            }));
+            clearFileInput();
             return;
         }
         
@@ -121,7 +132,12 @@ function CanSupport() {
         const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
         const maxTotalSize = 45 * 1024 * 1024; // 45MB
         if (totalSize > maxTotalSize) {
-            setErrors(prev => ({ ...prev, files: 'Total file size exceeds 45MB. Please select smaller files.' }));
+            const totalSizeMB = (totalSize / 1024 / 1024).toFixed(1);
+            setErrors(prev => ({ 
+                ...prev, 
+                files: `Combined file size too large: ${totalSizeMB}MB exceeds the 45MB limit. Please select smaller files or reduce the number of files.` 
+            }));
+            clearFileInput();
             return;
         }
         
@@ -370,20 +386,35 @@ function CanSupport() {
                                                 onChange={handleFileChange}
                                             />
                                             <small className="form-text text-muted">
-                                                Upload up to 3 files (max 15MB each). Supported: PDF, DOC, DOCX, XLS, XLSX, CSV, TXT, JPG, PNG, GIF, WEBP
+                                                <i className="fa fa-info-circle me-1"></i>
+                                                Upload up to 3 files (max 15MB each, 45MB total). Supported formats: PDF, DOC, DOCX, XLS, XLSX, CSV, TXT, JPG, PNG, GIF, WEBP
                                             </small>
-                                            {errors.files && <div className="invalid-feedback">{errors.files}</div>}
+                                            {errors.files && (
+                                                <div className="invalid-feedback d-block">
+                                                    <i className="fa fa-exclamation-triangle me-1"></i>
+                                                    {errors.files}
+                                                </div>
+                                            )}
                                             {files.length > 0 && (
-                                                <div className="mt-2">
-                                                    <strong>Selected files:</strong>
-                                                    <ul className="list-unstyled mt-1">
+                                                <div className="mt-2 p-2 bg-light rounded">
+                                                    <strong className="text-success">
+                                                        <i className="fa fa-check-circle me-1"></i>
+                                                        Selected files ({files.length}/3):
+                                                    </strong>
+                                                    <ul className="list-unstyled mt-1 mb-0">
                                                         {files.map((file, index) => (
-                                                            <li key={index} className="text-muted small">
-                                                                <i className="fa fa-file me-1"></i>
-                                                                {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
+                                                            <li key={index} className="text-muted small d-flex align-items-center">
+                                                                <i className="fa fa-file me-2 text-primary"></i>
+                                                                <span className="flex-grow-1">{file.name}</span>
+                                                                <span className="badge bg-secondary ms-2">
+                                                                    {(file.size / 1024 / 1024).toFixed(1)} MB
+                                                                </span>
                                                             </li>
                                                         ))}
                                                     </ul>
+                                                    <small className="text-muted">
+                                                        Total size: {(files.reduce((sum, file) => sum + file.size, 0) / 1024 / 1024).toFixed(1)} MB / 45 MB
+                                                    </small>
                                                 </div>
                                             )}
                                         </div>

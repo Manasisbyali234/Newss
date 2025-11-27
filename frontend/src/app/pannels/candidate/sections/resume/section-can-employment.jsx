@@ -5,18 +5,30 @@ import showToast from "../../../../../utils/toastNotification";
 
 function SectionCanEmployment({ profile }) {
     const modalId = 'EmploymentModal';
-    const [formData, setFormData] = useState({
-        designation: '',
-        organization: '',
-        isCurrent: false,
-        startDate: '',
-        endDate: '',
-        description: ''
+    const [formData, setFormData] = useState(() => {
+        const saved = localStorage.getItem('employmentFormData');
+        return saved ? JSON.parse(saved) : {
+            designation: '',
+            organization: '',
+            isCurrent: false,
+            startDate: '',
+            endDate: '',
+            description: ''
+        };
     });
-    const [totalExperience, setTotalExperience] = useState('');
+    const [totalExperience, setTotalExperience] = useState(() => {
+        return localStorage.getItem('totalExperience') || '';
+    });
     const [loading, setLoading] = useState(false);
     const [employment, setEmployment] = useState([]);
     const [errors, setErrors] = useState({});
+
+    const clearForm = () => {
+        const resetFormData = { designation: '', organization: '', isCurrent: false, startDate: '', endDate: '', description: '' };
+        setFormData(resetFormData);
+        localStorage.removeItem('employmentFormData');
+        setErrors({});
+    };
 
     useEffect(() => {
         if (profile?.employment) {
@@ -27,10 +39,25 @@ function SectionCanEmployment({ profile }) {
         }
     }, [profile]);
 
+    // Add event listener for modal close to optionally preserve data
+    useEffect(() => {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            const handleModalHide = () => {
+                // Data will persist in localStorage for next time modal opens
+                console.log('Modal closed - form data preserved in localStorage');
+            };
+            modal.addEventListener('hidden.bs.modal', handleModalHide);
+            return () => modal.removeEventListener('hidden.bs.modal', handleModalHide);
+        }
+    }, [modalId]);
+
 
 
     const handleInputChange = (field, value) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
+        const newFormData = { ...formData, [field]: value };
+        setFormData(newFormData);
+        localStorage.setItem('employmentFormData', JSON.stringify(newFormData));
 
         // Clear error for this field when user starts typing
         if (errors[field]) {
@@ -159,7 +186,7 @@ function SectionCanEmployment({ profile }) {
                 organization: formData.organization.trim(),
                 isCurrent: Boolean(formData.isCurrent),
                 startDate: formData.startDate,
-                endDate: formData.isCurrent ? '' : (formData.endDate || ''),
+                endDate: formData.isCurrent ? null : (formData.endDate || null),
                 description: formData.description ? formData.description.trim() : ''
             };
             
@@ -181,7 +208,9 @@ function SectionCanEmployment({ profile }) {
             
             if (response && (response.success || response.candidate)) {
                 setEmployment(newEmployment);
-                setFormData({ designation: '', organization: '', isCurrent: false, startDate: '', endDate: '', description: '' });
+                const resetFormData = { designation: '', organization: '', isCurrent: false, startDate: '', endDate: '', description: '' };
+                setFormData(resetFormData);
+                localStorage.removeItem('employmentFormData');
                 setErrors({});
                 setTotalExperience(totalExperience || '');
                 showToast('Employment added successfully!', 'success');
@@ -247,16 +276,24 @@ function SectionCanEmployment({ profile }) {
                     )}
                     {employment.length > 0 ? (
                         employment.map((emp, index) => (
-                            <div key={index} className="mb-3">
-                                <p><b>{emp.designation}</b></p>
-                                <p>{emp.organization}</p>
-                                <p>{emp.startDate} - {emp.isCurrent ? 'Present' : emp.endDate}</p>
-                                {emp.description && <p>{emp.description}</p>}
+                            <div key={index} className="mb-3" style={{background: '#fff', padding: '20px', borderRadius: '8px', border: '1px solid #e0e0e0', boxShadow: '0 2px 4px rgba(0,0,0,0.1)'}}>
+                                <h4 style={{color: '#2c3e50', marginBottom: '8px', fontWeight: '600'}}>
+                                    {emp.designation}
+                                </h4>
+                                <p style={{color: '#34495e', marginBottom: '8px', fontSize: '16px'}}>
+                                    {emp.organization}
+                                </p>
+                                <p style={{color: '#7f8c8d', marginBottom: '12px', fontSize: '14px'}}>
+                                    {emp.startDate ? new Date(emp.startDate).toLocaleDateString('en-US', {month: 'short', year: 'numeric'}) : 'Start Date'} - {emp.isCurrent ? 'Present' : (emp.endDate ? new Date(emp.endDate).toLocaleDateString('en-US', {month: 'short', year: 'numeric'}) : 'End Date')}
+                                </p>
+                                {emp.description && (
+                                    <p style={{color: '#555', fontSize: '14px', lineHeight: '1.6', marginBottom: '0'}}>
+                                        {emp.description}
+                                    </p>
+                                )}
                             </div>
                         ))
-                    ) : (
-                        <p>No employment history added yet. Click the edit button to add your work experience.</p>
-                    )}
+                    ) : null}
                 </div>
             </div>
             {createPortal(
@@ -266,7 +303,13 @@ function SectionCanEmployment({ profile }) {
                             <form onSubmit={(e) => e.preventDefault()}>
                                 <div className="modal-header">
                                     <h2 className="modal-title">Add Present Employment Details</h2>
-                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                                    <div className="d-flex align-items-center">
+                                        <small className="text-muted me-3">
+                                            <i className="fa fa-save me-1"></i>
+                                            Form auto-saves as you type
+                                        </small>
+                                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                                    </div>
                                 </div>
                                 <div className="modal-body">
                                     <div className="row">
@@ -276,6 +319,7 @@ function SectionCanEmployment({ profile }) {
                                                 <div className="ls-inputicon-box">
                                                     <input className={`form-control ${errors.totalExperience ? 'is-invalid' : ''}`} type="text" placeholder="e.g., 2 years, 6 months" value={totalExperience} onChange={(e) => {
                                                         setTotalExperience(e.target.value);
+                                                        localStorage.setItem('totalExperience', e.target.value);
                                                         if (errors.totalExperience) {
                                                             setErrors(prev => ({ ...prev, totalExperience: null }));
                                                         }
@@ -352,6 +396,7 @@ function SectionCanEmployment({ profile }) {
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="site-button" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" className="site-button btn-secondary me-2" onClick={clearForm}>Clear Form</button>
                                     <button type="button" className="site-button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleSave(); }} disabled={loading}>{loading ? 'Saving...' : 'Save'}</button>
                                 </div>
                             </form>

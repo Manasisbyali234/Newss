@@ -80,6 +80,37 @@
     color: #ff6600;
 }
 
+.refresh-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: #ff6600;
+    border: 2px solid #ff6600;
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.refresh-btn:hover:not(:disabled) {
+    background: #e55a00;
+    border-color: #e55a00;
+    transform: translateY(-1px);
+}
+
+.refresh-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.refresh-btn i.fa-spin {
+    animation: spin 1s linear infinite;
+}
+
 .header-title h2 {
     margin: 0;
     color: #212529;
@@ -481,6 +512,84 @@
     font-size: 1rem;
 }
 
+.employment-section {
+    margin-bottom: 40px;
+}
+
+.employment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.employment-item {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 25px;
+    border-left: 4px solid #ff6600;
+}
+
+.employment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.employment-header h5 {
+    margin: 0;
+    color: #212529;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.employment-status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.employment-status.current {
+    background: #d4edda;
+    color: #155724;
+}
+
+.employment-status.past {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.employment-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #495057;
+}
+
+.detail-row i {
+    color: #ff6600;
+    width: 16px;
+}
+
+.employment-description {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #dee2e6;
+}
+
+.employment-description p {
+    margin: 0;
+    color: #495057;
+    line-height: 1.6;
+}
+
 .documents-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -537,15 +646,18 @@
 .action-btn {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    padding: 10px 20px;
+    padding: 10px;
     border: none;
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 1rem;
+    width: 40px;
+    height: 40px;
 }
 
 .action-btn.primary {
@@ -677,7 +789,7 @@
     font-weight: 500;
 }
 
-.no-applications {
+.no-applications, .no-documents, .no-personal-info, .no-education, .no-skills {
     text-align: center;
     padding: 60px 20px;
 }

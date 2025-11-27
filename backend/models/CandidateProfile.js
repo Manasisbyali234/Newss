@@ -46,6 +46,14 @@ const candidateProfileSchema = new mongoose.Schema({
     description: String,
     current: { type: Boolean, default: false }
   }],
+  employment: [{
+    designation: String,
+    organization: String,
+    isCurrent: { type: Boolean, default: false },
+    startDate: Date,
+    endDate: Date,
+    description: String
+  }],
   totalExperience: { type: String }, // Total years of experience
   skills: [String],
   expectedSalary: { type: Number },

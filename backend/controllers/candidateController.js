@@ -192,18 +192,36 @@ exports.updateProfile = async (req, res) => {
     console.log('Update data before DB save:', updateData);
     console.log('Pincode in updateData:', updateData.pincode);
     
-    // Handle education array updates with marksheet preservation
+    // Handle education array updates with marksheet preservation and field normalization
     if (updateData.education && Array.isArray(updateData.education)) {
       const currentProfile = await CandidateProfile.findOne({ candidateId: req.user._id });
       if (currentProfile && currentProfile.education) {
-        // Preserve existing marksheets when updating education
+        // Preserve existing marksheets when updating education and normalize field names
         updateData.education = updateData.education.map((newEdu, index) => {
           const existingEdu = currentProfile.education[index];
           return {
             ...newEdu,
+            // Ensure consistent field naming for admin display
+            passYear: newEdu.passYear || newEdu.yearOfPassing || newEdu.year,
+            degreeName: newEdu.degreeName || newEdu.schoolName || newEdu.degree,
+            collegeName: newEdu.collegeName || newEdu.location || newEdu.institution,
+            percentage: newEdu.percentage || newEdu.score,
+            specialization: newEdu.specialization || newEdu.courseName || newEdu.stream,
+            registrationNumber: newEdu.registrationNumber || newEdu.enrollmentNumber,
             marksheet: existingEdu?.marksheet || newEdu.marksheet || null
           };
         });
+      } else {
+        // Normalize field names for new education entries
+        updateData.education = updateData.education.map(newEdu => ({
+          ...newEdu,
+          passYear: newEdu.passYear || newEdu.yearOfPassing || newEdu.year,
+          degreeName: newEdu.degreeName || newEdu.schoolName || newEdu.degree,
+          collegeName: newEdu.collegeName || newEdu.location || newEdu.institution,
+          percentage: newEdu.percentage || newEdu.score,
+          specialization: newEdu.specialization || newEdu.courseName || newEdu.stream,
+          registrationNumber: newEdu.registrationNumber || newEdu.enrollmentNumber
+        }));
       }
     }
     

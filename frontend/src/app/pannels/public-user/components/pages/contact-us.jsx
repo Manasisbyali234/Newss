@@ -77,34 +77,7 @@ function ContactUsPage() {
         }
     };
 
-    if (isSubmitted) {
-        return (
-            <>
-                <div className="section-full twm-contact-one">
-                    <div className="section-content">
-                        <div className="contact-one-inner" style={{ paddingLeft: '3rem', paddingRight: '3rem' }}>
-                                <div className="row justify-content-center">
-                                    <div className="col-lg-8 col-md-10">
-                                        <div className="contact-form-outer text-center">
-                                            <div className="section-head left wt-small-separator-outer">
-                                                <h2 className="wt-title text-success">✓ Submitted Successfully!</h2>
-                                                <p>Thank you for contacting us. We have received your message and will get back to you as soon as possible.</p>
-                                                <button 
-                                                    onClick={() => setIsSubmitted(false)} 
-                                                    className="site-button mt-3"
-                                                >
-                                                    Send Another Message
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    </div>
-                </div>
-            </>
-        );
-    }
+
 
     return (
         <>
@@ -116,11 +89,25 @@ function ContactUsPage() {
                                 <div className="col-lg-6 col-md-12">
                                     <div className="contact-form-outer">
                                         {/* title="" START*/}
-                                        <div className="section-head left wt-small-separator-outer">
-                                            <h2 className="wt-title">Send Us a Message</h2>
-                                            <p>Feel free to contact us and we will get back to you as soon as we can.</p>
-                                        </div>
+                                        {isSubmitted ? (
+                                            <div className="section-head left wt-small-separator-outer text-center">
+                                                <h2 className="wt-title text-success">✓ Submitted Successfully!</h2>
+                                                <p>Thank you for contacting us. We have received your message and will get back to you as soon as possible.</p>
+                                                <button 
+                                                    onClick={() => setIsSubmitted(false)} 
+                                                    className="site-button mt-3"
+                                                >
+                                                    Send Another Message
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className="section-head left wt-small-separator-outer">
+                                                <h2 className="wt-title">Send Us a Message</h2>
+                                                <p>Feel free to contact us and we will get back to you as soon as we can.</p>
+                                            </div>
+                                        )}
                                         {/* title="" END*/}
+                                        {!isSubmitted && (
                                         <form className="cons-contact-form" onSubmit={handleSubmit}>
                                             {errors.submit && (
                                                 <div className="alert alert-danger mb-3">{errors.submit}</div>
@@ -220,6 +207,7 @@ function ContactUsPage() {
                                                 </div>
                                             </div>
                                         </form>
+                                        )}
                                     </div>
                                 </div>
                                 <div className="col-lg-6 col-md-12">
