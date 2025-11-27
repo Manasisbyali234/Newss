@@ -151,13 +151,13 @@ function LoginPage() {
                                             <div className="mb-4">
                                                 <ul className="nav nav-pills nav-fill" id="myTab2" role="tablist" style={{borderRadius: '12px', padding: '6px', marginBottom: '24px', gap: '8px'}}>
                                                     <li className="nav-item">
-                                                        <button className="nav-link active" data-bs-toggle="tab" data-bs-target="#twm-login-candidate" type="button" style={{borderRadius: '10px', fontWeight: '500', padding: '10px 16px', fontSize: '14px'}}><i className="fas fa-user-tie me-2" style={{color: '#ffffff'}} />Candidate</button>
+                                                        <button className="nav-link active" data-bs-toggle="tab" data-bs-target="#twm-login-candidate" type="button" style={{borderRadius: '10px', fontWeight: '500', padding: '10px 16px', fontSize: '14px'}}><i className="fas fa-user-tie me-2" style={{color: '#FF6A00'}} />Candidate</button>
                                                     </li>
                                                     <li className="nav-item">
-                                                        <button className="nav-link" data-bs-toggle="tab" data-bs-target="#twm-login-Employer" type="button" style={{borderRadius: '10px', fontWeight: '500', padding: '10px 16px', fontSize: '14px'}}><i className="fas fa-building me-2" style={{color: 'white'}} />Employer</button>
+                                                        <button className="nav-link" data-bs-toggle="tab" data-bs-target="#twm-login-Employer" type="button" style={{borderRadius: '10px', fontWeight: '500', padding: '10px 16px', fontSize: '14px'}}><i className="fas fa-building me-2" style={{color: '#FF6A00'}} />Employer</button>
                                                     </li>
                                                     <li className="nav-item">
-                                                        <button className="nav-link" data-bs-toggle="tab" data-bs-target="#twm-login-Placement" type="button" style={{borderRadius: '10px', fontWeight: '500', padding: '10px 16px', fontSize: '14px'}}><i className="fas fa-graduation-cap me-2" style={{color: 'white'}} />Placement Officer</button>
+                                                        <button className="nav-link" data-bs-toggle="tab" data-bs-target="#twm-login-Placement" type="button" style={{borderRadius: '10px', fontWeight: '500', padding: '10px 16px', fontSize: '14px'}}><i className="fas fa-graduation-cap me-2" style={{color: '#FF6A00'}} />Placement Officer</button>
                                                     </li>
                                                 </ul>
                                                 <div className="tab-content" id="myTab2Content">
@@ -292,7 +292,7 @@ function LoginPage() {
                                         </div>
                                         <div className="text-center mt-3">
                                             <NavLink to={publicUser.INITIAL} className="btn btn-outline-secondary" style={{padding: '8px 20px', borderRadius: '8px', textDecoration: 'none'}}>
-                                                <i className="fas fa-home me-2" style={{color: 'white'}}></i>Back to Home
+                                                <i className="fas fa-home me-2" style={{color: '#FF6A00'}}></i>Back to Home
                                             </NavLink>
                                         </div>
                                     </div>
