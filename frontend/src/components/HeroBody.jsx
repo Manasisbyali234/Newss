@@ -214,12 +214,37 @@ const HeroBody = ({ onSearch }) => {
               onChange={(e) => handleFieldChange('category', e.target.value)}
               onBlur={() => handleFieldBlur('category')}
             >
-              <option value="">Job Categories</option>
-              <option value="Programming">Programming</option>
-              <option value="Content Writer">Content Writer</option>
-              <option value="Sales & Marketing">Sales & Marketing</option>
-              <option value="Healthcare">Healthcare</option>
-              <option value="Human Resources">Human Resources</option>
+              <option value=""hidden>Select Categories</option>
+              <option value="Information Technology (IT) & Software">Information Technology (IT) & Software</option>
+              <option value="Design & Creative">Design & Creative</option>
+              <option value="Marketing & Advertising">Marketing & Advertising</option>
+              <option value="Sales & Business Development">Sales & Business Development</option>
+              <option value="Customer Support & Service">Customer Support & Service</option>
+              <option value="Finance & Accounting">Finance & Accounting</option>
+              <option value="Human Resources (HR) & Recruitment">Human Resources (HR) & Recruitment</option>
+              <option value="Engineering & Manufacturing">Engineering & Manufacturing</option>
+              <option value="Construction & Real Estate">Construction & Real Estate</option>
+              <option value="Healthcare & Medical">Healthcare & Medical</option>
+              <option value="Education & Training">Education & Training</option>
+              <option value="Hospitality & Travel">Hospitality & Travel</option>
+              <option value="Retail & Commerce">Retail & Commerce</option>
+              <option value="Logistics & Supply Chain">Logistics & Supply Chain</option>
+              <option value="Legal & Compliance">Legal & Compliance</option>
+              <option value="Administration & Operations">Administration & Operations</option>
+              <option value="Government & Public Sector">Government & Public Sector</option>
+              <option value="Media & Journalism">Media & Journalism</option>
+              <option value="Agriculture & Environment">Agriculture & Environment</option>
+              <option value="Energy & Utilities">Energy & Utilities</option>
+              <option value="Automobile">Automobile</option>
+              <option value="E-commerce">E-commerce</option>
+              <option value="Non-Profit & Social Work">Non-Profit & Social Work</option>
+              <option value="Product & Project Management">Product & Project Management</option>
+              <option value="Cybersecurity">Cybersecurity</option>
+              <option value="Data Science & Analytics">Data Science & Analytics</option>
+              <option value="AI & Machine Learning">AI & Machine Learning</option>
+              <option value="Skilled Trades">Skilled Trades</option>
+              <option value="Security Services">Security Services</option>
+              <option value="Domestic & Care Services">Domestic & Care Services</option>
             </select>
             {touched.category && errors.category && (
               <div className="search-error">
@@ -229,42 +254,86 @@ const HeroBody = ({ onSearch }) => {
           </div>
           
           <div className="search-field">
-            <label className="search-label">designation</label>
+            <label className="search-label">Designation</label>
             <select 
               className={`search-select${touched.what && errors.what ? ' has-error' : ''}`}
               value={searchData.what}
               onChange={(e) => handleFieldChange('what', e.target.value)}
               onBlur={() => handleFieldBlur('what')}
             >
-              <option value="">Enter skills</option>
-              <option value="Software Engineer">Software Engineer</option>
-              <option value="Senior Software Engineer">Senior Software Engineer</option>
-              <option value="Frontend Developer">Frontend Developer</option>
-              <option value="Backend Developer">Backend Developer</option>
-              <option value="Full Stack Developer">Full Stack Developer</option>
-              <option value="Data Scientist">Data Scientist</option>
+              <option value="" hidden>Select skills</option>
+              <option value="Data Entry Operator">Data Entry Operator</option>
+              <option value="Computer Operator">Computer Operator</option>
+              <option value="IT Support Assistant">IT Support Assistant</option>
+              <option value="Junior Web Developer">Junior Web Developer</option>
+              <option value="Software Developer">Software Developer</option>
+              <option value="Full-Stack Developer">Full-Stack Developer</option>
+              <option value="DevOps Engineer">DevOps Engineer</option>
+              <option value="Cloud Engineer">Cloud Engineer</option>
+              <option value="Network Administrator">Network Administrator</option>
+              <option value="Cybersecurity Analyst">Cybersecurity Analyst</option>
               <option value="Data Analyst">Data Analyst</option>
-              <option value="Product Manager">Product Manager</option>
-              <option value="Project Manager">Project Manager</option>
-              <option value="Business Analyst">Business Analyst</option>
+              <option value="Data Scientist">Data Scientist</option>
+              <option value="AI/ML Engineer">AI/ML Engineer</option>
               <option value="UI/UX Designer">UI/UX Designer</option>
               <option value="Graphic Designer">Graphic Designer</option>
-              <option value="Marketing Manager">Marketing Manager</option>
-              <option value="Sales Manager">Sales Manager</option>
-              <option value="Sales Executive">Sales Executive</option>
-              <option value="HR Manager">HR Manager</option>
-              <option value="HR Executive">HR Executive</option>
-              <option value="Finance Manager">Finance Manager</option>
-              <option value="Accountant">Accountant</option>
-              <option value="Content Writer">Content Writer</option>
+              <option value="Motion Designer">Motion Designer</option>
+              <option value="3D Artist">3D Artist</option>
+              <option value="Video Editor">Video Editor</option>
               <option value="Digital Marketing Specialist">Digital Marketing Specialist</option>
-              <option value="Customer Support Executive">Customer Support Executive</option>
+              <option value="SEO Specialist">SEO Specialist</option>
+              <option value="Social Media Manager">Social Media Manager</option>
+              <option value="Content Writer">Content Writer</option>
+              <option value="Performance Marketer">Performance Marketer</option>
+              <option value="Brand Manager">Brand Manager</option>
+              <option value="Sales Executive">Sales Executive</option>
+              <option value="Business Development Executive">Business Development Executive</option>
+              <option value="Regional Sales Manager">Regional Sales Manager</option>
+              <option value="Inside Sales Specialist">Inside Sales Specialist</option>
+              <option value="Tele Sales Executive">Tele Sales Executive</option>
+              <option value="HR Executive">HR Executive</option>
+              <option value="Talent Acquisition Specialist">Talent Acquisition Specialist</option>
+              <option value="HR Manager">HR Manager</option>
+              <option value="L&D Manager">L&D Manager</option>
+              <option value="Accountant">Accountant</option>
+              <option value="Auditor">Auditor</option>
+              <option value="Tax Consultant">Tax Consultant</option>
+              <option value="Finance Manager">Finance Manager</option>
+              <option value="Billing Executive">Billing Executive</option>
+              <option value="Site Engineer">Site Engineer</option>
+              <option value="Safety Officer">Safety Officer</option>
+              <option value="Doctor">Doctor</option>
+              <option value="Nurse">Nurse</option>
+              <option value="Lab Technician">Lab Technician</option>
+              <option value="IVF Specialist">IVF Specialist</option>
+              <option value="Pharmacist">Pharmacist</option>
+              <option value="Medical Equipment Specialist">Medical Equipment Specialist</option>
+              <option value="Teacher">Teacher</option>
+              <option value="Professor">Professor</option>
+              <option value="HOD">HOD</option>
+              <option value="Principal">Principal</option>
+              <option value="Logistics Coordinator">Logistics Coordinator</option>
+              <option value="Warehouse Manager">Warehouse Manager</option>
+              <option value="Supply Chain Executive">Supply Chain Executive</option>
+              <option value="Receptionist">Receptionist</option>
+              <option value="Chef">Chef</option>
+              <option value="Housekeeping Staff">Housekeeping Staff</option>
+              <option value="Store Manager">Store Manager</option>
+              <option value="Cashier">Cashier</option>
+              <option value="Delivery Executive">Delivery Executive</option>
+              <option value="Legal Advisor">Legal Advisor</option>
+              <option value="Compliance Officer">Compliance Officer</option>
+              <option value="Office Administrator">Office Administrator</option>
               <option value="Operations Manager">Operations Manager</option>
-              <option value="Quality Assurance Engineer">Quality Assurance Engineer</option>
-              <option value="DevOps Engineer">DevOps Engineer</option>
-              <option value="System Administrator">System Administrator</option>
-              <option value="Network Administrator">Network Administrator</option>
-              <option value="Telecaller">Telecaller</option>
+              <option value="Security Guard">Security Guard</option>
+              <option value="Social Worker">Social Worker</option>
+              <option value="Program Coordinator (NGO)">Program Coordinator (NGO)</option>
+              <option value="Machine Operator">Machine Operator</option>
+              <option value="Welder">Welder</option>
+              <option value="Electrician">Electrician</option>
+              <option value="Plumber">Plumber</option>
+              <option value="Carpenter">Carpenter</option>
+              <option value="Technician">Technician</option>
             </select>
             {touched.what && errors.what && (
               <div className="search-error">
@@ -281,7 +350,7 @@ const HeroBody = ({ onSearch }) => {
               onChange={(e) => handleFieldChange('type', e.target.value)}
               onBlur={() => handleFieldBlur('type')}
             >
-              <option value="">Education Qualification</option>
+              <option value="">Select Education</option>
               <option value="10th Pass">10th Pass</option>
               <option value="12th Pass">12th Pass</option>
               <option value="Diploma">Diploma</option>

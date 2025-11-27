@@ -436,6 +436,15 @@ exports.uploadGallery = async (req, res) => {
       return res.status(400).json({ success: false, message: 'No files uploaded' });
     }
 
+    // Check file sizes before processing
+    const oversizedFiles = req.files.filter(file => file.size > 10 * 1024 * 1024);
+    if (oversizedFiles.length > 0) {
+      return res.status(413).json({ 
+        success: false, 
+        message: `Files too large: ${oversizedFiles.map(f => f.originalname).join(', ')}. Maximum size is 10MB per file.` 
+      });
+    }
+
     const { fileToBase64 } = require('../middlewares/upload');
     const profile = await EmployerProfile.findOne({ employerId: req.user._id });
     const currentGallery = profile?.gallery || [];
@@ -447,11 +456,25 @@ exports.uploadGallery = async (req, res) => {
       });
     }
 
-    const newImages = req.files.map(file => ({
-      url: fileToBase64(file),
-      fileName: file.originalname,
-      uploadedAt: new Date()
-    }));
+    // Process files one by one to manage memory better
+    const newImages = [];
+    for (const file of req.files) {
+      try {
+        const base64Data = fileToBase64(file);
+        newImages.push({
+          url: base64Data,
+          fileName: file.originalname,
+          uploadedAt: new Date(),
+          fileSize: file.size
+        });
+      } catch (conversionError) {
+        console.error(`Error converting file ${file.originalname}:`, conversionError);
+        return res.status(500).json({ 
+          success: false, 
+          message: `Failed to process file: ${file.originalname}. Please try with a smaller file.` 
+        });
+      }
+    }
 
     const updatedProfile = await EmployerProfile.findOneAndUpdate(
       { employerId: req.user._id },
@@ -459,9 +482,18 @@ exports.uploadGallery = async (req, res) => {
       { new: true, upsert: true }
     );
 
-    res.json({ success: true, gallery: updatedProfile.gallery });
+    res.json({ 
+      success: true, 
+      gallery: updatedProfile.gallery,
+      message: `Successfully uploaded ${newImages.length} image(s)` 
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error('Gallery upload error:', error);
+    if (error.message && error.message.includes('too large')) {
+      res.status(413).json({ success: false, message: 'Files too large. Please compress your images and try again.' });
+    } else {
+      res.status(500).json({ success: false, message: 'Upload failed. Please try again with smaller files.' });
+    }
   }
 };
 

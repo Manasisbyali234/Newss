@@ -7,6 +7,7 @@ import SectionAvailableJobsList from "../../sections/employers/detail/section-av
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { loadScript } from "../../../../../globals/constants";
+import showToast from "../../../../../utils/toastNotification";
 import "../jobs/job-detail.css";
 import "../../../../../employer-detail-tabs.css";
 
@@ -106,7 +107,7 @@ function EmployersDetail1Page() {
             const data = await response.json();
             
             if (data.success) {
-                alert('Review submitted successfully! Thank you for your feedback.');
+                showToast('Review submitted successfully! Thank you for your feedback.', 'success');
                 localStorage.setItem('reviewerEmail', reviewForm.reviewerEmail);
                 // Refresh submitted reviews from database
                 await fetchSubmittedReviews();
@@ -123,11 +124,11 @@ function EmployersDetail1Page() {
                     if (reviewPostTab) reviewPostTab.click();
                 }, 1000);
             } else {
-                alert(data.message || data.error || 'Failed to submit review');
+                showToast(data.message || data.error || 'Failed to submit review', 'error');
             }
         } catch (error) {
             console.error('Error submitting review:', error);
-            alert('Network error while submitting review. Please try again.');
+            showToast('Network error while submitting review. Please try again.', 'error');
         }
     };
 

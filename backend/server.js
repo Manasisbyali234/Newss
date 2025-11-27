@@ -133,14 +133,33 @@ app.use(limiter);
 // Skip body parsing for file uploads
 app.use('/api/employer/profile/gallery', (req, res, next) => next());
 
-// Body Parser Middleware
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+// Body Parser Middleware with increased limits for file uploads
+app.use(express.json({ limit: '100mb', parameterLimit: 50000 }));
+app.use(express.urlencoded({ extended: true, limit: '100mb', parameterLimit: 50000 }));
+
+// Set timeout for requests
+app.use((req, res, next) => {
+  // Set timeout to 5 minutes for file uploads
+  if (req.path.includes('/gallery') || req.path.includes('/upload')) {
+    req.setTimeout(300000); // 5 minutes
+    res.setTimeout(300000); // 5 minutes
+  }
+  next();
+});
 
 // Handle errors
 app.use((error, req, res, next) => {
   if (error.type === 'entity.too.large') {
-    return res.status(413).json({ success: false, message: 'Request too large' });
+    return res.status(413).json({ 
+      success: false, 
+      message: 'Request too large. Please upload smaller files or fewer files at once.' 
+    });
+  }
+  if (error.code === 'ECONNRESET' || error.code === 'ETIMEDOUT') {
+    return res.status(408).json({ 
+      success: false, 
+      message: 'Upload timeout. Please try uploading smaller files or check your internet connection.' 
+    });
   }
   next(error);
 });

@@ -21,11 +21,82 @@ function SectionCanEducation({ profile, onUpdate }) {
     const [additionalErrors, setAdditionalErrors] = useState([]);
 
     const educationLevels = [
-        { value: 'sslc', label: 'SSLC / 10th' },
-        { value: 'puc', label: 'PUC / 12th / Diploma' },
-        { value: 'degree', label: 'Degree / Graduation' },
-        { value: 'masters', label: 'Masters / Post Graduation' },
-        { value: 'phd', label: 'PhD / Doctorate' }
+        { value: '10th_pass', label: '10th Pass / SSLC' },
+        { value: '12th_pass', label: '12th Pass / PUC / Higher Secondary' },
+        { value: 'diploma_general', label: 'Diploma (General)' },
+        { value: 'iti_trade', label: 'ITI / Trade Certification' },
+        { value: 'polytechnic_diploma', label: 'Polytechnic Diploma' },
+        { value: 'vocational_training', label: 'Vocational Training' },
+        { value: 'certification_courses', label: 'Certification Courses (Technical/Non-Technical)' },
+        { value: 'apprenticeship', label: 'Apprenticeship Programs' },
+        { value: 'be', label: 'B.E. (Bachelor of Engineering)' },
+        { value: 'btech', label: 'B.Tech (Bachelor of Technology)' },
+        { value: 'bsc', label: 'B.Sc (Bachelor of Science)' },
+        { value: 'bca', label: 'BCA (Bachelor of Computer Applications)' },
+        { value: 'bba', label: 'BBA (Bachelor of Business Administration)' },
+        { value: 'bcom', label: 'B.Com (Bachelor of Commerce)' },
+        { value: 'ba', label: 'BA (Bachelor of Arts)' },
+        { value: 'bba_llb', label: 'BBA-LLB' },
+        { value: 'bsc_nursing', label: 'B.Sc Nursing' },
+        { value: 'bpharm', label: 'Bachelor of Pharmacy (B.Pharm)' },
+        { value: 'bds', label: 'BDS (Dentistry)' },
+        { value: 'mbbs', label: 'MBBS (Medicine)' },
+        { value: 'bams', label: 'BAMS (Ayurvedic Medicine)' },
+        { value: 'bhms', label: 'BHMS (Homeopathy)' },
+        { value: 'bums', label: 'BUMS (Unani Medicine)' },
+        { value: 'bpt', label: 'BPT (Physiotherapy)' },
+        { value: 'bot', label: 'BOT (Occupational Therapy)' },
+        { value: 'bvsc', label: 'B.V.Sc (Veterinary Science)' },
+        { value: 'barch', label: 'B.Arch (Architecture)' },
+        { value: 'bfa', label: 'BFA (Fine Arts)' },
+        { value: 'bsw', label: 'BSW (Social Work)' },
+        { value: 'bhm', label: 'BHM (Hotel Management)' },
+        { value: 'bttm', label: 'BTTM (Travel & Tourism)' },
+        { value: 'bba_it', label: 'BBA (IT Management)' },
+        { value: 'bsc_it', label: 'B.Sc (IT)' },
+        { value: 'bsc_cs', label: 'B.Sc (Computer Science)' },
+        { value: 'bsc_data_science', label: 'B.Sc (Data Science / AI / ML)' },
+        { value: 'btech_ai', label: 'B.Tech (AI / Data Science / ML / Cybersecurity)' },
+        { value: 'be_specializations', label: 'B.E (Specializations: CSE, ECE, EEE, Mech, Civil, etc.)' },
+        { value: 'bca_cloud', label: 'BCA (Cloud Computing / Cybersecurity tracks)' },
+        { value: 'bca_data_analytics', label: 'BCA (Data Analytics / AI tracks)' },
+        { value: 'bcom_finance', label: 'B.Com (Finance)' },
+        { value: 'bcom_banking', label: 'B.Com (Banking & Insurance)' },
+        { value: 'bba_finance', label: 'BBA (Finance)' },
+        { value: 'bba_marketing', label: 'BBA (Marketing)' },
+        { value: 'bba_hr', label: 'BBA (HR)' },
+        { value: 'bba_hospital', label: 'BBA (Hospital Administration)' },
+        { value: 'bba_retail', label: 'BBA (Retail Management)' },
+        { value: 'bba_entrepreneurship', label: 'BBA (Entrepreneurship)' },
+        { value: 'bsc_biology', label: 'B.Sc (Biology)' },
+        { value: 'bsc_biotech', label: 'B.Sc (Biotechnology)' },
+        { value: 'bsc_microbiology', label: 'B.Sc (Microbiology)' },
+        { value: 'bsc_genetics', label: 'B.Sc (Genetics)' },
+        { value: 'bsc_biochemistry', label: 'B.Sc (Biochemistry)' },
+        { value: 'clinical_research', label: 'Clinical Research Certification' },
+        { value: 'paramedical', label: 'Paramedical Courses' },
+        { value: 'llb', label: 'LLB (Bachelor of Law)' },
+        { value: 'aviation', label: 'Aviation Courses' },
+        { value: 'me', label: 'M.E. (Master of Engineering)' },
+        { value: 'mtech', label: 'M.Tech (Master of Technology)' },
+        { value: 'mba', label: 'MBA (Master of Business Administration)' },
+        { value: 'mba_finance', label: 'MBA (Finance)' },
+        { value: 'mba_marketing', label: 'MBA (Marketing)' },
+        { value: 'mba_hr', label: 'MBA (HR)' },
+        { value: 'mba_operations', label: 'MBA (Operations)' },
+        { value: 'mba_systems', label: 'MBA (Systems / IT)' },
+        { value: 'msc', label: 'M.Sc (Master of Science)' },
+        { value: 'mca', label: 'MCA (Master of Computer Applications)' },
+        { value: 'mcom', label: 'M.Com (Master of Commerce)' },
+        { value: 'ma', label: 'MA (Master of Arts)' },
+        { value: 'mph', label: 'MPH (Public Health)' },
+        { value: 'ms', label: 'MS (Master of Surgery)' },
+        { value: 'md', label: 'MD (Doctor of Medicine)' },
+        { value: 'mds', label: 'MDS (Master of Dental Surgery)' },
+        { value: 'mpt', label: 'MPT (Master of Physiotherapy)' },
+        { value: 'phd', label: 'PhD (Doctorate)' },
+        { value: 'doctoral_research', label: 'Doctoral Research Fellow' },
+        { value: 'post_doctoral', label: 'Post-Doctoral Programs' }
     ];
 
     const [formData, setFormData] = useState({
@@ -277,8 +348,8 @@ function SectionCanEducation({ profile, onUpdate }) {
             isValid = false;
         }
 
-        // Additional fields for PUC/Diploma, Degree, Masters, and PhD
-        if (selectedEducationLevel === 'puc' || selectedEducationLevel === 'degree' || selectedEducationLevel === 'masters' || selectedEducationLevel === 'phd') {
+        // Additional fields for higher education levels (all except 10th pass)
+        if (selectedEducationLevel !== '10th_pass' && selectedEducationLevel !== 'sslc' && selectedEducationLevel) {
             if (!formData.courseName || !formData.courseName.trim()) {
                 newErrors.courseName = 'Course Name is required';
                 isValid = false;
@@ -901,11 +972,87 @@ function SectionCanEducation({ profile, onUpdate }) {
 
     const getEducationLevelLabel = (level) => {
         const levelMap = {
-            sslc: 'SSLC / 10th',
-            puc: 'PUC / 12th / Diploma',
-            degree: 'Degree / Graduation',
-            masters: 'Masters / Post Graduation',
-            phd: 'PhD / Doctorate'
+            '10th_pass': '10th Pass / SSLC',
+            '12th_pass': '12th Pass / PUC / Higher Secondary',
+            'diploma_general': 'Diploma (General)',
+            'iti_trade': 'ITI / Trade Certification',
+            'polytechnic_diploma': 'Polytechnic Diploma',
+            'vocational_training': 'Vocational Training',
+            'certification_courses': 'Certification Courses (Technical/Non-Technical)',
+            'apprenticeship': 'Apprenticeship Programs',
+            'be': 'B.E. (Bachelor of Engineering)',
+            'btech': 'B.Tech (Bachelor of Technology)',
+            'bsc': 'B.Sc (Bachelor of Science)',
+            'bca': 'BCA (Bachelor of Computer Applications)',
+            'bba': 'BBA (Bachelor of Business Administration)',
+            'bcom': 'B.Com (Bachelor of Commerce)',
+            'ba': 'BA (Bachelor of Arts)',
+            'bba_llb': 'BBA-LLB',
+            'bsc_nursing': 'B.Sc Nursing',
+            'bpharm': 'Bachelor of Pharmacy (B.Pharm)',
+            'bds': 'BDS (Dentistry)',
+            'mbbs': 'MBBS (Medicine)',
+            'bams': 'BAMS (Ayurvedic Medicine)',
+            'bhms': 'BHMS (Homeopathy)',
+            'bums': 'BUMS (Unani Medicine)',
+            'bpt': 'BPT (Physiotherapy)',
+            'bot': 'BOT (Occupational Therapy)',
+            'bvsc': 'B.V.Sc (Veterinary Science)',
+            'barch': 'B.Arch (Architecture)',
+            'bfa': 'BFA (Fine Arts)',
+            'bsw': 'BSW (Social Work)',
+            'bhm': 'BHM (Hotel Management)',
+            'bttm': 'BTTM (Travel & Tourism)',
+            'bba_it': 'BBA (IT Management)',
+            'bsc_it': 'B.Sc (IT)',
+            'bsc_cs': 'B.Sc (Computer Science)',
+            'bsc_data_science': 'B.Sc (Data Science / AI / ML)',
+            'btech_ai': 'B.Tech (AI / Data Science / ML / Cybersecurity)',
+            'be_specializations': 'B.E (Specializations: CSE, ECE, EEE, Mech, Civil, etc.)',
+            'bca_cloud': 'BCA (Cloud Computing / Cybersecurity tracks)',
+            'bca_data_analytics': 'BCA (Data Analytics / AI tracks)',
+            'bcom_finance': 'B.Com (Finance)',
+            'bcom_banking': 'B.Com (Banking & Insurance)',
+            'bba_finance': 'BBA (Finance)',
+            'bba_marketing': 'BBA (Marketing)',
+            'bba_hr': 'BBA (HR)',
+            'bba_hospital': 'BBA (Hospital Administration)',
+            'bba_retail': 'BBA (Retail Management)',
+            'bba_entrepreneurship': 'BBA (Entrepreneurship)',
+            'bsc_biology': 'B.Sc (Biology)',
+            'bsc_biotech': 'B.Sc (Biotechnology)',
+            'bsc_microbiology': 'B.Sc (Microbiology)',
+            'bsc_genetics': 'B.Sc (Genetics)',
+            'bsc_biochemistry': 'B.Sc (Biochemistry)',
+            'clinical_research': 'Clinical Research Certification',
+            'paramedical': 'Paramedical Courses',
+            'llb': 'LLB (Bachelor of Law)',
+            'aviation': 'Aviation Courses',
+            'me': 'M.E. (Master of Engineering)',
+            'mtech': 'M.Tech (Master of Technology)',
+            'mba': 'MBA (Master of Business Administration)',
+            'mba_finance': 'MBA (Finance)',
+            'mba_marketing': 'MBA (Marketing)',
+            'mba_hr': 'MBA (HR)',
+            'mba_operations': 'MBA (Operations)',
+            'mba_systems': 'MBA (Systems / IT)',
+            'msc': 'M.Sc (Master of Science)',
+            'mca': 'MCA (Master of Computer Applications)',
+            'mcom': 'M.Com (Master of Commerce)',
+            'ma': 'MA (Master of Arts)',
+            'mph': 'MPH (Public Health)',
+            'ms': 'MS (Master of Surgery)',
+            'md': 'MD (Doctor of Medicine)',
+            'mds': 'MDS (Master of Dental Surgery)',
+            'mpt': 'MPT (Master of Physiotherapy)',
+            'phd': 'PhD (Doctorate)',
+            'doctoral_research': 'Doctoral Research Fellow',
+            'post_doctoral': 'Post-Doctoral Programs',
+            // Legacy mappings for backward compatibility
+            'sslc': 'SSLC / 10th',
+            'puc': 'PUC / 12th / Diploma',
+            'degree': 'Degree / Graduation',
+            'masters': 'Masters / Post Graduation'
         };
         return levelMap[level] || level;
     };
@@ -1044,8 +1191,8 @@ function SectionCanEducation({ profile, onUpdate }) {
                                         {errors.cgpa && <div className="invalid-feedback">{errors.cgpa}</div>}
                                     </div>
 
-                                    {/* Year of Passing for SSLC/10th */}
-                                    {selectedEducationLevel === 'sslc' && (
+                                    {/* Year of Passing for basic education levels */}
+                                    {(selectedEducationLevel === '10th_pass' || selectedEducationLevel === 'sslc') && (
                                         <div className="col-md-6">
                                             <label className="form-label">Year of Passing</label>
                                             <input
@@ -1062,8 +1209,8 @@ function SectionCanEducation({ profile, onUpdate }) {
                                         </div>
                                     )}
 
-                                    {/* Additional fields for PUC/Diploma, Degree, Masters, and PhD */}
-                                    {(selectedEducationLevel === 'puc' || selectedEducationLevel === 'degree' || selectedEducationLevel === 'masters' || selectedEducationLevel === 'phd') && (
+                                    {/* Additional fields for higher education levels */}
+                                    {(selectedEducationLevel !== '10th_pass' && selectedEducationLevel !== 'sslc' && selectedEducationLevel) && (
                                         <>
                                             <div className="col-md-6">
                                                 <label className="form-label">Course Name / Stream</label>
@@ -1092,8 +1239,6 @@ function SectionCanEducation({ profile, onUpdate }) {
                                                 />
                                                 {errors.yearOfPassing && <div className="invalid-feedback">{errors.yearOfPassing}</div>}
                                             </div>
-
-
                                         </>
                                     )}
 

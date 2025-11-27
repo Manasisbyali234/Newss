@@ -66,31 +66,38 @@ router.post('/profile/document', upload.single('document'), employerController.u
 router.post('/profile/authorization-letter', upload.single('document'), employerController.uploadAuthorizationLetter);
 router.delete('/profile/authorization-letter/:documentId', employerController.deleteAuthorizationLetter);
 router.put('/profile/update-authorization-companies', employerController.updateAuthorizationCompanies);
-router.post('/profile/gallery', uploadGallery.array('gallery', 5), (error, req, res, next) => {
+router.post('/profile/gallery', uploadGallery.array('gallery', 3), (error, req, res, next) => {
   if (error instanceof multer.MulterError) {
     if (error.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({ 
+      return res.status(413).json({ 
         success: false, 
-        message: 'File too large. Maximum size is 2MB per image.' 
+        message: 'File too large. Maximum size is 10MB per image. Please compress your images and try again.' 
       });
     }
     if (error.code === 'LIMIT_FILE_COUNT') {
       return res.status(400).json({ 
         success: false, 
-        message: 'Too many files. Maximum 5 images per batch allowed.' 
+        message: 'Too many files. Maximum 3 images per batch allowed. Please upload fewer files at once.' 
       });
     }
     if (error.code === 'LIMIT_FIELD_VALUE') {
+      return res.status(413).json({ 
+        success: false, 
+        message: 'Request too large. Please upload smaller files or fewer files at once.' 
+      });
+    }
+    if (error.code === 'LIMIT_UNEXPECTED_FILE') {
       return res.status(400).json({ 
         success: false, 
-        message: 'Request too large. Please upload fewer files at once.' 
+        message: 'Unexpected file field. Please only upload gallery images.' 
       });
     }
   }
   if (error) {
+    console.error('Gallery upload error:', error);
     return res.status(400).json({ 
       success: false, 
-      message: error.message || 'Upload failed' 
+      message: error.message || 'Upload failed. Please try again with smaller files.' 
     });
   }
   next();

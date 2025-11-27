@@ -645,13 +645,13 @@ function EmpCompanyProfilePage() {
         }
 
         // Validate each file before upload
-        const maxSize = 2 * 1024 * 1024; // 2MB
+        const maxSize = 10 * 1024 * 1024; // 10MB
         const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml'];
         
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
             if (file.size > maxSize) {
-                showToast(`File "${file.name}" is too large. Maximum size is 2MB.`, 'error');
+                showToast(`File "${file.name}" is too large. Maximum size is 10MB. Please compress the image.`, 'error');
                 return;
             }
             if (!allowedTypes.includes(file.type)) {
@@ -661,7 +661,7 @@ function EmpCompanyProfilePage() {
         }
 
         // Upload files in smaller batches to avoid request size limits
-        const batchSize = 5; // Upload max 5 files at a time
+        const batchSize = 3; // Upload max 3 files at a time for better reliability
         const batches = [];
         for (let i = 0; i < files.length; i += batchSize) {
             batches.push(files.slice(i, i + batchSize));
@@ -680,19 +680,53 @@ function EmpCompanyProfilePage() {
 
                 showToast(`Uploading batch ${batchIndex + 1} of ${batches.length}...`, 'info', 2000);
 
-                const response = await fetch('http://localhost:5000/api/employer/profile/gallery', {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}` },
-                    body: formDataObj
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    setFormData(prev => ({ ...prev, gallery: data.gallery }));
-                    totalUploaded += batch.length;
-                } else {
-                    showToast(data.message || `Batch ${batchIndex + 1} upload failed`, 'error');
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
+
+                    const response = await fetch('http://localhost:5000/api/employer/profile/gallery', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: formDataObj,
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        let errorData;
+                        try {
+                            errorData = JSON.parse(errorText);
+                        } catch {
+                            errorData = { message: `HTTP ${response.status}: ${response.statusText}` };
+                        }
+                        throw new Error(errorData.message || `Upload failed with status ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        setFormData(prev => ({ ...prev, gallery: data.gallery }));
+                        totalUploaded += batch.length;
+                    } else {
+                        showToast(data.message || `Batch ${batchIndex + 1} upload failed`, 'error');
+                        hasError = true;
+                        break;
+                    }
+                } catch (fetchError) {
+                    console.error(`Batch ${batchIndex + 1} upload error:`, fetchError);
+                    
+                    if (fetchError.name === 'AbortError') {
+                        showToast(`Upload timed out. Please try with smaller files or check your connection.`, 'error');
+                    } else if (fetchError.message.includes('413') || fetchError.message.toLowerCase().includes('too large')) {
+                        showToast(`Files too large. Please use smaller images (under 10MB each).`, 'error');
+                    } else if (fetchError.message.toLowerCase().includes('network') || fetchError.message.toLowerCase().includes('fetch')) {
+                        showToast(`Network error. Please check your connection and try again.`, 'error');
+                    } else {
+                        showToast(`Upload failed: ${fetchError.message}`, 'error');
+                    }
+                    
                     hasError = true;
                     break;
                 }
@@ -1837,7 +1871,10 @@ function EmpCompanyProfilePage() {
                                                 <strong>Select multiple images at once</strong>
                                             </p>
                                             <p className="text-muted small">
-                                                Upload up to {10 - (formData.gallery?.length || 0)} more images (JPG, PNG, SVG). Max 2MB per image.
+                                                Upload up to {10 - (formData.gallery?.length || 0)} more images (JPG, PNG, SVG). Max 10MB per image.
+                                            </p>
+                                            <p className="text-info small">
+                                                <strong>Tip:</strong> Large files are uploaded in batches of 3 for better reliability.
                                             </p>
                                             <p className="text-info small">
                                                 <i className></i>

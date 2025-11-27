@@ -79,9 +79,11 @@ const uploadGallery = multer({
     }
   },
   limits: { 
-    fileSize: 2 * 1024 * 1024, // 2MB per file
-    files: 5, // Reduced to 5 files per batch to avoid memory issues
-    fieldSize: 10 * 1024 * 1024 // 10MB total field size
+    fileSize: 10 * 1024 * 1024, // Increased to 10MB per file
+    files: 3, // Reduced to 3 files per batch to manage memory better
+    fieldSize: 30 * 1024 * 1024, // Increased to 30MB total field size
+    fieldNameSize: 100, // Field name size
+    fields: 10 // Maximum number of non-file fields
   }
 });
 
