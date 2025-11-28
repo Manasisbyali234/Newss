@@ -569,15 +569,55 @@ function PlacementDetails() {
                         <small className="text-muted d-block mt-2">ID Card</small>
                     </div>
                     <div className="col-md-8">
-                        <h3 className="mb-2" style={{color: '#2c3e50'}}>{placement.name}</h3>
-                        <p className="mb-1" style={{color: '#6c757d', fontSize: '1.1rem'}}>
-                            <i className="fa fa-university mr-2"></i>
-                            {placement.collegeName || 'College Name Not Available'}
-                        </p>
-                        <p className="mb-0" style={{color: '#6c757d'}}>
-                            <i className="fa fa-envelope mr-2"></i>
-                            {placement.email}
-                        </p>
+                        <div className="mb-3">
+                            <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600'}}>1. College Name</h4>
+                            <p className="mb-0" style={{color: '#6c757d', fontSize: '1.1rem'}}>
+                                <i className="fa fa-university mr-2"></i>
+                                {placement.collegeName || 'Not Available'}
+                            </p>
+                        </div>
+                        <div className="mb-3">
+                            <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600'}}>2. Placement Officer Name</h4>
+                            <p className="mb-0" style={{color: '#6c757d', fontSize: '1.1rem'}}>
+                                <i className="fa fa-user mr-2"></i>
+                                {placement.name}
+                            </p>
+                        </div>
+                        <div className="mb-3">
+                            <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600'}}>3. College Address</h4>
+                            <p className="mb-0" style={{color: '#6c757d'}}>
+                                <i className="fa fa-map-marker mr-2"></i>
+                                {placement.collegeAddress || 'Not Available'}
+                            </p>
+                        </div>
+                        <div className="mb-3">
+                            <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600'}}>4. College Official Email ID</h4>
+                            <p className="mb-0" style={{color: '#6c757d'}}>
+                                <i className="fa fa-envelope mr-2"></i>
+                                {placement.collegeOfficialEmail || 'Not Available'}
+                            </p>
+                        </div>
+                        <div className="mb-3">
+                            <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600'}}>5. College Official Phone Number</h4>
+                            <p className="mb-0" style={{color: '#6c757d'}}>
+                                <i className="fa fa-phone mr-2"></i>
+                                {placement.collegeOfficialPhone || 'Not Available'}
+                            </p>
+                        </div>
+                        <div className="mb-3">
+                            <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600'}}>6. College Logo</h4>
+                            <p className="mb-0" style={{color: '#6c757d'}}>
+                                <i className="fa fa-image mr-2"></i>
+                                {placement.logo ? 'Uploaded' : 'Not Uploaded'}
+                            </p>
+                        </div>
+                        <div className="mb-3">
+                            <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600'}}>7. Personal Email</h4>
+                            <p className="mb-0" style={{color: '#6c757d'}}>
+                                <i className="fa fa-envelope mr-2"></i>
+                                {placement.email}
+                            </p>
+                        </div>
                     </div>
                 </div>
 

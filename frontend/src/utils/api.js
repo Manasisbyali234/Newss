@@ -628,6 +628,20 @@ export const api = {
       body: JSON.stringify(scheduleData),
     }).then(handleApiResponse);
   },
+
+  getCandidatesForCredits: () => {
+    return fetch(`${API_BASE_URL}/admin/candidates/credits/list`, {
+      headers: getAuthHeaders('admin'),
+    }).then((res) => res.json());
+  },
+
+  updateCandidateCredits: (candidateId, data) => {
+    return fetch(`${API_BASE_URL}/admin/candidates/${candidateId}/credits`, {
+      method: 'PUT',
+      headers: getAuthHeaders('admin'),
+      body: JSON.stringify(data),
+    }).then((res) => res.json());
+  },
 };
 
 export default api;

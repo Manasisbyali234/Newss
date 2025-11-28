@@ -76,6 +76,12 @@ function RegisteredCandidatesPage() {
         setFilteredCandidates(filtered);
     };
 
+    const viewCandidateDetails = (candidate) => {
+        setSelectedCandidate(candidate);
+        const modal = new window.bootstrap.Modal(modalRef.current);
+        modal.show();
+    };
+
     if (loading) {
         return (
             <div className="dashboard-content">
@@ -217,7 +223,7 @@ function RegisteredCandidatesPage() {
                                                 <td>
                                                     <button 
                                                         className="action-btn btn-view"
-                                                        onClick={() => viewCandidateDetails(candidate)}
+                                                        onClick={() => navigate(`/admin/candidate-review/${candidate._id}`)}
                                                         title="View Details"
                                                     >
                                                         <i className="fa fa-eye"></i>
@@ -235,12 +241,6 @@ function RegisteredCandidatesPage() {
             </div>
         </div>
     );
-
-    const viewCandidateDetails = (candidate) => {
-        setSelectedCandidate(candidate);
-        const modal = new window.bootstrap.Modal(modalRef.current);
-        modal.show();
-    };
 }
 
 export default RegisteredCandidatesPage;

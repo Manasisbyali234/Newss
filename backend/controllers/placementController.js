@@ -16,7 +16,7 @@ const generateToken = (id, role) => {
 
 exports.registerPlacement = async (req, res) => {
   try {
-    const { name, email, password, phone, collegeName, sendWelcomeEmail: shouldSendEmail } = req.body;
+    const { name, email, password, phone, collegeName, collegeAddress, collegeOfficialEmail, collegeOfficialPhone, sendWelcomeEmail: shouldSendEmail } = req.body;
 
     const existingPlacement = await Placement.findOne({ email });
     if (existingPlacement) {
@@ -159,6 +159,20 @@ exports.uploadStudentData = async (req, res) => {
       return res.status(400).json({ success: false, message: 'No file uploaded' });
     }
 
+    // Check if placement officer has uploaded college logo
+    const placement = await Placement.findById(placementId);
+    if (!placement) {
+      return res.status(404).json({ success: false, message: 'Placement officer not found' });
+    }
+    
+    if (!placement.logo) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Please upload your College Logo to continue.',
+        requiresLogo: true
+      });
+    }
+
     console.log('File upload:', {
       originalname: req.file.originalname,
       customFileName: customFileName,
@@ -227,7 +241,7 @@ exports.uploadStudentData = async (req, res) => {
     // Removed console debug line for security;
     
     // Add to file history with file data, custom name, university, and batch
-    const placement = await Placement.findByIdAndUpdate(placementId, {
+    const updatedPlacement = await Placement.findByIdAndUpdate(placementId, {
       $push: {
         fileHistory: {
           fileName: req.file.originalname,
@@ -243,13 +257,13 @@ exports.uploadStudentData = async (req, res) => {
       }
     }, { new: true });
     
-    console.log('File added to history, total files:', placement.fileHistory.length);
+    console.log('File added to history, total files:', updatedPlacement.fileHistory.length);
 
     // Create notification for admin
     try {
       console.log('Creating notification for file upload...');
       const displayName = customFileName && customFileName.trim() ? customFileName.trim() : req.file.originalname;
-      let notificationMessage = `${placement.name} from ${placement.collegeName} has uploaded a new Excel/CSV file: "${displayName}"${customFileName ? ` (${req.file.originalname})` : ''}`;
+      let notificationMessage = `${updatedPlacement.name} from ${updatedPlacement.collegeName} has uploaded a new Excel/CSV file: "${displayName}"${customFileName ? ` (${req.file.originalname})` : ''}`;
       
       if (university && university.trim()) {
         notificationMessage += ` - University: ${university.trim()}`;
@@ -1328,19 +1342,19 @@ exports.uploadIdCard = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   try {
     const placementId = req.user.id;
-    const { name, firstName, lastName, phone, collegeName } = req.body;
+    const { name, firstName, lastName, phone, collegeName, collegeAddress, collegeOfficialEmail, collegeOfficialPhone } = req.body;
     
     console.log('=== PROFILE UPDATE REQUEST ===');
     console.log('Placement ID:', placementId);
-    console.log('Request body:', { name, firstName, lastName, phone, collegeName });
+    console.log('Request body:', { name, firstName, lastName, phone, collegeName, collegeAddress, collegeOfficialEmail, collegeOfficialPhone });
     console.log('User object:', req.user);
     
     // Validate required fields
-    if (!firstName || !lastName || !phone || !collegeName) {
+    if (!firstName || !lastName || !phone || !collegeName || !collegeAddress || !collegeOfficialEmail || !collegeOfficialPhone) {
       console.log('Validation failed: Missing required fields');
       return res.status(400).json({ 
         success: false, 
-        message: 'First name, last name, phone, and college name are required' 
+        message: 'First name, last name, phone, college name, college address, college official email, and college official phone are required' 
       });
     }
     
@@ -1357,6 +1371,9 @@ exports.updateProfile = async (req, res) => {
     
     if (phone) updateData.phone = phone.trim();
     if (collegeName) updateData.collegeName = collegeName.trim();
+    if (collegeAddress) updateData.collegeAddress = collegeAddress.trim();
+    if (collegeOfficialEmail) updateData.collegeOfficialEmail = collegeOfficialEmail.toLowerCase().trim();
+    if (collegeOfficialPhone) updateData.collegeOfficialPhone = collegeOfficialPhone.trim();
     
     console.log('Constructed update data:', updateData);
     

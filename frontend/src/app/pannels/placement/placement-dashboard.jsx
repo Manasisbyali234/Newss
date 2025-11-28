@@ -30,9 +30,13 @@ function PlacementDashboard() {
         firstName: '',
         lastName: '',
         phone: '',
-        collegeName: ''
+        collegeName: '',
+        collegeAddress: '',
+        collegeOfficialEmail: '',
+        collegeOfficialPhone: ''
     });
     const [updating, setUpdating] = useState(false);
+    const [showLogoRequiredModal, setShowLogoRequiredModal] = useState(false);
 
     useEffect(() => {
         const initializeDashboard = async () => {
@@ -320,7 +324,10 @@ function PlacementDashboard() {
                 fetchPlacementDetails();
             } else {
                 // Show specific error message from backend
-                if (data.message && data.message.includes('Duplicate emails found')) {
+                if (data.requiresLogo) {
+                    // Show popup for logo requirement
+                    setShowLogoRequiredModal(true);
+                } else if (data.message && data.message.includes('Duplicate emails found')) {
                     showToast(data.message, 'error', 5000); // Show for 5 seconds for duplicate emails
                 } else if (data.message && (data.message.includes('empty') || data.message.includes('no data'))) {
                     showToast(`Upload failed: ${data.message}. Please ensure your file contains actual student data, not just headers.`, 'error');
@@ -467,15 +474,18 @@ function PlacementDashboard() {
             firstName: firstName,
             lastName: lastName,
             phone: placementData?.phone || '',
-            collegeName: placementData?.collegeName || ''
+            collegeName: placementData?.collegeName || '',
+            collegeAddress: placementData?.collegeAddress || '',
+            collegeOfficialEmail: placementData?.collegeOfficialEmail || '',
+            collegeOfficialPhone: placementData?.collegeOfficialPhone || ''
         });
         setShowEditModal(true);
         document.body.classList.add('modal-open');
     };
 
     const handleUpdateProfile = async () => {
-        if (!editFormData.firstName.trim() || !editFormData.lastName.trim() || !editFormData.phone.trim() || !editFormData.collegeName.trim()) {
-            showToast('First Name, Last Name, Phone, and College Name are required', 'warning');
+        if (!editFormData.firstName.trim() || !editFormData.lastName.trim() || !editFormData.phone.trim() || !editFormData.collegeName.trim() || !editFormData.collegeAddress.trim() || !editFormData.collegeOfficialEmail.trim() || !editFormData.collegeOfficialPhone.trim()) {
+            showToast('All fields are required', 'warning');
             return;
         }
 
@@ -690,6 +700,24 @@ function PlacementDashboard() {
                                         <i className="fa fa-phone mr-2" style={{color: '#ff8c00'}}></i>
                                         {placementData?.phone || 'Phone Unavailable'}
                                     </span>
+                                    {placementData?.collegeAddress && (
+                                        <span className="d-flex align-items-center" style={{color: '#6c757d'}}>
+                                            <i className="fa fa-map-marker mr-2" style={{color: '#ff8c00'}}></i>
+                                            {placementData.collegeAddress}
+                                        </span>
+                                    )}
+                                    {placementData?.collegeOfficialEmail && (
+                                        <span className="d-flex align-items-center" style={{color: '#6c757d'}}>
+                                            <i className="fa fa-envelope-o mr-2" style={{color: '#ff8c00'}}></i>
+                                            Official: {placementData.collegeOfficialEmail}
+                                        </span>
+                                    )}
+                                    {placementData?.collegeOfficialPhone && (
+                                        <span className="d-flex align-items-center" style={{color: '#6c757d'}}>
+                                            <i className="fa fa-phone-square mr-2" style={{color: '#ff8c00'}}></i>
+                                            Official: {placementData.collegeOfficialPhone}
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                             <div className="d-flex flex-column" style={{gap: '0.75rem', minWidth: '300px'}}>
@@ -1218,6 +1246,39 @@ function PlacementDashboard() {
                                         maxLength="200"
                                     />
                                 </div>
+                                <div className="form-group">
+                                    <label className="font-weight-bold">College Address *</label>
+                                    <textarea
+                                        className="form-control"
+                                        value={editFormData.collegeAddress || ''}
+                                        onChange={(e) => setEditFormData({...editFormData, collegeAddress: e.target.value})}
+                                        placeholder="Enter your college address"
+                                        maxLength="500"
+                                        rows="3"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="font-weight-bold">College Official Email ID *</label>
+                                    <input
+                                        type="email"
+                                        className="form-control"
+                                        value={editFormData.collegeOfficialEmail || ''}
+                                        onChange={(e) => setEditFormData({...editFormData, collegeOfficialEmail: e.target.value})}
+                                        placeholder="Enter college official email"
+                                        maxLength="100"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="font-weight-bold">College Official Phone Number *</label>
+                                    <input
+                                        type="tel"
+                                        className="form-control"
+                                        value={editFormData.collegeOfficialPhone || ''}
+                                        onChange={(e) => setEditFormData({...editFormData, collegeOfficialPhone: e.target.value})}
+                                        placeholder="Enter college official phone number"
+                                        maxLength="15"
+                                    />
+                                </div>
                                 <small className="text-muted">
                                     * All fields are required
                                 </small>
@@ -1248,6 +1309,58 @@ function PlacementDashboard() {
                                             Update Profile
                                         </>
                                     )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Logo Required Modal */}
+            {showLogoRequiredModal && (
+                <div className="modal fade show" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, overflowY: 'auto', zIndex: 1050}} onClick={() => setShowLogoRequiredModal(false)}>
+                    <div className="modal-dialog modal-dialog-centered" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-content">
+                            <div className="modal-header" style={{backgroundColor: '#fff3cd', borderBottom: '1px solid #ffeaa7'}}>
+                                <h5 className="modal-title" style={{color: '#856404'}}>
+                                    <i className="fa fa-exclamation-triangle mr-2"></i>
+                                    College Logo Required
+                                </h5>
+                                <button 
+                                    type="button" 
+                                    className="close" 
+                                    onClick={() => setShowLogoRequiredModal(false)}
+                                >
+                                    <span>&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body text-center">
+                                <div className="mb-4">
+                                    <i className="fa fa-university fa-4x text-warning mb-3"></i>
+                                    <h4 style={{color: '#2c3e50'}}>Please upload your College Logo to continue</h4>
+                                    <p className="text-muted mb-0">
+                                        You must upload your college logo (ID Card logo) before you can upload any student data.
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="modal-footer justify-content-center">
+                                <button 
+                                    type="button" 
+                                    className="btn btn-secondary" 
+                                    onClick={() => setShowLogoRequiredModal(false)}
+                                >
+                                    Cancel
+                                </button>
+                                <button 
+                                    type="button" 
+                                    className="btn btn-warning" 
+                                    onClick={() => {
+                                        setShowLogoRequiredModal(false);
+                                        document.getElementById('logoInput').click();
+                                    }}
+                                >
+                                    <i className="fa fa-upload mr-1"></i>
+                                    Upload Logo Now
                                 </button>
                             </div>
                         </div>

@@ -1,14 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
-const { protect, adminOnly } = require('../middlewares/auth');
+const { auth } = require('../middlewares/auth');
 
 router.post('/login', adminController.loginAdmin);
 router.post('/send-otp', adminController.sendOTP);
 router.post('/verify-otp-reset', adminController.verifyOTPAndResetPassword);
 
-router.use(protect);
-router.use(adminOnly);
+router.use(auth(['admin', 'sub-admin']));
 
 router.get('/dashboard/stats', adminController.getDashboardStats);
 router.get('/dashboard/charts', adminController.getChartData);

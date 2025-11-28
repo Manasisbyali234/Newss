@@ -9,6 +9,9 @@ const placementSchema = new mongoose.Schema({
   password: { type: String, required: false },
   phone: { type: String, required: true },
   collegeName: { type: String, required: true },
+  collegeAddress: { type: String },
+  collegeOfficialEmail: { type: String },
+  collegeOfficialPhone: { type: String },
   logo: { type: String }, // Base64 encoded logo image
   idCard: { type: String }, // Base64 encoded ID card image
   studentData: { type: String }, // Base64 encoded Excel/CSV file
