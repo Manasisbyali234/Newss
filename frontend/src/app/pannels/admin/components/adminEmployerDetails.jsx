@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import ImagePreviewModal from '../../../../components/ImagePreviewModal';
 import './employer-details-styles.css';
 
 function EmployerDetails() {
@@ -716,22 +717,11 @@ function EmployerDetails() {
             
             {/* Image Modal */}
             {showImageModal && (
-                <div className="image-modal" onClick={() => setShowImageModal(false)}>
-                    <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
-                        <div className="image-modal-header">
-                            <h5 className="image-modal-title">
-                                <i className="fa fa-image me-2"></i>
-                                Image Preview
-                            </h5>
-                            <button className="modal-close-btn" onClick={() => setShowImageModal(false)}>
-                                <i className="fa fa-times"></i>
-                            </button>
-                        </div>
-                        <div className="text-center">
-                            <img src={currentImage} alt="Preview" className="modal-image" />
-                        </div>
-                    </div>
-                </div>
+                <ImagePreviewModal 
+                    src={currentImage} 
+                    alt="Document Preview" 
+                    onClose={() => setShowImageModal(false)} 
+                />
             )}
         </div>
     );
