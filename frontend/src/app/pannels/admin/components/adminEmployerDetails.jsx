@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import ImagePreviewModal from '../../../../components/ImagePreviewModal';
 import './employer-details-styles.css';
 
 function EmployerDetails() {
@@ -12,6 +11,8 @@ function EmployerDetails() {
     const [loading, setLoading] = useState(true);
     const [showImageModal, setShowImageModal] = useState(false);
     const [currentImage, setCurrentImage] = useState('');
+    const [isMinimized, setIsMinimized] = useState(false);
+    const [isMaximized, setIsMaximized] = useState(false);
     const [jobCount, setJobCount] = useState(0);
     const [jobsLoading, setJobsLoading] = useState(false);
 
@@ -717,11 +718,32 @@ function EmployerDetails() {
             
             {/* Image Modal */}
             {showImageModal && (
-                <ImagePreviewModal 
-                    src={currentImage} 
-                    alt="Document Preview" 
-                    onClose={() => setShowImageModal(false)} 
-                />
+                <div className="image-modal" onClick={() => setShowImageModal(false)}>
+                    <div className={`image-modal-content ${isMaximized ? 'maximized' : ''} ${isMinimized ? 'minimized' : ''}`} onClick={(e) => e.stopPropagation()}>
+                        <div className="image-modal-header">
+                            <h5 className="image-modal-title">
+                                <i className="fa fa-image me-2"></i>
+                                Image Preview
+                            </h5>
+                            <div style={{display: 'flex', gap: '5px'}}>
+                                <button className="modal-control-btn minimize-btn" onClick={() => setIsMinimized(!isMinimized)} title={isMinimized ? "Restore" : "Minimize"}>
+                                    {isMinimized ? '□' : '_'}
+                                </button>
+                                <button className="modal-control-btn maximize-btn" onClick={() => setIsMaximized(!isMaximized)} title={isMaximized ? "Restore" : "Maximize"}>
+                                    {isMaximized ? '❐' : '□'}
+                                </button>
+                                <button className="modal-close-btn" onClick={() => setShowImageModal(false)}>
+                                    <i className="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        {!isMinimized && (
+                            <div className="text-center">
+                                <img src={currentImage} alt="Preview" className="modal-image" />
+                            </div>
+                        )}
+                    </div>
+                </div>
             )}
         </div>
     );
