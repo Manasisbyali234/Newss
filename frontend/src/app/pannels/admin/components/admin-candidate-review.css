@@ -222,6 +222,23 @@
     color: #ffc107;
 }
 
+.completion-percentage {
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.missing-sections {
+    margin-top: 5px;
+}
+
+.missing-sections small {
+    color: #dc3545;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
 .tab-navigation {
     display: flex;
     background: white;
