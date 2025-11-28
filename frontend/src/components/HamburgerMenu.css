@@ -179,7 +179,13 @@
 }
 
 @media (max-width: 991px) {
-  .hamburger-btn { display: block; }
+  .hamburger-btn { display: block !important; }
+}
+
+@media (min-width: 992px) {
+  .hamburger-btn { display: none !important; }
+  .hamburger-menu { display: none !important; }
+  .hamburger-overlay { display: none !important; }
 }
 
 @media (max-width: 768px) {
