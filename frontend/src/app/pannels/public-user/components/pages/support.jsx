@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './support.css';
 import CountryCodeSelector from '../../../../../components/CountryCodeSelector';
 
@@ -150,9 +150,36 @@ function SupportPage() {
         }
     };
 
+    useEffect(() => {
+        if (isSubmitted) {
+            document.body.style.overflow = 'hidden';
+            document.body.style.height = '100vh';
+            document.documentElement.style.overflow = 'hidden';
+            const panels = document.querySelectorAll('.twm-right-section-panel, .page-wraper, #content');
+            panels.forEach(el => {
+                el.style.overflow = 'hidden';
+                el.style.height = '100vh';
+            });
+        } else {
+            document.body.style.overflow = '';
+            document.body.style.height = '';
+            document.documentElement.style.overflow = '';
+            const panels = document.querySelectorAll('.twm-right-section-panel, .page-wraper, #content');
+            panels.forEach(el => {
+                el.style.overflow = '';
+                el.style.height = '';
+            });
+        }
+        return () => {
+            document.body.style.overflow = '';
+            document.body.style.height = '';
+            document.documentElement.style.overflow = '';
+        };
+    }, [isSubmitted]);
+
     if (isSubmitted) {
         return (
-            <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100vh', overflow: 'hidden', zIndex: 9999 }}>
+            <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', overflow: 'hidden', zIndex: 9999, touchAction: 'none' }} onWheel={(e) => e.preventDefault()} onTouchMove={(e) => e.preventDefault()}>
                 <div className="d-flex align-items-center justify-content-center" style={{ height: '100%', width: '100%', backgroundColor: '#fff' }}>
                     <div className="text-center" style={{ padding: '20px' }}>
                         <h2 className="text-success mb-4">✓ Support Ticket Submitted!</h2>

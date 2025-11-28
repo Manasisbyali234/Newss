@@ -31,8 +31,21 @@ function AdminEmployersAllRequest() {
             const response = await api.getAllEmployers({ approvalStatus: 'pending' });
             if (response.success) {
                 const pendingEmployers = response.data.filter(emp => !emp.isApproved);
-                setEmployers(pendingEmployers);
-                setFilteredEmployers(pendingEmployers);
+                
+                const employersWithProfiles = await Promise.all(
+                    pendingEmployers.map(async (emp) => {
+                        try {
+                            const profileRes = await api.getEmployerProfile(emp._id);
+                            if (profileRes.success && profileRes.profile) {
+                                return { ...emp, companyName: profileRes.profile.companyName || emp.companyName };
+                            }
+                        } catch (err) {}
+                        return emp;
+                    })
+                );
+                
+                setEmployers(employersWithProfiles);
+                setFilteredEmployers(employersWithProfiles);
             } else {
                 setError(response.message || 'Failed to fetch employers');
             }

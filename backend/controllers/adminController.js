@@ -77,21 +77,25 @@ exports.loginAdmin = async (req, res) => {
 exports.getDashboardStats = async (req, res) => {
   try {
     const totalCandidates = await Candidate.countDocuments();
+    const candidatesWithProfile = await CandidateProfile.countDocuments();
     const totalEmployers = await Employer.countDocuments();
     const totalJobs = await Job.countDocuments();
     const totalApplications = await Application.countDocuments();
     const activeJobs = await Job.countDocuments({ status: 'active' });
     const pendingJobs = await Job.countDocuments({ status: 'pending' });
     const pendingPlacements = await Placement.countDocuments({ status: 'pending' });
+    const totalPlacements = await Placement.countDocuments();
 
     const stats = {
       totalCandidates,
+      completedProfileCandidates: candidatesWithProfile,
       totalEmployers,
       totalJobs,
       totalApplications,
       activeJobs,
       pendingJobs,
-      pendingPlacements
+      pendingPlacements,
+      totalPlacements
     };
 
     res.json({ success: true, stats });

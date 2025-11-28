@@ -6,10 +6,10 @@ import "./admin-dashboard-styles.css";
 
 function AdminDashboardPage() {
     const [stats, setStats] = useState({
-        totalCandidates: 0,
+        completedProfileCandidates: 0,
         totalEmployers: 0,
         activeJobs: 0,
-        totalApplications: 0
+        totalPlacements: 0
     });
     const [loading, setLoading] = useState(true);
 
@@ -57,15 +57,15 @@ function AdminDashboardPage() {
                             <div className="panel-body wt-panel-body gradi-1">
                                 <div className="wt-card-wrap">
                                     <div className="wt-card-icon">
-                                        <i className="fa fa-users" style={{color: '#fd7e14'}} />
+                                        <i className="fa fa-user-check" style={{color: '#fd7e14'}} />
                                     </div>
 
                                     <div className="wt-card-right wt-total-active-listing counter">
-                                        {loading ? <div className="loading-spinner"></div> : <CountUp end={stats.totalCandidates} duration={2} />}
+                                        {loading ? <div className="loading-spinner"></div> : <CountUp end={stats.completedProfileCandidates} duration={2} />}
                                     </div>
 
                                     <div className="wt-card-bottom">
-                                        <h4 className="m-b0">Total Candidates</h4>
+                                        <h4 className="m-b0">Completed Profiles</h4>
                                     </div>
                                 </div>
                             </div>
@@ -117,15 +117,15 @@ function AdminDashboardPage() {
                             <div className="panel-body wt-panel-body gradi-4">
                                 <div className="wt-card-wrap">
                                     <div className="wt-card-icon">
-                                        <i className="fa fa-file-alt" style={{color: '#fd7e14'}} />
+                                        <i className="fa fa-graduation-cap" style={{color: '#fd7e14'}} />
                                     </div>
 
                                     <div className="wt-card-right wt-total-listing-bookmarked counter">
-                                        {loading ? <div className="loading-spinner"></div> : <CountUp end={stats.totalApplications} duration={2} />}
+                                        {loading ? <div className="loading-spinner"></div> : <CountUp end={stats.totalPlacements} duration={2} />}
                                     </div>
 
                                     <div className="wt-card-bottom">
-                                        <h4 className="m-b0">Applications</h4>
+                                        <h4 className="m-b0">Placement Officers</h4>
                                     </div>
                                 </div>
                             </div>
