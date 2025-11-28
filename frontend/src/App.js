@@ -22,6 +22,9 @@ import "./tab-icon-fix.css";
 import "./styles/scroll-lock.css";
 // CANDIDATE HEADER MOBILE FIX - Fix header display on mobile screens
 import "./candidate-header-mobile-fix.css";
+// ENHANCED MOBILE RESPONSIVE - Comprehensive mobile fixes for all pages
+import "./mobile-responsive-enhancements.css";
+
 
 function App() {
 

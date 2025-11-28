@@ -1059,6 +1059,32 @@ img[src*="logo-skin-8.png"] {
   background: transparent !important;
 }
 
+/* Increase logo size on mobile screens */
+@media (max-width: 767px) {
+  .logo-header-inner.logo-header-one,
+  .logo-header-inner.logo-header-one img {
+    max-height: 40px !important;
+    height: 40px !important;
+    max-width: 120px !important;
+    width: auto !important;
+  }
+
+  /* Top Recruiters section mobile margins */
+  .recruiters-header-section {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    justify-content: center !important;
+  }
+
+  .recruiters-header-section .text-left {
+    text-align: center !important;
+  }
+
+  .wt-separator-two-part-right .site-button {
+    margin-right: 20px !important;
+  }
+}
+
 /* Navbar and header z-index */
 .navbar,
 .header,

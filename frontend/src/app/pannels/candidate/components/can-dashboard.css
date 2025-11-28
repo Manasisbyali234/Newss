@@ -214,19 +214,105 @@
   display: flex !important;
   flex-direction: column !important;
   justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+
+.can-dashboard .wt-card-wrap-2 {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  gap: 0.5rem !important;
+}
+
+.can-dashboard .wt-card-icon-2 {
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.can-dashboard .wt-card-right {
+  text-align: center !important;
+}
+
+.can-dashboard .wt-card-bottom-2 {
+  text-align: center !important;
+  width: 100% !important;
+}
+
+.can-dashboard .wt-card-bottom-2 h4 {
+  text-align: center !important;
+  margin: 0 auto !important;
+}
+
+/* Welcome card improvements */
+.can-dashboard .welcome-card-container {
+  width: 100%;
+}
+
+.can-dashboard .welcome-card-container > div {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.can-dashboard .welcome-card-container h2 {
+  line-height: 1.3;
+}
+
+.can-dashboard .welcome-card-container p {
+  line-height: 1.4;
 }
 
 /* Responsive paddings */
 @media (max-width: 992px) {
-  .can-dashboard .wt-admin-right-page-header { padding: 20px !important; }
+  .can-dashboard .wt-admin-right-page-header { 
+    padding: 20px !important; 
+  }
   
   .can-dashboard .dashboard-card-2 {
     padding: 1.25rem !important;
   }
+  
+  .can-dashboard > div:first-child {
+    padding: 1.5rem 1.5rem 0 1.5rem !important;
+  }
+  
+  .can-dashboard > div:last-child {
+    padding: 0 1.5rem 1.5rem 1.5rem !important;
+  }
 }
 
 @media (max-width: 768px) {
-  .can-dashboard { padding-bottom: 20px; }
+  .can-dashboard { 
+    padding-bottom: 20px; 
+  }
+  
+  .can-dashboard > div:first-child {
+    padding: 1rem 1rem 0 1rem !important;
+  }
+  
+  .can-dashboard > div:last-child {
+    padding: 0 1rem 1rem 1rem !important;
+  }
+  
+  .can-dashboard .welcome-card-container {
+    padding: 1rem 1rem 0 1rem !important;
+  }
+  
+  .can-dashboard .welcome-card-container > div {
+    padding: 1.25rem !important;
+  }
+  
+  .can-dashboard .welcome-card-container h2 {
+    font-size: 1.5rem !important;
+  }
+  
+  .can-dashboard .welcome-card-container p {
+    font-size: 0.85rem !important;
+  }
   
   .can-dashboard .icon-row {
     gap: 0.75rem !important;
@@ -243,5 +329,92 @@
   
   .can-dashboard h5 {
     font-size: 0.875rem !important;
+  }
+  
+  .can-dashboard .row {
+    margin-left: -0.5rem !important;
+    margin-right: -0.5rem !important;
+  }
+  
+  .can-dashboard .row > [class*="col-"] {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .can-dashboard > div:first-child {
+    padding: 0.75rem 0.75rem 0 0.75rem !important;
+  }
+  
+  .can-dashboard > div:last-child {
+    padding: 0 0.75rem 0.75rem 0.75rem !important;
+  }
+  
+  .can-dashboard .welcome-card-container {
+    padding: 0.75rem 0.75rem 0 0.75rem !important;
+  }
+  
+  .can-dashboard .welcome-card-container > div {
+    padding: 1rem !important;
+  }
+  
+  .can-dashboard .welcome-card-container div[style*="display: flex"] {
+    flex-direction: row !important;
+    gap: 0.75rem !important;
+  }
+  
+  .can-dashboard .welcome-card-container h2 {
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+  }
+  
+  .can-dashboard .welcome-card-container p {
+    font-size: 0.75rem !important;
+  }
+  
+  .can-dashboard .wt-card-icon-2 {
+    margin-bottom: 0 !important;
+    font-size: 1.5rem !important;
+  }
+  
+  .can-dashboard .dashboard-card-2 {
+    padding: 0.875rem !important;
+    min-height: auto !important;
+  }
+  
+  .can-dashboard .counter {
+    font-size: 22px !important;
+  }
+  
+  .can-dashboard h5 {
+    font-size: 0.8rem !important;
+  }
+  
+  .can-dashboard .row {
+    margin-left: -0.375rem !important;
+    margin-right: -0.375rem !important;
+  }
+  
+  .can-dashboard .row > [class*="col-"] {
+    padding-left: 0.375rem !important;
+    padding-right: 0.375rem !important;
+  }
+  
+  .can-dashboard .col-xl-8,
+  .can-dashboard .col-lg-8 {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+  
+  .can-dashboard .col-xl-4,
+  .can-dashboard .col-lg-4 {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+  
+  .can-dashboard .col-12 {
+    width: 100% !important;
+    flex: 0 0 100% !important;
   }
 }

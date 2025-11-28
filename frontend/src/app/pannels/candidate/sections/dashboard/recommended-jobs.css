@@ -5,6 +5,7 @@
 
 .job-recommendation-card {
     transition: all 0.2s ease;
+    display: block;
 }
 
 .job-recommendation-card:hover {
@@ -16,6 +17,7 @@
 .job-recommendation-card .badge {
     border-radius: 12px;
     font-weight: 500;
+    display: inline-block;
 }
 
 .recommended-jobs-header {
@@ -48,12 +50,78 @@
     font-size: 0.75rem;
 }
 
+@media (max-width: 992px) {
+    .job-recommendations-list {
+        max-height: 450px;
+    }
+    
+    .job-recommendation-card {
+        padding: 1rem 1.25rem !important;
+    }
+}
+
 @media (max-width: 768px) {
     .job-recommendation-card {
-        padding: 0.75rem 1rem !important;
+        padding: 0.85rem 1rem !important;
     }
     
     .job-recommendations-list {
         max-height: 400px;
+    }
+    
+    .job-recommendation-card h6 {
+        font-size: 0.9rem !important;
+    }
+    
+    .job-recommendation-card .d-flex.justify-content-between {
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+    }
+    
+    .job-recommendation-card .badge {
+        font-size: 0.65rem !important;
+        padding: 0.2rem 0.4rem !important;
+    }
+    
+    .job-recommendation-card .d-flex.flex-wrap.gap-2 {
+        gap: 0.5rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .job-recommendation-card {
+        padding: 0.75rem 0.85rem !important;
+    }
+    
+    .job-recommendations-list {
+        max-height: 350px;
+    }
+    
+    .job-recommendation-card h6 {
+        font-size: 0.85rem !important;
+        word-break: break-word !important;
+    }
+    
+    .job-recommendation-card p {
+        font-size: 0.8rem !important;
+    }
+    
+    .job-recommendation-card .d-flex.justify-content-between {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.4rem !important;
+    }
+    
+    .job-recommendation-card .d-flex.align-items-center {
+        font-size: 0.75rem !important;
+    }
+    
+    .job-recommendation-card .badge {
+        font-size: 0.6rem !important;
+        padding: 0.15rem 0.35rem !important;
+    }
+    
+    .job-recommendation-card .d-flex.flex-wrap.gap-2 {
+        gap: 0.35rem !important;
     }
 }

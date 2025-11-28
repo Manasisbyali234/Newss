@@ -1,200 +1,24 @@
-/* Header Responsive Styles - Hide duplicates on desktop */
-
-/* Navbar link styles */
+/* Clean Header Responsive Styles */
 .nav-link-custom {
   color: #333 !important;
   font-weight: 500 !important;
-  font-size: 16px !important;
   text-decoration: none !important;
   padding: 8px 16px !important;
-  border-radius: 6px !important;
-  transition: all 0.3s ease !important;
-  position: relative !important;
+  transition: color 0.3s ease !important;
 }
 
-.nav-link-custom:hover {
-  color: #ff9c00 !important;
-  background-color: transparent !important;
-  transform: none !important;
-}
-
-/* Active navbar link styles */
+.nav-link-custom:hover,
 .nav-link-custom.active {
   color: #ff9c00 !important;
-  font-weight: 600 !important;
-  background-color: transparent !important;
 }
 
-.twm-side-navigation-menu .nav a.active {
-  color: #ff9c00 !important;
-  font-weight: 600 !important;
-}
-
-/* Hover effect for navbar links */
-.twm-side-navigation-menu .nav a:hover {
-  color: #ff9c00 !important;
-}
-
-/* Desktop view - hide hamburger and mobile elements */
 @media (min-width: 992px) {
-  /* Hide hamburger menu button */
-  .vnav-btn,
-  .twm-side-navigation-menu {
-    display: none !important;
-  }
-
-  /* Hide mobile auth section inside nav */
-  .mobile-auth-section {
-    display: none !important;
-  }
-
-  /* Show desktop navigation */
-  .header-nav.navbar-collapse {
-    display: flex !important;
-  }
-
-  /* Show desktop auth buttons */
-  .extra-nav.header-2-nav {
-    display: flex !important;
-    align-items: center !important;
-    gap: 15px !important;
-  }
-
-  /* Align user dashboard link properly */
-  .extra-nav.header-2-nav .extra-cell {
-    display: flex !important;
-    align-items: center !important;
-  }
-
-  .extra-nav.header-2-nav .extra-cell:first-child {
-    margin-left: 80px !important;
-  }
-
-  .employer-nav-menu,
-  .dashboard-link {
-    display: flex !important;
-    align-items: center !important;
-  }
+  .hamburger-btn { display: none !important; }
+  .header-nav.navbar-collapse { display: flex !important; }
+  .extra-nav.header-2-nav { display: flex !important; }
 }
 
-/* Mobile view - hide desktop auth, show hamburger */
 @media (max-width: 991px) {
-  /* Fix header container to prevent cutoff */
-  .site-header .main-bar {
-    padding: 10px 0 !important;
-  }
-
-  .site-header .container-fluid {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    padding: 0 15px !important;
-  }
-
-  /* Logo section - prevent cutoff */
-  .logo-header {
-    flex-shrink: 0 !important;
-    max-width: 150px !important;
-  }
-
-  .logo-header img {
-    max-height: 40px !important;
-    width: auto !important;
-    object-fit: contain !important;
-  }
-
-  /* Hide desktop auth buttons */
-  .extra-nav.header-2-nav .extra-cell:first-child {
-    display: none !important;
-  }
-
-  /* Show only hamburger button - hide any other navigation */
-  .extra-nav.header-2-nav {
-    display: flex !important;
-    align-items: center !important;
-    gap: 0 !important;
-  }
-
-  .extra-nav.header-2-nav .extra-cell:last-child {
-    display: flex !important;
-  }
-
-  /* Hide any arrow or other navigation elements */
-  .extra-nav.header-2-nav .extra-cell:not(:last-child) {
-    display: none !important;
-  }
-
-  /* Ensure hamburger menu is always visible */
-  .vnav-btn {
-    background: rgba(255, 255, 255, 0.9) !important;
-    border-radius: 6px !important;
-    padding: 8px 12px !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-    transition: all 0.3s ease !important;
-    min-width: 44px !important;
-    min-height: 44px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  .vnav-btn:hover {
-    background: rgba(255, 255, 255, 1) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  }
-
-  .vnav-btn .fa-bars {
-    color: #333333 !important;
-    font-size: 18px !important;
-  }
-
-  /* Force hamburger menu visibility */
-  .site-header .extra-nav .extra-cell:last-child {
-    display: flex !important;
-    position: relative !important;
-    z-index: 10000 !important;
-  }
-
-  .site-header .vnav-btn {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-
-  /* Hide desktop navigation */
-  .header-nav.navbar-collapse {
-    display: none !important;
-  }
-
-  /* Show mobile menu when active */
-  .twm-side-navigation-menu.active {
-    display: block !important;
-  }
-
-  /* Mobile auth in sidebar */
-  .twm-side-navigation-menu .header-nav-btn-section {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .twm-side-navigation-menu .twm-nav-sign-up,
-  .twm-side-navigation-menu .twm-nav-post-a-job {
-    width: 100%;
-    text-align: center;
-  }
-
-  /* Fix profile image in authenticated state */
-  .site-header.authenticated-user .extra-nav.header-2-nav .extra-cell:first-child {
-    display: none !important;
-  }
-
-  /* Ensure no overflow on header */
-  .site-header,
-  .sticky-header,
-  .main-bar-wraper,
-  .main-bar {
-    overflow: visible !important;
-  }
+  .header-nav.navbar-collapse { display: none !important; }
+  .hamburger-btn { display: block !important; }
 }

@@ -821,7 +821,7 @@ function Home16Page() {
                                 className="wt-separator-two-part-left mb-4"
                             >
                                 {/* title="" START*/}
-                                  <div className="recruiters-header-section" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', flexWrap: 'wrap', gap: '1rem', paddingLeft: '15px'}}>
+                                  <div className="recruiters-header-section" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', flexWrap: 'wrap', gap: '1rem', paddingLeft: '30px'}}>
                                   <div className="text-left">
                                   <div className="wt-small-separator site-text-primary">
                                 <div>Top Recruiters</div>
@@ -836,7 +836,8 @@ function Home16Page() {
                                 xl={6}
                                 lg={6}
                                 md={12}
-                                className="wt-separator-two-part-right text-right mb-4"
+                                className="wt-separator-two-part-right mb-4"
+                                style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}
                             >
                                 {isFiltered && (
                                     <button
@@ -859,7 +860,7 @@ function Home16Page() {
                                         Clear Filters
                                     </button>
                                 )}
-                                <NavLink to="/job-grid" className=" site-button" style={{padding: '0.5rem 1rem', fontSize: '14px', display: 'inline-flex', width: 'auto', whiteSpace: 'nowrap', marginRight: '30px'}}>
+                                <NavLink to="/job-grid" className="site-button" style={{padding: '0.5rem 1rem', fontSize: '14px', display: 'inline-flex', width: 'auto', whiteSpace: 'nowrap', marginRight: '30px'}}>
                                     Browse All Jobs
                                 </NavLink>
                             </Col>
@@ -1017,14 +1018,14 @@ function Home16Page() {
                 <div style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
                     <Container style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
                     {/* title="" START*/}
-                    <div className="recruiters-header-section" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', background: 'transparent !important', flexWrap: 'wrap', gap: '1rem', paddingLeft: '15px', paddingRight: '15px'}}>
-                        <div className="text-left">
+                    <div className="recruiters-header-section" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', background: 'transparent !important', flexWrap: 'wrap', gap: '1rem', paddingLeft: '30px', paddingRight: '15px'}}>
+                        <div className="text-left text-center text-md-left" style={{width: '100%'}}>
                             <div className="wt-small-separator site-text-primary">
                                 <div>Top Recruiters</div>
                             </div>
                             <h2 className="wt-title mb-0">Discover your next career move</h2>
                         </div>
-                        <NavLink to="/emp-grid" className="site-button" style={{padding: '0.5rem 1rem', fontSize: '14px', whiteSpace: 'nowrap'}}>
+                        <NavLink to="/emp-grid" className="site-button d-none d-md-inline-flex" style={{padding: '0.5rem 1rem', fontSize: '14px', whiteSpace: 'nowrap', marginRight: '30px'}}>
                             View All
                         </NavLink>
                     </div>
@@ -1162,8 +1163,8 @@ function Home16Page() {
                     {/* title="" END*/}
 
                     <div className="twm-how-it-work-section3" style={{maxWidth: '1800px', margin: '0 auto'}}>
-                        <Row style={{marginLeft: '10px', marginRight: '10px', marginBottom: '0'}}>
-                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4" style={{padding: '1rem'}}>
+                        <Row style={{marginLeft: '0px', marginRight: '0px', marginBottom: '0'}}>
+                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4" style={{padding: '0.5rem'}}>
                                 <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '30px 25px', borderRadius: '16px', height: '160px', background: '#fff', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', border: '1px solid #f0f0f0', transition: 'all 0.3s ease'}}>
                                     <div className="twm-media" style={{marginRight: '20px', flexShrink: 0}}>
                                         <div style={{width: '65px', height: '65px', background: 'linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(255, 106, 0, 0.3)'}}>
@@ -1253,7 +1254,7 @@ function Home16Page() {
                     <div className="twm-how-it-work-section3" style={{maxWidth: '2400px', margin: '0 auto'}}>
                         <Row style={{marginLeft: '0px', marginRight: '0px', marginBottom: '0'}}>
                             {/* Card 1: Post Your Job */}
-                            <Col xl={4} lg={4} md={6} sm={12} xs={12} style={{padding: '1.5rem'}}>
+                            <Col xl={4} lg={4} md={6} sm={12} xs={12} style={{padding: '0.5rem'}}>
                                 <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '45px 40px', borderRadius: '16px', height: '160px', background: '#fff', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', border: '1px solid #f0f0f0', transition: 'all 0.3s ease'}}>
                                     <div className="twm-media" style={{marginRight: '30px', flexShrink: 0}}>
                                         <div style={{width: '65px', height: '65px', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.1)'}}>
@@ -1272,7 +1273,7 @@ function Home16Page() {
                             </Col>
 
                             {/* Card 2: Hire the Best */}
-                            <Col xl={4} lg={4} md={6} sm={12} xs={12} style={{padding: '1.5rem'}}>
+                            <Col xl={4} lg={4} md={6} sm={12} xs={12} style={{padding: '0.5rem'}}>
                                 <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '45px 40px', borderRadius: '16px', height: '160px', background: '#fff', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', border: '1px solid #f0f0f0', transition: 'all 0.3s ease'}}>
                                     <div className="twm-media" style={{marginRight: '30px', flexShrink: 0}}>
                                         <div style={{width: '65px', height: '65px', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.1)'}}>
@@ -1291,7 +1292,7 @@ function Home16Page() {
                             </Col>
 
                             {/* Card 3: Build Your Team */}
-                            <Col xl={4} lg={4} md={6} sm={12} xs={12} style={{padding: '1.5rem'}}>
+                            <Col xl={4} lg={4} md={6} sm={12} xs={12} style={{padding: '0.5rem'}}>
                                 <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '45px 40px', borderRadius: '16px', height: '160px', background: '#fff', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', border: '1px solid #f0f0f0', transition: 'all 0.3s ease'}}>
                                     <div className="twm-media" style={{marginRight: '30px', flexShrink: 0}}>
                                         <div style={{width: '65px', height: '65px', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.1)'}}>
