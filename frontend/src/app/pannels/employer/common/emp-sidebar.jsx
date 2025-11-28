@@ -13,7 +13,7 @@ function EmpSidebarSection({ sidebarActive, isMobile, onClose }) {
         loadScript("js/emp-sidebar.js");
     });
 
-    const handleLogoutClick = () => {
+    const handleLinkClick = () => {
         if (isMobile && onClose) {
             onClose();
         }
@@ -50,33 +50,33 @@ function EmpSidebarSection({ sidebarActive, isMobile, onClose }) {
                     <ul>
                         <li
                             className={setMenuActive(currentpath, empRoute(employer.DASHBOARD))}>
-                            <NavLink to={empRoute(employer.DASHBOARD)} style={{display: 'flex', alignItems: 'center'}}><i className="fa fa-home" style={{minWidth: '30px', textAlign: 'center'}} /><span className="admin-nav-text" style={{paddingLeft: '10px'}}>Dashboard</span></NavLink>
+                            <NavLink to={empRoute(employer.DASHBOARD)} onClick={handleLinkClick} style={{display: 'flex', alignItems: 'center'}}><i className="fa fa-home" style={{minWidth: '30px', textAlign: 'center'}} /><span className="admin-nav-text" style={{paddingLeft: '10px'}}>Dashboard</span></NavLink>
                         </li>
 
                         <li
                             className={setMenuActive(currentpath, empRoute(employer.PROFILE))}>
-                            <NavLink to={empRoute(employer.PROFILE)} style={{display: 'flex', alignItems: 'center'}}><i className="fa fa-user-tie" style={{minWidth: '30px', textAlign: 'center'}} /><span className="admin-nav-text" style={{paddingLeft: '10px'}}>Company Profile</span></NavLink>
+                            <NavLink to={empRoute(employer.PROFILE)} onClick={handleLinkClick} style={{display: 'flex', alignItems: 'center'}}><i className="fa fa-user-tie" style={{minWidth: '30px', textAlign: 'center'}} /><span className="admin-nav-text" style={{paddingLeft: '10px'}}>Company Profile</span></NavLink>
                         </li>
 
                         <li
                             className={setMenuActive(currentpath, empRoute(employer.MANAGE_JOBS))}>
-                            <NavLink to={empRoute(employer.MANAGE_JOBS)} style={{display: 'flex', alignItems: 'center'}}><i className="fa fa-suitcase" style={{minWidth: '30px', textAlign: 'center'}} /><span className="admin-nav-text" style={{paddingLeft: '10px'}}>Openings</span></NavLink>
+                            <NavLink to={empRoute(employer.MANAGE_JOBS)} onClick={handleLinkClick} style={{display: 'flex', alignItems: 'center'}}><i className="fa fa-suitcase" style={{minWidth: '30px', textAlign: 'center'}} /><span className="admin-nav-text" style={{paddingLeft: '10px'}}>Openings</span></NavLink>
                         </li>
 
                         <li className={setMenuActive(currentpath, empRoute(employer.CREATE_ASSESSMENT))}>
-                            <NavLink to={empRoute(employer.CREATE_ASSESSMENT)} style={{display: 'flex', alignItems: 'center'}}><i className="fa fa-clipboard-check" style={{minWidth: '30px', textAlign: 'center'}} /><span className="admin-nav-text" style={{paddingLeft: '10px'}}>Assessments</span></NavLink>
+                            <NavLink to={empRoute(employer.CREATE_ASSESSMENT)} onClick={handleLinkClick} style={{display: 'flex', alignItems: 'center'}}><i className="fa fa-clipboard-check" style={{minWidth: '30px', textAlign: 'center'}} /><span className="admin-nav-text" style={{paddingLeft: '10px'}}>Assessments</span></NavLink>
                         </li>
 
                         <li className={setMenuActive(currentpath, empRoute(employer.CANDIDATES))}>
-                            <NavLink to={empRoute(employer.CANDIDATES)} style={{display: 'flex', alignItems: 'center'}}><i className="fa fa-user-friends" style={{minWidth: '30px', textAlign: 'center'}} /><span className="admin-nav-text" style={{paddingLeft: '15px'}}>Applicants</span></NavLink>
+                            <NavLink to={empRoute(employer.CANDIDATES)} onClick={handleLinkClick} style={{display: 'flex', alignItems: 'center'}}><i className="fa fa-user-friends" style={{minWidth: '30px', textAlign: 'center'}} /><span className="admin-nav-text" style={{paddingLeft: '15px'}}>Applicants</span></NavLink>
                         </li>
 
                         <li className={setMenuActive(currentpath, empRoute(employer.SUPPORT))}>
-                            <NavLink to={empRoute(employer.SUPPORT)} style={{display: 'flex', alignItems: 'center'}}><i className="fa fa-headset" style={{minWidth: '30px', textAlign: 'center'}} /><span className="admin-nav-text" style={{paddingLeft: '10px'}}>Support</span></NavLink>
+                            <NavLink to={empRoute(employer.SUPPORT)} onClick={handleLinkClick} style={{display: 'flex', alignItems: 'center'}}><i className="fa fa-headset" style={{minWidth: '30px', textAlign: 'center'}} /><span className="admin-nav-text" style={{paddingLeft: '10px'}}>Support</span></NavLink>
                         </li>
                         
                         <li>
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#logout-dash-profile" onClick={handleLogoutClick} style={{display: 'flex', alignItems: 'center'}}>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#logout-dash-profile" onClick={handleLinkClick} style={{display: 'flex', alignItems: 'center'}}>
                                 <i className="fa fa-share-square" style={{minWidth: '30px', textAlign: 'center'}} />
                                 <span className="admin-nav-text" style={{paddingLeft: '10px'}}>Logout</span>
                             </a>

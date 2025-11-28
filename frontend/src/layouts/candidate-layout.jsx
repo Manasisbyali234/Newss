@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import CanHeaderSection from "../app/pannels/candidate/common/can-header";
 import CanSidebarSection from "../app/pannels/candidate/common/can-sidebar";
 import CandidateRoutes from "../routing/candidate-routes";
+import "../logout-modal-fix.css";
+import "../logout-modal-fix.css";
 
 function CandidateLayout() {
 

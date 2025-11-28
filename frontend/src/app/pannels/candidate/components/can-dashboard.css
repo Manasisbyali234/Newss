@@ -208,44 +208,16 @@
   flex-shrink: 0 !important;
 }
 
-/* Stats card improvements */
-.can-dashboard .dashboard-card-2 {
-  min-height: 120px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-  align-items: center !important;
+.can-dashboard .dashboard-card-2 > div {
   text-align: center !important;
 }
 
-.can-dashboard .wt-card-wrap-2 {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 100% !important;
-  gap: 0.5rem !important;
-}
-
-.can-dashboard .wt-card-icon-2 {
-  text-align: center !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.can-dashboard .wt-card-right {
+.can-dashboard .dashboard-card-2 h5 {
   text-align: center !important;
 }
 
-.can-dashboard .wt-card-bottom-2 {
+.can-dashboard .dashboard-card-2 .counter {
   text-align: center !important;
-  width: 100% !important;
-}
-
-.can-dashboard .wt-card-bottom-2 h4 {
-  text-align: center !important;
-  margin: 0 auto !important;
 }
 
 /* Welcome card improvements */

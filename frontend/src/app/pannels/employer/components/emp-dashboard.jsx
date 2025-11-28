@@ -143,13 +143,13 @@ function EmpDashboardPage() {
                 minHeight: '100vh'
             }}>
                 {/* Header */}
-                <div style={{ padding: '2rem 2rem 2rem 2rem' }}>
-                <div className="wt-admin-right-page-header clearfix" style={{ background: 'white', borderRadius: '12px', padding: isMobile ? '1rem' : '2rem', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ padding: isMobile ? '1rem' : '2rem' }}>
+                <div className="wt-admin-right-page-header clearfix" style={{ background: 'white', borderRadius: '12px', padding: isMobile ? '1rem' : '2rem', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', marginBottom: '2rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '1rem' : '0' }}>
+                        <div style={{ display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', gap: '1rem', width: isMobile ? '100%' : 'auto' }}>
                             <div style={{
-                                width: '60px',
-                                height: '60px',
+                                width: isMobile ? '50px' : '60px',
+                                height: isMobile ? '50px' : '60px',
                                 borderRadius: '50%',
                                 background: employer.logo ? `url("${employer.logo}") center/cover` : '#f97316',
                                 backgroundSize: 'cover',
@@ -158,18 +158,19 @@ function EmpDashboardPage() {
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 color: 'white',
-                                fontSize: '1.5rem',
-                                fontWeight: 'bold'
+                                fontSize: isMobile ? '1.25rem' : '1.5rem',
+                                fontWeight: 'bold',
+                                flexShrink: 0
                             }}>
                                 {!employer.logo && (employer.companyName ? employer.companyName.charAt(0).toUpperCase() : 'C')}
                             </div>
-                            <div>
-                                <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111827', margin: '0 0 0.30rem 0' }}>Welcome, {employer.companyName}</h2>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '1 rem', marginBottom: '0.25rem' }}>
-                                    <MapPin size={16} style={{ color: '#f97316' }} />
-                                    <span style={{ color: '#f97316', fontSize: '0.875rem', fontWeight: '500' }}>Bangalore</span>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                                <h2 style={{ fontSize: isMobile ? '1.25rem' : '1.875rem', fontWeight: 'bold', color: '#111827', margin: '0 0 0.25rem 0', wordBreak: 'break-word' }}>Welcome, {employer.companyName}</h2>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                                    <MapPin size={isMobile ? 14 : 16} style={{ color: '#f97316', flexShrink: 0 }} />
+                                    <span style={{ color: '#f97316', fontSize: isMobile ? '0.75rem' : '0.875rem', fontWeight: '500' }}>Bangalore</span>
                                 </div>
-                                <p style={{ color: '#6b7280', margin: 0 }}>Here's an overview of your job postings and applications</p>
+                                <p style={{ color: '#6b7280', margin: 0, fontSize: isMobile ? '0.813rem' : '0.875rem' }}>Here's an overview of your job postings and applications</p>
                             </div>
                         </div>
 
@@ -178,7 +179,7 @@ function EmpDashboardPage() {
                 </div>
 
                 {/* Stats Cards */}
-                <div style={{ padding: '0 2rem 2rem 2rem' }}>
+                <div style={{ padding: isMobile ? '1rem' : '0 2rem 2rem 2rem' }}>
                     <div className="row" style={{ marginBottom: '2rem' }}>
                         <div className="col-xl-4 col-lg-4 col-md-12 mb-3">
                             <div className="panel panel-default">
@@ -411,10 +412,10 @@ function EmpDashboardPage() {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flex: '1' }}>
                                     {notifications.length > 0 ? notifications.slice(0, 5).map((notification, index) => (
                                         <div key={index} onMouseEnter={() => setHoveredId(notification._id)} onMouseLeave={() => setHoveredId(null)} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem', background: notification.isRead ? '#f9fafb' : '#fef3c7', borderRadius: '0.5rem', position: 'relative' }}>
-                                            <div style={{ width: '2rem', height: '2rem', background: (notification.type === 'profile_approved' || notification.title?.includes('Approved')) ? '#dcfce7' : '#fecaca', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <div style={{ width: '2rem', height: '2rem', background: (notification.type === 'profile_approved' || notification.title?.includes('Approved')) ? '#dcfce7' : '#fecaca', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                                                 <span style={{ fontSize: '1rem' }}>{(notification.type === 'profile_approved' || notification.title?.includes('Approved')) ? '✅' : '❌'}</span>
                                             </div>
-                                            <div style={{ flex: '1' }}>
+                                            <div style={{ flex: '1', minWidth: 0 }}>
                                                 <p style={{ fontSize: '0.875rem', fontWeight: '500', color: '#111827', margin: 0 }}>{notification.title}</p>
                                                 <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>{notification.message}</p>
                                                 <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>{new Date(notification.createdAt).toLocaleDateString()}</p>
@@ -429,7 +430,7 @@ function EmpDashboardPage() {
                                                         });
                                                         setNotifications(prev => prev.filter(n => n._id !== notification._id));
                                                     } catch (error) {}
-                                                }} style={{ background: '#fed7aa', border: 'none', color: 'black', fontSize: '12px', cursor: 'pointer', borderRadius: '2px', padding: '2px 6px', height: 'fit-content', flexShrink: 0, width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                }} style={{ background: '#fed7aa', border: 'none', color: 'black', fontSize: '10px', cursor: 'pointer', borderRadius: '2px', padding: '2px', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                                                     <i className="fa fa-times"></i>
                                                 </button>
                                             )}

@@ -164,3 +164,19 @@
     max-width: 100% !important;
   }
 }
+
+/* Mobile reordering - show candidate profile first */
+@media (max-width: 991px) {
+  .emp-candidate-review-page .row.g-4 {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .emp-candidate-review-page .row.g-4 .col-lg-4 {
+    order: 2;
+  }
+  
+  .emp-candidate-review-page .row.g-4 .col-lg-8 {
+    order: 1;
+  }
+}

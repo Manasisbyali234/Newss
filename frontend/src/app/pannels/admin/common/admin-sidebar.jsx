@@ -42,10 +42,13 @@ function AdminSidebarSection({ sidebarActive, isMobile }) {
             adminRoute(admin.PLACEMENT_APPROVE),
             adminRoute(admin.PLACEMENT_REJECT)
         ].includes(currentpath);
+        
+        const isJobsPath = currentpath.includes('/admin/jobs');
 
         setOpenMenus({
             employers: isEmployerPath,
-            placement: isPlacementPath
+            placement: isPlacementPath,
+            jobs: isJobsPath
         });
     }, [currentpath])
 
@@ -149,9 +152,36 @@ function AdminSidebarSection({ sidebarActive, isMobile }) {
                                             <span className="admin-nav-text">Rejected</span>
                                         </NavLink>
                                     </li>
+                                    <li>
+                                        <NavLink to="/admin/placement-credits">
+                                            <span className="admin-nav-text">Credits</span>
+                                        </NavLink>
+                                    </li>
                                 </ul>
                             </li>
                         )}
+
+                        <li>
+                            <a href="#" onClick={(e) => {
+                                e.preventDefault();
+                                setOpenMenus(prev => ({...prev, jobs: !prev.jobs}));
+                            }}>
+                                <i className="fa fa-briefcase" />
+                                <span className="admin-nav-text">Jobs</span>
+                            </a>
+                            <ul className={`sub-menu ${openMenus.jobs ? 'open' : ''}`}>
+                                <li>
+                                    <NavLink to="/admin/jobs">
+                                        <span className="admin-nav-text">All Jobs</span>
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/admin/jobs/skills">
+                                        <span className="admin-nav-text">All Skills</span>
+                                    </NavLink>
+                                </li>
+                            </ul>
+                        </li>
 
                         <li className={setMenuActive(currentpath, adminRoute(admin.SUPPORT_TICKETS))}>
                             <NavLink to={adminRoute(admin.SUPPORT_TICKETS)}>

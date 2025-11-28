@@ -394,20 +394,29 @@ exports.updateEmployerStatus = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Employer not found' });
     }
 
-    // Create notification for employer
+    // Send approval email and create notification
     if (isApproved !== undefined) {
-      const notificationData = {
-        title: isApproved ? 'Profile Approved - You Can Now Post Jobs!' : 'Profile Rejected',
-        message: isApproved 
-          ? 'Congratulations! Your company profile has been approved by admin. You can now post jobs and start hiring candidates.' 
-          : 'Your company profile has been rejected by admin. Please contact support for more information or resubmit your profile with the required corrections.',
-        type: isApproved ? 'profile_approved' : 'profile_rejected',
-        role: 'employer',
-        relatedId: employer._id,
-        createdBy: req.user.id
-      };
-      
-      await createNotification(notificationData);
+      try {
+        if (isApproved) {
+          const { sendWelcomeEmail } = require('../utils/emailService');
+          await sendWelcomeEmail(employer.email, employer.companyName, 'employer');
+        }
+        
+        const notificationData = {
+          title: isApproved ? 'Profile Approved - You Can Now Post Jobs!' : 'Profile Rejected',
+          message: isApproved 
+            ? 'Congratulations! Your company profile has been approved by admin. You can now post jobs and start hiring candidates.' 
+            : 'Your company profile has been rejected by admin. Please contact support for more information or resubmit your profile with the required corrections.',
+          type: isApproved ? 'profile_approved' : 'profile_rejected',
+          role: 'employer',
+          relatedId: employer._id,
+          createdBy: req.user.id
+        };
+        
+        await createNotification(notificationData);
+      } catch (notifError) {
+        console.error('Failed to send approval email/notification:', notifError);
+      }
     }
 
     res.json({ success: true, employer });
@@ -879,9 +888,12 @@ exports.updatePlacementStatus = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Placement officer not found' });
     }
 
-    // Create notification if approved
+    // Send approval email and create notification
     if (updateData.status === 'active') {
       try {
+        const { sendWelcomeEmail } = require('../utils/emailService');
+        await sendWelcomeEmail(placement.email, placement.name, 'placement');
+        
         await createNotification({
           title: 'Account Approved',
           message: 'Your placement officer account has been approved by admin. You can now sign in.',
@@ -891,7 +903,7 @@ exports.updatePlacementStatus = async (req, res) => {
           createdBy: req.user.id
         });
       } catch (notifError) {
-        console.error('Failed to create approval notification:', notifError);
+        console.error('Failed to send approval email/notification:', notifError);
       }
     }
 

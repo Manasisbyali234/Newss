@@ -16,6 +16,9 @@ import EmployerDetails from "../app/pannels/admin/components/adminEmployerDetail
 import AdminPlacementOfficersAllRequest from "../app/pannels/admin/components/admin-placement-manage";
 import AdminPlacementOfficersApproved from "../app/pannels/admin/components/admin-placement-approve";
 import AdminPlacementOfficersRejected from "../app/pannels/admin/components/admin-placement-reject";
+import AdminPlacementOfficersTabs from "../app/pannels/admin/components/admin-placement-manage-tabs";
+import AdminIndividualCredit from "../app/pannels/admin/components/admin-individual-credit";
+import AdminJobsSkills from "../app/pannels/admin/components/admin-jobs-skills";
 import PlacementDetails from "../app/pannels/admin/components/placement-details";
 import AdminSubAdmin from "../app/pannels/admin/components/admin-sub-admin";
 import AdminSupportTickets from "../app/pannels/admin/components/admin-support-tickets";
@@ -46,10 +49,12 @@ function AdminRoutes() {
 
 				<Route path={admin.REGISTERED_CANDIDATES} element={<RegisteredCandidatesPage />} />
 				<Route path={admin.CANDIDATE_REVIEW} element={<AdminCandidateReviewPage />} />
-				<Route path={admin.PLACEMENT_MANAGE} element={<AdminPlacementOfficersAllRequest />} />
+				<Route path={admin.PLACEMENT_MANAGE} element={<AdminPlacementOfficersTabs />} />
 				<Route path={admin.PLACEMENT_APPROVE} element={<AdminPlacementOfficersApproved />} />
 				<Route path={admin.PLACEMENT_REJECT} element={<AdminPlacementOfficersRejected />} />
 				<Route path={admin.PLACEMENT_DETAILS} element={<PlacementDetails />} />
+				<Route path="/placement-credits" element={<AdminIndividualCredit />} />
+				<Route path="/jobs/skills" element={<AdminJobsSkills />} />
 				<Route path={admin.SUPPORT_TICKETS} element={<AdminSupportTickets />} />
 				<Route path={admin.SUB_ADMIN} element={<AdminSubAdmin />} />
 			</Routes>

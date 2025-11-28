@@ -108,12 +108,13 @@
   filter: drop-shadow(0 4px 10px rgba(249, 115, 22, 0.25));
 }
 
-/* Generic card hover */
+/* Remove all hover effects */
 .emp-dashboard .panel:hover,
 .emp-dashboard .wt-panel-body:hover,
 .emp-dashboard .dashboard-card-2:hover {
-  transform: translateY(-2px);
-  transition: transform 0.2s ease;
+  transform: none !important;
+  transition: none !important;
+  box-shadow: none !important;
 }
 
 /* Mobile-specific card styles */
@@ -123,13 +124,8 @@
   .emp-dashboard .dashboard-card-2 {
     border-radius: 8px !important;
     box-shadow: none !important;
-  }
-  
-  .emp-dashboard .panel:hover,
-  .emp-dashboard .wt-panel-body:hover,
-  .emp-dashboard .dashboard-card-2:hover {
-    transform: none !important;
-    box-shadow: none !important;
+    position: relative !important;
+    z-index: 1 !important;
   }
 }
 
@@ -170,12 +166,32 @@
   }
 }
 
+/* Fix card overlapping on mobile scroll */
+@media (max-width: 767px) {
+  .emp-dashboard .panel,
+  .emp-dashboard .dashboard-card-2 {
+    margin-bottom: 1rem !important;
+    position: relative !important;
+    z-index: auto !important;
+  }
+  
+  .emp-dashboard .row > div {
+    margin-bottom: 1rem !important;
+  }
+}
+
 /* Dashboard content container */
 .emp-dashboard .twm-right-section-panel {
   width: 100% !important;
   margin: 0 !important;
-  padding: 0 !important;
+  padding: 1rem 0 0 0 !important;
   background: #f7f7f7 !important;
+}
+
+@media (max-width: 767px) {
+  .emp-dashboard .twm-right-section-panel {
+    padding: 1rem !important;
+  }
 }
 
 /* Responsive paddings */
@@ -205,6 +221,7 @@
   .emp-dashboard .col-xl-4.col-lg-4.col-md-12 {
     flex: 0 0 50% !important;
     max-width: 50% !important;
+    margin-bottom: 1rem !important;
   }
 }
 
@@ -212,7 +229,11 @@
   .emp-dashboard .col-xl-4.col-lg-4.col-md-12 {
     flex: 0 0 100% !important;
     max-width: 100% !important;
-    margin-bottom: -3.5rem !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  .emp-dashboard .col-xl-4.col-lg-4.col-md-12:last-child {
+    margin-bottom: 1.5rem !important;
   }
 }
 
@@ -335,10 +356,13 @@
 
 /* Remove background panel for stats cards */
 .emp-dashboard .col-xl-4 .panel,
-.emp-dashboard .col-lg-4 .panel {
+.emp-dashboard .col-lg-4 .panel,
+.emp-dashboard .col-md-12 .panel {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 /* Fix profile completion card height */
@@ -398,7 +422,7 @@
 
   /* Remove any remaining margins */
   .twm-right-section-panel .wt-admin-right-page-header {
-    margin: 0 !important;
+    margin: 0 0 1rem 0 !important;
   }
 
   /* Fix any overflow issues */
@@ -485,5 +509,12 @@
     align-items: center !important;
     text-align: center !important;
     width: 100% !important;
+  }
+}
+
+/* Fix gap between header and stats cards on mobile */
+@media (max-width: 767px) {
+  .emp-dashboard .wt-admin-right-page-header {
+    margin-bottom: 2rem !important;
   }
 }

@@ -1,0 +1,33 @@
+.twm-model-popup .modal-dialog {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 100vh !important;
+  margin: 0 auto !important;
+  max-width: 500px !important;
+}
+
+.twm-model-popup .modal-body {
+  text-align: center !important;
+}
+
+.twm-model-popup .modal-footer {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center !important;
+  gap: 1rem !important;
+  border-top: none !important;
+}
+
+.twm-model-popup .modal-footer button {
+  margin: 0 !important;
+}
+
+@media (max-width: 576px) {
+  .twm-model-popup .modal-dialog {
+    margin: 1rem !important;
+    align-items: flex-end !important;
+    padding-bottom: 15vh !important;
+    max-width: calc(100% - 2rem) !important;
+  }
+}

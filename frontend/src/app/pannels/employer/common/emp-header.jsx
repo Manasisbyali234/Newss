@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import { empRoute, employer } from "../../../../globals/route-names";
 import NotificationBell from "../../../../components/NotificationBell";
 import { api } from "../../../../utils/api";
+import "../../../../employer-header-mobile-fix.css";
 
 function EmpHeaderSection(props) {
     const [profileData, setProfileData] = useState(null);
