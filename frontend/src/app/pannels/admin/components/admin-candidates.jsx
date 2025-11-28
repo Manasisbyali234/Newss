@@ -118,7 +118,7 @@ function AdminCandidates() {
                                                 <th>Email</th>
                                                 <th>Phone</th>
                                                 <th>Joined Date</th>
-                                                <th>Status</th>
+                                                <th>Profile Status</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
@@ -149,8 +149,8 @@ function AdminCandidates() {
                                                         <td>{formatDate(candidate.createdAt)}</td>
                                                         <td>
                                                             <div className="twm-jobs-category">
-                                                                <span className={`twm-bg-${candidate.status === 'active' ? 'green' : 'red'}`}>
-                                                                    {candidate.status}
+                                                                <span className={`twm-bg-${candidate.isProfileComplete ? 'green' : 'yellow'}`}>
+                                                                    {candidate.isProfileComplete ? 'Complete' : `Incomplete (${candidate.profileCompletionPercentage || 0}%)`}
                                                                 </span>
                                                             </div>
                                                         </td>

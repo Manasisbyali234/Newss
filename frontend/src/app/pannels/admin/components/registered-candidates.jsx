@@ -93,7 +93,7 @@ function RegisteredCandidatesPage() {
                     Registered Candidates Management
                 </h2>
                 <p className="candidates-subtitle">
-                    <i className="fa fa-info-circle"></i>
+                    <i className=""></i>
                     Manage and monitor all registered candidates in the system
                 </p>
             </div>
@@ -115,7 +115,7 @@ function RegisteredCandidatesPage() {
                                     </div>
                                     <div className="row mb-2">
                                         <div className="col-6"><strong>Phone:</strong> {selectedCandidate.phone || 'Not provided'}</div>
-                                        <div className="col-6"><strong>Profile:</strong> {selectedCandidate.hasProfile ? 'Completed' : 'Incomplete'}</div>
+                                        <div className="col-6"><strong>Profile:</strong> {selectedCandidate.isProfileComplete ? 'Completed' : `Incomplete (${selectedCandidate.profileCompletionPercentage || 0}%)`}</div>
                                     </div>
                                     <div className="row mb-2">
                                         <div className="col-6"><strong>Location:</strong> {selectedCandidate.profile?.location || 'Not specified'}</div>
@@ -200,12 +200,12 @@ function RegisteredCandidatesPage() {
                                                 </td>
                                                 <td>
                                                     <span className={`status-badge ${
-                                                        candidate.hasProfile ? 'badge-completed' : 'badge-incomplete'
+                                                        candidate.isProfileComplete ? 'badge-completed' : 'badge-incomplete'
                                                     }`}>
                                                         <i className={`fa ${
-                                                            candidate.hasProfile ? 'fa-check' : 'fa-exclamation-triangle'
+                                                            candidate.isProfileComplete ? 'fa-check' : 'fa-exclamation-triangle'
                                                         } me-1`}></i>
-                                                        {candidate.hasProfile ? 'Completed' : 'Incomplete'}
+                                                        {candidate.isProfileComplete ? 'Completed' : `Incomplete (${candidate.profileCompletionPercentage || 0}%)`}
                                                     </span>
                                                 </td>
                                                 <td>
@@ -236,9 +236,11 @@ function RegisteredCandidatesPage() {
         </div>
     );
 
-    function viewCandidateDetails(candidate) {
-        navigate(`/admin/candidate-review/${candidate._id}`);
-    }
+    const viewCandidateDetails = (candidate) => {
+        setSelectedCandidate(candidate);
+        const modal = new window.bootstrap.Modal(modalRef.current);
+        modal.show();
+    };
 }
 
 export default RegisteredCandidatesPage;

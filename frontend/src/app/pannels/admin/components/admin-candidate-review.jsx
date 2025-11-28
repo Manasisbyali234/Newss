@@ -174,9 +174,17 @@ function AdminCandidateReviewPage() {
                             </div>
                             <div className="stat">
                                 <span className="label">Status</span>
-                                <span className={`value status ${candidate.hasProfile ? 'complete' : 'incomplete'}`}>
-                                    {candidate.hasProfile ? 'Complete' : 'Incomplete'}
+                                <span className={`value status ${candidate.isProfileComplete ? 'complete' : 'incomplete'}`}>
+                                    {candidate.isProfileComplete ? 'Complete' : 'Incomplete'}
+                                    {candidate.profileCompletionPercentage !== undefined && (
+                                        <span className="completion-percentage"> ({candidate.profileCompletionPercentage}%)</span>
+                                    )}
                                 </span>
+                                {!candidate.isProfileComplete && candidate.missingSections && candidate.missingSections.length > 0 && (
+                                    <div className="missing-sections">
+                                        <small>Missing: {candidate.missingSections.join(', ')}</small>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

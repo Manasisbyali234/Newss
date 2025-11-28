@@ -178,8 +178,25 @@ exports.getUsers = async (req, res) => {
     
     let users;
     if (type === 'candidates') {
-      users = await Candidate.find().select('-password')
+      const candidates = await Candidate.find().select('-password')
         .limit(limit * 1).skip((page - 1) * limit);
+      
+      // Enhance candidates with profile completion status
+      const { calculateProfileCompletionWithDetails } = require('../utils/profileCompletion');
+      const enhancedCandidates = await Promise.all(
+        candidates.map(async (candidate) => {
+          const profile = await CandidateProfile.findOne({ candidateId: candidate._id }).lean();
+          const profileCompletion = calculateProfileCompletionWithDetails(profile);
+          
+          return {
+            ...candidate.toObject(),
+            hasProfile: !!profile,
+            isProfileComplete: profileCompletion.percentage === 100,
+            profileCompletionPercentage: profileCompletion.percentage
+          };
+        })
+      );
+      users = enhancedCandidates;
     } else if (type === 'employers') {
       users = await Employer.find().select('-password')
         .limit(limit * 1).skip((page - 1) * limit);
@@ -327,7 +344,23 @@ exports.getAllCandidates = async (req, res) => {
       .limit(limit * 1)
       .skip((page - 1) * limit);
 
-    res.json({ success: true, data: candidates, candidates });
+    // Enhance candidates with profile completion status
+    const { calculateProfileCompletionWithDetails } = require('../utils/profileCompletion');
+    const enhancedCandidates = await Promise.all(
+      candidates.map(async (candidate) => {
+        const profile = await require('../models/CandidateProfile').findOne({ candidateId: candidate._id }).lean();
+        const profileCompletion = calculateProfileCompletionWithDetails(profile);
+        
+        return {
+          ...candidate.toObject(),
+          hasProfile: !!profile,
+          isProfileComplete: profileCompletion.percentage === 100,
+          profileCompletionPercentage: profileCompletion.percentage
+        };
+      })
+    );
+
+    res.json({ success: true, data: enhancedCandidates, candidates: enhancedCandidates });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -739,7 +772,19 @@ exports.getRegisteredCandidates = async (req, res) => {
       }
     ]);
 
-    res.json({ success: true, data: candidatesWithProfiles });
+    // Calculate profile completion for each candidate
+    const { calculateProfileCompletionWithDetails } = require('../utils/profileCompletion');
+    const enhancedCandidates = candidatesWithProfiles.map(candidate => {
+      const profileCompletion = calculateProfileCompletionWithDetails(candidate.profile);
+      return {
+        ...candidate,
+        isProfileComplete: profileCompletion.percentage === 100,
+        profileCompletionPercentage: profileCompletion.percentage,
+        missingSections: profileCompletion.missingSections
+      };
+    });
+
+    res.json({ success: true, data: enhancedCandidates });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -756,6 +801,11 @@ exports.getCandidateDetails = async (req, res) => {
 
     // Fetch fresh profile data without caching
     const profile = await CandidateProfile.findOne({ candidateId }).lean();
+    
+    // Calculate profile completion status
+    const { calculateProfileCompletionWithDetails } = require('../utils/profileCompletion');
+    const profileCompletion = calculateProfileCompletionWithDetails(profile);
+    const isProfileComplete = profileCompletion.percentage === 100;
     
     // Get candidate's job applications with company details
     const applications = await Application.find({ candidateId })
@@ -807,6 +857,9 @@ exports.getCandidateDetails = async (req, res) => {
       // Override education with properly formatted data
       education: formattedEducation,
       hasProfile: !!profile,
+      isProfileComplete,
+      profileCompletionPercentage: profileCompletion.percentage,
+      missingSections: profileCompletion.missingSections,
       applications: formattedApplications
     };
 

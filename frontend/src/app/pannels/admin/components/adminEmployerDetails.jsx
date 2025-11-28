@@ -230,164 +230,225 @@ function EmployerDetails() {
                 Back to Management
             </button>
             
+            {/* Logo and Cover Images Section */}
             <div className="profile-info-card" data-aos="fade-up" data-aos-delay="100">
                 <h4 className="profile-section-title">
-                    <i className="fa fa-user-tie"></i>
-                    Company Information
+                    <i className="fa fa-image"></i>
+                    Logo and Cover Images
                 </h4>
                 
                 <div className="row">
                     <div className="col-lg-6">
                         <div className="profile-field" data-aos="fade-right" data-aos-delay="200">
-                            <h6><i className="fa fa-building"></i>Company Name</h6>
-                            <p>{profile.companyName || profile.employerId?.companyName || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="250">
-                            <h6><i className="fa fa-user"></i>Contact Full Name</h6>
-                            <p>{profile.contactFullName || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="275">
-                            <h6><i className="fa fa-user"></i>Contact Middle Name</h6>
-                            <p>{profile.contactMiddleName || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="300">
-                            <h6><i className="fa fa-user"></i>Contact Last Name</h6>
-                            <p>{profile.contactLastName || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="325">
-                            <h6><i className="fa fa-envelope"></i>Email</h6>
-                            <p>{profile.email || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="350">
-                            <h6><i className="fa fa-phone"></i>Phone</h6>
-                            <p>{profile.phone || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="375">
-                            <h6><i className="fa fa-envelope-open"></i>Official Email</h6>
-                            <p>{profile.officialEmail || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="400">
-                            <h6><i className="fa fa-mobile-alt"></i>Official Mobile</h6>
-                            <p>{profile.officialMobile || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="425">
-                            <h6><i className="fa fa-phone-alt"></i>Alternate Contact</h6>
-                            <p>{profile.alternateContact || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="450">
-                            <h6><i className="fa fa-id-badge"></i>Contact Designation</h6>
-                            <p>{profile.contactDesignation || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="475">
-                            <h6><i className="fa fa-mobile"></i>Contact Mobile</h6>
-                            <p>{profile.contactMobile || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="500">
-                            <h6><i className="fa fa-id-badge"></i>Employer Code</h6>
-                            <p>{profile.employerCode || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="525">
-                            <h6><i className="fa fa-globe"></i>Website</h6>
-                            <p>{profile.website || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="550">
-                            <h6><i className="fa fa-calendar"></i>Established Since</h6>
-                            <p>{profile.establishedSince || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-right" data-aos-delay="575">
-                            <h6><i className="fa fa-users"></i>Team Size</h6>
-                            <p>{profile.teamSize || 'N/A'}</p>
+                            <h6><i className="fa fa-image"></i>Company Logo</h6>
+                            {profile.logo ? (
+                                <div>
+                                    <button 
+                                        className="btn btn-outline-primary btn-sm"
+                                        onClick={() => {
+                                            const imageUrl = profile.logo.startsWith('data:') ? profile.logo : `data:image/jpeg;base64,${profile.logo}`;
+                                            setCurrentImage(imageUrl);
+                                            setShowImageModal(true);
+                                        }}
+                                        style={{ backgroundColor: 'transparent', borderColor: '#ff6b35', color: '#ff6b35' }}
+                                    >
+                                        <i className="fa fa-eye"></i>
+                                        View Logo
+                                    </button>
+                                    <p className="text-success mt-1">✓ Logo uploaded</p>
+                                </div>
+                            ) : (
+                                <p className="text-muted">No logo uploaded</p>
+                            )}
                         </div>
                     </div>
                     
                     <div className="col-lg-6">
                         <div className="profile-field" data-aos="fade-left" data-aos-delay="200">
+                            <h6><i className="fa fa-images"></i>Cover Image</h6>
+                            {profile.coverImage ? (
+                                <div>
+                                    <button 
+                                        className="btn btn-outline-primary btn-sm"
+                                        onClick={() => {
+                                            const imageUrl = profile.coverImage.startsWith('data:') ? profile.coverImage : `data:image/jpeg;base64,${profile.coverImage}`;
+                                            setCurrentImage(imageUrl);
+                                            setShowImageModal(true);
+                                        }}
+                                        style={{ backgroundColor: 'transparent', borderColor: '#ff6b35', color: '#ff6b35' }}
+                                    >
+                                        <i className="fa fa-eye"></i>
+                                        View Cover
+                                    </button>
+                                    <p className="text-success mt-1">✓ Cover image uploaded</p>
+                                </div>
+                            ) : (
+                                <p className="text-muted">No cover image uploaded</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Basic Information Section */}
+            <div className="profile-info-card" data-aos="fade-up" data-aos-delay="150">
+                <h4 className="profile-section-title">
+                    <i className="fa fa-info-circle"></i>
+                    Basic Information
+                </h4>
+                
+                <div className="row">
+                    <div className="col-lg-6">
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="200">
                             <h6><i className="fa fa-tag"></i>Employer Category</h6>
                             <p>{profile.employerCategory || 'N/A'}</p>
                         </div>
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="225">
+                            <h6><i className="fa fa-building"></i>Company Name</h6>
+                            <p>{profile.companyName || profile.employerId?.companyName || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="250">
+                            <h6><i className="fa fa-phone"></i>Phone</h6>
+                            <p>{profile.phone || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="275">
+                            <h6><i className="fa fa-envelope"></i>Email</h6>
+                            <p>{profile.email || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="300">
+                            <h6><i className="fa fa-globe"></i>Website</h6>
+                            <p>{profile.website || 'N/A'}</p>
+                        </div>
+                    </div>
+                    
+                    <div className="col-lg-6">
+                        <div className="profile-field" data-aos="fade-left" data-aos-delay="200">
+                            <h6><i className="fa fa-calendar"></i>Established Since</h6>
+                            <p>{profile.establishedSince || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-left" data-aos-delay="225">
+                            <h6><i className="fa fa-users"></i>Team Size</h6>
+                            <p>{profile.teamSize || 'N/A'}</p>
+                        </div>
                         <div className="profile-field" data-aos="fade-left" data-aos-delay="250">
-                            <h6><i className="fa fa-industry"></i>Company Type</h6>
-                            <p>{profile.companyType || 'N/A'}</p>
+                            <h6><i className="fa fa-map-marker-alt"></i>Primary Office Location</h6>
+                            <p>{profile.location || 'N/A'}</p>
                         </div>
-                        <div className="profile-field" data-aos="fade-left" data-aos-delay="300">
-                            <h6><i className="fa fa-cogs"></i>Industry Sector</h6>
-                            <p style={{textTransform: 'uppercase'}}>{profile.industrySector || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-left" data-aos-delay="350">
-                            <h6><i className="fa fa-map-marker-alt"></i>Corporate Address</h6>
-                            <p>{profile.corporateAddress || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-left" data-aos-delay="375">
-                            <h6><i className="fa fa-map-pin"></i>Pincode</h6>
-                            <p>{profile.pincode || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-left" data-aos-delay="400">
-                            <h6><i className="fa fa-map-marked"></i>Branch Locations</h6>
-                            <p>{profile.branchLocations || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-left" data-aos-delay="450">
-                            <h6><i className="fa fa-certificate"></i>CIN</h6>
-                            <p>{profile.cin || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-left" data-aos-delay="550">
-                            <h6><i className="fa fa-receipt"></i>GST Number</h6>
-                            <p>{profile.gstNumber || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-left" data-aos-delay="600">
-                            <h6><i className="fa fa-id-card"></i>PAN Number</h6>
-                            <p>{profile.panNumber || 'N/A'}</p>
-                        </div>
-                        <div className="profile-field" data-aos="fade-left" data-aos-delay="650">
-                            <h6><i className="fa fa-image"></i>Logo</h6>
-                            {profile.logo ? (
-                                <button 
-                                    className="btn btn-outline-primary btn-sm"
-                                    onClick={() => {
-                                        const imageUrl = profile.logo.startsWith('data:') ? profile.logo : `data:image/jpeg;base64,${profile.logo}`;
-                                        setCurrentImage(imageUrl);
-                                        setShowImageModal(true);
-                                    }}
-                                    style={{ backgroundColor: 'transparent', borderColor: '#ff6b35', color: '#ff6b35' }}
-                                >
-                                    <i className="fa fa-eye"></i>
-                                    View Image
-                                </button>
-                            ) : (
-                                <p>N/A</p>
-                            )}
-                        </div>
-                        <div className="profile-field" data-aos="fade-left" data-aos-delay="700">
-                            <h6><i className="fa fa-images"></i>Cover Image</h6>
-                            {profile.coverImage ? (
-                                <button 
-                                    className="btn btn-outline-primary btn-sm"
-                                    onClick={() => {
-                                        const imageUrl = profile.coverImage.startsWith('data:') ? profile.coverImage : `data:image/jpeg;base64,${profile.coverImage}`;
-                                        setCurrentImage(imageUrl);
-                                        setShowImageModal(true);
-                                    }}
-                                    style={{ backgroundColor: 'transparent', borderColor: '#ff6b35', color: '#ff6b35' }}
-                                >
-                                    <i className="fa fa-eye"></i>
-                                    View Image
-                                </button>
-                            ) : (
-                                <p>N/A</p>
-                            )}
-                        </div>
-                        <div className="profile-field" data-aos="fade-left" data-aos-delay="750">
+                        <div className="profile-field" data-aos="fade-left" data-aos-delay="275">
                             <h6><i className="fa fa-clock"></i>Created At</h6>
                             <p>{formatDate(profile.createdAt)}</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="description-section" data-aos="fade-up" data-aos-delay="800">
+                <div className="description-section" data-aos="fade-up" data-aos-delay="300">
                     <h6><i className="fa fa-align-left"></i>Company Description</h6>
                     <div className="description-text" dangerouslySetInnerHTML={{ __html: profile.description || 'No description provided' }} />
                 </div>
+            </div>
 
+            {/* Company Details Section */}
+            <div className="profile-info-card" data-aos="fade-up" data-aos-delay="200">
+                <h4 className="profile-section-title">
+                    <i className="fa fa-building"></i>
+                    Company Details
+                </h4>
+                
+                <div className="row">
+                    <div className="col-lg-6">
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="250">
+                            <h6><i className="fa fa-map-marker-alt"></i>Corporate Address</h6>
+                            <p>{profile.corporateAddress || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="275">
+                            <h6><i className="fa fa-map-marked"></i>Branch Locations</h6>
+                            <p>{profile.branchLocations || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="300">
+                            <h6><i className="fa fa-map-pin"></i>Pincode</h6>
+                            <p>{profile.pincode || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="325">
+                            <h6><i className="fa fa-envelope-open"></i>Official Email</h6>
+                            <p>{profile.officialEmail || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="350">
+                            <h6><i className="fa fa-mobile-alt"></i>Official Mobile</h6>
+                            <p>{profile.officialMobile || 'N/A'}</p>
+                        </div>
+                    </div>
+                    
+                    <div className="col-lg-6">
+                        <div className="profile-field" data-aos="fade-left" data-aos-delay="250">
+                            <h6><i className="fa fa-industry"></i>Company Type</h6>
+                            <p>{profile.companyType || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-left" data-aos-delay="275">
+                            <h6><i className="fa fa-certificate"></i>CIN</h6>
+                            <p>{profile.cin || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-left" data-aos-delay="300">
+                            <h6><i className="fa fa-receipt"></i>GST Number</h6>
+                            <p>{profile.gstNumber || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-left" data-aos-delay="325">
+                            <h6><i className="fa fa-cogs"></i>Industry Sector</h6>
+                            <p style={{textTransform: 'uppercase'}}>{profile.industrySector || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-left" data-aos-delay="350">
+                            <h6><i className="fa fa-id-card"></i>PAN Number</h6>
+                            <p>{profile.panNumber || 'N/A'}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            {/* Primary Contact Person Section */}
+            <div className="profile-info-card" data-aos="fade-up" data-aos-delay="250">
+                <h4 className="profile-section-title">
+                    <i className="fa fa-user-tie"></i>
+                    Primary Contact Person
+                </h4>
+                
+                <div className="row">
+                    <div className="col-lg-6">
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="300">
+                            <h6><i className="fa fa-user"></i>Contact Full Name</h6>
+                            <p>{profile.contactFullName || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="325">
+                            <h6><i className="fa fa-user"></i>Contact Middle Name</h6>
+                            <p>{profile.contactMiddleName || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="350">
+                            <h6><i className="fa fa-user"></i>Contact Last Name</h6>
+                            <p>{profile.contactLastName || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="375">
+                            <h6><i className="fa fa-id-badge"></i>Contact Designation</h6>
+                            <p>{profile.contactDesignation || 'N/A'}</p>
+                        </div>
+                    </div>
+                    
+                    <div className="col-lg-6">
+                        <div className="profile-field" data-aos="fade-left" data-aos-delay="300">
+                            <h6><i className="fa fa-envelope"></i>Contact Official Email</h6>
+                            <p>{profile.contactOfficialEmail || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-left" data-aos-delay="325">
+                            <h6><i className="fa fa-mobile"></i>Contact Mobile</h6>
+                            <p>{profile.contactMobile || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-left" data-aos-delay="350">
+                            <h6><i className="fa fa-phone-alt"></i>Alternate Contact</h6>
+                            <p>{profile.alternateContact || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-left" data-aos-delay="375">
+                            <h6><i className="fa fa-id-badge"></i>Employer Code</h6>
+                            <p>{profile.employerCode || 'N/A'}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div className="documents-section" data-aos="fade-up" data-aos-delay="300">
