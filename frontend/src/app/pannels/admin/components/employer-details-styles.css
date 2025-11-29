@@ -2,7 +2,7 @@
 .employer-details-container {
     background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
     min-height: 100vh;
-    padding: 20px;
+    padding: 30px 20px 20px 20px;
 }
 
 .employer-details-header {
@@ -11,6 +11,7 @@
     border: 1px solid #ffe0b3;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
     padding: 25px;
+    margin-top: 20px;
     margin-bottom: 30px;
     transition: all 0.3s ease;
     overflow: visible;
@@ -53,7 +54,8 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 20px;
+    margin-top: 0;
+    margin-bottom: 25px;
 }
 
 .back-button i {
@@ -195,11 +197,17 @@
     text-align: center !important;
 }
 
-.documents-table thead th:nth-child(1) { width: 25% !important; }
-.documents-table thead th:nth-child(2) { width: 25% !important; }
-.documents-table thead th:nth-child(3) { width: 15% !important; }
-.documents-table thead th:nth-child(4) { width: 15% !important; }
-.documents-table thead th:nth-child(5) { width: 20% !important; }
+.documents-table thead th:nth-child(1) { width: 25% !important; min-width: 150px !important; }
+.documents-table thead th:nth-child(2) { width: 25% !important; min-width: 150px !important; }
+.documents-table thead th:nth-child(3) { width: 15% !important; min-width: 100px !important; }
+.documents-table thead th:nth-child(4) { width: 15% !important; min-width: 100px !important; }
+.documents-table thead th:nth-child(5) { width: 20% !important; min-width: 150px !important; }
+
+.documents-table tbody td:nth-child(1) { width: 25% !important; min-width: 150px !important; }
+.documents-table tbody td:nth-child(2) { width: 25% !important; min-width: 150px !important; }
+.documents-table tbody td:nth-child(3) { width: 15% !important; min-width: 100px !important; }
+.documents-table tbody td:nth-child(4) { width: 15% !important; min-width: 100px !important; }
+.documents-table tbody td:nth-child(5) { width: 20% !important; min-width: 150px !important; }
 
 .documents-table thead th i {
     color: #ffffff !important;
@@ -481,7 +489,7 @@
     max-height: 90vh;
     position: relative;
     animation: zoomIn 0.3s ease;
-    overflow: hidden;
+    overflow: visible;
     display: flex;
     flex-direction: column;
     transition: all 0.3s ease;
@@ -507,6 +515,8 @@
     margin-bottom: 20px;
     padding-bottom: 15px;
     border-bottom: 2px solid #f1f3f4;
+    position: relative;
+    z-index: 10;
 }
 
 .image-modal-title {
@@ -547,9 +557,9 @@
 }
 
 .modal-close-btn {
-    background: transparent;
+    background: #ff6b35;
     border: none;
-    color: #333;
+    color: white;
     width: 35px;
     height: 35px;
     border-radius: 50%;
@@ -558,21 +568,25 @@
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 20;
 }
 
 .modal-close-btn:hover {
     transform: scale(1.1);
-    background: rgba(0, 0, 0, 0.05);
+    background: #e74c3c;
 }
 
 .modal-image {
     max-width: 100%;
-    max-height: calc(90vh - 100px);
+    max-height: calc(90vh - 150px);
     width: auto;
     height: auto;
     object-fit: contain;
     border-radius: 10px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: block;
+    margin: 0 auto;
 }
 
 .loading-container {
@@ -839,7 +853,29 @@
 .table-responsive {
     border-radius: 12px;
     box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 600px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #FDC360;
+    border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #ff9c00;
 }
 
 /* Document type icons */
@@ -878,6 +914,10 @@
         padding: 8px 12px;
         font-size: 0.7rem;
     }
+    
+    .employer-details-container {
+        padding: 15px;
+    }
 }
 
 @media (max-width: 992px) {
@@ -899,24 +939,51 @@
 }
 
 @media (max-width: 768px) {
+    .employer-details-container {
+        padding: 10px;
+    }
+    
+    .employer-details-header {
+        padding: 20px 15px;
+        margin-bottom: 20px;
+    }
+    
     .employer-details-header h2 {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .employer-details-header h2 i {
+        font-size: 1.3rem;
+    }
+    
+    .employer-details-subtitle {
+        font-size: 14px;
     }
     
     .profile-info-card {
-        padding: 20px;
+        padding: 15px;
+        margin-bottom: 20px;
     }
     
-    /* Keep 2 columns on tablet */
+    .profile-section-title {
+        font-size: 1.2rem;
+        flex-wrap: wrap;
+    }
+    
+    /* Single column on mobile */
     .profile-info-card .row {
         display: flex;
         flex-wrap: wrap;
     }
     
     .profile-info-card .row .col-lg-6 {
-        width: 50%;
-        max-width: 50%;
-        flex: 0 0 50%;
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+        padding: 0 !important;
     }
     
     .documents-section {
@@ -1004,24 +1071,140 @@
 }
 
 @media (max-width: 576px) {
-    .documents-table thead th {
-        padding: 10px 6px;
-        font-size: 0.65rem;
+    .employer-details-container {
+        padding: 8px;
+    }
+    
+    .employer-details-header {
+        padding: 15px 12px;
+        margin-bottom: 15px;
+    }
+    
+    .employer-details-header h2 {
+        font-size: 1.3rem;
+    }
+    
+    .employer-details-subtitle {
+        font-size: 13px;
+    }
+    
+    .back-button {
+        padding: 10px 18px;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+    
+    .profile-info-card {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .profile-section-title {
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+        padding-bottom: 8px;
+    }
+    
+    .profile-field {
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+    
+    .profile-field h6 {
+        font-size: 0.8rem;
+    }
+    
+    .profile-field p {
+        font-size: 0.9rem;
+    }
+    
+    .description-section {
+        padding: 15px;
+        margin-top: 15px;
+    }
+    
+    .description-text {
+        font-size: 0.9rem;
+    }
+    
+    .documents-section {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    /* Mobile table - card layout */
+    .documents-table {
+        display: block;
+        width: 100%;
+    }
+    
+    .documents-table thead {
+        display: none;
+    }
+    
+    .documents-table tbody {
+        display: block;
+    }
+    
+    .documents-table tbody tr {
+        display: block;
+        margin-bottom: 15px;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 12px;
+        background: white;
     }
     
     .documents-table tbody td {
-        padding: 10px 6px;
+        display: block;
+        text-align: left !important;
+        padding: 8px 0 !important;
+        border: none !important;
+        font-size: 0.85rem !important;
+    }
+    
+    .documents-table tbody td:before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: #ff6b35;
+        display: block;
+        margin-bottom: 5px;
         font-size: 0.75rem;
+        text-transform: uppercase;
+    }
+    
+    .documents-table tbody td:first-child {
+        border-top: none;
+        padding-top: 0 !important;
+    }
+    
+    .documents-table tbody td:last-child {
+        padding-bottom: 0 !important;
+    }
+    
+    .action-buttons-container {
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        gap: 8px !important;
+        justify-content: flex-start !important;
+    }
+    
+    .action-buttons-container .btn {
+        width: auto !important;
+        min-width: 80px !important;
+        flex: 0 0 auto;
     }
     
     .status-badge {
         padding: 6px 12px;
         font-size: 0.65rem;
+        display: inline-flex;
     }
     
     .action-btn {
         padding: 8px 12px;
         font-size: 0.65rem;
+        min-width: 70px;
     }
     
     .job-count-card {
@@ -1039,6 +1222,24 @@
     
     .job-count-label {
         font-size: 0.9rem;
+    }
+    
+    .gallery-container {
+        gap: 8px;
+    }
+    
+    .gallery-item {
+        width: calc(50% - 4px);
+        height: 120px;
+    }
+    
+    .image-modal-content {
+        max-width: 95%;
+        padding: 15px;
+    }
+    
+    .modal-image {
+        max-height: calc(80vh - 80px);
     }
 }
 
@@ -1427,6 +1628,10 @@
 }
 
 @media (max-width: 576px) {
+    .authorization-letters-section {
+        padding: 15px;
+    }
+    
     .authorization-letters-section h6 {
         font-size: 1rem;
         flex-direction: column;
@@ -1434,17 +1639,38 @@
         gap: 8px;
     }
     
+    .authorization-letter-card {
+        padding: 15px;
+    }
+    
     .letter-header h6 {
-        font-size: 1rem;
+        font-size: 0.95rem;
+    }
+    
+    .letter-filename {
+        font-size: 0.85rem;
+    }
+    
+    .letter-date {
+        font-size: 0.8rem;
     }
     
     .letter-actions {
-        flex-direction: column;
+        flex-direction: row;
+        flex-wrap: wrap;
         gap: 6px;
+        justify-content: flex-start;
     }
     
     .letter-actions .action-btn {
-        width: 100%;
-        min-width: unset;
+        width: auto;
+        min-width: 70px;
+        height: 32px;
+        font-size: 0.7rem;
+        padding: 0 12px;
+    }
+    
+    .letter-actions .action-btn i {
+        font-size: 0.85rem;
     }
 }

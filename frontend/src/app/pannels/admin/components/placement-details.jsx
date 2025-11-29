@@ -119,14 +119,11 @@ function PlacementDetails() {
     const handleFileApprove = async (fileId, fileName) => {
         const file = placement?.fileHistory?.find(f => f._id === fileId);
         const displayName = file?.customName || fileName;
-        if (!window.confirm(`Are you sure you want to approve and process the file "${displayName}"? This will create candidate accounts from the file data.`)) {
-            return;
-        }
         
         try {
             setProcessingFiles(prev => ({...prev, [fileId]: 'approving'}));
             const response = await fetch(`http://localhost:5000/api/admin/placements/${id}/files/${fileId}/approve`, {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
                     'Content-Type': 'application/json'
@@ -160,14 +157,11 @@ function PlacementDetails() {
     const handleFileReject = async (fileId, fileName) => {
         const file = placement?.fileHistory?.find(f => f._id === fileId);
         const displayName = file?.customName || fileName;
-        if (!window.confirm(`Are you sure you want to reject the file "${displayName}"? This action cannot be undone.`)) {
-            return;
-        }
         
         try {
             setProcessingFiles(prev => ({...prev, [fileId]: 'rejecting'}));
             const response = await fetch(`http://localhost:5000/api/admin/placements/${id}/files/${fileId}/reject`, {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
                     'Content-Type': 'application/json'
@@ -298,9 +292,6 @@ function PlacementDetails() {
     const handleProcessData = async (fileId, fileName) => {
         const file = placement?.fileHistory?.find(f => f._id === fileId);
         const displayName = file?.customName || fileName;
-        if (!window.confirm(`Are you sure you want to process the file "${displayName}"?\n\nThis will:\n• Create candidate accounts from Excel data\n• Enable immediate login with email/password from Excel\n• Store data in database permanently\n• Allow candidates to access their dashboard`)) {
-            return;
-        }
         
         try {
             setProcessingFiles(prev => ({...prev, [fileId]: 'processing'}));
@@ -376,10 +367,6 @@ function PlacementDetails() {
     };
 
     const handleStoreExcelData = async () => {
-        if (!window.confirm('This will store all Excel data from uploaded files in MongoDB. Continue?')) {
-            return;
-        }
-        
         try {
             setProcessing(true);
             const response = await fetch(`http://localhost:5000/api/admin/placements/${id}/store-excel-data`, {
@@ -479,144 +466,154 @@ function PlacementDetails() {
 
             {/* Officer Information */}
             <div className="modern-card mb-4 p-4">
-                <div className="row align-items-center mb-4">
-                    <div className="col-md-2 text-center">
-                        {placement.logo ? (
-                            <img 
-                                src={placement.logo} 
-                                alt="College Logo" 
-                                style={{
-                                    width: '100px',
-                                    height: '100px',
-                                    objectFit: 'contain',
-                                    borderRadius: '12px',
-                                    border: '2px solid #e9ecef',
-                                    background: '#f8f9fa'
-                                }}
-                            />
-                        ) : (
-                            <div 
-                                style={{
-                                    width: '100px',
-                                    height: '100px',
-                                    borderRadius: '12px',
-                                    border: '2px dashed #ccc',
-                                    background: '#f8f9fa',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}
-                            >
-                                <i className="fa fa-university fa-2x text-muted"></i>
-                            </div>
-                        )}
-                        <small className="text-muted d-block mt-2">College Logo</small>
-                    </div>
-                    <div className="col-md-2 text-center">
-                        {placement.idCard ? (
-                            <div>
-                                <img 
-                                    src={placement.idCard} 
-                                    alt="ID Card" 
-                                    style={{
-                                        width: '100px',
-                                        height: '100px',
-                                        objectFit: 'contain',
-                                        borderRadius: '12px',
-                                        border: '2px solid #e9ecef',
-                                        background: '#f8f9fa'
-                                    }}
-                                />
-                                <div className="mt-2">
-                                    <i 
-                                        className="fa fa-download" 
-                                        onClick={() => {
-                                            fetch(`http://localhost:5000/api/admin/placements/${id}/download-id-card`, {
-                                                headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
-                                            }).then(response => response.blob())
-                                            .then(blob => {
-                                                const url = window.URL.createObjectURL(blob);
-                                                const a = document.createElement('a');
-                                                a.href = url;
-                                                a.download = `${placement.name.replace(/\s+/g, '_')}_ID_Card`;
-                                                document.body.appendChild(a);
-                                                a.click();
-                                                window.URL.revokeObjectURL(url);
-                                                document.body.removeChild(a);
-                                            }).catch(() => alert('Failed to download ID card'));
+                <div className="row mb-4">
+                    <div className="col-md-12">
+                        <div className="d-flex align-items-start gap-4">
+                            <div className="text-center">
+                                {placement.logo ? (
+                                    <img 
+                                        src={placement.logo} 
+                                        alt="College Logo" 
+                                        style={{
+                                            width: '100px',
+                                            height: '100px',
+                                            objectFit: 'contain',
+                                            borderRadius: '12px',
+                                            border: '2px solid #e9ecef',
+                                            background: '#f8f9fa'
                                         }}
-                                        style={{cursor: 'pointer', color: '#007bff', fontSize: '16px'}}
-                                        title="Download ID Card"
-                                    ></i>
-                                </div>
+                                    />
+                                ) : (
+                                    <div 
+                                        style={{
+                                            width: '100px',
+                                            height: '100px',
+                                            borderRadius: '12px',
+                                            border: '2px dashed #ccc',
+                                            background: '#f8f9fa',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}
+                                    >
+                                        <i className="fa fa-university fa-2x text-muted"></i>
+                                    </div>
+                                )}
+                                <small className="text-muted d-block mt-2">College Logo</small>
                             </div>
-                        ) : (
-                            <div 
-                                style={{
-                                    width: '100px',
-                                    height: '100px',
-                                    borderRadius: '12px',
-                                    border: '2px dashed #ccc',
-                                    background: '#f8f9fa',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}
-                            >
-                                <i className="fa fa-id-card fa-2x text-muted"></i>
+                            <div className="text-center">
+                                {placement.idCard ? (
+                                    <img 
+                                        src={placement.idCard} 
+                                        alt="ID Card" 
+                                        style={{
+                                            width: '100px',
+                                            height: '100px',
+                                            objectFit: 'contain',
+                                            borderRadius: '12px',
+                                            border: '2px solid #e9ecef',
+                                            background: '#f8f9fa'
+                                        }}
+                                    />
+                                ) : (
+                                    <div 
+                                        style={{
+                                            width: '100px',
+                                            height: '100px',
+                                            borderRadius: '12px',
+                                            border: '2px dashed #ccc',
+                                            background: '#f8f9fa',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}
+                                    >
+                                        <i className="fa fa-id-card fa-2x text-muted"></i>
+                                    </div>
+                                )}
+                                <small className="text-muted d-block mt-2">ID Card</small>
                             </div>
-                        )}
-                        <small className="text-muted d-block mt-2">ID Card</small>
-                    </div>
-                    <div className="col-md-8">
-                        <div className="mb-3">
-                            <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600'}}>1. College Name</h4>
-                            <p className="mb-0" style={{color: '#6c757d', fontSize: '1.1rem'}}>
-                                <i className="fa fa-university mr-2"></i>
-                                {placement.collegeName || 'Not Available'}
-                            </p>
+                            <div style={{flex: 1}}>
+                        <div className="row">
+                            <div className="col-md-6 mb-3">
+                                <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600', fontSize: '0.95rem'}}>College Name</h4>
+                                <p className="mb-0" style={{color: '#6c757d', fontSize: '1rem'}}>
+                                    <i className="fa fa-university mr-2" style={{color: '#fd7e14'}}></i>
+                                    {placement.collegeName || 'Not Available'}
+                                </p>
+                            </div>
+                            <div className="col-md-6 mb-3">
+                                <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600', fontSize: '0.95rem'}}>Placement Officer Name</h4>
+                                <p className="mb-0" style={{color: '#6c757d', fontSize: '1rem'}}>
+                                    <i className="fa fa-user mr-2" style={{color: '#fd7e14'}}></i>
+                                    {placement.name}
+                                </p>
+                            </div>
+                            <div className="col-md-6 mb-3">
+                                <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600', fontSize: '0.95rem'}}>College Address</h4>
+                                <p className="mb-0" style={{color: '#6c757d', fontSize: '1rem'}}>
+                                    <i className="fa fa-map-marker mr-2" style={{color: '#fd7e14'}}></i>
+                                    {placement.collegeAddress || 'Not Available'}
+                                </p>
+                            </div>
+                            <div className="col-md-6 mb-3">
+                                <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600', fontSize: '0.95rem'}}>College Official Email ID</h4>
+                                <p className="mb-0" style={{color: '#6c757d', fontSize: '1rem'}}>
+                                    <i className="fa fa-envelope mr-2" style={{color: '#fd7e14'}}></i>
+                                    {placement.collegeOfficialEmail || 'Not Available'}
+                                </p>
+                            </div>
+                            <div className="col-md-6 mb-3">
+                                <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600', fontSize: '0.95rem'}}>College Official Phone Number</h4>
+                                <p className="mb-0" style={{color: '#6c757d', fontSize: '1rem'}}>
+                                    <i className="fa fa-phone mr-2" style={{color: '#fd7e14'}}></i>
+                                    {placement.collegeOfficialPhone || 'Not Available'}
+                                </p>
+                            </div>
+                            <div className="col-md-6 mb-3">
+                                <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600', fontSize: '0.95rem'}}>ID Card</h4>
+                                <p className="mb-0" style={{color: '#6c757d', fontSize: '1rem'}}>
+                                    {placement.idCard ? (
+                                        <>
+                                            <i 
+                                                className="fa fa-download mr-2" 
+                                                onClick={() => {
+                                                    fetch(`http://localhost:5000/api/admin/placements/${id}/download-id-card`, {
+                                                        headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
+                                                    }).then(response => response.blob())
+                                                    .then(blob => {
+                                                        const url = window.URL.createObjectURL(blob);
+                                                        const a = document.createElement('a');
+                                                        a.href = url;
+                                                        a.download = `${placement.name.replace(/\s+/g, '_')}_ID_Card`;
+                                                        document.body.appendChild(a);
+                                                        a.click();
+                                                        window.URL.revokeObjectURL(url);
+                                                        document.body.removeChild(a);
+                                                    }).catch(() => alert('Failed to download ID card'));
+                                                }}
+                                                style={{cursor: 'pointer', color: '#007bff'}}
+                                                title="Download ID Card"
+                                            ></i>
+                                            Uploaded
+                                        </>
+                                    ) : (
+                                        <>
+                                            <i className="fa fa-id-card mr-2"></i>
+                                            Not Uploaded
+                                        </>
+                                    )}
+                                </p>
+                            </div>
+                            <div className="col-md-6 mb-3">
+                                <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600', fontSize: '0.95rem'}}>Personal Email</h4>
+                                <p className="mb-0" style={{color: '#6c757d', fontSize: '1rem'}}>
+                                    <i className="fa fa-envelope mr-2" style={{color: '#fd7e14'}}></i>
+                                    {placement.email}
+                                </p>
+                            </div>
                         </div>
-                        <div className="mb-3">
-                            <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600'}}>2. Placement Officer Name</h4>
-                            <p className="mb-0" style={{color: '#6c757d', fontSize: '1.1rem'}}>
-                                <i className="fa fa-user mr-2"></i>
-                                {placement.name}
-                            </p>
                         </div>
-                        <div className="mb-3">
-                            <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600'}}>3. College Address</h4>
-                            <p className="mb-0" style={{color: '#6c757d'}}>
-                                <i className="fa fa-map-marker mr-2"></i>
-                                {placement.collegeAddress || 'Not Available'}
-                            </p>
-                        </div>
-                        <div className="mb-3">
-                            <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600'}}>4. College Official Email ID</h4>
-                            <p className="mb-0" style={{color: '#6c757d'}}>
-                                <i className="fa fa-envelope mr-2"></i>
-                                {placement.collegeOfficialEmail || 'Not Available'}
-                            </p>
-                        </div>
-                        <div className="mb-3">
-                            <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600'}}>5. College Official Phone Number</h4>
-                            <p className="mb-0" style={{color: '#6c757d'}}>
-                                <i className="fa fa-phone mr-2"></i>
-                                {placement.collegeOfficialPhone || 'Not Available'}
-                            </p>
-                        </div>
-                        <div className="mb-3">
-                            <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600'}}>6. College Logo</h4>
-                            <p className="mb-0" style={{color: '#6c757d'}}>
-                                <i className="fa fa-image mr-2"></i>
-                                {placement.logo ? 'Uploaded' : 'Not Uploaded'}
-                            </p>
-                        </div>
-                        <div className="mb-3">
-                            <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600'}}>7. Personal Email</h4>
-                            <p className="mb-0" style={{color: '#6c757d'}}>
-                                <i className="fa fa-envelope mr-2"></i>
-                                {placement.email}
-                            </p>
                         </div>
                     </div>
                 </div>
@@ -626,7 +623,7 @@ function PlacementDetails() {
                         <div className="info-card" style={{minHeight: '100px'}}>
                             <div>
                                 <label className="text-muted mb-1">
-                                    <i className="fa fa-phone mr-2" style={{color: '#000'}}></i>Phone Number
+                                    <i className="fa fa-phone mr-2" style={{color: '#fd7e14'}}></i>Phone Number
                                 </label>
                                 <p className="mb-0 font-weight-bold">{placement.phone || 'Not provided'}</p>
                             </div>
@@ -636,7 +633,7 @@ function PlacementDetails() {
                         <div className="info-card" style={{minHeight: '100px'}}>
                             <div>
                                 <label className="text-muted mb-1">
-                                    <i className="fa fa-calendar mr-2" style={{color: '#000'}}></i>Registration Date
+                                    <i className="fa fa-calendar mr-2" style={{color: '#fd7e14'}}></i>Registration Date
                                 </label>
                                 <p className="mb-0 font-weight-bold">{new Date(placement.createdAt).toLocaleDateString('en-US', {
                                     year: 'numeric',
@@ -650,7 +647,7 @@ function PlacementDetails() {
                         <div className="info-card" style={{minHeight: '100px'}}>
                             <div>
                                 <label className="text-muted mb-1">
-                                    <i className={`fa ${placement.status === 'approved' ? 'fa-check-circle' : 'fa-clock-o'} mr-2`} style={{color: '#000'}}></i>Status
+                                    <i className={`fa ${placement.status === 'approved' ? 'fa-check-circle' : 'fa-clock-o'} mr-2`} style={{color: '#fd7e14'}}></i>Status
                                 </label>
                                 <p className="mb-0 font-weight-bold" style={{
                                     color: placement.status === 'approved' ? '#28a745' :
@@ -665,7 +662,7 @@ function PlacementDetails() {
                         <div className="info-card" style={{minHeight: '100px'}}>
                             <div>
                                 <label className="text-muted mb-1">
-                                    <i className="fa fa-files-o mr-2" style={{color: '#000'}}></i>Files Uploaded
+                                    <i className="fa fa-files-o mr-2" style={{color: '#fd7e14'}}></i>Files Uploaded
                                 </label>
                                 <p className="mb-0 font-weight-bold">{placement.fileHistory?.length || 0}</p>
                             </div>
@@ -1170,15 +1167,13 @@ function PlacementDetails() {
                     </div>
                 ) : studentData.length > 0 ? (
                     <div className="table-responsive">
-                        <table className="table table-striped" style={{minWidth: '800px'}}>
+                        <table className="table table-striped" style={{minWidth: '600px'}}>
                             <thead className="thead-light">
                                 <tr>
                                     <th style={{minWidth: '80px', width: '80px'}}>ID</th>
                                     <th style={{minWidth: '150px'}}>Name</th>
-                                    <th style={{minWidth: '150px'}}>College</th>
                                     <th style={{minWidth: '200px'}}>Email</th>
                                     <th style={{minWidth: '120px'}}>Phone</th>
-                                    <th style={{minWidth: '120px'}}>Course</th>
                                     <th style={{minWidth: '100px'}}>Password</th>
                                     <th style={{minWidth: '80px'}}>Credits</th>
                                 </tr>
@@ -1211,16 +1206,10 @@ function PlacementDetails() {
                                             </div>
                                         </td>
                                         <td>
-                                            {student.collegeName || '-'}
-                                        </td>
-                                        <td>
                                             {student.email || 'N/A'}
                                         </td>
                                         <td>
                                             {student.phone || '-'}
-                                        </td>
-                                        <td>
-                                            {student.course || '-'}
                                         </td>
                                         <td style={{verticalAlign: 'top', paddingTop: '12px'}}>
                                             <span className="status-badge status-approved" style={{

@@ -10,15 +10,28 @@ function SectionCanKeySkills({ profile }) {
     const [showCustomInput, setShowCustomInput] = useState(false);
 
     const predefinedSkills = [
-        'JavaScript', 'Python', 'Java', 'C++', 'C#', 'PHP', 'Ruby', 'Go', 'Swift', 'Kotlin',
-        'HTML', 'CSS', 'React', 'Angular', 'Vue.js', 'Node.js', 'Express.js', 'Bootstrap', 'jQuery',
-        'MySQL', 'PostgreSQL', 'MongoDB', 'SQLite', 'Oracle', 'Redis',
-        'AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Jenkins', 'Git',
+        'JavaScript', 'Python', 'Java', 'C++', 'C#', 'PHP', 'Ruby', 'Go', 'Swift', 'Kotlin', 'TypeScript', 'Rust', 'Scala',
+        'HTML', 'CSS', 'React', 'Angular', 'Vue.js', 'Node.js', 'Express.js', 'Bootstrap', 'jQuery', 'Next.js', 'Nuxt.js', 'Tailwind CSS', 'Material UI', 'Redux', 'Svelte',
+        'MySQL', 'PostgreSQL', 'MongoDB', 'SQLite', 'Oracle', 'Redis', 'Firebase', 'Cassandra', 'DynamoDB',
+        'AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Jenkins', 'Git', 'Terraform', 'Ansible', 'CI/CD', 'GitLab', 'GitHub Actions',
+        'Django', 'Flask', 'Spring Boot', 'Laravel', 'Ruby on Rails', 'ASP.NET', 'FastAPI',
+        'React Native', 'Flutter', 'Ionic', 'Xamarin', 'Android', 'iOS',
+        'GraphQL', 'REST API', 'Microservices', 'WebSockets', 'gRPC',
+        'Selenium', 'Cypress', 'Jest', 'Mocha', 'Pytest', 'JUnit', 'Postman',
+        'Linux', 'Unix', 'Windows Server', 'Shell Scripting', 'PowerShell',
+        'Agile', 'Scrum', 'Kanban', 'Jira', 'Confluence', 'Trello',
+        'Figma', 'Adobe XD', 'Sketch', 'Photoshop', 'Illustrator',
+        'Salesforce', 'SAP', 'ServiceNow', 'Workday',
+        'Power BI', 'Tableau', 'Excel', 'Google Analytics', 'Looker',
+        'Hadoop', 'Spark', 'Kafka', 'Airflow', 'ETL',
+        'TensorFlow', 'PyTorch', 'Keras', 'Scikit-learn', 'Pandas', 'NumPy',
+        'Blockchain', 'Ethereum', 'Solidity', 'Web3',
+        'Penetration Testing', 'Ethical Hacking', 'OWASP', 'Security Auditing',
         'Project Management', 'Team Leadership', 'Communication', 'Problem Solving', 'Critical Thinking',
         'Data Analysis', 'Business Analysis', 'Financial Analysis', 'Marketing', 'Sales', 'Accounting',
-        'Digital Marketing', 'Content Writing', 'SEO', 'Social Media Marketing',
+        'Digital Marketing', 'Content Writing', 'SEO', 'Social Media Marketing', 'Email Marketing', 'PPC',
         'Software Testing', 'Quality Assurance', 'System Administration', 'Network Administration',
-        'Cybersecurity', 'Data Science', 'Machine Learning', 'Artificial Intelligence'
+        'Cybersecurity', 'Data Science', 'Machine Learning', 'Artificial Intelligence', 'Deep Learning', 'NLP', 'Computer Vision'
     ];
 
     useEffect(() => {

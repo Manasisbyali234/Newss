@@ -120,14 +120,28 @@ function EmpCompanyProfilePage() {
                 // Split phone numbers into country code and number parts
                 if (profileData.phone) {
                     const phoneStr = String(profileData.phone).trim();
-                    // Match country code (prefer longer matches like +91 over +1)
-                    const phoneMatch = phoneStr.match(/^(\+\d{2,4})(\d+)$/) || phoneStr.match(/^(\+\d{1})(\d{10,})$/);
-                    if (phoneMatch) {
-                        profileData.phoneCountryCode = phoneMatch[1];
-                        profileData.phone = phoneMatch[2];
+                    if (phoneStr.startsWith('+')) {
+                        // For +91, extract exactly 3 chars as country code
+                        if (phoneStr.startsWith('+91')) {
+                            profileData.phoneCountryCode = '+91';
+                            profileData.phone = phoneStr.substring(3);
+                        } else if (phoneStr.startsWith('+1')) {
+                            profileData.phoneCountryCode = '+1';
+                            profileData.phone = phoneStr.substring(2);
+                        } else {
+                            // For other codes, try to match pattern
+                            const phoneMatch = phoneStr.match(/^(\+\d{1,4})(\d{8,15})$/);
+                            if (phoneMatch) {
+                                profileData.phoneCountryCode = phoneMatch[1];
+                                profileData.phone = phoneMatch[2];
+                            } else {
+                                profileData.phoneCountryCode = '+91';
+                                profileData.phone = phoneStr.replace(/^\+/, '');
+                            }
+                        }
                     } else {
                         profileData.phoneCountryCode = '+91';
-                        profileData.phone = phoneStr.replace(/^\+\d+/, '');
+                        profileData.phone = phoneStr;
                     }
                 } else {
                     profileData.phoneCountryCode = '+91';
@@ -136,13 +150,26 @@ function EmpCompanyProfilePage() {
 
                 if (profileData.officialMobile) {
                     const officialStr = String(profileData.officialMobile).trim();
-                    const officialMatch = officialStr.match(/^(\+\d{2,4})(\d+)$/) || officialStr.match(/^(\+\d{1})(\d{10,})$/);
-                    if (officialMatch) {
-                        profileData.officialMobileCountryCode = officialMatch[1];
-                        profileData.officialMobile = officialMatch[2];
+                    if (officialStr.startsWith('+')) {
+                        if (officialStr.startsWith('+91')) {
+                            profileData.officialMobileCountryCode = '+91';
+                            profileData.officialMobile = officialStr.substring(3);
+                        } else if (officialStr.startsWith('+1')) {
+                            profileData.officialMobileCountryCode = '+1';
+                            profileData.officialMobile = officialStr.substring(2);
+                        } else {
+                            const officialMatch = officialStr.match(/^(\+\d{1,4})(\d{8,15})$/);
+                            if (officialMatch) {
+                                profileData.officialMobileCountryCode = officialMatch[1];
+                                profileData.officialMobile = officialMatch[2];
+                            } else {
+                                profileData.officialMobileCountryCode = '+91';
+                                profileData.officialMobile = officialStr.replace(/^\+/, '');
+                            }
+                        }
                     } else {
                         profileData.officialMobileCountryCode = '+91';
-                        profileData.officialMobile = officialStr.replace(/^\+\d+/, '');
+                        profileData.officialMobile = officialStr;
                     }
                 } else {
                     profileData.officialMobileCountryCode = '+91';
@@ -151,13 +178,26 @@ function EmpCompanyProfilePage() {
 
                 if (profileData.contactMobile) {
                     const contactStr = String(profileData.contactMobile).trim();
-                    const contactMatch = contactStr.match(/^(\+\d{2,4})(\d+)$/) || contactStr.match(/^(\+\d{1})(\d{10,})$/);
-                    if (contactMatch) {
-                        profileData.contactMobileCountryCode = contactMatch[1];
-                        profileData.contactMobile = contactMatch[2];
+                    if (contactStr.startsWith('+')) {
+                        if (contactStr.startsWith('+91')) {
+                            profileData.contactMobileCountryCode = '+91';
+                            profileData.contactMobile = contactStr.substring(3);
+                        } else if (contactStr.startsWith('+1')) {
+                            profileData.contactMobileCountryCode = '+1';
+                            profileData.contactMobile = contactStr.substring(2);
+                        } else {
+                            const contactMatch = contactStr.match(/^(\+\d{1,4})(\d{8,15})$/);
+                            if (contactMatch) {
+                                profileData.contactMobileCountryCode = contactMatch[1];
+                                profileData.contactMobile = contactMatch[2];
+                            } else {
+                                profileData.contactMobileCountryCode = '+91';
+                                profileData.contactMobile = contactStr.replace(/^\+/, '');
+                            }
+                        }
                     } else {
                         profileData.contactMobileCountryCode = '+91';
-                        profileData.contactMobile = contactStr.replace(/^\+\d+/, '');
+                        profileData.contactMobile = contactStr;
                     }
                 } else {
                     profileData.contactMobileCountryCode = '+91';
@@ -166,13 +206,26 @@ function EmpCompanyProfilePage() {
 
                 if (profileData.alternateContact) {
                     const alternateStr = String(profileData.alternateContact).trim();
-                    const alternateMatch = alternateStr.match(/^(\+\d{2,4})(\d+)$/) || alternateStr.match(/^(\+\d{1})(\d{10,})$/);
-                    if (alternateMatch) {
-                        profileData.alternateContactCountryCode = alternateMatch[1];
-                        profileData.alternateContact = alternateMatch[2];
+                    if (alternateStr.startsWith('+')) {
+                        if (alternateStr.startsWith('+91')) {
+                            profileData.alternateContactCountryCode = '+91';
+                            profileData.alternateContact = alternateStr.substring(3);
+                        } else if (alternateStr.startsWith('+1')) {
+                            profileData.alternateContactCountryCode = '+1';
+                            profileData.alternateContact = alternateStr.substring(2);
+                        } else {
+                            const alternateMatch = alternateStr.match(/^(\+\d{1,4})(\d{8,15})$/);
+                            if (alternateMatch) {
+                                profileData.alternateContactCountryCode = alternateMatch[1];
+                                profileData.alternateContact = alternateMatch[2];
+                            } else {
+                                profileData.alternateContactCountryCode = '+91';
+                                profileData.alternateContact = alternateStr.replace(/^\+/, '');
+                            }
+                        }
                     } else {
                         profileData.alternateContactCountryCode = '+91';
-                        profileData.alternateContact = alternateStr.replace(/^\+\d+/, '');
+                        profileData.alternateContact = alternateStr;
                     }
                 } else {
                     profileData.alternateContactCountryCode = '+91';

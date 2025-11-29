@@ -32,12 +32,28 @@ const RichTextEditor = ({ value, onChange, placeholder = "Enter text...", classN
         'link', 'image'
     ];
 
+    // Decode HTML entities if they exist
+    const decodeHTML = (html) => {
+        if (!html) return '';
+        const txt = document.createElement('textarea');
+        txt.innerHTML = html;
+        return txt.value;
+    };
+
+    const decodedValue = useMemo(() => decodeHTML(value), [value]);
+
+    // Handle onChange to ensure we're passing proper HTML
+    const handleChange = (content) => {
+        // ReactQuill already provides HTML, just pass it through
+        onChange(content);
+    };
+
     return (
         <div className={`rich-text-editor-wrapper ${className}`}>
             <ReactQuill
                 theme="snow"
-                value={value || ''}
-                onChange={onChange}
+                value={decodedValue}
+                onChange={handleChange}
                 modules={modules}
                 formats={formats}
                 placeholder={placeholder}

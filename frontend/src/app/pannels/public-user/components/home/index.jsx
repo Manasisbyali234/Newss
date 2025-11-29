@@ -36,14 +36,16 @@ function TopRecruitersSection() {
 
     return (
         <div className="section-full p-t120 site-bg-white twm-companies-wrap">
-            <div className="section-head center wt-small-separator-outer">
-                <div className="wt-small-separator site-text-primary">
-                    <div>Top Recruiters</div>
+            <div className="container">
+                <div className="section-head center wt-small-separator-outer">
+                    <div className="wt-small-separator site-text-primary">
+                        <div>Top Recruiters</div>
+                    </div>
+                    <h2 className="wt-title">Discover your next career move</h2>
                 </div>
-                <h2 className="wt-title">Discover your next career move</h2>
             </div>
             <div className="container">
-                <div className="section-content">
+                <div className="section-content" style={{marginTop: '40px'}}>
                     {loading ? (
                         <div className="text-center p-5">Loading jobs...</div>
                     ) : displayJobs.length > 0 ? (

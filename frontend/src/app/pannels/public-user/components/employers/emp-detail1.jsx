@@ -339,53 +339,66 @@ function EmployersDetail1Page() {
 															left: 0,
 															width: '100vw',
 															height: '100vh',
-															backgroundColor: 'rgba(0,0,0,0.8)',
+															backgroundColor: 'rgba(0,0,0,0.9)',
 															zIndex: 9999999,
 															display: 'flex',
 															alignItems: 'center',
-															justifyContent: 'center'
+															justifyContent: 'center',
+															padding: '20px'
 														}}
 														onClick={() => setSelectedImage(null)}
 													>
 														<div 
 															style={{
-																background: 'white',
-																borderRadius: '8px',
-																padding: '20px',
+																position: 'relative',
 																maxWidth: '90vw',
 																maxHeight: '90vh',
-																position: 'relative',
-																boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+																display: 'flex',
+																flexDirection: 'column'
 															}}
 															onClick={(e) => e.stopPropagation()}
 														>
-															<button
-																style={{
-																	position: 'absolute',
-																	top: '10px',
-																	right: '10px',
-																	background: '#f8f9fa',
-																	border: '1px solid #dee2e6',
-																	borderRadius: '50%',
-																	width: '30px',
-																	height: '30px',
-																	fontSize: '16px',
-																	cursor: 'pointer',
-																	color: '#6c757d'
-																}}
-																onClick={() => setSelectedImage(null)}
-															>
-																×
-															</button>
+															<div style={{
+																display: 'flex',
+																justifyContent: 'flex-end',
+																marginBottom: '10px',
+																position: 'relative',
+																zIndex: 10
+															}}>
+																<button
+																	style={{
+																		background: '#ff6b35',
+																		border: 'none',
+																		color: 'white',
+																		borderRadius: '50%',
+																		width: '40px',
+																		height: '40px',
+																		fontSize: '24px',
+																		cursor: 'pointer',
+																		display: 'flex',
+																		alignItems: 'center',
+																		justifyContent: 'center',
+																		boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
+																		transition: 'all 0.3s ease'
+																	}}
+																	onClick={() => setSelectedImage(null)}
+																	onMouseOver={(e) => e.target.style.background = '#e74c3c'}
+																	onMouseOut={(e) => e.target.style.background = '#ff6b35'}
+																>
+																	×
+																</button>
+															</div>
 															<img 
 																src={selectedImage}
 																alt="Gallery"
 																style={{
-																	width: '100%',
+																	maxWidth: '100%',
+																	maxHeight: 'calc(90vh - 60px)',
+																	width: 'auto',
 																	height: 'auto',
-																	maxHeight: 'calc(90vh - 40px)',
 																	objectFit: 'contain',
-																	borderRadius: '4px'
+																	borderRadius: '8px',
+																	boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
 																}}
 															/>
 														</div>

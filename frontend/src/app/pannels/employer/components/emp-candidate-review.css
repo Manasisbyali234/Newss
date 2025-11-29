@@ -40,6 +40,22 @@
   flex-shrink: 0 !important;
 }
 
+/* Profile image display fix */
+.emp-candidate-review-page .rounded-circle {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+}
+
+.emp-candidate-review-page .rounded-circle img {
+  display: block !important;
+  width: 200px !important;
+  height: 200px !important;
+  object-fit: cover !important;
+  max-width: none !important;
+}
+
 .emp-candidate-review-page .card-header .d-flex.align-items-center svg {
   width: 22px !important;
   height: 22px !important;
@@ -70,14 +86,19 @@
 
   /* Adjust header layout for mobile */
   .emp-candidate-review-page .d-flex.justify-content-between {
-    flex-direction: column !important;
-    gap: 1rem !important;
-    align-items: flex-start !important;
+    flex-direction: row !important;
+    gap: 0.5rem !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
   }
 
-  .emp-candidate-review-page .badge {
-    align-self: flex-end !important;
-    margin-top: -2rem !important;
+  .emp-candidate-review-page .d-flex.justify-content-between .d-flex.align-items-center {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .emp-candidate-review-page .d-flex.justify-content-between .d-flex.gap-2 {
+    flex-shrink: 0 !important;
   }
 }
 
@@ -133,37 +154,40 @@
 
   /* Back button positioning */
   .emp-candidate-review-page .btn-outline-primary {
-    position: absolute !important;
-    top: 1rem !important;
-    right: 1rem !important;
-    z-index: 10 !important;
+    flex-shrink: 0 !important;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.85rem !important;
   }
 
   /* Title and subtitle adjustments */
   .emp-candidate-review-page h2 {
-    font-size: 1.5rem !important;
+    font-size: 1.25rem !important;
     margin-bottom: 0.25rem !important;
   }
 
   .emp-candidate-review-page .text-muted.fs-6 {
-    font-size: 0.8rem !important;
+    font-size: 0.75rem !important;
   }
 
   /* Status badge */
   .emp-candidate-review-page .badge {
-    position: static !important;
-    margin-top: 0 !important;
-    align-self: flex-start !important;
+    font-size: 0.7rem !important;
+    padding: 0.35rem 0.75rem !important;
   }
 
   /* Main content adjustments */
   .emp-candidate-review-page .row.g-4 {
     margin: 0 !important;
+    gap: 0 !important;
+  }
+
+  .emp-candidate-review-page .row.mb-4 {
+    margin-bottom: 0.25rem !important;
   }
 
   /* Card spacing */
   .emp-candidate-review-page .card {
-    margin: 0 1rem 1.5rem 1rem !important;
+    margin: 0 1rem 0.75rem 1rem !important;
     border-radius: 12px !important;
     overflow: hidden !important;
   }
@@ -175,8 +199,15 @@
 
   /* Profile image adjustments */
   .emp-candidate-review-page .rounded-circle {
-    width: 80px !important;
-    height: 80px !important;
+    width: 150px !important;
+    height: 150px !important;
+  }
+
+  .emp-candidate-review-page .rounded-circle img {
+    width: 150px !important;
+    height: 150px !important;
+    object-fit: cover !important;
+    max-width: none !important;
   }
 
   /* Skills badges */
@@ -229,6 +260,18 @@
     padding: 0.75rem 1.5rem !important;
     height: 44px !important;
   }
+
+  /* Education buttons - force horizontal */
+  .emp-candidate-review-page .card-body .d-flex.gap-2 {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .emp-candidate-review-page .card-body .d-flex.gap-2 .btn {
+    flex: 1 !important;
+    white-space: nowrap !important;
+    font-size: 0.8rem !important;
+  }
 }
 
 @media (max-width: 575px) {
@@ -252,8 +295,15 @@
 
   /* Profile image smaller on very small screens */
   .emp-candidate-review-page .rounded-circle {
-    width: 60px !important;
-    height: 60px !important;
+    width: 120px !important;
+    height: 120px !important;
+  }
+
+  .emp-candidate-review-page .rounded-circle img {
+    width: 120px !important;
+    height: 120px !important;
+    object-fit: cover !important;
+    max-width: none !important;
   }
 
   /* Compact action buttons */

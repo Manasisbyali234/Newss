@@ -420,6 +420,99 @@ const retryFailedEmail = async (email, name, password, placementOfficerName, col
   return { success: false, error: lastError, attempts: attempt };
 };
 
+const sendApprovalEmail = async (email, name, userType) => {
+  const transporter = createTransport();
+  const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/`;
+  
+  const approvalTemplate = `
+    <div style="font-family: 'Poppins', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa;">
+      <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="color: #28a745; margin: 0; font-size: 28px;">🎉 Profile Approved!</h1>
+        </div>
+        
+        <p style="color: #666; font-size: 16px; line-height: 1.6;">Dear ${name},</p>
+        
+        <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0f9ff 100%); padding: 25px; border-radius: 10px; margin: 25px 0; border-left: 5px solid #28a745;">
+          <p style="color: #155724; margin: 0; font-size: 18px; line-height: 1.6; font-weight: 600;">
+            ✅ Congratulations! Your ${userType === 'employer' ? 'company' : 'placement officer'} profile has been successfully approved by our admin team.
+          </p>
+        </div>
+        
+        <p style="color: #666; font-size: 16px; line-height: 1.6;">
+          You can now proceed with the following steps:
+        </p>
+        
+        <div style="background-color: #f8f9fa; padding: 25px; border-radius: 10px; margin: 25px 0;">
+          <h3 style="color: #2c3e50; margin: 0 0 20px 0; font-size: 18px;">📋 Next Steps:</h3>
+          <div style="color: #495057; line-height: 1.8; font-size: 15px;">
+            ${userType === 'employer' ? `
+              <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+                <span style="color: #fd7e14; font-weight: bold; margin-right: 10px;">1.</span>
+                <span><strong>Login to your dashboard</strong> using your credentials</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+                <span style="color: #fd7e14; font-weight: bold; margin-right: 10px;">2.</span>
+                <span><strong>Post unlimited job openings</strong> for qualified candidates</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+                <span style="color: #fd7e14; font-weight: bold; margin-right: 10px;">3.</span>
+                <span><strong>Review applications</strong> from talented job seekers</span>
+              </div>
+              <div style="display: flex; align-items: flex-start;">
+                <span style="color: #fd7e14; font-weight: bold; margin-right: 10px;">4.</span>
+                <span><strong>Manage your hiring process</strong> efficiently</span>
+              </div>
+            ` : `
+              <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+                <span style="color: #fd7e14; font-weight: bold; margin-right: 10px;">1.</span>
+                <span><strong>Login to your dashboard</strong> using your credentials</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+                <span style="color: #fd7e14; font-weight: bold; margin-right: 10px;">2.</span>
+                <span><strong>Upload student data files</strong> (Excel/CSV format)</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+                <span style="color: #fd7e14; font-weight: bold; margin-right: 10px;">3.</span>
+                <span><strong>Manage student registrations</strong> and track progress</span>
+              </div>
+              <div style="display: flex; align-items: flex-start;">
+                <span style="color: #fd7e14; font-weight: bold; margin-right: 10px;">4.</span>
+                <span><strong>Monitor placement activities</strong> for your college</span>
+              </div>
+            `}
+          </div>
+        </div>
+        
+        <div style="text-align: center; margin: 35px 0;">
+          <a href="${loginUrl}" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 16px 40px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 18px; display: inline-block; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);">🚀 Login to Dashboard</a>
+        </div>
+        
+        <div style="background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #2196f3;">
+          <p style="color: #1565c0; margin: 0; font-size: 14px;">
+            <strong>💡 Quick Tip:</strong> Make sure to complete all sections of your profile for the best experience on TaleGlobal.
+          </p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px; padding-top: 30px; border-top: 2px solid #e9ecef;">
+          <p style="color: #6c757d; font-size: 16px; margin: 0 0 5px 0; font-weight: 600;">Best regards,</p>
+          <p style="color: #fd7e14; font-size: 18px; margin: 0 0 5px 0; font-weight: 700;">The TaleGlobal Team</p>
+          <p style="color: #6c757d; font-size: 14px; margin: 0;">🌟 Connecting Talent with Opportunities 🌟</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const mailOptions = {
+    from: `"TaleGlobal Team" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: '🎉 Profile Approved - Welcome to TaleGlobal!',
+    html: approvalTemplate
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
 module.exports = { 
   sendWelcomeEmail, 
   sendResetEmail, 
@@ -427,5 +520,6 @@ module.exports = {
   sendAssessmentNotificationEmail, 
   sendOTPEmail, 
   sendPlacementCandidateWelcomeEmail,
-  retryFailedEmail
+  retryFailedEmail,
+  sendApprovalEmail
 };

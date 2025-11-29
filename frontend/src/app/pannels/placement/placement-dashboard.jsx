@@ -813,7 +813,7 @@ function PlacementDashboard() {
                             <div className="d-flex justify-content-between align-items-center mb-2">
                                 <small className="text-danger" style={{fontWeight: '600'}}>
                                     <i className="fa fa-exclamation-circle mr-1"></i>
-                                    Required columns (must be filled): Candidate Name, College Name, Email, Phone, Course, Password
+                                    Required columns (must be filled): Candidate Name | College Name | Email | Phone | Course | Password
                                 </small>
                                 <div className="d-flex" style={{gap: '8px'}}>
                                     <a 

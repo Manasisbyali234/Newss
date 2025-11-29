@@ -435,8 +435,8 @@ exports.updateEmployerStatus = async (req, res) => {
     if (isApproved !== undefined) {
       try {
         if (isApproved) {
-          const { sendWelcomeEmail } = require('../utils/emailService');
-          await sendWelcomeEmail(employer.email, employer.companyName, 'employer');
+          const { sendApprovalEmail } = require('../utils/emailService');
+          await sendApprovalEmail(employer.email, employer.companyName, 'employer');
         }
         
         const notificationData = {
@@ -948,8 +948,8 @@ exports.updatePlacementStatus = async (req, res) => {
     // Send approval email and create notification
     if (updateData.status === 'active') {
       try {
-        const { sendWelcomeEmail } = require('../utils/emailService');
-        await sendWelcomeEmail(placement.email, placement.name, 'placement');
+        const { sendApprovalEmail } = require('../utils/emailService');
+        await sendApprovalEmail(placement.email, placement.name, 'placement');
         
         await createNotification({
           title: 'Account Approved',
@@ -980,6 +980,76 @@ exports.getPlacementDetails = async (req, res) => {
 
     res.json({ success: true, placement });
   } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getPlacementData = async (req, res) => {
+  try {
+    const placementId = req.params.id;
+    
+    const candidates = await Candidate.find({ placementId })
+      .select('name email phone course credits')
+      .lean();
+    
+    res.json({ success: true, students: candidates });
+  } catch (error) {
+    console.error('Error getting placement data:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getFileData = async (req, res) => {
+  try {
+    const { id: placementId, fileId } = req.params;
+    
+    const placement = await Placement.findById(placementId);
+    if (!placement) {
+      return res.status(404).json({ success: false, message: 'Placement officer not found' });
+    }
+
+    const file = placement.fileHistory.id(fileId);
+    if (!file) {
+      return res.status(404).json({ success: false, message: 'File not found' });
+    }
+
+    if (!file.fileData) {
+      return res.json({ success: true, students: [] });
+    }
+
+    const result = base64ToBuffer(file.fileData);
+    const buffer = result.buffer;
+
+    let workbook;
+    if (file.fileType && file.fileType.includes('csv')) {
+      const csvData = buffer.toString('utf8');
+      workbook = XLSX.read(csvData, { type: 'string' });
+    } else {
+      workbook = XLSX.read(buffer, { type: 'buffer' });
+    }
+    
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+    
+    if (!jsonData || jsonData.length === 0) {
+      return res.json({ success: true, students: [] });
+    }
+    
+    const students = jsonData.map(row => ({
+      id: row.ID || row.id || row.Id || '',
+      name: row['Candidate Name'] || row['candidate name'] || row['CANDIDATE NAME'] || row.Name || row.name || row.NAME || row['Full Name'] || row['full name'] || row['FULL NAME'] || row['Student Name'] || row['student name'] || row['STUDENT NAME'] || '',
+      collegeName: row['College Name'] || row['college name'] || row['COLLEGE NAME'] || row.College || row.college || row.COLLEGE || '',
+      email: row.Email || row.email || row.EMAIL || '',
+      phone: row.Phone || row.phone || row.PHONE || row.Mobile || row.mobile || row.MOBILE || '',
+      course: row.Course || row.course || row.COURSE || row.Branch || row.branch || row.BRANCH || 'Not Specified',
+      password: row.Password || row.password || row.PASSWORD || '',
+      credits: parseInt(row['Credits Assigned'] || row['credits assigned'] || row['CREDITS ASSIGNED'] || row.Credits || row.credits || row.CREDITS || row.Credit || row.credit || file.credits || 0)
+    }));
+    
+    res.json({ success: true, students });
+  } catch (error) {
+    console.error('Error getting file data:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };

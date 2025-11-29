@@ -118,15 +118,23 @@
   }
 
   .emp-candidate-review-page .row.mb-4 .d-flex.gap-3 {
-    flex-direction: column !important;
-    align-items: flex-start !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
   }
 
-  .emp-candidate-review-page .btn-outline-primary.rounded-circle {
-    position: absolute !important;
-    top: 1rem !important;
-    right: 1rem !important;
-    z-index: 10 !important;
+  .emp-candidate-review-page .btn-outline-primary {
+    flex-shrink: 0 !important;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  .emp-candidate-review-page .row.mb-4 h2 {
+    font-size: 1.25rem !important;
+  }
+
+  .emp-candidate-review-page .row.mb-4 .text-muted {
+    font-size: 0.75rem !important;
   }
 
   /* Header title icons */

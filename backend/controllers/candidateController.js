@@ -16,18 +16,19 @@ const generateToken = (id, role) => {
 exports.registerCandidate = async (req, res) => {
   try {
     const { name, email, password, phone, sendWelcomeEmail: shouldSendWelcome } = req.body;
-    console.log('Registration attempt:', { name, email, phone, shouldSendWelcome });
+    const normalizedEmail = email.toLowerCase().trim();
+    console.log('Registration attempt:', { name, email: normalizedEmail, phone, shouldSendWelcome });
 
-    const existingCandidate = await Candidate.findOne({ email });
+    const existingCandidate = await Candidate.findOne({ email: normalizedEmail });
     if (existingCandidate) {
-      console.log('Email already exists:', email);
+      console.log('Email already exists:', normalizedEmail);
       return res.status(400).json({ success: false, message: 'Email already registered' });
     }
 
     // Create candidate without password - they will create it via email link
     const candidate = await Candidate.create({ 
       name, 
-      email, 
+      email: normalizedEmail, 
       phone,
       registrationMethod: 'email_signup',
       credits: 0,
@@ -40,8 +41,8 @@ exports.registerCandidate = async (req, res) => {
 
     // Send welcome email with password creation link
     try {
-      await sendWelcomeEmail(email, name, 'candidate');
-      console.log('Welcome email sent successfully to:', email);
+      await sendWelcomeEmail(normalizedEmail, name, 'candidate');
+      console.log('Welcome email sent successfully to:', normalizedEmail);
     } catch (emailError) {
       console.error('Welcome email failed:', emailError);
       return res.status(500).json({ success: false, message: 'Failed to send welcome email. Please try again.' });
@@ -803,13 +804,20 @@ exports.checkEmail = async (req, res) => {
 exports.createPassword = async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log('Create password request:', { email, passwordLength: password?.length });
 
-    const candidate = await Candidate.findOne({ email });
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: 'Email and password are required' });
+    }
+
+    const candidate = await Candidate.findOne({ email: email.toLowerCase().trim() });
     if (!candidate) {
+      console.log('Candidate not found for email:', email);
       return res.status(404).json({ success: false, message: 'Candidate not found' });
     }
 
     if (candidate.password) {
+      console.log('Password already set for:', email);
       return res.status(400).json({ success: false, message: 'Password already set' });
     }
 
@@ -817,9 +825,11 @@ exports.createPassword = async (req, res) => {
     candidate.status = 'active';
     candidate.registrationMethod = 'signup';
     await candidate.save();
+    console.log('Password created successfully for:', email);
 
     res.json({ success: true, message: 'Password created successfully' });
   } catch (error) {
+    console.error('Create password error:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };

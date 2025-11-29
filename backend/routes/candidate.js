@@ -51,8 +51,19 @@ router.post('/password/verify-otp', [
 ], handleValidationErrors, candidateController.verifyOTPAndResetPassword);
 
 router.post('/create-password', [
-  body('email').isEmail().withMessage('Valid email is required'),
-  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
+  body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
+  body('password')
+    .isLength({ min: 10, max: 25 }).withMessage('Password must be between 10 and 25 characters')
+    .matches(/[A-Z]/).withMessage('Password must contain at least one uppercase letter')
+    .matches(/[a-z]/).withMessage('Password must contain at least one lowercase letter')
+    .matches(/[0-9]/).withMessage('Password must contain at least one number')
+    .custom((value) => {
+      const specialChars = (value.match(/[@#!%$*?]/g) || []).length;
+      if (specialChars < 3) {
+        throw new Error('Password must contain at least 3 special characters (@#!%$*?)');
+      }
+      return true;
+    })
 ], handleValidationErrors, candidateController.createPassword);
 
 // Protected Routes

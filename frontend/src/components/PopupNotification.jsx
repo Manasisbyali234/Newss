@@ -1,0 +1,33 @@
+import React from 'react';
+import './PopupNotification.css';
+
+const PopupNotification = ({ message, onClose, type = 'info' }) => {
+  if (!message) return null;
+
+  const handleOverlayClick = (e) => {
+    if (e.target.className === 'popup-overlay') {
+      onClose();
+    }
+  };
+
+  return (
+    <div className="popup-overlay" onClick={handleOverlayClick}>
+      <div className={`popup-box popup-${type}`}>
+        <div className="popup-content">
+          <div className="popup-icon">
+            {type === 'success' && '✓'}
+            {type === 'error' && '✕'}
+            {type === 'warning' && '⚠'}
+            {type === 'info' && 'ℹ'}
+          </div>
+          <p className="popup-message">{message}</p>
+          <button className="popup-button" onClick={onClose}>
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PopupNotification;

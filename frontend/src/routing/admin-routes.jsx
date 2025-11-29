@@ -16,10 +16,10 @@ import EmployerDetails from "../app/pannels/admin/components/adminEmployerDetail
 import AdminPlacementOfficersAllRequest from "../app/pannels/admin/components/admin-placement-manage";
 import AdminPlacementOfficersApproved from "../app/pannels/admin/components/admin-placement-approve";
 import AdminPlacementOfficersRejected from "../app/pannels/admin/components/admin-placement-reject";
-import AdminPlacementOfficersTabs from "../app/pannels/admin/components/admin-placement-manage-tabs";
+import AdminPlacementOfficersTabs from "../app/pannels/admin/components/admin-placement-manage-tabs.jsx";
 import AdminIndividualCredit from "../app/pannels/admin/components/admin-individual-credit";
 import AdminJobsSkills from "../app/pannels/admin/components/admin-jobs-skills";
-import PlacementDetails from "../app/pannels/admin/components/placement-details";
+import PlacementDetails from "../app/pannels/admin/components/placement-details.jsx";
 import AdminSubAdmin from "../app/pannels/admin/components/admin-sub-admin";
 import AdminSupportTickets from "../app/pannels/admin/components/admin-support-tickets";
 

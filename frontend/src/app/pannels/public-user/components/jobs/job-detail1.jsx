@@ -296,14 +296,16 @@ function JobDetail1Page() {
                                         </div>
                                     </div>
 
-                                    <div style={{marginBottom: '40px'}}>
-                                        <h4 className="twm-s-title" style={{color: '#2c3e50', marginBottom: '20px', fontSize: '24px', fontWeight: '600'}}>
-                                            <i className="feather-list" style={{marginRight: '10px', color: '#e74c3c'}}></i>
-                                            Roles and Responsibilities
-                                        </h4>
-                                        <div style={{lineHeight: '1.8', fontSize: '16px', color: '#495057'}} dangerouslySetInnerHTML={{__html: job.rolesAndResponsibilities || 'Roles and responsibilities to be updated'}}>
+                                    {job.rolesAndResponsibilities && job.rolesAndResponsibilities.trim() !== '' && (
+                                        <div style={{marginBottom: '40px'}}>
+                                            <h4 className="twm-s-title" style={{color: '#2c3e50', marginBottom: '20px', fontSize: '24px', fontWeight: '600'}}>
+                                                <i className="feather-list" style={{marginRight: '10px', color: '#e74c3c'}}></i>
+                                                Roles and Responsibilities
+                                            </h4>
+                                            <div style={{lineHeight: '1.8', fontSize: '16px', color: '#495057'}} dangerouslySetInnerHTML={{__html: job.rolesAndResponsibilities}}>
+                                            </div>
                                         </div>
-                                    </div>
+                                    )}
 
                                     <div style={{marginBottom: '40px'}}>
                                         <h4 className="twm-s-title" style={{color: '#2c3e50', marginBottom: '20px', fontSize: '24px', fontWeight: '600'}}>
@@ -370,7 +372,7 @@ function JobDetail1Page() {
                                                 </div>
                                                 <div className="col-md-9">
                                                     <h5 style={{color: '#2c3e50', fontSize: '18px', fontWeight: '600', marginBottom: '15px'}}>{job.employerId?.companyName || 'Consultant'}</h5>
-                                                    {job.employerProfile.description && <p style={{lineHeight: '1.8', fontSize: '16px', color: '#495057'}}>{job.employerProfile.description}</p>}
+                                                    {job.employerProfile.description && <div style={{lineHeight: '1.8', fontSize: '16px', color: '#495057'}} dangerouslySetInnerHTML={{__html: job.employerProfile.description}} />}
                                                     {job.employerProfile.website && (
                                                         <p style={{fontSize: '16px', color: '#495057'}}><strong>Website:</strong> <a href={job.employerProfile.website} target="_blank" rel="noopener noreferrer">{job.employerProfile.website}</a></p>
                                                     )}

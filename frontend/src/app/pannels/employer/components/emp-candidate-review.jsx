@@ -585,18 +585,22 @@ function EmpCandidateReviewPage () {
 							<div className="row align-items-center mb-4">
 								<div className="col-auto">
 									<div
-										className="rounded-circle overflow-hidden shadow-sm"
-										style={{ width: "100px", height: "100px", border: '4px solid #ff6600' }}
+										className="overflow-hidden shadow-sm"
+										style={{ width: "100px", height: "100px", borderRadius: "12px" }}
 									>
-										{candidate.profilePicture ? (
+										{candidate.profilePicture || candidate.profileImage ? (
 											<img
-												src={candidate.profilePicture}
+												src={candidate.profilePicture || candidate.profileImage}
 												alt={candidate.name}
 												style={{ width: "100px", height: "100px", objectFit: "cover" }}
+												onError={(e) => {
+													e.target.style.display = 'none';
+													e.target.parentElement.innerHTML = '<div class="d-flex align-items-center justify-content-center h-100" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); width: 100px; height: 100px;"><svg width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="#ff6600" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>';
+												}}
 											/>
 										) : (
-											<div className="d-flex align-items-center justify-content-center h-100" style={{background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)'}}>
-												<User size={50} style={{color: '#ff6600'}} />
+											<div className="d-flex align-items-center justify-content-center h-100" style={{background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)', width: '100px', height: '100px'}}>
+												<User size={45} style={{color: '#ff6600'}} />
 											</div>
 										)}
 									</div>
@@ -712,17 +716,17 @@ function EmpCandidateReviewPage () {
 												<p className="mb-1"><strong>Year:</strong> {edu.passYear || 'Not provided'}</p>
 												<p className="mb-2"><strong>Score:</strong> {edu.scoreValue || edu.percentage || 'Not provided'}{edu.scoreType === 'percentage' ? '%' : ''}</p>
 												{edu.marksheet && (
-													<div className="d-flex gap-2">
+													<div style={{display: 'flex', flexDirection: 'row', gap: '0.5rem', flexWrap: 'nowrap'}}>
 														<button
 															className="btn btn-outline-primary btn-sm"
-															style={{color: 'white', backgroundColor: '#ff6600', borderColor: '#ff6600'}}
+															style={{color: 'white', backgroundColor: '#ff6600', borderColor: '#ff6600', flex: 1, whiteSpace: 'nowrap'}}
 															onClick={() => viewDocument(edu.marksheet)}
 														>
 															<i className="fa fa-eye me-1" style={{color: 'white'}}></i>View
 														</button>
 														<button
 															className="btn btn-outline-secondary btn-sm"
-															style={{color: 'white', backgroundColor: '#ff6600', borderColor: '#ff6600'}}
+															style={{color: 'white', backgroundColor: '#ff6600', borderColor: '#ff6600', flex: 1, whiteSpace: 'nowrap'}}
 															onClick={() => downloadDocument(edu.marksheet, `marksheet_${index}.pdf`)}
 														>
 															<Download size={14} className="me-1" />Download

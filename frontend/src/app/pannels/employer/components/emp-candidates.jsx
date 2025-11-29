@@ -262,10 +262,10 @@ function EmpCandidatesPage() {
                 filteredApplications.map((application) => (
                   <div className="col-lg-6 col-12" key={application._id}>
                     <div className="d-flex justify-content-between align-items-center p-3 border rounded mb-3 shadow-sm">
-                      <div className="d-flex align-items-center gap-3">
+                      <div className="d-flex align-items-center gap-3" style={{flex: '1', minWidth: '0', marginRight: '1rem'}}>
                         <div
                           className="twm-media-pic rounded-circle overflow-hidden"
-                          style={{ width: "50px", height: "50px" }}
+                          style={{ width: "50px", height: "50px", flexShrink: 0 }}
                         >
                           {application.candidateId?.profilePicture ? (
                             <img
@@ -289,11 +289,11 @@ function EmpCandidatesPage() {
                           )}
                         </div>
 
-                        <div>
-                          <h5 className="mb-1">
+                        <div style={{minWidth: '0', flex: 1}}>
+                          <h5 className="mb-1" style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
                             {application.candidateId?.name || "Unknown"}
                           </h5>
-                          <p className="mb-0 text-muted">
+                          <p className="mb-0 text-muted" style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
                             {application.candidateId?.email || "No email"}
                           </p>
                           <small className="text-muted">
@@ -314,7 +314,7 @@ function EmpCandidatesPage() {
                         </div>
                       </div>
 
-                      <div className="d-flex align-items-center gap-3">
+                      <div style={{flexShrink: 0}}>
                         <button
                           className="btn btn-outline-primary btn-sm"
                           onClick={() =>
@@ -322,6 +322,7 @@ function EmpCandidatesPage() {
                               `/employer/emp-candidate-review/${application._id}`
                             )
                           }
+                          style={{whiteSpace: 'nowrap'}}
                         >
                           <i className="fa fa-eye me-1" style={{ color: '#000000' }}></i> View Details
                         </button>

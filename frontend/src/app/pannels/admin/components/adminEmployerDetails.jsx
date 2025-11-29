@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import showToast from '../../../../utils/toastNotification';
 import './employer-details-styles.css';
 
 function EmployerDetails() {
@@ -29,7 +30,7 @@ function EmployerDetails() {
     const fetchEmployerProfile = async () => {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch(`http://localhost:5000/api/admin/employer-profile/${id}`, {
+            const response = await fetch(`http://localhost:5000/api/admin/employers/${id}/profile`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
@@ -77,11 +78,10 @@ function EmployerDetails() {
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
             } else {
-                alert('Failed to download document');
+                showToast('Failed to download document', 'error');
             }
         } catch (error) {
-            
-            alert('Error downloading document');
+            showToast('Error downloading document', 'error');
         }
     };
 
@@ -89,7 +89,7 @@ function EmployerDetails() {
         try {
             setJobsLoading(true);
             const token = localStorage.getItem('adminToken');
-            const response = await fetch(`http://localhost:5000/api/admin/employer-jobs/${id}`, {
+            const response = await fetch(`http://localhost:5000/api/admin/employers/${id}/jobs`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
@@ -106,7 +106,7 @@ function EmployerDetails() {
     const updateDocumentStatus = async (employerId, field, status) => {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch(`http://localhost:5000/api/admin/employer-profile/${employerId}`, {
+            const response = await fetch(`http://localhost:5000/api/admin/employers/${employerId}/profile`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -117,13 +117,12 @@ function EmployerDetails() {
             
             if (response.ok) {
                 setProfile(prev => ({ ...prev, [field]: status }));
-                alert(`Document ${status} successfully`);
+                showToast(`Document ${status} successfully`, 'success');
             } else {
-                alert('Failed to update document status');
+                showToast('Failed to update document status', 'error');
             }
         } catch (error) {
-            
-            alert('Error updating document status');
+            showToast('Error updating document status', 'error');
         }
     };
 
@@ -131,7 +130,7 @@ function EmployerDetails() {
         try {
             const token = localStorage.getItem('adminToken');
             const response = await fetch(`http://localhost:5000/api/admin/employers/${id}/authorization-letters/${letterId}/approve`, {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -148,14 +147,13 @@ function EmployerDetails() {
                             : letter
                     )
                 }));
-                alert('Authorization letter approved successfully! Notification sent to employer.');
+                showToast('Authorization letter approved successfully! Notification sent to employer.', 'success');
             } else {
                 const data = await response.json();
-                alert(data.message || 'Failed to approve authorization letter');
+                showToast(data.message || 'Failed to approve authorization letter', 'error');
             }
         } catch (error) {
-            
-            alert('Error approving authorization letter');
+            showToast('Error approving authorization letter', 'error');
         }
     };
 
@@ -163,7 +161,7 @@ function EmployerDetails() {
         try {
             const token = localStorage.getItem('adminToken');
             const response = await fetch(`http://localhost:5000/api/admin/employers/${id}/authorization-letters/${letterId}/reject`, {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -180,14 +178,13 @@ function EmployerDetails() {
                             : letter
                     )
                 }));
-                alert('Authorization letter rejected successfully! Notification sent to employer.');
+                showToast('Authorization letter rejected successfully! Notification sent to employer.', 'success');
             } else {
                 const data = await response.json();
-                alert(data.message || 'Failed to reject authorization letter');
+                showToast(data.message || 'Failed to reject authorization letter', 'error');
             }
         } catch (error) {
-            
-            alert('Error rejecting authorization letter');
+            showToast('Error rejecting authorization letter', 'error');
         }
     };
 

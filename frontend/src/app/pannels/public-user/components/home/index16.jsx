@@ -813,56 +813,41 @@ function Home16Page() {
                 <div style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
                     <Container style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
                     <div className="wt-separator-two-part" style={{background: 'transparent'}}>
-                        <Row className="wt-separator-two-part-row">
-                            <Col
-                                xl={6}
-                                lg={6}
-                                md={12}
-                                className="wt-separator-two-part-left mb-4"
-                            >
-                                {/* title="" START*/}
-                                  <div className="recruiters-header-section" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', flexWrap: 'wrap', gap: '1rem', paddingLeft: '30px'}}>
-                                  <div className="text-left">
-                                  <div className="wt-small-separator site-text-primary">
-                                <div>Top Recruiters</div>
-                            </div>
-                            <h2 className="wt-title mb-0">Discover your next career move</h2>
-                        </div>
-                        </div>
-                            {/* title="" END*/}
-                            </Col>
-
-                            <Col
-                                xl={6}
-                                lg={6}
-                                md={12}
-                                className="wt-separator-two-part-right mb-4"
-                                style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}
-                            >
-                                {isFiltered && (
-                                    <button
-                                        className="site-button site-button-sm me-3"
-                                        onClick={() => {
-                                            setJobs(allJobs.slice(0, 6));
-                                            setFilteredJobs([]);
-                                            setIsFiltered(false);
-                                            setShowingCount(6);
-                                            // Reset search form
-                                            const searchForm =
-                                                document.querySelector(".search-container");
-                                            if (searchForm) {
-                                                const selects = searchForm.querySelectorAll("select");
-                                                selects.forEach((select) => (select.value = ""));
-                                            }
-                                        }}
-                                        style={{ marginRight: "10px" }}
-                                    >
-                                        Clear Filters
-                                    </button>
-                                )}
-                                <NavLink to="/job-grid" className="site-button" style={{padding: '0.5rem 1rem', fontSize: '14px', display: 'inline-flex', width: 'auto', whiteSpace: 'nowrap', marginRight: '30px'}}>
-                                    Browse All Jobs
-                                </NavLink>
+                        <Row className="wt-separator-two-part-row" style={{alignItems: 'center'}}>
+                            <Col xs={12} className="mb-4" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem'}}>
+                                <div style={{flex: 1}}></div>
+                                <div className="section-head center wt-small-separator-outer" style={{margin: 0}}>
+                                    <div className="wt-small-separator site-text-primary">
+                                        <div>Top Recruiters</div>
+                                    </div>
+                                    <h2 className="wt-title">Discover your next career move</h2>
+                                </div>
+                                <div style={{flex: 1, display: 'flex', justifyContent: 'flex-end'}}>
+                                    {isFiltered && (
+                                        <button
+                                            className="site-button site-button-sm me-3"
+                                            onClick={() => {
+                                                setJobs(allJobs.slice(0, 6));
+                                                setFilteredJobs([]);
+                                                setIsFiltered(false);
+                                                setShowingCount(6);
+                                                // Reset search form
+                                                const searchForm =
+                                                    document.querySelector(".search-container");
+                                                if (searchForm) {
+                                                    const selects = searchForm.querySelectorAll("select");
+                                                    selects.forEach((select) => (select.value = ""));
+                                                }
+                                            }}
+                                            style={{ marginRight: "10px" }}
+                                        >
+                                            Clear Filters
+                                        </button>
+                                    )}
+                                    <NavLink to="/job-grid" className="site-button" style={{padding: '0.5rem 1rem', fontSize: '14px', display: 'inline-flex', width: 'auto', whiteSpace: 'nowrap'}}>
+                                        Browse All Jobs
+                                    </NavLink>
+                                </div>
                             </Col>
                         </Row>
                     </div>
@@ -1018,16 +1003,19 @@ function Home16Page() {
                 <div style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
                     <Container style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
                     {/* title="" START*/}
-                    <div className="recruiters-header-section" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', background: 'transparent !important', flexWrap: 'wrap', gap: '1rem', paddingLeft: '30px', paddingRight: '15px'}}>
-                        <div className="text-left text-center text-md-left" style={{width: '100%'}}>
+                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', flexWrap: 'wrap', gap: '1rem'}}>
+                        <div style={{flex: 1}}></div>
+                        <div className="section-head center wt-small-separator-outer" style={{margin: 0}}>
                             <div className="wt-small-separator site-text-primary">
                                 <div>Top Recruiters</div>
                             </div>
-                            <h2 className="wt-title mb-0">Discover your next career move</h2>
+                            <h2 className="wt-title">Discover your next career move</h2>
                         </div>
-                        <NavLink to="/emp-grid" className="site-button d-none d-md-inline-flex" style={{padding: '0.5rem 1rem', fontSize: '14px', whiteSpace: 'nowrap', marginRight: '30px'}}>
-                            View All
-                        </NavLink>
+                        <div style={{flex: 1, display: 'flex', justifyContent: 'flex-end'}}>
+                            <NavLink to="/emp-grid" className="site-button" style={{padding: '0.5rem 1rem', fontSize: '14px', whiteSpace: 'nowrap'}}>
+                                View All
+                            </NavLink>
+                        </div>
                     </div>
                     {/* title="" END*/}
 
@@ -1181,7 +1169,7 @@ function Home16Page() {
                                 </div>
                             </Col>
 
-                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4" style={{padding: '1rem'}}>
+                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4" style={{padding: '0.5rem'}}>
                                 <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '30px 25px', borderRadius: '16px', height: '160px', background: '#fff', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', border: '1px solid #f0f0f0', transition: 'all 0.3s ease'}}>
                                     <div className="twm-media" style={{marginRight: '20px', flexShrink: 0}}>
                                         <div style={{width: '65px', height: '65px', background: 'linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(255, 106, 0, 0.3)'}}>
@@ -1198,7 +1186,7 @@ function Home16Page() {
                                 </div>
                             </Col>
 
-                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4" style={{padding: '1rem'}}>
+                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4" style={{padding: '0.5rem'}}>
                                 <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '30px 25px', borderRadius: '16px', height: '160px', background: '#fff', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', border: '1px solid #f0f0f0', transition: 'all 0.3s ease'}}>
                                     <div className="twm-media" style={{marginRight: '20px', flexShrink: 0}}>
                                         <div style={{width: '65px', height: '65px', background: 'linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(255, 106, 0, 0.3)'}}>
@@ -1215,7 +1203,7 @@ function Home16Page() {
                                 </div>
                             </Col>
 
-                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4" style={{padding: '1rem'}}>
+                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4" style={{padding: '0.5rem'}}>
                                 <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '30px 25px', borderRadius: '16px', height: '160px', background: '#fff', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', border: '1px solid #f0f0f0', transition: 'all 0.3s ease'}}>
                                     <div className="twm-media" style={{marginRight: '20px', flexShrink: 0}}>
                                         <div style={{width: '65px', height: '65px', background: 'linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(255, 106, 0, 0.3)'}}>
