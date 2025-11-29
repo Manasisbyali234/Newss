@@ -1,5 +1,4 @@
-import showToast from './toastNotification';
-
+import { showPopup, showSuccess, showError, showWarning, showInfo } from './popupNotification';
 /**
  * Enhanced error handling utility for better user experience
  */
@@ -160,7 +159,7 @@ export const displayError = (error, options = {}) => {
 
   // Display using toast notification (preferred)
   if (useToast && !useAlert) {
-    showToast(errorData.message, errorData.type === 'auth' ? 'warning' : 'error', duration);
+    if (errorData.type === 'auth') { showWarning(errorData.message); } else { showError(errorData.message); }
     return;
   }
 

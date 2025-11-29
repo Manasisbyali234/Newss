@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../../../../../utils/api";
-import showToast from "../../../../../utils/toastNotification";
-
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
 function SectionCanAttachment({ profile }) {
     const [uploading, setUploading] = useState(false);
     const [deleting, setDeleting] = useState(false);
@@ -19,7 +18,7 @@ function SectionCanAttachment({ profile }) {
     const handleFileSelect = (e) => {
         // Prevent file selection if resume already exists
         if (resumeFile) {
-            showToast('Please delete your current resume before uploading a new one.', 'warning', 4000);
+            showWarning('Please delete your current resume before uploading a new one.');
             e.target.value = ''; // Clear the input
             return;
         }
@@ -29,7 +28,7 @@ function SectionCanAttachment({ profile }) {
             // Check file size (15MB limit to match backend)
             const maxSize = 15 * 1024 * 1024; // 15MB
             if (file.size > maxSize) {
-                showToast('File size must be less than 15MB. Please choose a smaller file.', 'error', 4000);
+                showError('File size must be less than 15MB. Please choose a smaller file.');
                 e.target.value = ''; // Clear the input
                 setSelectedFile(null); // Ensure no file is selected
                 return;
@@ -38,7 +37,7 @@ function SectionCanAttachment({ profile }) {
             // Check file type
             const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
             if (!allowedTypes.includes(file.type)) {
-                showToast('Only PDF, DOC, and DOCX files are allowed.', 'error', 4000);
+                showPopup('Only PDF, DOC, and DOCX files are allowed.', 'error', 4000);
                 e.target.value = ''; // Clear the input
                 setSelectedFile(null); // Ensure no file is selected
                 return;
@@ -49,14 +48,14 @@ function SectionCanAttachment({ profile }) {
 
     const handleSubmit = async () => {
         if (!selectedFile) {
-            showToast('Please select a file first', 'warning', 4000);
+            showWarning('Please select a file first');
             return;
         }
 
         // Double-check file size before upload
         const maxSize = 15 * 1024 * 1024; // 15MB
         if (selectedFile.size > maxSize) {
-            showToast('File size must be less than 15MB. Please choose a smaller file.', 'error', 4000);
+            showError('File size must be less than 15MB. Please choose a smaller file.');
             setSelectedFile(null);
             const fileInput = document.querySelector('input[type="file"]');
             if (fileInput) fileInput.value = '';
@@ -70,7 +69,7 @@ function SectionCanAttachment({ profile }) {
         try {
             const response = await api.uploadResume(formData);
             if (response.success) {
-                showToast('Resume uploaded successfully!', 'success', 4000);
+                showSuccess('Resume uploaded successfully!');
                 setResumeFile(selectedFile.name);
                 setSelectedFile(null);
                 // Clear the file input
@@ -78,7 +77,7 @@ function SectionCanAttachment({ profile }) {
                 if (fileInput) fileInput.value = '';
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
             } else {
-                showToast(`Failed to upload resume: ${response.message || 'Unknown error'}`, 'error', 4000);
+                showError(`Failed to upload resume: ${response.message || 'Unknown error'}`);
             }
         } catch (error) {
             console.error('Resume upload error:', error);
@@ -86,7 +85,7 @@ function SectionCanAttachment({ profile }) {
             if (error.message) {
                 errorMessage += `: ${error.message}`;
             }
-            showToast(errorMessage, 'error', 4000);
+            showError(errorMessage);
         } finally {
             setUploading(false);
         }
@@ -165,13 +164,11 @@ function SectionCanAttachment({ profile }) {
         };
 
         yesBtn.onclick = () => {
-            removeToast();
             performDelete();
         };
 
         noBtn.onclick = () => {
-            removeToast();
-        };
+            };
 
         setTimeout(removeToast, 10000);
     };
@@ -181,14 +178,14 @@ function SectionCanAttachment({ profile }) {
         try {
             const response = await api.deleteResume();
             if (response.success) {
-                showToast('Resume deleted successfully!', 'success', 4000);
+                showSuccess('Resume deleted successfully!');
                 setResumeFile(null);
                 setSelectedFile(null);
                 const fileInput = document.querySelector('input[type="file"]');
                 if (fileInput) fileInput.value = '';
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
             } else {
-                showToast(`Failed to delete resume: ${response.message || 'Unknown error'}`, 'error', 4000);
+                showError(`Failed to delete resume: ${response.message || 'Unknown error'}`);
             }
         } catch (error) {
             console.error('Resume delete error:', error);
@@ -196,7 +193,7 @@ function SectionCanAttachment({ profile }) {
             if (error.message) {
                 errorMessage += `: ${error.message}`;
             }
-            showToast(errorMessage, 'error', 4000);
+            showError(errorMessage);
         } finally {
             setDeleting(false);
         }
@@ -204,7 +201,7 @@ function SectionCanAttachment({ profile }) {
 
     const handleDelete = () => {
         if (!resumeFile) {
-            showToast('No resume to delete', 'warning', 4000);
+            showWarning('No resume to delete');
             return;
         }
         showConfirmationToast();

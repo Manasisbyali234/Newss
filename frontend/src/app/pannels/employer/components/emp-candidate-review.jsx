@@ -2,12 +2,12 @@ import { ArrowLeft, Award, Briefcase, Calendar, Check, Download, FileText, Gradu
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { loadScript } from "../../../../globals/constants";
-import showToast from "../../../../utils/toastNotification";
 import InterviewProcessManager from "./InterviewProcessManager";
 import './emp-candidate-review.css';
 import './emp-candidate-review-mobile.css';
 
 
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
 function EmpCandidateReviewPage () {
 	const navigate = useNavigate();
 	const { applicationId } = useParams();
@@ -153,16 +153,16 @@ function EmpCandidateReviewPage () {
 				await sendNotificationToCandidate('interview_scheduled', 'Interview Scheduled', 
 					`Your interview has been scheduled. Please check your dashboard for details.`);
 				
-				showToast('Interview review saved successfully! Candidate will see the updated status.', 'success');
+				showSuccess('Interview review saved successfully! Candidate will see the updated status.');
 				
 			} else {
 				const errorData = await response.json();
-				showToast(errorData.message || errorData.error || 'Failed to save review', 'error');
+				showError(errorData.message || errorData.error || 'Failed to save review');
 			}
 		} catch (error) {
 			
 			console.error('Error saving review:', error);
-		showToast('Network error while saving review. Please try again.', 'error');
+		showError('Network error while saving review. Please try again.');
 		}
 	};
 
@@ -201,16 +201,16 @@ function EmpCandidateReviewPage () {
 			});
 			
 			if (response.ok) {
-				showToast('Candidate shortlisted successfully! Status updated for candidate.', 'success');
+				showSuccess('Candidate shortlisted successfully! Status updated for candidate.');
 				setApplication(prev => ({ ...prev, status: 'shortlisted' }));
 			} else {
 				const errorData = await response.json();
-				showToast(errorData.message || errorData.error || 'Failed to shortlist candidate', 'error');
+				showError(errorData.message || errorData.error || 'Failed to shortlist candidate');
 			}
 		} catch (error) {
 			
 			console.error('Error shortlisting candidate:', error);
-		showToast('Network error while shortlisting candidate. Please try again.', 'error');
+		showError('Network error while shortlisting candidate. Please try again.');
 		}
 	};
 
@@ -232,15 +232,15 @@ function EmpCandidateReviewPage () {
 			});
 			
 			if (response.ok) {
-				showToast(statusMessages[status] || 'Status updated successfully', 'success');
+				showSuccess(statusMessages[status] || 'Status updated successfully');
 				setApplication(prev => ({ ...prev, status }));
 			} else {
 				const errorData = await response.json();
-				showToast(errorData.message || errorData.error || 'Failed to update status', 'error');
+				showError(errorData.message || errorData.error || 'Failed to update status');
 			}
 		} catch (error) {
 			console.error('Error updating status:', error);
-			showToast('Network error while updating status. Please try again.', 'error');
+			showError('Network error while updating status. Please try again.');
 		}
 	};
 
@@ -257,15 +257,15 @@ function EmpCandidateReviewPage () {
 			});
 			
 			if (response.ok) {
-				showToast('Offer letter shared with candidate! Status updated for candidate.', 'success');
+				showSuccess('Offer letter shared with candidate! Status updated for candidate.');
 				setApplication(prev => ({ ...prev, status: 'hired' }));
 			} else {
 				const errorData = await response.json();
-				showToast(errorData.message || errorData.error || 'Failed to share offer letter', 'error');
+				showError(errorData.message || errorData.error || 'Failed to share offer letter');
 			}
 		} catch (error) {
 			console.error('Error sharing offer letter:', error);
-			showToast('Network error while sharing offer letter. Please try again.', 'error');
+			showError('Network error while sharing offer letter. Please try again.');
 		}
 	};
 
@@ -282,15 +282,15 @@ function EmpCandidateReviewPage () {
 			});
 			
 			if (response.ok) {
-				showToast('Candidate rejected. Status updated for candidate.', 'success');
+				showSuccess('Candidate rejected. Status updated for candidate.');
 				setApplication(prev => ({ ...prev, status: 'rejected' }));
 			} else {
 				const errorData = await response.json();
-				showToast(errorData.message || errorData.error || 'Failed to reject candidate', 'error');
+				showError(errorData.message || errorData.error || 'Failed to reject candidate');
 			}
 		} catch (error) {
 			console.error('Error rejecting candidate:', error);
-			showToast('Network error while rejecting candidate. Please try again.', 'error');
+			showError('Network error while rejecting candidate. Please try again.');
 		}
 	};
 

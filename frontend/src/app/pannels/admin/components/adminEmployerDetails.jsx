@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import showToast from '../../../../utils/toastNotification';
+import { showSuccess, showError } from '../../../../utils/popupNotification';
 import './employer-details-styles.css';
 
 function EmployerDetails() {
@@ -78,10 +78,10 @@ function EmployerDetails() {
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
             } else {
-                showToast('Failed to download document', 'error');
+                showError('Failed to download document');
             }
         } catch (error) {
-            showToast('Error downloading document', 'error');
+            showError('Error downloading document');
         }
     };
 
@@ -117,12 +117,12 @@ function EmployerDetails() {
             
             if (response.ok) {
                 setProfile(prev => ({ ...prev, [field]: status }));
-                showToast(`Document ${status} successfully`, 'success');
+                showSuccess(`Document ${status} successfully`);
             } else {
-                showToast('Failed to update document status', 'error');
+                showError('Failed to update document status');
             }
         } catch (error) {
-            showToast('Error updating document status', 'error');
+            showError('Error updating document status');
         }
     };
 
@@ -147,13 +147,13 @@ function EmployerDetails() {
                             : letter
                     )
                 }));
-                showToast('Authorization letter approved successfully! Notification sent to employer.', 'success');
+                showSuccess('Authorization letter approved successfully! Notification sent to employer.');
             } else {
                 const data = await response.json();
-                showToast(data.message || 'Failed to approve authorization letter', 'error');
+                showError(data.message || 'Failed to approve authorization letter');
             }
         } catch (error) {
-            showToast('Error approving authorization letter', 'error');
+            showError('Error approving authorization letter');
         }
     };
 
@@ -178,13 +178,13 @@ function EmployerDetails() {
                             : letter
                     )
                 }));
-                showToast('Authorization letter rejected successfully! Notification sent to employer.', 'success');
+                showSuccess('Authorization letter rejected successfully! Notification sent to employer.');
             } else {
                 const data = await response.json();
-                showToast(data.message || 'Failed to reject authorization letter', 'error');
+                showError(data.message || 'Failed to reject authorization letter');
             }
         } catch (error) {
-            showToast('Error rejecting authorization letter', 'error');
+            showError('Error rejecting authorization letter');
         }
     };
 

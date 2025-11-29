@@ -8,10 +8,10 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { loadScript } from "../../../../../globals/constants";
-import showToast from "../../../../../utils/toastNotification";
 import "../jobs/job-detail.css";
 import "../../../../../employer-detail-tabs.css";
 
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
 function EmployersDetail1Page() {
     const { id } = useParams();
     const [employer, setEmployer] = useState(null);
@@ -108,7 +108,7 @@ function EmployersDetail1Page() {
             const data = await response.json();
             
             if (data.success) {
-                showToast('Review submitted successfully! Thank you for your feedback.', 'success');
+                showSuccess('Review submitted successfully! Thank you for your feedback.');
                 localStorage.setItem('reviewerEmail', reviewForm.reviewerEmail);
                 // Refresh submitted reviews from database
                 await fetchSubmittedReviews();
@@ -125,11 +125,11 @@ function EmployersDetail1Page() {
                     if (reviewPostTab) reviewPostTab.click();
                 }, 1000);
             } else {
-                showToast(data.message || data.error || 'Failed to submit review', 'error');
+                showError(data.message || data.error || 'Failed to submit review');
             }
         } catch (error) {
             console.error('Error submitting review:', error);
-            showToast('Network error while submitting review. Please try again.', 'error');
+            showError('Network error while submitting review. Please try again.');
         }
     };
 

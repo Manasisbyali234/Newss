@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../../../utils/api';
-import showToast from '../../../../utils/toastNotification';
-
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
 function AdminIndividualCredit() {
     const [candidates, setCandidates] = useState([]);
     const [selectedCandidate, setSelectedCandidate] = useState('');
@@ -20,14 +19,14 @@ function AdminIndividualCredit() {
                 setCandidates(response.candidates || []);
             }
         } catch (error) {
-            showToast('Error fetching candidates', 'error');
+            showError('Error fetching candidates');
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!selectedCandidate || !credits) {
-            showToast('Please select a candidate and enter credits', 'warning');
+            showWarning('Please select a candidate and enter credits');
             return;
         }
 
@@ -35,15 +34,15 @@ function AdminIndividualCredit() {
         try {
             const response = await api.updateCandidateCredits(selectedCandidate, { creditsToAdd: parseInt(credits) });
             if (response.success) {
-                showToast('Credits updated successfully!', 'success');
+                showSuccess('Credits updated successfully!');
                 setSelectedCandidate('');
                 setCredits('');
                 fetchCandidates();
             } else {
-                showToast('Failed to update credits', 'error');
+                showError('Failed to update credits');
             }
         } catch (error) {
-            showToast('Error updating credits', 'error');
+            showError('Error updating credits');
         } finally {
             setLoading(false);
         }

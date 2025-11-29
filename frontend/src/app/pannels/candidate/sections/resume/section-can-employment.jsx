@@ -1,8 +1,7 @@
 import { useEffect, useState, memo } from "react";
 import { createPortal } from "react-dom";
 import { api } from "../../../../../utils/api";
-import showToast from "../../../../../utils/toastNotification";
-
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
 function SectionCanEmployment({ profile }) {
     const modalId = 'EmploymentModal';
     const [formData, setFormData] = useState(() => {
@@ -145,7 +144,7 @@ function SectionCanEmployment({ profile }) {
         if (!validateForm()) {
             const errorMessages = Object.values(errors).filter(error => error);
             if (errorMessages.length > 0) {
-                showToast(errorMessages.join(', '), 'error', 4000);
+                showPopup(errorMessages.join(', '), 'error', 4000);
             }
             return;
         }
@@ -169,14 +168,14 @@ function SectionCanEmployment({ profile }) {
                 }
             } catch (testError) {
                 console.error('API connectivity test failed:', testError);
-                showToast(`API connection failed: ${testError.message}. Please check if the backend server is running.`, 'error');
+                showError(`API connection failed: ${testError.message}. Please check if the backend server is running.`);
                 setLoading(false);
                 return;
             }
             
             // Ensure all required fields are present and valid
             if (!totalExperience?.trim() || !formData.designation?.trim() || !formData.organization?.trim() || !formData.startDate) {
-                showToast('Please fill in all required fields (Total Experience, Designation, Organization, Start Date)', 'warning');
+                showPopup('Please fill in all required fields (Total Experience, Designation, Organization, Start Date)', 'warning');
                 setLoading(false);
                 return;
             }
@@ -213,7 +212,7 @@ function SectionCanEmployment({ profile }) {
                 localStorage.removeItem('employmentFormData');
                 setErrors({});
                 setTotalExperience(totalExperience || '');
-                showToast('Employment added successfully!', 'success');
+                showSuccess('Employment added successfully!');
                 
                 // Trigger profile update event
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
@@ -244,11 +243,11 @@ function SectionCanEmployment({ profile }) {
             } else {
                 console.error('Save failed:', response);
                 const errorMsg = response?.message || response?.error || 'Unknown error occurred';
-                showToast(`Failed to save employment: ${errorMsg}`, 'error');
+                showError(`Failed to save employment: ${errorMsg}`);
             }
         } catch (error) {
             console.error('Employment save error:', error);
-            showToast(`Failed to save employment: ${error.message || 'Please check your connection and try again.'}`, 'error');
+            showError(`Failed to save employment: ${error.message || 'Please check your connection and try again.'}`);
         } finally {
             setLoading(false);
         }

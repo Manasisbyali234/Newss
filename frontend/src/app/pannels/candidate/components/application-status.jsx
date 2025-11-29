@@ -1,10 +1,10 @@
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
 // Route: /candidate/status
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { loadScript } from "../../../../globals/constants";
 import { api } from "../../../../utils/api";
-import showToast from "../../../../utils/toastNotification";
 import { pubRoute, publicUser } from "../../../../globals/route-names";
 import CanPostedJobs from "./can-posted-jobs";
 import PopupInterviewRoundDetails from "../../../common/popups/popup-interview-round-details";
@@ -292,10 +292,10 @@ function CanStatusPage() {
 		if (!windowInfo.isWithinWindow) {
 			if (windowInfo.isBeforeStart) {
 				const startLabel = windowInfo.startDate ? windowInfo.startDate.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : null;
-				showToast(startLabel ? `Assessment opens on ${startLabel}` : 'Assessment is not yet available', 'warning');
+				showWarning(startLabel ? `Assessment opens on ${startLabel}` : 'Assessment is not yet available');
 				return;
 			}
-			showToast('Assessment window has ended', 'error');
+			showError('Assessment window has ended');
 			return;
 		}
 		const assessmentId = job?.assessmentId;
@@ -971,100 +971,49 @@ function CanStatusPage() {
 												{/* Round Details - Always show if we have any details */}
 												{roundName !== 'Assessment' && (
 													<div className="mt-2">
-														{/* Description - Show first and prominently */}
-														{roundDetails?.description && (
-															<div className="mb-3 p-2" style={{backgroundColor: '#f8f9fa', borderRadius: '6px', border: '1px solid #e9ecef'}}>
-																<small className="text-muted d-block mb-1"><i className="fa fa-info-circle me-1" style={{color: '#ff6b35'}}></i><strong>Interview Process Description:</strong></small>
-																<div style={{fontSize: '14px', lineHeight: '1.5', color: '#495057'}}>{roundDetails.description}</div>
-															</div>
-														)}
-														
-														{/* Date Range - Show fromDate to toDate */}
-														{roundDetails && (roundDetails.fromDate || roundDetails.toDate) && (
-															<div className="mb-2">
-																<small className="text-muted"><i className="fa fa-calendar me-1"></i>Interview Period:</small>
-																<div>
-																	{roundDetails.fromDate && (
-																		<span><strong>From:</strong> {new Date(roundDetails.fromDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}</span>
-																	)}
-																	{roundDetails.fromDate && roundDetails.toDate && <span className="mx-2">-</span>}
-																	{roundDetails.toDate && (
-																		<span><strong>To:</strong> {new Date(roundDetails.toDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}</span>
-																	)}
-																	{roundDetails.time && (
-																		<div className="mt-1"><strong>Time:</strong> {roundDetails.time}</div>
-																	)}
-																</div>
-															</div>
-														)}
-														
-														{/* Fallback for old date field */}
-														{roundDetails && !roundDetails.fromDate && !roundDetails.toDate && roundDetails.date && (
-															<div className="mb-2">
-																<small className="text-muted"><i className="fa fa-calendar me-1"></i>Date:</small>
-																<div>{new Date(roundDetails.date).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'})}</div>
-															</div>
-														)}
-														
-														{roundDetails?.location && (
-															<div className="mb-2">
-																<small className="text-muted"><i className="fa fa-map-marker me-1"></i>Location:</small>
-																<div>{roundDetails.location}</div>
-															</div>
-														)}
-														{roundDetails?.interviewerName && (
-															<div className="mb-2">
-																<small className="text-muted"><i className="fa fa-user me-1"></i>Interviewer:</small>
-																<div>{roundDetails.interviewerName}</div>
-															</div>
-														)}
-														
-														{/* Show interview details or fallback message */}
-														{(() => {
-															let details = null;
-															if (selectedApplication.jobId?.interviewRoundDetails) {
-																const allDetails = selectedApplication.jobId.interviewRoundDetails;
-																const searchTerm = roundName.toLowerCase().replace(/[^a-z]/g, '');
-																for (const [key, value] of Object.entries(allDetails)) {
-																	if (value && key.toLowerCase().includes(searchTerm)) {
-																		details = value;
-																		break;
-																	}
-																}
-															}
-															return (
-																<>
-																	{details?.description && (
-																		<div className="mb-3 p-2" style={{backgroundColor: '#f8f9fa', borderRadius: '6px', border: '1px solid #e9ecef'}}>
-																			<small className="text-muted d-block mb-1"><i className="fa fa-info-circle me-1" style={{color: '#ff6b35'}}></i><strong>Interview Process Description:</strong></small>
-																			<div style={{fontSize: '14px', lineHeight: '1.5', color: '#495057'}}>{details.description}</div>
+														{roundDetails ? (
+															<>
+																{roundDetails.description && (
+																	<div className="mb-3 p-2" style={{backgroundColor: '#f8f9fa', borderRadius: '6px', border: '1px solid #e9ecef'}}>
+																		<small className="text-muted d-block mb-1"><i className="fa fa-info-circle me-1" style={{color: '#ff6b35'}}></i><strong>Interview Process Description:</strong></small>
+																		<div style={{fontSize: '14px', lineHeight: '1.5', color: '#495057'}}>{roundDetails.description}</div>
+																	</div>
+																)}
+																{(roundDetails.fromDate || roundDetails.toDate) && (
+																	<div className="mb-2">
+																		<small className="text-muted"><i className="fa fa-calendar me-1"></i>Interview Period:</small>
+																		<div>
+																			{roundDetails.fromDate && <span><strong>From:</strong> {new Date(roundDetails.fromDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}</span>}
+																			{roundDetails.fromDate && roundDetails.toDate && <span className="mx-2">-</span>}
+																			{roundDetails.toDate && <span><strong>To:</strong> {new Date(roundDetails.toDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}</span>}
+																			{roundDetails.time && <div className="mt-1"><strong>Time:</strong> {roundDetails.time}</div>}
 																		</div>
-																	)}
-																	{details && (details.fromDate || details.toDate) && (
-																		<div className="mb-2">
-																			<small className="text-muted"><i className="fa fa-calendar me-1"></i>Interview Period:</small>
-																			<div>
-																				{details.fromDate && (
-																					<span><strong>From:</strong> {new Date(details.fromDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}</span>
-																				)}
-																				{details.fromDate && details.toDate && <span className="mx-2">-</span>}
-																				{details.toDate && (
-																					<span><strong>To:</strong> {new Date(details.toDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}</span>
-																				)}
-																				{details.time && (
-																					<div className="mt-1"><strong>Time:</strong> {details.time}</div>
-																				)}
-																			</div>
-																		</div>
-																	)}
-																	{!details && (
-																		<div className="mb-2 p-2" style={{backgroundColor: '#fff3cd', borderRadius: '6px', border: '1px solid #ffeaa7'}}>
-																			<small className="text-muted"><i className="fa fa-info-circle me-1"></i>Interview details will be updated by the employer soon.</small>
-																		</div>
-																	)}
-																</>
-															);
-														})()}
+																	</div>
+																)}
+																{!roundDetails.fromDate && !roundDetails.toDate && roundDetails.date && (
+																	<div className="mb-2">
+																		<small className="text-muted"><i className="fa fa-calendar me-1"></i>Date:</small>
+																		<div>{new Date(roundDetails.date).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'})}</div>
+																	</div>
+																)}
+																{roundDetails.location && (
+																	<div className="mb-2">
+																		<small className="text-muted"><i className="fa fa-map-marker me-1"></i>Location:</small>
+																		<div>{roundDetails.location}</div>
+																	</div>
+																)}
+																{roundDetails.interviewerName && (
+																	<div className="mb-2">
+																		<small className="text-muted"><i className="fa fa-user me-1"></i>Interviewer:</small>
+																		<div>{roundDetails.interviewerName}</div>
+																	</div>
+																)}
+															</>
+														) : (
+															<div className="mb-2 p-2" style={{backgroundColor: '#fff3cd', borderRadius: '6px', border: '1px solid #ffeaa7'}}>
+																<small className="text-muted"><i className="fa fa-info-circle me-1"></i>Interview details will be updated by the employer soon.</small>
+															</div>
+														)}
 													</div>
 												)}
 

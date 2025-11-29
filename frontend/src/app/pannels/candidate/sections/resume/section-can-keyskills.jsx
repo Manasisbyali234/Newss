@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { api } from "../../../../../utils/api";
-import showToast from "../../../../../utils/toastNotification";
-
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
 function SectionCanKeySkills({ profile }) {
     const [skills, setSkills] = useState([]);
     const [selectedSkill, setSelectedSkill] = useState('');
@@ -50,11 +49,11 @@ function SectionCanKeySkills({ profile }) {
                 setSelectedSkill('');
                 setCustomSkill('');
                 setShowCustomInput(false);
-                showToast(`Skill "${skillToAdd}" added successfully!`, 'success', 4000);
+                showSuccess(`Skill "${skillToAdd}" added successfully!`);
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
             }
         } catch (error) {
-            showToast('Failed to add skill', 'error', 4000);
+            showError('Failed to add skill');
         } finally {
             setLoading(false);
         }
@@ -67,11 +66,11 @@ function SectionCanKeySkills({ profile }) {
             const response = await api.updateCandidateProfile({ skills: updatedSkills });
             if (response.success) {
                 setSkills(updatedSkills);
-                showToast(`Skill "${skillToRemove}" removed successfully!`, 'success', 4000);
+                showSuccess(`Skill "${skillToRemove}" removed successfully!`);
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
             }
         } catch (error) {
-            showToast('Failed to remove skill', 'error', 4000);
+            showError('Failed to remove skill');
         } finally {
             setLoading(false);
         }

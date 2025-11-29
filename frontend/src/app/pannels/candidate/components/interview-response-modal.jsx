@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, Clock, MessageSquare, Send } from 'lucide-react';
-import showToast from '../../../../utils/toastNotification';
-
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
 const InterviewResponseModal = ({ isOpen, onClose, application, onSubmit }) => {
   const [responseData, setResponseData] = useState({
     availableDate: '',
@@ -16,7 +15,7 @@ const InterviewResponseModal = ({ isOpen, onClose, application, onSubmit }) => {
     e.preventDefault();
     
     if (!responseData.availableDate || !responseData.availableTime) {
-      showToast('Please provide your available date and time', 'error');
+      showError('Please provide your available date and time');
       return;
     }
 
@@ -34,15 +33,15 @@ const InterviewResponseModal = ({ isOpen, onClose, application, onSubmit }) => {
 
       const data = await response.json();
       if (response.ok) {
-        showToast('Response sent successfully!', 'success');
+        showSuccess('Response sent successfully!');
         onSubmit && onSubmit(data);
         onClose();
       } else {
-        showToast(data.message || 'Failed to send response', 'error');
+        showError(data.message || 'Failed to send response');
       }
     } catch (error) {
       console.error('Error sending response:', error);
-      showToast('Error sending response. Please try again.', 'error');
+      showError('Error sending response. Please try again.');
     } finally {
       setSubmitting(false);
     }

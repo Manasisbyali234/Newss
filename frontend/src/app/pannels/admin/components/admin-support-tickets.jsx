@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Container, Row, Col, Card, Badge, Button, Modal, Form, Alert, Spinner } from 'react-bootstrap';
 import './admin-support-tickets.css';
 import './admin-emp-manage-styles.css';
-import showToast from '../../../../utils/toastNotification';
-
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
 function AdminSupportTickets() {
     const [tickets, setTickets] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -46,7 +45,7 @@ function AdminSupportTickets() {
             
             if (!token) {
                 console.error('No admin token found');
-                showToast('Authentication token not found. Please login again.', 'error');
+                showError('Authentication token not found. Please login again.');
                 return;
             }
             
@@ -75,23 +74,23 @@ function AdminSupportTickets() {
                     setStats(newStats);
                 } else {
                     console.error('API returned error:', data.message);
-                    showToast(data.message || 'Failed to fetch support tickets', 'error');
+                    showError(data.message || 'Failed to fetch support tickets');
                 }
             } else {
                 const errorData = await response.json().catch(() => ({}));
                 console.error('HTTP error:', response.status, errorData);
                 
                 if (response.status === 401) {
-                    showToast('Session expired. Please login again.', 'error');
+                    showError('Session expired. Please login again.');
                     localStorage.removeItem('adminToken');
                     window.location.href = '/admin-login';
                 } else {
-                    showToast(errorData.message || 'Failed to fetch support tickets', 'error');
+                    showError(errorData.message || 'Failed to fetch support tickets');
                 }
             }
         } catch (error) {
             console.error('Error fetching support tickets:', error);
-            showToast('Network error. Please check your connection and try again.', 'error');
+            showError('Network error. Please check your connection and try again.');
         } finally {
             setLoading(false);
         }
@@ -126,7 +125,7 @@ function AdminSupportTickets() {
         event.stopPropagation();
         const token = localStorage.getItem('adminToken');
         if (!token) {
-            showToast('Authentication token not found. Please login again.', 'error');
+            showError('Authentication token not found. Please login again.');
             return;
         }
         try {
@@ -137,13 +136,13 @@ function AdminSupportTickets() {
             });
             if (!response.ok) {
                 if (response.status === 401) {
-                    showToast('Session expired. Please login again.', 'error');
+                    showError('Session expired. Please login again.');
                     localStorage.removeItem('adminToken');
                     window.location.href = '/admin-login';
                     return;
                 }
                 const errorData = await response.json().catch(() => ({}));
-                showToast(errorData.message || 'Failed to open attachment', 'error');
+                showError(errorData.message || 'Failed to open attachment');
                 return;
             }
             const blob = await response.blob();
@@ -178,7 +177,7 @@ function AdminSupportTickets() {
             const token = localStorage.getItem('adminToken');
             
             if (!token) {
-                showToast('Authentication token not found. Please login again.', 'error');
+                showError('Authentication token not found. Please login again.');
                 return;
             }
             
@@ -198,11 +197,11 @@ function AdminSupportTickets() {
                 fetchSupportTickets();
             } else {
                 console.error('Update failed:', result);
-                showToast(result.message || 'Failed to update support ticket', 'error');
+                showError(result.message || 'Failed to update support ticket');
             }
         } catch (error) {
             console.error('Error updating support ticket:', error);
-            showToast('Error updating support ticket. Please try again.', 'error');
+            showError('Error updating support ticket. Please try again.');
         } finally {
             setUpdating(false);
         }
@@ -217,7 +216,7 @@ function AdminSupportTickets() {
             const token = localStorage.getItem('adminToken');
             
             if (!token) {
-                showToast('Authentication token not found. Please login again.', 'error');
+                showError('Authentication token not found. Please login again.');
                 return;
             }
             
@@ -233,14 +232,14 @@ function AdminSupportTickets() {
             
             if (response.ok && result.success) {
                 await fetchSupportTickets();
-                showToast('Support ticket deleted successfully', 'success');
+                showSuccess('Support ticket deleted successfully');
             } else {
                 console.error('Delete failed:', result);
-                showToast(result.message || 'Failed to delete support ticket', 'error');
+                showError(result.message || 'Failed to delete support ticket');
             }
         } catch (error) {
             console.error('Error deleting support ticket:', error);
-            showToast('Error deleting support ticket. Please try again.', 'error');
+            showError('Error deleting support ticket. Please try again.');
         }
     };
 

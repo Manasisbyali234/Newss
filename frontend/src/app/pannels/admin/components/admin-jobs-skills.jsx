@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../../../utils/api';
-import showToast from '../../../../utils/toastNotification';
-
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
 function AdminJobsSkills() {
     const [jobs, setJobs] = useState([]);
     const [skills, setSkills] = useState([]);
@@ -28,7 +27,7 @@ function AdminJobsSkills() {
                 setSkills(Array.from(skillsSet).sort());
             }
         } catch (error) {
-            showToast('Error fetching jobs and skills', 'error');
+            showError('Error fetching jobs and skills');
         } finally {
             setLoading(false);
         }

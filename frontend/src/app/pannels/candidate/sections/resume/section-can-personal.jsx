@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../../../../../utils/api";
-import showToast from "../../../../../utils/toastNotification";
-
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
 function SectionCanPersonalDetail({ profile }) {
     const [formData, setFormData] = useState({
         firstName: '',
@@ -278,7 +277,7 @@ function SectionCanPersonalDetail({ profile }) {
     const handleSubmit = async () => {
         if (!validateAllRequiredFields()) {
             const errorMessages = Object.values(errors).join(', ');
-            showToast(errorMessages || 'Please fill all required fields correctly', 'error', 4000);
+            showError(errorMessages || 'Please fill all required fields correctly');
             return;
         }
         
@@ -299,13 +298,13 @@ function SectionCanPersonalDetail({ profile }) {
             
             const response = await api.updateCandidateProfile(updateData);
             if (response.success) {
-                showToast('Personal details updated successfully!', 'success', 4000);
+                showSuccess('Personal details updated successfully!');
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
             } else {
-                showToast('Failed to update personal details. Please try again.', 'error', 4000);
+                showError('Failed to update personal details. Please try again.');
             }
         } catch (error) {
-            showToast('Failed to update personal details: ' + error.message, 'error', 4000);
+            showError('Failed to update personal details: ' + error.message);
         } finally {
             setLoading(false);
         }

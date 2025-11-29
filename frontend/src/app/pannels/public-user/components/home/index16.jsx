@@ -8,7 +8,6 @@ import api from "../../../../../utils/api";
 import HeroBody from "../../../../../components/HeroBody";
 import { Container, Row, Col } from "react-bootstrap";
 import HomeJobCard from "../../../../../components/HomeJobCard";
-import showToast from "../../../../../utils/toastNotification";
 import useDebounce from "../../../../../utils/useDebounce";
 import { SkeletonContainer, JobCardSkeleton, StatsSkeleton, RecruiterSkeleton } from "../../../../../components/SkeletonLoader";
 import "../../../../../new-job-card.css";
@@ -21,6 +20,7 @@ import "../../../../../container-fixes.css";
 import "../../../../../how-it-works-improvements.css";
 import "./naukri-preview.css";
 
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
 function Home16Page() {
     const [jobs, setJobs] = useState([]);
     const [allJobs, setAllJobs] = useState([]);
@@ -237,7 +237,7 @@ function Home16Page() {
             // Validate allJobs array
             if (!Array.isArray(allJobs)) {
                 setError('Unable to search jobs. Please refresh the page.');
-                showToast('Unable to search jobs. Please refresh the page.', 'error');
+                showError('Unable to search jobs. Please refresh the page.');
                 return;
             }
 
@@ -249,12 +249,12 @@ function Home16Page() {
                 const searchTerm = String(filters.search).trim().toLowerCase();
 
                 if (searchTerm.length < 2) {
-                    showToast('Search term must be at least 2 characters', 'warning');
+                    showWarning('Search term must be at least 2 characters');
                     return;
                 }
 
                 if (searchTerm.length > 100) {
-                    showToast('Search term is too long (max 100 characters)', 'warning');
+                    showWarning('Search term is too long (max 100 characters)');
                     return;
                 }
 
@@ -276,7 +276,7 @@ function Home16Page() {
                 const jobType = String(filters.jobType).trim().toLowerCase();
 
                 if (jobType.length > 50) {
-                    showToast('Job type filter is invalid', 'warning');
+                    showWarning('Job type filter is invalid');
                     return;
                 }
 
@@ -295,12 +295,12 @@ function Home16Page() {
                 const location = String(filters.location).trim().toLowerCase();
 
                 if (location.length < 2) {
-                    showToast('Location must be at least 2 characters', 'warning');
+                    showWarning('Location must be at least 2 characters');
                     return;
                 }
 
                 if (location.length > 100) {
-                    showToast('Location filter is too long (max 100 characters)', 'warning');
+                    showWarning('Location filter is too long (max 100 characters)');
                     return;
                 }
 
@@ -320,7 +320,7 @@ function Home16Page() {
 
             // Show success message with result count
             if (Object.keys(filters).length > 0) {
-                showToast(`Found ${filtered.length} job(s) matching your criteria`, 'success', 2000);
+                showSuccess(`Found ${filtered.length} job(s) matching your criteria`);
 
                 // Scroll to jobs section when search is performed
                 setTimeout(() => {
@@ -332,7 +332,7 @@ function Home16Page() {
             }
         } catch (error) {
             setError('An error occurred while searching. Please try again.');
-            showToast('An error occurred while searching. Please try again.', 'error');
+            showError('An error occurred while searching. Please try again.');
         }
     }, [allJobs]);
     
@@ -341,7 +341,7 @@ function Home16Page() {
             // Validate current state
             if (!Array.isArray(allJobs) || !Array.isArray(filteredJobs)) {
                 setError('Unable to load more jobs. Please refresh the page.');
-                showToast('Unable to load more jobs. Please refresh the page.', 'error');
+                showError('Unable to load more jobs. Please refresh the page.');
                 return;
             }
 
@@ -349,7 +349,7 @@ function Home16Page() {
 
             // Validate newCount
             if (newCount < 0 || newCount > 1000) {
-                showToast('No more jobs to load', 'info');
+                showInfo('No more jobs to load');
                 return;
             }
 
@@ -361,10 +361,10 @@ function Home16Page() {
 
             // Show feedback to user
             const loadedCount = Math.min(6, sourceJobs.length - showingCount);
-            showToast(`Loaded ${loadedCount} more job(s)`, 'info', 1500);
+            showInfo(`Loaded ${loadedCount} more job(s)`);
         } catch (error) {
             setError('An error occurred while loading more jobs.');
-            showToast('An error occurred while loading more jobs.', 'error');
+            showError('An error occurred while loading more jobs.');
         }
     }, [showingCount, isFiltered, filteredJobs, allJobs]);
 
@@ -946,10 +946,10 @@ function Home16Page() {
                                                                 if (sanitizedJobId) {
                                                                     window.location.href = `/job-detail/${sanitizedJobId}`;
                                                                 } else {
-                                                                    showToast('Invalid job ID. Cannot navigate to job details.', 'error');
+                                                                    showError('Invalid job ID. Cannot navigate to job details.');
                                                                 }
                                                             } else {
-                                                                showToast('Job ID is missing. Cannot navigate to job details.', 'error');
+                                                                showError('Job ID is missing. Cannot navigate to job details.');
                                                             }
                                                         }}
                                                     >

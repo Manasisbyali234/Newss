@@ -3,6 +3,7 @@ import Loader from "./app/common/loader";
 import ScrollToTop from "./globals/scroll-to-top";
 import { AuthProvider } from "./contexts/AuthContext";
 import { WebSocketProvider } from "./contexts/WebSocketContext";
+import GlobalPopupProvider from "./components/GlobalPopupProvider";
 import { useState, useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -53,9 +54,11 @@ function App() {
   return (
     <AuthProvider>
       <WebSocketProvider>
-        {isLoading && <Loader />}
-        <ScrollToTop />
-        <RootLayout />
+        <GlobalPopupProvider>
+          {isLoading && <Loader />}
+          <ScrollToTop />
+          <RootLayout />
+        </GlobalPopupProvider>
       </WebSocketProvider>
     </AuthProvider>
   )

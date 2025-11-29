@@ -5,9 +5,9 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import './admin-emp-manage-styles.css';
 import './admin-search-styles.css';
-import showToast from '../../../../utils/toastNotification';
 import SearchBar from '../../../../components/SearchBar';
 
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
 function AdminEmployersAllRequest() {
     const navigate = useNavigate();
     const [employers, setEmployers] = useState([]);
@@ -79,12 +79,12 @@ function AdminEmployersAllRequest() {
                 const updatedEmployers = employers.filter(emp => emp._id !== employerId);
                 setEmployers(updatedEmployers);
                 setFilteredEmployers(updatedEmployers);
-                showToast('Employer approved successfully! Notification sent to employer.', 'success');
+                showSuccess('Employer approved successfully! Notification sent to employer.');
             } else {
-                showToast('Failed to approve employer', 'error');
+                showError('Failed to approve employer');
             }
         } catch (error) {
-            showToast('Error approving employer', 'error');
+            showError('Error approving employer');
             
         }
     };
@@ -96,12 +96,12 @@ function AdminEmployersAllRequest() {
                 const updatedEmployers = employers.filter(emp => emp._id !== employerId);
                 setEmployers(updatedEmployers);
                 setFilteredEmployers(updatedEmployers);
-                showToast('Employer rejected successfully! Notification sent to employer.', 'success');
+                showSuccess('Employer rejected successfully! Notification sent to employer.');
             } else {
-                showToast('Failed to reject employer', 'error');
+                showError('Failed to reject employer');
             }
         } catch (error) {
-            showToast('Error rejecting employer', 'error');
+            showError('Error rejecting employer');
             
         }
     };

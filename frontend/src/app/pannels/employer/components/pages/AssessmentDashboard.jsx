@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import AssessmentCard from "../assessments/AssessmnetCard";
 import CreateAssessmentModal from "../assessments/CreateassessmentModal";
 import axios from "axios";
-import showToast from "../../../../../utils/toastNotification";
 import './assessment-dashboard.css';
 
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
 export default function AssessmentDashboard() {
 	const [assessments, setAssessments] = useState([]);
 	const [showModal, setShowModal] = useState(false);
@@ -44,7 +44,7 @@ export default function AssessmentDashboard() {
 					setAssessments((prev) => prev.map(a => a._id === assessmentData.id ? response.data.assessment : a));
 					setShowModal(false);
 					setEditingAssessment(null);
-					showToast('Assessment updated successfully!', 'success');
+					showSuccess('Assessment updated successfully!');
 				}
 			} else {
 				// Create new assessment
@@ -54,7 +54,7 @@ export default function AssessmentDashboard() {
 				if (response.data.success) {
 					setAssessments((prev) => [response.data.assessment, ...prev]);
 					setShowModal(false);
-					showToast('Assessment created successfully!', 'success');
+					showSuccess('Assessment created successfully!');
 				}
 			}
 		} catch (error) {
@@ -68,7 +68,7 @@ export default function AssessmentDashboard() {
 				errorMessage = error.response.data.errors[0].msg;
 			}
 			
-			showToast(errorMessage, 'error');
+			showError(errorMessage);
 		}
 	};
 
@@ -85,10 +85,10 @@ export default function AssessmentDashboard() {
 				headers: { Authorization: `Bearer ${token}` }
 			});
 			setAssessments(prev => prev.filter(a => a._id !== id));
-			showToast('Assessment deleted successfully', 'success');
+			showSuccess('Assessment deleted successfully');
 		} catch (error) {
 			console.error('Error deleting assessment:', error);
-			showToast('Failed to delete assessment', 'error');
+			showError('Failed to delete assessment');
 		}
 	};
 

@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { api } from '../../../../utils/api';
 import './admin-emp-manage-styles.css';
 import './admin-search-styles.css';
-import showToast from '../../../../utils/toastNotification';
 import SearchBar from '../../../../components/SearchBar';
 
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
 function AdminPlacementOfficersAllRequest() {
     const navigate = useNavigate();
     const [placements, setPlacements] = useState([]);
@@ -59,12 +59,12 @@ function AdminPlacementOfficersAllRequest() {
                 const updatedPlacements = placements.filter(placement => placement._id !== placementId);
                 setPlacements(updatedPlacements);
                 setFilteredPlacements(updatedPlacements);
-                showToast('Placement officer approved successfully!', 'success');
+                showSuccess('Placement officer approved successfully!');
             } else {
-                showToast('Failed to approve placement officer', 'error');
+                showError('Failed to approve placement officer');
             }
         } catch (error) {
-            showToast('Error approving placement officer', 'error');
+            showError('Error approving placement officer');
         }
     };
 
@@ -75,12 +75,12 @@ function AdminPlacementOfficersAllRequest() {
                 const updatedPlacements = placements.filter(placement => placement._id !== placementId);
                 setPlacements(updatedPlacements);
                 setFilteredPlacements(updatedPlacements);
-                showToast('Placement officer rejected successfully!', 'success');
+                showSuccess('Placement officer rejected successfully!');
             } else {
-                showToast('Failed to reject placement officer', 'error');
+                showError('Failed to reject placement officer');
             }
         } catch (error) {
-            showToast('Error rejecting placement officer', 'error');
+            showError('Error rejecting placement officer');
         }
     };
 

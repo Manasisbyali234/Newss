@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Save, Plus, Trash2, Edit3, Mail, Send } from 'lucide-react';
 import api from '../../../../utils/api';
-import showToast from '../../../../utils/toastNotification';
-
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
 const InterviewProcessManager = ({ applicationId, onSave }) => {
   const [interviewProcess, setInterviewProcess] = useState(null);
   const [stages, setStages] = useState([]);
@@ -121,7 +120,7 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
 
   const sendInterviewInvite = async () => {
     if (!emailData.interviewDate || !emailData.interviewTime) {
-      showToast('Please provide interview date and time', 'error');
+      showError('Please provide interview date and time');
       return;
     }
 
@@ -139,17 +138,17 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
 
       const data = await response.json();
       if (response.ok) {
-        showToast('Interview invite sent successfully!', 'success');
+        showSuccess('Interview invite sent successfully!');
         setShowEmailModal(false);
         setEmailData({ interviewDate: '', interviewTime: '', meetingLink: '', instructions: '' });
         // Refresh to show the sent invitation
         fetchInterviewProcess();
       } else {
-        showToast(data.message || 'Failed to send invite', 'error');
+        showError(data.message || 'Failed to send invite');
       }
     } catch (error) {
       console.error('Error sending invite:', error);
-      showToast('Error sending invite. Please try again.', 'error');
+      showError('Error sending invite. Please try again.');
     } finally {
       setSendingEmail(false);
     }
@@ -172,16 +171,16 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
 
       const data = await response.json();
       if (response.ok) {
-        showToast('Interview schedule confirmed!', 'success');
+        showSuccess('Interview schedule confirmed!');
         setCandidateResponse(null);
         // Refresh to show updated status
         fetchInterviewProcess();
       } else {
-        showToast(data.message || 'Failed to confirm schedule', 'error');
+        showError(data.message || 'Failed to confirm schedule');
       }
     } catch (error) {
       console.error('Error confirming schedule:', error);
-      showToast('Error confirming schedule. Please try again.', 'error');
+      showError('Error confirming schedule. Please try again.');
     }
   };
 
@@ -194,11 +193,11 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
       });
       
       setInterviewProcess(data.interviewProcess);
-      showToast('Interview process saved successfully!', 'success');
+      showSuccess('Interview process saved successfully!');
       if (onSave) onSave(data.interviewProcess);
     } catch (error) {
       console.error('Error saving interview process:', error);
-      showToast('Error saving interview process. Please try again.', 'error');
+      showError('Error saving interview process. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -428,7 +427,15 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
 
         {stages.length === 0 ? (
           <div className="text-center py-4">
-            <p className="text-muted mb-3">No interview stages configured yet. Use "Send Invite" button to schedule interviews.</p>
+            <p className="text-muted mb-3">No interview stages configured yet. Click "Add Interview Stage" to create interview rounds.</p>
+            <button
+              className="btn"
+              style={{ backgroundColor: '#ff6600', color: 'white', border: 'none' }}
+              onClick={addStage}
+            >
+              <Plus size={16} className="me-2" />
+              Add Interview Stage
+            </button>
           </div>
         ) : (
           <div className="row g-4">
@@ -642,7 +649,15 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
         )}
 
         {stages.length > 0 && (
-          <div className="mt-4 d-flex justify-content-end">
+          <div className="mt-4 d-flex justify-content-between align-items-center">
+            <button
+              className="btn"
+              style={{ backgroundColor: '#28a745', color: 'white', border: 'none' }}
+              onClick={addStage}
+            >
+              <Plus size={16} className="me-2" />
+              Add Another Stage
+            </button>
             <button
               className="btn btn-lg px-4"
               style={{ backgroundColor: '#ff6600', color: 'white', border: 'none' }}

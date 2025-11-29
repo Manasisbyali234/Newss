@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import showToast from "../../../../utils/toastNotification";
 import SearchBar from "../../../../components/SearchBar";
 
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
 const API_BASE_URL = 'http://localhost:5000/api';
 
 function AdminSubAdmin() {
@@ -186,14 +186,14 @@ function AdminSubAdmin() {
             
             const data = await response.json();
             if (data.success) {
-                showToast(showEditForm ? 'Sub Admin updated successfully' : 'Sub Admin created successfully', 'success');
+                showSuccess(showEditForm ? 'Sub Admin updated successfully' : 'Sub Admin created successfully');
                 resetForm();
                 fetchSubAdmins();
             } else {
-                showToast(data.message || `Error ${showEditForm ? 'updating' : 'creating'} sub admin`, 'error');
+                showError(data.message || `Error ${showEditForm ? 'updating' : 'creating'} sub admin`);
             }
         } catch (error) {
-            showToast(`Error ${showEditForm ? 'updating' : 'creating'} sub admin`, 'error');
+            showError(`Error ${showEditForm ? 'updating' : 'creating'} sub admin`);
         }
         setLoading(false);
     };
@@ -267,7 +267,7 @@ function AdminSubAdmin() {
     };
 
     const handleDelete = async (id) => {
-        showToast('Click delete again to confirm sub admin deletion', 'warning', 3000);
+        showWarning('Click delete again to confirm sub admin deletion');
         return;
     };
     
@@ -284,13 +284,13 @@ function AdminSubAdmin() {
             
             const data = await response.json();
             if (data.success) {
-                showToast('Sub Admin deleted successfully', 'success');
+                showSuccess('Sub Admin deleted successfully');
                 fetchSubAdmins();
             } else {
-                showToast(data.message || 'Error deleting sub admin', 'error');
+                showError(data.message || 'Error deleting sub admin');
             }
         } catch (error) {
-            showToast('Error deleting sub admin', 'error');
+            showError('Error deleting sub admin');
         }
     };
 

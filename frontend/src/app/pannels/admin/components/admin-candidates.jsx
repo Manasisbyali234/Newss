@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import JobZImage from "../../../common/jobz-img";
 import { loadScript } from "../../../../globals/constants";
-import showToast from "../../../../utils/toastNotification";
-
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
 function AdminCandidates() {
     const [candidates, setCandidates] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -33,7 +32,7 @@ function AdminCandidates() {
 
     const handleDelete = async (candidateId) => {
         // Show confirmation toast instead of alert
-        showToast('Click delete again to confirm candidate deletion', 'warning', 3000);
+        showWarning('Click delete again to confirm candidate deletion');
         
         // Add a confirmation flag to prevent accidental deletion
         const confirmDelete = () => {
@@ -69,14 +68,14 @@ function AdminCandidates() {
             });
             
             if (response.ok) {
-                showToast('Candidate deleted successfully!', 'success');
+                showSuccess('Candidate deleted successfully!');
                 fetchCandidates();
             } else {
-                showToast('Failed to delete candidate', 'error');
+                showError('Failed to delete candidate');
             }
         } catch (error) {
             
-            showToast('Failed to delete candidate', 'error');
+            showError('Failed to delete candidate');
         }
     };
 

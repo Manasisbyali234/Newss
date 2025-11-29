@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { api } from "../../../../../utils/api";
-import showToast from "../../../../../utils/toastNotification";
-
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
 function SectionCanResumeHeadline({ profile }) {
     const [headline, setHeadline] = useState('');
     const [loading, setLoading] = useState(false);
@@ -12,7 +11,7 @@ function SectionCanResumeHeadline({ profile }) {
 
     const handleSave = async () => {
         if (!headline.trim()) {
-            showToast('Resume headline cannot be empty', 'error', 4000);
+            showError('Resume headline cannot be empty');
             return;
         }
 
@@ -32,13 +31,13 @@ function SectionCanResumeHeadline({ profile }) {
             const data = await response.json();
             
             if (response.ok && data.success) {
-                showToast('Resume headline updated successfully!', 'success', 4000);
+                showSuccess('Resume headline updated successfully!');
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
             } else {
-                showToast('Failed to update resume headline: ' + (data.message || 'Unknown error'), 'error', 4000);
+                showError('Failed to update resume headline: ' + (data.message || 'Unknown error'));
             }
         } catch (error) {
-            showToast('Failed to update resume headline: ' + error.message, 'error', 4000);
+            showError('Failed to update resume headline: ' + error.message);
         } finally {
             setLoading(false);
         }

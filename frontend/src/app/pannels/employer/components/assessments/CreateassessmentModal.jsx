@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
-import showToast from "../../../../../utils/toastNotification";
 import './CreateassessmentModal.css';
 import { disableBodyScroll, enableBodyScroll } from "../../../../../utils/scrollUtils";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
 export default function CreateAssessmentModal({ onClose, onCreate, editData = null }) {
 	const [title, setTitle] = useState(editData?.title || "");
 	const [type, setType] = useState(editData?.type || "Technical");
@@ -91,7 +91,7 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 			const updated = questions.filter((_, i) => i !== index);
 			setQuestions(updated);
 		} else {
-			showToast("Assessment must have at least one question", 'warning');
+			showWarning("Assessment must have at least one question");
 		}
 	};
 
@@ -107,18 +107,18 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 
 	const handleSubmit = (isDraft = false) => {
 		if (!title.trim()) {
-			showToast("Please enter an assessment title", 'warning');
+			showWarning("Please enter an assessment title");
 			return;
 		}
 		
 		if (!isDraft) {
 			if (!timeLimit || timeLimit < 1) {
-				showToast("Please enter a valid time limit (at least 1 minute)", 'warning');
+				showWarning("Please enter a valid time limit (at least 1 minute)");
 				return;
 			}
 			
 			if (questions.length === 0) {
-				showToast("Please add at least one question", 'warning');
+				showWarning("Please add at least one question");
 				return;
 			}
 			
@@ -127,26 +127,26 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 				
 				const questionText = question.question.replace(/<[^>]*>/g, '').trim();
 				if (!questionText) {
-					showToast(`Please enter text for Question ${i + 1}`, 'warning');
+					showWarning(`Please enter text for Question ${i + 1}`);
 					return;
 				}
 				
 				if (question.type === "mcq") {
 					for (let j = 0; j < question.options.length; j++) {
 						if (!question.options[j].trim()) {
-							showToast(`Please fill Option ${String.fromCharCode(65 + j)} for Question ${i + 1}`, 'warning');
+							showWarning(`Please fill Option ${String.fromCharCode(65 + j)} for Question ${i + 1}`);
 							return;
 						}
 					}
 					
 					if (question.correctAnswer === null || question.correctAnswer === undefined) {
-						showToast(`Please select the correct answer for Question ${i + 1}`, 'warning');
+						showWarning(`Please select the correct answer for Question ${i + 1}`);
 						return;
 					}
 				}
 				
 				if (!question.marks || question.marks < 1) {
-					showToast(`Please enter valid marks for Question ${i + 1} (at least 1)`, 'warning');
+					showWarning(`Please enter valid marks for Question ${i + 1} (at least 1)`);
 					return;
 				}
 			}

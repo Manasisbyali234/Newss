@@ -1,10 +1,9 @@
-
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
 import { Building2, Calendar, Edit, Eye, MapPin, Pause, Play, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { loadScript } from "../../../../../globals/constants";
 import { employer, empRoute } from "../../../../../globals/route-names";
-import showToast from "../../../../../utils/toastNotification";
 import './emp-posted-jobs.css';
 
 export default function EmpPostedJobs() {
@@ -137,14 +136,14 @@ export default function EmpPostedJobs() {
             });
             
             if (response.ok) {
-                showToast('Job deleted successfully!', 'success');
+                showSuccess('Job deleted successfully!');
                 fetchJobs();
             } else {
-                showToast('Failed to delete job', 'error');
+                showError('Failed to delete job');
             }
         } catch (error) {
             
-            showToast('Failed to delete job', 'error');
+            showError('Failed to delete job');
         }
     };
 
@@ -163,14 +162,14 @@ export default function EmpPostedJobs() {
             });
             
             if (response.ok) {
-                showToast(`Job ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully!`, 'success');
+                showSuccess(`Job ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully!`);
                 fetchJobs();
             } else {
-                showToast('Failed to update job status', 'error');
+                showError('Failed to update job status');
             }
         } catch (error) {
             
-            showToast('Failed to update job status', 'error');
+            showError('Failed to update job status');
         }
     };
 

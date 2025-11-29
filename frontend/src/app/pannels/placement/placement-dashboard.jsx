@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { api } from '../../../utils/api';
 import { useAuth } from '../../../contexts/AuthContext';
 import { debugAuth, testAPIConnection, testPlacementAuth } from '../../../utils/authDebug';
-import showToast from '../../../utils/toastNotification';
 import PlacementNotifications from './sections/PlacementNotifications';
 import './placement-dashboard.css';
 
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../utils/popupNotification';
 function PlacementDashboard() {
     const { user, userType, isAuthenticated, loading: authLoading } = useAuth();
     const [placementData, setPlacementData] = useState(null);
@@ -103,7 +103,7 @@ function PlacementDashboard() {
         } catch (error) {
             console.error('Profile fetch error:', error);
             if (error.message.includes('401')) {
-                showToast('Authentication failed. Please login again.', 'error');
+                showError('Authentication failed. Please login again.');
                 localStorage.removeItem('placementToken');
                 localStorage.removeItem('placementUser');
                 window.location.href = '/placement/login';
@@ -146,24 +146,24 @@ function PlacementDashboard() {
         ];
         
         if (!allowedTypes.includes(file.type)) {
-            showToast('Please upload only Excel (.xlsx, .xls) or CSV files.', 'error');
+            showPopup('Please upload only Excel (.xlsx, .xls) or CSV files.', 'error');
             return false;
         }
         
         if (file.size > 5 * 1024 * 1024) {
-            showToast('File size should be less than 5MB.', 'error');
+            showError('File size should be less than 5MB.');
             return false;
         }
         
         // Check if file is empty
         if (file.size === 0) {
-            showToast('The selected file is empty. Please choose a file with student data.', 'error');
+            showError('The selected file is empty. Please choose a file with student data.');
             return false;
         }
         
         // Basic content validation for very small files
         if (file.size < 50) {
-            showToast('The file appears to be too small to contain valid student data. Please check your file.', 'warning');
+            showWarning('The file appears to be too small to contain valid student data. Please check your file.');
             return false;
         }
         
@@ -172,7 +172,7 @@ function PlacementDashboard() {
 
     const handleFileApprove = async (fileId, fileName) => {
         if (!placementId) {
-            showToast('Placement ID not found', 'error');
+            showError('Placement ID not found');
             return;
         }
         if (!window.confirm(`Approve file "${fileName}"?`)) return;
@@ -189,13 +189,13 @@ function PlacementDashboard() {
             });
             const data = await response.json();
             if (data.success) {
-                showToast('File approved successfully!', 'success');
+                showSuccess('File approved successfully!');
                 fetchPlacementDetails();
             } else {
-                showToast('Failed to approve file', 'error');
+                showError('Failed to approve file');
             }
         } catch (error) {
-            showToast('Error approving file', 'error');
+            showError('Error approving file');
         } finally {
             setProcessingFiles(prev => ({...prev, [fileId]: null}));
         }
@@ -203,7 +203,7 @@ function PlacementDashboard() {
 
     const handleFileReject = async (fileId, fileName) => {
         if (!placementId) {
-            showToast('Placement ID not found', 'error');
+            showError('Placement ID not found');
             return;
         }
         if (!window.confirm(`Reject file "${fileName}"?`)) return;
@@ -220,13 +220,13 @@ function PlacementDashboard() {
             });
             const data = await response.json();
             if (data.success) {
-                showToast('File rejected successfully!', 'success');
+                showSuccess('File rejected successfully!');
                 fetchPlacementDetails();
             } else {
-                showToast('Failed to reject file', 'error');
+                showError('Failed to reject file');
             }
         } catch (error) {
-            showToast('Error rejecting file', 'error');
+            showError('Error rejecting file');
         } finally {
             setProcessingFiles(prev => ({...prev, [fileId]: null}));
         }
@@ -261,14 +261,14 @@ function PlacementDashboard() {
                         }
                     }, 100);
                 } else {
-                    showToast('File data not available or file not processed yet.', 'warning');
+                    showWarning('File data not available or file not processed yet.');
                 }
             } else {
-                showToast('Unable to view file. Please try again.', 'error');
+                showError('Unable to view file. Please try again.');
             }
         } catch (error) {
             console.error('Error viewing file:', error);
-            showToast('Error viewing file. Please try again.', 'error');
+            showError('Error viewing file. Please try again.');
         }
     };
 
@@ -297,7 +297,7 @@ function PlacementDashboard() {
         // Check authentication before upload
         const token = localStorage.getItem('placementToken');
         if (!token) {
-            showToast('Authentication token missing. Please login again.', 'error');
+            showError('Authentication token missing. Please login again.');
             resetFileUploadState();
             return;
         }
@@ -319,7 +319,7 @@ function PlacementDashboard() {
             const data = await api.uploadStudentData(formData);
             
             if (data.success) {
-                showToast('Student data uploaded successfully! Waiting for admin approval.', 'success');
+                showSuccess('Student data uploaded successfully! Waiting for admin approval.');
                 resetFileUploadState();
                 fetchPlacementDetails();
             } else {
@@ -328,23 +328,23 @@ function PlacementDashboard() {
                     // Show popup for logo requirement
                     setShowLogoRequiredModal(true);
                 } else if (data.message && data.message.includes('Duplicate emails found')) {
-                    showToast(data.message, 'error', 5000); // Show for 5 seconds for duplicate emails
+                    showError(data.message); // Show for 5 seconds for duplicate emails
                 } else if (data.message && (data.message.includes('empty') || data.message.includes('no data'))) {
-                    showToast(`Upload failed: ${data.message}. Please ensure your file contains actual student data, not just headers.`, 'error');
+                    showPopup(`Upload failed: ${data.message}. Please ensure your file contains actual student data, not just headers.`, 'error');
                 } else {
-                    showToast(data.message || 'Upload failed', 'error');
+                    showError(data.message || 'Upload failed');
                 }
                 resetFileUploadState();
             }
         } catch (error) {
             
             if (error.message.includes('401') || error.message.includes('authentication')) {
-                showToast('Authentication failed. Please login again.', 'error');
+                showError('Authentication failed. Please login again.');
                 localStorage.removeItem('placementToken');
                 localStorage.removeItem('placementUser');
                 window.location.href = '/placement/login';
             } else {
-                showToast(error.message || 'Upload failed. Please try again.', 'error');
+                showError(error.message || 'Upload failed. Please try again.');
             }
             resetFileUploadState();
         } finally {
@@ -373,12 +373,12 @@ function PlacementDashboard() {
         if (!file) return;
         
         if (!file.type.startsWith('image/')) {
-            showToast('Please select an image file', 'error');
+            showError('Please select an image file');
             return;
         }
         
         if (file.size > 2 * 1024 * 1024) {
-            showToast('Image size should be less than 2MB', 'error');
+            showError('Image size should be less than 2MB');
             return;
         }
         
@@ -400,13 +400,13 @@ function PlacementDashboard() {
                 
                 const data = await response.json();
                 if (data.success) {
-                    showToast('Logo uploaded successfully!', 'success');
+                    showSuccess('Logo uploaded successfully!');
                     fetchPlacementDetails();
                 } else {
-                    showToast('Failed to upload logo', 'error');
+                    showError('Failed to upload logo');
                 }
             } catch (error) {
-                showToast('Error uploading logo', 'error');
+                showError('Error uploading logo');
             }
         };
         reader.readAsDataURL(file);
@@ -417,12 +417,12 @@ function PlacementDashboard() {
         if (!file) return;
         
         if (!file.type.startsWith('image/')) {
-            showToast('Please select an image file', 'error');
+            showError('Please select an image file');
             return;
         }
         
         if (file.size > 2 * 1024 * 1024) {
-            showToast('Image size should be less than 2MB', 'error');
+            showError('Image size should be less than 2MB');
             return;
         }
         
@@ -444,13 +444,13 @@ function PlacementDashboard() {
                 
                 const data = await response.json();
                 if (data.success) {
-                    showToast('ID card uploaded successfully!', 'success');
+                    showSuccess('ID card uploaded successfully!');
                     fetchPlacementDetails();
                 } else {
-                    showToast('Failed to upload ID card', 'error');
+                    showError('Failed to upload ID card');
                 }
             } catch (error) {
-                showToast('Error uploading ID card', 'error');
+                showError('Error uploading ID card');
             }
         };
         reader.readAsDataURL(file);
@@ -485,7 +485,7 @@ function PlacementDashboard() {
 
     const handleUpdateProfile = async () => {
         if (!editFormData.firstName.trim() || !editFormData.lastName.trim() || !editFormData.phone.trim() || !editFormData.collegeName.trim() || !editFormData.collegeAddress.trim() || !editFormData.collegeOfficialEmail.trim() || !editFormData.collegeOfficialPhone.trim()) {
-            showToast('All fields are required', 'warning');
+            showWarning('All fields are required');
             return;
         }
 
@@ -498,19 +498,19 @@ function PlacementDashboard() {
             console.log('Frontend: Update response:', response);
             
             if (response && response.success) {
-                showToast('Profile updated successfully!', 'success');
+                showSuccess('Profile updated successfully!');
                 setShowEditModal(false);
                 document.body.classList.remove('modal-open');
                 await fetchPlacementDetails(); // Wait for profile refresh
             } else {
                 const errorMessage = response?.message || 'Failed to update profile';
                 console.error('Frontend: Update failed:', errorMessage);
-                showToast(errorMessage, 'error');
+                showError(errorMessage);
             }
         } catch (error) {
             console.error('Frontend: Profile update error:', error);
             const errorMessage = error.message || 'Error updating profile. Please try again.';
-            showToast(errorMessage, 'error');
+            showError(errorMessage);
         } finally {
             setUpdating(false);
         }

@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { api } from "../../../../../utils/api";
 import CountryCodeSelector from "../../../../../components/CountryCodeSelector";
-import showToast from "../../../../../utils/toastNotification";
-
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
 const indianCities = [
     'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata', 'Pune', 'Ahmedabad',
     'Surat', 'Jaipur', 'Lucknow', 'Kanpur', 'Nagpur', 'Indore', 'Thane', 'Bhopal',
@@ -336,7 +335,7 @@ function SectionCandicateBasicInfo() {
             const response = await api.updateCandidateProfile(submitData);
             
             if (response.success) {
-                showToast('Profile updated successfully!', 'success', 4000);
+                showSuccess('Profile updated successfully!');
                 // Scroll to top of the page
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 fetchProfile();

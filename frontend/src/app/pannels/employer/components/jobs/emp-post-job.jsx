@@ -1,4 +1,4 @@
-
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
 import React, { useState, useEffect, useCallback } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import { employer, empRoute, publicUser } from "../../../../../globals/route-names";
@@ -8,7 +8,6 @@ import { api } from "../../../../../utils/api";
 import InterviewDateTester from "../../../../../components/InterviewDateTester";
 import { ErrorDisplay, GlobalErrorDisplay } from "../../../../../components/ErrorDisplay";
 import { validateField, validateForm, displayError, safeApiCall, getErrorMessage } from "../../../../../utils/errorHandler";
-import showToast from "../../../../../utils/toastNotification";
 import RichTextEditor from "../../../../../components/RichTextEditor";
 
 import "../../../../../components/ErrorDisplay.css";
@@ -170,7 +169,7 @@ export default function EmpPostJob({ onNext }) {
 			}
 		} catch (error) {
 			if (error.name === 'AuthError') {
-				showToast('Session expired. Please login again.', 'warning');
+				showWarning('Session expired. Please login again.');
 				localStorage.removeItem('employerToken');
 				window.location.href = '/login';
 				return;
@@ -275,7 +274,7 @@ export default function EmpPostJob({ onNext }) {
 			}
 		} catch (error) {
 			if (error.name === 'AuthError') {
-				showToast('Session expired. Please login again.', 'warning');
+				showWarning('Session expired. Please login again.');
 				localStorage.removeItem('employerToken');
 				window.location.href = '/login';
 				return;
@@ -311,7 +310,7 @@ export default function EmpPostJob({ onNext }) {
 			}
 		} catch (error) {
 			if (error.name === 'AuthError') {
-				showToast('Session expired. Please login again.', 'warning');
+				showWarning('Session expired. Please login again.');
 				localStorage.removeItem('employerToken');
 				window.location.href = '/login';
 				return;
@@ -375,14 +374,14 @@ export default function EmpPostJob({ onNext }) {
 		if (field === 'toDate' && value) {
 			const fromDate = formData.interviewRoundDetails[roundType]?.fromDate;
 			if (fromDate && new Date(value) < new Date(fromDate)) {
-				showToast('To Date cannot be earlier than From Date', 'error');
+				showError('To Date cannot be earlier than From Date');
 				return;
 			}
 		}
 		if (field === 'fromDate' && value) {
 			const toDate = formData.interviewRoundDetails[roundType]?.toDate;
 			if (toDate && new Date(value) > new Date(toDate)) {
-				showToast('From Date cannot be later than To Date', 'error');
+				showError('From Date cannot be later than To Date');
 				return;
 			}
 		}
@@ -411,7 +410,7 @@ export default function EmpPostJob({ onNext }) {
 		if ((field === 'fromDate' || field === 'toDate') && value) {
 			const holidayCheck = await holidaysApi.checkHoliday(value);
 			if (holidayCheck.success && holidayCheck.isHoliday) {
-				showToast(`Note: ${value} is a public holiday (${holidayCheck.holidayInfo.name}). Consider selecting a different date.`, 'warning', 6000);
+				showWarning(`Note: ${value} is a public holiday (${holidayCheck.holidayInfo.name}). Consider selecting a different date.`);
 			}
 		}
 	};
@@ -513,7 +512,7 @@ export default function EmpPostJob({ onNext }) {
 		if (!validateJobForm()) {
 			const allErrors = [...Object.entries(errors).map(([field, msgs]) => `${field}: ${msgs.join(', ')}`), ...globalErrors];
 			if (allErrors.length > 0) {
-				showToast(`Validation Errors:\n${allErrors.join('\n')}`, 'error', 8000);
+				showError(`Validation Errors:\n${allErrors.join('\n')}`);
 			}
 			const firstErrorField = document.querySelector('.is-invalid');
 			if (firstErrorField) {
@@ -533,7 +532,7 @@ export default function EmpPostJob({ onNext }) {
 		try {
 			const token = localStorage.getItem('employerToken');
 			if (!token) {
-				showToast('Please login first', 'warning');
+				showWarning('Please login first');
 				return;
 			}
 
@@ -552,6 +551,16 @@ export default function EmpPostJob({ onNext }) {
 			const assessmentRoundKey = formData.interviewRoundOrder.find(key => formData.interviewRoundTypes[key] === 'assessment');
 			const assessmentDetails = assessmentRoundKey ? formData.interviewRoundDetails[assessmentRoundKey] : null;
 			
+			// Map interview round details from unique keys to base round types
+			const mappedInterviewRoundDetails = {};
+			formData.interviewRoundOrder.forEach(uniqueKey => {
+				const roundType = formData.interviewRoundTypes[uniqueKey];
+				const details = formData.interviewRoundDetails[uniqueKey];
+				if (roundType && details) {
+					mappedInterviewRoundDetails[uniqueKey] = details;
+				}
+			});
+
 			const jobData = {
 				title: formData.jobTitle,
 				location: formData.jobLocation,
@@ -570,7 +579,7 @@ export default function EmpPostJob({ onNext }) {
 				backlogsAllowed: formData.backlogsAllowed,
 				interviewRoundsCount: parseInt(formData.interviewRoundsCount) || 0,
 				interviewRoundTypes: formData.interviewRoundTypes,
-				interviewRoundDetails: formData.interviewRoundDetails,
+				interviewRoundDetails: mappedInterviewRoundDetails,
 				interviewRoundOrder: formData.interviewRoundOrder || [],
 				assignedAssessment: selectedAssessment || null,
 				assessmentStartDate: assessmentDetails?.fromDate || null,
@@ -617,23 +626,23 @@ export default function EmpPostJob({ onNext }) {
 			if (data.success) {
 				// Clear saved CTC from localStorage after successful submission
 				localStorage.removeItem('draft_ctc');
-				showToast(isEditMode ? 'Job updated successfully!' : 'Job posted successfully!', 'success');
+				showSuccess(isEditMode ? 'Job updated successfully!' : 'Job posted successfully!');
 				setTimeout(() => {
 					window.location.href = '/employer/manage-jobs';
 				}, 1500);
 			} else {
-				showToast(data.message || `Failed to ${isEditMode ? 'update' : 'post'} job`, 'error');
+				showError(data.message || `Failed to ${isEditMode ? 'update' : 'post'} job`);
 			}
 		} catch (error) {
 			if (error.name === 'AuthError') {
-				showToast('Session expired. Please login again.', 'warning');
+				showWarning('Session expired. Please login again.');
 				localStorage.removeItem('employerToken');
 				window.location.href = '/login';
 				return;
 			}
 			
 			const errorMessage = getErrorMessage(error, 'profile');
-			showToast(errorMessage, 'error');
+			showError(errorMessage);
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -1687,21 +1696,21 @@ export default function EmpPostJob({ onNext }) {
 															const assessmentDetails = formData.interviewRoundDetails[assessmentKey];
 															
 															if (!selectedAssessment) {
-																showToast('Please select an assessment first', 'warning');
+																showWarning('Please select an assessment first');
 																return;
 															}
 															
 															if (!assessmentDetails?.fromDate || !assessmentDetails?.toDate) {
-																showToast(`Please set both From Date and To Date for Assessment ${assessmentIndex + 1}`, 'warning');
+																showWarning(`Please set both From Date and To Date for Assessment ${assessmentIndex + 1}`);
 																return;
 															}
 															
 															if (new Date(assessmentDetails.fromDate) > new Date(assessmentDetails.toDate)) {
-																showToast(`Assessment ${assessmentIndex + 1} From Date cannot be after To Date`, 'error');
+																showError(`Assessment ${assessmentIndex + 1} From Date cannot be after To Date`);
 																return;
 															}
 															
-															showToast(`Assessment ${assessmentIndex + 1} scheduled successfully! Assessment: ${availableAssessments.find(a => a._id === selectedAssessment)?.title} | From: ${new Date(assessmentDetails.fromDate).toLocaleDateString()} | To: ${new Date(assessmentDetails.toDate).toLocaleDateString()}`, 'success', 5000);
+															showSuccess(`Assessment ${assessmentIndex + 1} scheduled successfully! Assessment: ${availableAssessments.find(a => a._id === selectedAssessment)?.title} | From: ${new Date(assessmentDetails.fromDate).toLocaleDateString()} | To: ${new Date(assessmentDetails.toDate).toLocaleDateString()}`);
 														}}
 													>
 														<i className="fa fa-calendar-plus"></i>
@@ -2076,21 +2085,21 @@ export default function EmpPostJob({ onNext }) {
 															const roundDetails = formData.interviewRoundDetails[uniqueKey];
 															
 															if (!roundDetails?.description?.trim()) {
-																showToast(`Please enter description for ${roundNames[roundType]}`, 'warning');
+																showWarning(`Please enter description for ${roundNames[roundType]}`);
 																return;
 															}
 															
 															if (!roundDetails?.fromDate || !roundDetails?.toDate) {
-																showToast(`Please set both From Date and To Date for ${roundNames[roundType]}`, 'warning');
+																showWarning(`Please set both From Date and To Date for ${roundNames[roundType]}`);
 																return;
 															}
 															
 															if (!roundDetails?.time) {
-																showToast(`Please set time for ${roundNames[roundType]}`, 'warning');
+																showWarning(`Please set time for ${roundNames[roundType]}`);
 																return;
 															}
 															
-															showToast(`${roundNames[roundType]} scheduled successfully! From: ${new Date(roundDetails.fromDate).toLocaleDateString()} | To: ${new Date(roundDetails.toDate).toLocaleDateString()} | Time: ${roundDetails.time}`, 'success', 5000);
+															showSuccess(`${roundNames[roundType]} scheduled successfully! From: ${new Date(roundDetails.fromDate).toLocaleDateString()} | To: ${new Date(roundDetails.toDate).toLocaleDateString()} | Time: ${roundDetails.time}`);
 														}}
 													>
 														<i className="fa fa-calendar-plus"></i>

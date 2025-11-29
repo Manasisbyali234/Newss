@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { api } from '../../../../utils/api';
 import { useWebSocket } from '../../../../contexts/WebSocketContext';
-import showToast from '../../../../utils/toastNotification';
 import './placement-details.css';
 import '../../../../table-id-fix.css';
 
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
 function PlacementDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -81,10 +81,10 @@ function PlacementDetails() {
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
             } else {
-                showToast('Failed to download file', 'error');
+                showError('Failed to download file');
             }
         } catch (error) {
-            showToast('Error downloading file', 'error');
+            showError('Error downloading file');
             
         }
     };
@@ -103,13 +103,13 @@ function PlacementDetails() {
             });
             const data = await response.json();
             if (data.success) {
-                showToast('Placement officer approved successfully!', 'success');
+                showSuccess('Placement officer approved successfully!');
                 fetchPlacementDetails();
             } else {
-                showToast('Failed to approve placement officer', 'error');
+                showError('Failed to approve placement officer');
             }
         } catch (error) {
-            showToast('Error approving placement officer', 'error');
+            showError('Error approving placement officer');
             
         }
     };
@@ -133,7 +133,7 @@ function PlacementDetails() {
             const data = await response.json();
             if (data.success) {
                 const displayName = placement?.fileHistory?.find(f => f._id === fileId)?.customName || fileName;
-                showToast(`File "${displayName}" approved and processed successfully! ${data.message}`, 'success', 5000);
+                showSuccess(`File "${displayName}" approved and processed successfully! ${data.message}`);
                 // Force immediate refresh
                 setTimeout(() => {
                     fetchPlacementDetails();
@@ -145,10 +145,10 @@ function PlacementDetails() {
                     }, 1000);
                 }
             } else {
-                showToast(`Failed to approve file: ${data.message}`, 'error');
+                showError(`Failed to approve file: ${data.message}`);
             }
         } catch (error) {
-            showToast(`Error approving file: ${error.message}`, 'error');
+            showError(`Error approving file: ${error.message}`);
         } finally {
             setProcessingFiles(prev => ({...prev, [fileId]: null}));
         }
@@ -170,16 +170,16 @@ function PlacementDetails() {
             const data = await response.json();
             if (data.success) {
                 const displayName = placement?.fileHistory?.find(f => f._id === fileId)?.customName || fileName;
-                showToast(`File "${displayName}" rejected successfully!`, 'success');
+                showSuccess(`File "${displayName}" rejected successfully!`);
                 // Force immediate refresh
                 setTimeout(() => {
                     fetchPlacementDetails();
                 }, 500);
             } else {
-                showToast(`Failed to reject file: ${data.message}`, 'error');
+                showError(`Failed to reject file: ${data.message}`);
             }
         } catch (error) {
-            showToast(`Error rejecting file: ${error.message}`, 'error');
+            showError(`Error rejecting file: ${error.message}`);
         } finally {
             setProcessingFiles(prev => ({...prev, [fileId]: null}));
         }
@@ -197,13 +197,13 @@ function PlacementDetails() {
             });
             const data = await response.json();
             if (data.success) {
-                showToast('Placement officer rejected successfully!', 'success');
+                showSuccess('Placement officer rejected successfully!');
                 fetchPlacementDetails();
             } else {
-                showToast('Failed to reject placement officer', 'error');
+                showError('Failed to reject placement officer');
             }
         } catch (error) {
-            showToast('Error rejecting placement officer', 'error');
+            showError('Error rejecting placement officer');
             
         }
     };
@@ -256,7 +256,7 @@ function PlacementDetails() {
     const handleUpdateFileCredits = async () => {
         // Check if file is rejected
         if (selectedFile.status === 'rejected') {
-            showToast('Cannot update credits for rejected files', 'warning');
+            showWarning('Cannot update credits for rejected files');
             return;
         }
         
@@ -272,7 +272,7 @@ function PlacementDetails() {
             
             const data = await response.json();
             if (data.success) {
-                showToast(`File credits updated successfully! ${data.message}. All candidates will see updated credits immediately.`, 'success', 5000);
+                showSuccess(`File credits updated successfully! ${data.message}. All candidates will see updated credits immediately.`);
                 setShowCreditsModal(false);
                 fetchPlacementDetails();
                 // Refresh student data if currently viewing this file
@@ -282,10 +282,10 @@ function PlacementDetails() {
                     }, 500);
                 }
             } else {
-                showToast(`Failed to update credits: ${data.message}`, 'error');
+                showError(`Failed to update credits: ${data.message}`);
             }
         } catch (error) {
-            showToast(`Error updating credits: ${error.message}`, 'error');
+            showError(`Error updating credits: ${error.message}`);
         }
     };
 
@@ -310,7 +310,7 @@ function PlacementDetails() {
             const data = await response.json();
             
             if (data.success) {
-                showToast(`File processed successfully! Created: ${data.stats.created}, Skipped: ${data.stats.skipped}. Candidates can now login.`, 'success', 5000);
+                showPopup(`File processed successfully! Created: ${data.stats.created}, Skipped: ${data.stats.skipped}. Candidates can now login.`, 'success', 5000);
                 
                 fetchPlacementDetails();
                 if (currentViewingFileId === fileId) {
@@ -319,10 +319,10 @@ function PlacementDetails() {
                     }, 1000);
                 }
             } else {
-                showToast(`Failed to process file: ${data.message}`, 'error');
+                showError(`Failed to process file: ${data.message}`);
             }
         } catch (error) {
-            showToast(`Error processing file: ${error.message}`, 'error');
+            showError(`Error processing file: ${error.message}`);
         } finally {
             setProcessingFiles(prev => ({...prev, [fileId]: null}));
         }
@@ -346,7 +346,7 @@ function PlacementDetails() {
                 if (rejectedCount > 0) {
                     message += ` Note: ${rejectedCount} rejected file(s) excluded.`;
                 }
-                showToast(message, 'success', 5000);
+                showSuccess(message);
                 setShowBulkCreditsModal(false);
                 fetchPlacementDetails();
                 // Refresh student data if currently viewing a file
@@ -359,10 +359,10 @@ function PlacementDetails() {
                     }
                 }
             } else {
-                showToast(`Failed to update bulk credits: ${data.message}`, 'error');
+                showError(`Failed to update bulk credits: ${data.message}`);
             }
         } catch (error) {
-            showToast(`Error updating bulk credits: ${error.message}`, 'error');
+            showError(`Error updating bulk credits: ${error.message}`);
         }
     };
 
@@ -379,13 +379,13 @@ function PlacementDetails() {
             
             const data = await response.json();
             if (data.success) {
-                showToast(`Excel data stored successfully! Files: ${data.stats.totalFilesProcessed}, Records: ${data.stats.totalRecordsStored}`, 'success', 5000);
+                showPopup(`Excel data stored successfully! Files: ${data.stats.totalFilesProcessed}, Records: ${data.stats.totalRecordsStored}`, 'success', 5000);
                 fetchPlacementDetails();
             } else {
-                showToast(`Failed to store Excel data: ${data.message}`, 'error');
+                showError(`Failed to store Excel data: ${data.message}`);
             }
         } catch (error) {
-            showToast(`Error storing Excel data: ${error.message}`, 'error');
+            showError(`Error storing Excel data: ${error.message}`);
         } finally {
             setProcessing(false);
         }
@@ -406,11 +406,11 @@ function PlacementDetails() {
             if (data.success) {
                 setStoredData(data.data || []);
             } else {
-                showToast(`Failed to load stored data: ${data.message}`, 'error');
+                showError(`Failed to load stored data: ${data.message}`);
                 setStoredData([]);
             }
         } catch (error) {
-            showToast(`Error loading stored data: ${error.message}`, 'error');
+            showError(`Error loading stored data: ${error.message}`);
             setStoredData([]);
         } finally {
             setLoadingStoredData(false);

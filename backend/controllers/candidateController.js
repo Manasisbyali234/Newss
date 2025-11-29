@@ -1078,26 +1078,47 @@ exports.getCandidateApplicationsWithInterviews = async (req, res) => {
     const applications = await Application.find({ candidateId: req.user._id })
       .populate({
         path: 'jobId',
-        select: 'title location jobType status interviewRoundsCount interviewRoundTypes interviewRoundDetails assessmentId assessmentStartDate assessmentEndDate',
         options: { lean: false }
       })
       .populate('employerId', 'companyName')
       .sort({ createdAt: -1 })
       .lean(); // Use lean for better performance
 
-    // Add assessment status fields to each application
+    // Add assessment status fields to each application and normalize interviewRoundDetails
     const applicationsWithAssessmentStatus = applications.map(app => {
-      console.log('Processing app for job:', app.jobId?._id, {
-        assessmentStartDate: app.jobId?.assessmentStartDate,
-        assessmentEndDate: app.jobId?.assessmentEndDate
-      });
-      return {
+      const normalizedApp = {
         ...app,
         assessmentStatus: app.assessmentStatus || 'not_required',
         assessmentScore: app.assessmentScore || null,
         assessmentPercentage: app.assessmentPercentage || null,
         assessmentResult: app.assessmentResult || null
       };
+
+      // Normalize interviewRoundDetails to handle both old and new key formats
+      if (app.jobId?.interviewRoundDetails && app.jobId?.interviewRoundOrder) {
+        const normalizedDetails = {};
+        
+        // Extract round type from unique key (e.g., 'technical_1764388004810' -> 'technical')
+        app.jobId.interviewRoundOrder.forEach(uniqueKey => {
+          const roundType = uniqueKey.split('_')[0]; // Extract 'technical' from 'technical_1764388004810'
+          const details = app.jobId.interviewRoundDetails[roundType];
+          
+          if (details) {
+            normalizedDetails[uniqueKey] = details;
+            normalizedDetails[roundType] = details;
+          }
+        });
+        
+        normalizedApp.jobId = {
+          ...normalizedApp.jobId,
+          interviewRoundDetails: {
+            ...app.jobId.interviewRoundDetails,
+            ...normalizedDetails
+          }
+        };
+      }
+
+      return normalizedApp;
     });
 
     res.json({ success: true, applications: applicationsWithAssessmentStatus });

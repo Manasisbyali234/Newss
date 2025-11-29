@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './PopupNotification.css';
 
 const PopupNotification = ({ message, onClose, type = 'info' }) => {
+  useEffect(() => {
+    if (message) {
+      const audio = new Audio('/sounds/notification.mp3');
+      audio.play().catch(() => {});
+    }
+  }, [message]);
+
   if (!message) return null;
 
   const handleOverlayClick = (e) => {

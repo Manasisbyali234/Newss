@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { api } from "../../../../../utils/api";
-import showToast from "../../../../../utils/toastNotification";
-
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
 function SectionCanProfileSummary({ profile }) {
     const [summary, setSummary] = useState('');
     const [loading, setLoading] = useState(false);
@@ -15,17 +14,17 @@ function SectionCanProfileSummary({ profile }) {
         // Frontend validation
         const trimmedSummary = summary.trim();
         if (!trimmedSummary) {
-            showToast('Profile summary cannot be empty. Please provide a brief description of your professional background.', 'warning', 4000);
+            showWarning('Profile summary cannot be empty. Please provide a brief description of your professional background.');
             return;
         }
 
         if (trimmedSummary.length < 50) {
-            showToast('Profile summary should be at least 50 characters long to provide meaningful information to employers.', 'warning', 4000);
+            showWarning('Profile summary should be at least 50 characters long to provide meaningful information to employers.');
             return;
         }
 
         if (trimmedSummary.length > 1000) {
-            showToast('Profile summary cannot exceed 1000 characters.', 'error', 4000);
+            showError('Profile summary cannot exceed 1000 characters.');
             return;
         }
 
@@ -46,30 +45,30 @@ function SectionCanProfileSummary({ profile }) {
 
             if (response.ok && data.success) {
                 setIsEditing(false);
-                showToast('Profile summary updated successfully!', 'success', 4000);
+                showSuccess('Profile summary updated successfully!');
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
             } else {
                 // Handle different types of errors
                 if (data.errors && Array.isArray(data.errors)) {
                     const errorMessages = data.errors.map(err => err.msg).join(', ');
-                    showToast('Validation errors: ' + errorMessages, 'error', 6000);
+                    showError('Validation errors: ' + errorMessages);
                 } else if (data.message) {
-                    showToast('Failed to update profile summary: ' + data.message, 'error', 4000);
+                    showError('Failed to update profile summary: ' + data.message);
                 } else if (response.status === 400) {
-                    showToast('Invalid data provided. Please check your input and try again.', 'error', 4000);
+                    showError('Invalid data provided. Please check your input and try again.');
                 } else if (response.status === 401) {
-                    showToast('Your session has expired. Please log in again.', 'error', 4000);
+                    showError('Your session has expired. Please log in again.');
                 } else if (response.status === 500) {
-                    showToast('Server error occurred. Please try again later.', 'error', 4000);
+                    showError('Server error occurred. Please try again later.');
                 } else {
-                    showToast('Failed to update profile summary. Please try again.', 'error', 4000);
+                    showError('Failed to update profile summary. Please try again.');
                 }
             }
         } catch (error) {
             if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                showToast('Network error: Unable to connect to server. Please check your internet connection.', 'error', 4000);
+                showError('Network error: Unable to connect to server. Please check your internet connection.');
             } else {
-                showToast('Failed to update profile summary: ' + error.message, 'error', 4000);
+                showError('Failed to update profile summary: ' + error.message);
             }
         } finally {
             setLoading(false);

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { api } from '../../../../utils/api';
-import showToast from '../../../../utils/toastNotification';
 import SearchBar from '../../../../components/SearchBar';
 
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
 function AdminPlacementOfficersTabs() {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('pending');
@@ -35,7 +35,7 @@ function AdminPlacementOfficersTabs() {
                 setFilteredPlacements(filtered);
             }
         } catch (error) {
-            showToast('Error fetching placement officers', 'error');
+            showError('Error fetching placement officers');
         } finally {
             setLoading(false);
         }
@@ -59,12 +59,12 @@ function AdminPlacementOfficersTabs() {
             const response = await api.updatePlacementStatus(placementId, 'approved');
             if (response.success) {
                 fetchPlacements();
-                showToast('Placement officer approved successfully!', 'success');
+                showSuccess('Placement officer approved successfully!');
             } else {
-                showToast('Failed to approve placement officer', 'error');
+                showError('Failed to approve placement officer');
             }
         } catch (error) {
-            showToast('Error approving placement officer', 'error');
+            showError('Error approving placement officer');
         }
     };
 
@@ -73,12 +73,12 @@ function AdminPlacementOfficersTabs() {
             const response = await api.updatePlacementStatus(placementId, 'rejected');
             if (response.success) {
                 fetchPlacements();
-                showToast('Placement officer rejected successfully!', 'success');
+                showSuccess('Placement officer rejected successfully!');
             } else {
-                showToast('Failed to reject placement officer', 'error');
+                showError('Failed to reject placement officer');
             }
         } catch (error) {
-            showToast('Error rejecting placement officer', 'error');
+            showError('Error rejecting placement officer');
         }
     };
 

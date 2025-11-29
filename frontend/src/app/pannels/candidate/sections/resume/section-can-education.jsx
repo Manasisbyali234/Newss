@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { api } from '../../../../../utils/api';
-import showToast from '../../../../../utils/toastNotification';
-
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
 function SectionCanEducation({ profile, onUpdate }) {
     const [selectedEducationLevel, setSelectedEducationLevel] = useState('');
     const [educationEntries, setEducationEntries] = useState([]);
@@ -250,13 +249,13 @@ function SectionCanEducation({ profile, onUpdate }) {
             if (file) {
                 // Validate file type first
                 if (file.type !== 'application/pdf') {
-                    showToast('Only PDF files are allowed', 'error', 4000);
+                    showError('Only PDF files are allowed');
                     e.target.value = ''; // Clear the input
                     return;
                 }
                 // Validate file size (50MB limit)
                 if (file.size > 50 * 1024 * 1024) {
-                    showToast('File size must be less than 50MB', 'error', 4000);
+                    showError('File size must be less than 50MB');
                     e.target.value = ''; // Clear the input
                     return;
                 }
@@ -388,18 +387,18 @@ function SectionCanEducation({ profile, onUpdate }) {
                     ...prev,
                     documentBase64: result.filePath
                 }));
-                showToast('Document uploaded successfully!', 'success', 4000);
+                showSuccess('Document uploaded successfully!');
             } else {
-                showToast('Failed to upload document', 'error', 4000);
+                showError('Failed to upload document');
             }
         } catch (error) {
-            showToast('Error uploading document', 'error', 4000);
+            showError('Error uploading document');
         }
     };
 
     const handleAddEducation = () => {
         if (!selectedEducationLevel) {
-            showToast('Please select an education level first', 'error', 4000);
+            showError('Please select an education level first');
             return;
         }
 
@@ -407,9 +406,9 @@ function SectionCanEducation({ profile, onUpdate }) {
         if (!validation.isValid) {
             const errorMessages = Object.values(validation.errors).filter(e => e);
             if (errorMessages.length > 0) {
-                showToast(errorMessages.join(', '), 'error', 4000);
+                showPopup(errorMessages.join(', '), 'error', 4000);
             } else {
-                showToast('Please fill in all required fields', 'error', 4000);
+                showError('Please fill in all required fields');
             }
             return;
         }
@@ -444,7 +443,7 @@ function SectionCanEducation({ profile, onUpdate }) {
         setSelectedEducationLevel('');
         setErrors({});
 
-        showToast('Education entry added successfully! Please click "Save All Education Details" to save changes.', 'success', 4000);
+        showSuccess('Education entry added successfully! Please click "Save All Education Details" to save changes.');
     };
 
     const handleEditEntry = (entry) => {
@@ -458,9 +457,9 @@ function SectionCanEducation({ profile, onUpdate }) {
         if (!validation.isValid) {
             const errorMessages = Object.values(validation.errors).filter(e => e);
             if (errorMessages.length > 0) {
-                showToast(errorMessages.join(', '), 'error', 4000);
+                showPopup(errorMessages.join(', '), 'error', 4000);
             } else {
-                showToast('Please fill in all required fields', 'error', 4000);
+                showError('Please fill in all required fields');
             }
             return;
         }
@@ -497,18 +496,18 @@ function SectionCanEducation({ profile, onUpdate }) {
         setEditingEntry(null);
         setErrors({});
 
-        showToast('Education entry updated successfully! Please click "Save All Education Details" to save changes.', 'success', 4000);
+        showSuccess('Education entry updated successfully! Please click "Save All Education Details" to save changes.');
     };
 
     const handleDeleteEntry = (id) => {
         setEducationEntries(prev => prev.filter(entry => entry.id !== id));
         setHasUnsavedChanges(true);
-        showToast('Education entry deleted successfully! Please click "Save All Education Details" to save changes.', 'success', 4000);
+        showSuccess('Education entry deleted successfully! Please click "Save All Education Details" to save changes.');
     };
 
     const handleSaveAll = async () => {
         if (educationEntries.length === 0) {
-            showToast('Please add at least one education entry', 'warning', 4000);
+            showWarning('Please add at least one education entry');
             return;
         }
 
@@ -537,15 +536,15 @@ function SectionCanEducation({ profile, onUpdate }) {
             if (response.success) {
                 setHasUnsavedChanges(false);
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
-                showToast('All education details saved successfully!', 'success', 4000);
+                showSuccess('All education details saved successfully!');
             } else {
                 const errorMessage = response.message || response.error || 'Failed to save education details';
                 console.error('Save failed:', errorMessage);
-                showToast(errorMessage, 'error', 4000);
+                showError(errorMessage);
             }
         } catch (error) {
             console.error('Save error:', error);
-            showToast('Failed to save education details: ' + (error.message || 'Unknown error'), 'error', 4000);
+            showError('Failed to save education details: ' + (error.message || 'Unknown error'));
         } finally {
             setLoading(false);
         }
@@ -679,20 +678,20 @@ function SectionCanEducation({ profile, onUpdate }) {
     const uploadMarksheet = async (file, level, index = null) => {
         // File validation
         if (!file) {
-            showToast('Please select a file to upload.', 'warning', 4000);
+            showWarning('Please select a file to upload.');
             return;
         }
 
         // Check file type first
         const allowedTypes = ['application/pdf'];
         if (!allowedTypes.includes(file.type)) {
-            showToast('Only PDF files are allowed.', 'error', 4000);
+            showError('Only PDF files are allowed.');
             return;
         }
 
         // Check file size (50MB limit)
         if (file.size > 50 * 1024 * 1024) {
-            showToast('File size must be less than 50MB', 'error', 4000);
+            showError('File size must be less than 50MB');
             return;
         }
 
@@ -750,15 +749,15 @@ function SectionCanEducation({ profile, onUpdate }) {
                 }
                 
                 // Show success toast notification
-                showToast('Marksheet uploaded successfully!', 'success', 4000);
+                showSuccess('Marksheet uploaded successfully!');
             } else {
                 const errorData = await response.json().catch(() => ({}));
                 const errorMessage = errorData.message || `Upload failed with status: ${response.status}`;
-                showToast(`Failed to upload marksheet: ${errorMessage}`, 'error', 4000);
+                showError(`Failed to upload marksheet: ${errorMessage}`);
             }
         } catch (error) {
             console.error('Upload error:', error);
-            showToast(`Error uploading marksheet: ${error.message || 'Network error. Please check your connection and try again.'}`, 'error', 4000);
+            showError(`Error uploading marksheet: ${error.message || 'Network error. Please check your connection and try again.'}`);
         }
     };
 
@@ -887,7 +886,7 @@ function SectionCanEducation({ profile, onUpdate }) {
 
         if (hasErrors) {
             const errorMessages = Object.values(newErrors).concat(newAdditionalErrors.flatMap(e => Object.values(e || {}))).filter(e => e).join(', ');
-            showToast(errorMessages || 'Please correct the highlighted fields', 'error', 4000);
+            showError(errorMessages || 'Please correct the highlighted fields');
             return false;
         }
 
@@ -899,7 +898,7 @@ function SectionCanEducation({ profile, onUpdate }) {
         const validationResult = validateAllFields();
         if (!validationResult.isValid) {
             const errorMessages = validationResult.errors.join(', ');
-            showToast(errorMessages || 'Please correct the highlighted fields', 'error', 4000);
+            showError(errorMessages || 'Please correct the highlighted fields');
             return;
         }
 
@@ -966,13 +965,13 @@ function SectionCanEducation({ profile, onUpdate }) {
                 setAdditionalEditMode(additionalRows.map(() => false));
                 
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
-                showToast('All education details saved successfully!', 'success', 4000);
+                showSuccess('All education details saved successfully!');
             } else {
                 const errorMessage = response.message || response.error || 'Failed to save education details. Please try again.';
-                showToast(errorMessage, 'error', 4000);
+                showError(errorMessage);
             }
         } catch (error) {
-            showToast('Failed to save education details. Please check your connection and try again.', 'error', 4000);
+            showError('Failed to save education details. Please check your connection and try again.');
         } finally {
             setLoading(false);
         }

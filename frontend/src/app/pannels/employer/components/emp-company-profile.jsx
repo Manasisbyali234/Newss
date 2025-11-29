@@ -4,12 +4,12 @@ import { loadScript } from "../../../../globals/constants";
 import CountryCodeSelector from "../../../../components/CountryCodeSelector";
 import { ErrorDisplay, GlobalErrorDisplay } from "../../../../components/ErrorDisplay";
 import { validateField, validateForm, displayError, safeApiCall, getErrorMessage } from "../../../../utils/errorHandler";
-import showToast from "../../../../utils/toastNotification";
 import RichTextEditor from "../../../../components/RichTextEditor";
 import './emp-company-profile.css';
 import '../../../../components/ErrorDisplay.css';
 import '../../../../remove-profile-hover-effects.css';
 
+import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
 function EmpCompanyProfilePage() {
     const [formData, setFormData] = useState({
         // Basic Information
@@ -104,7 +104,7 @@ function EmpCompanyProfilePage() {
         try {
             const token = localStorage.getItem('employerToken');
             if (!token) {
-                showToast('Please login to access your profile.', 'warning');
+                showWarning('Please login to access your profile.');
                 window.location.href = '/employer/login';
                 return;
             }
@@ -252,7 +252,7 @@ function EmpCompanyProfilePage() {
             }
         } catch (error) {
             if (error.name === 'AuthError') {
-                showToast('Session expired. Please login again.', 'warning');
+                showWarning('Session expired. Please login again.');
                 localStorage.removeItem('employerToken');
                 window.location.href = '/employer/login';
                 return;
@@ -315,14 +315,14 @@ function EmpCompanyProfilePage() {
                     state: prev.state || state 
                 }));
                 const message = formData.state ? `City auto-filled: ${city}` : `City and State auto-filled: ${city}, ${state}`;
-                showToast(message, 'success', 2000);
+                showSuccess(message);
             } else {
                 setFormData(prev => ({ ...prev, city: '' }));
-                showToast('Invalid pincode or city not found', 'warning');
+                showWarning('Invalid pincode or city not found');
             }
         } catch (error) {
             console.error('Error fetching city:', error);
-            showToast('Failed to fetch city from pincode', 'error');
+            showError('Failed to fetch city from pincode');
         } finally {
             setFetchingCity(false);
         }
@@ -402,7 +402,7 @@ function EmpCompanyProfilePage() {
             allowedTypes: ['image/jpeg', 'image/png']
         });
         if (!result.ok) {
-            showToast(`Logo upload failed: ${result.message}`, 'error');
+            showError(`Logo upload failed: ${result.message}`);
             return;
         }
 
@@ -412,7 +412,7 @@ function EmpCompanyProfilePage() {
         try {
             const token = localStorage.getItem('employerToken');
             if (!token) {
-                showToast('Please login again to upload files.', 'warning');
+                showWarning('Please login again to upload files.');
                 return;
             }
             
@@ -429,13 +429,13 @@ function EmpCompanyProfilePage() {
             
             if (data.success) {
                 handleInputChange('logo', data.logo);
-                showToast('Logo uploaded successfully!', 'success');
+                showSuccess('Logo uploaded successfully!');
             } else {
-                showToast(data.message || 'Logo upload failed', 'error');
+                showError(data.message || 'Logo upload failed');
             }
         } catch (error) {
             console.error('Logo upload error:', error);
-            showToast('Logo upload failed. Please try again.', 'error');
+            showError('Logo upload failed. Please try again.');
         }
     };
 
@@ -451,7 +451,7 @@ function EmpCompanyProfilePage() {
             allowedTypes: ['image/jpeg', 'image/png']
         });
         if (!result.ok) {
-            showToast(`Cover image upload failed: ${result.message}`, 'error');
+            showError(`Cover image upload failed: ${result.message}`);
             return;
         }
 
@@ -461,7 +461,7 @@ function EmpCompanyProfilePage() {
         try {
             const token = localStorage.getItem('employerToken');
             if (!token) {
-                showToast('Please login again to upload files.', 'warning');
+                showWarning('Please login again to upload files.');
                 return;
             }
             
@@ -478,13 +478,13 @@ function EmpCompanyProfilePage() {
             
             if (data.success) {
                 handleInputChange('coverImage', data.coverImage);
-                showToast('Cover image uploaded successfully!', 'success');
+                showSuccess('Cover image uploaded successfully!');
             } else {
-                showToast(data.message || 'Cover image upload failed', 'error');
+                showError(data.message || 'Cover image upload failed');
             }
         } catch (error) {
             console.error('Cover upload error:', error);
-            showToast('Cover upload failed. Please try again.', 'error');
+            showError('Cover upload failed. Please try again.');
         }
     };
 
@@ -496,11 +496,11 @@ function EmpCompanyProfilePage() {
         const maxBytes = 5 * 1024 * 1024;
         const allowed = ['image/jpeg', 'image/png', 'application/pdf'];
         if (file.size > maxBytes) {
-            showToast('Document is too large. Max size is 5MB.', 'error');
+            showError('Document is too large. Max size is 5MB.');
             return;
         }
         if (!allowed.includes(file.type)) {
-            showToast('Invalid document type. Allowed: JPEG, PNG, PDF.', 'error');
+            showPopup('Invalid document type. Allowed: JPEG, PNG, PDF.', 'error');
             return;
         }
 
@@ -511,7 +511,7 @@ function EmpCompanyProfilePage() {
         try {
             const token = localStorage.getItem('employerToken');
             if (!token) {
-                showToast('Please login again to upload files.', 'warning');
+                showWarning('Please login again to upload files.');
                 return;
             }
             
@@ -528,13 +528,13 @@ function EmpCompanyProfilePage() {
             
             if (data.success) {
                 handleInputChange(fieldName, data.filePath);
-                showToast('Document uploaded successfully!', 'success');
+                showSuccess('Document uploaded successfully!');
             } else {
-                showToast(data.message || 'Document upload failed', 'error');
+                showError(data.message || 'Document upload failed');
             }
         } catch (error) {
             console.error('Document upload error:', error);
-            showToast('Document upload failed. Please try again.', 'error');
+            showError('Document upload failed. Please try again.');
         }
     };
 
@@ -548,7 +548,7 @@ function EmpCompanyProfilePage() {
 
         // For consultancy, require company name
         if (formData.employerCategory === 'consultancy' && !companyName.trim()) {
-            showToast('Please enter the company name before uploading the authorization letter.', 'warning');
+            showWarning('Please enter the company name before uploading the authorization letter.');
             return;
         }
 
@@ -556,11 +556,11 @@ function EmpCompanyProfilePage() {
         const maxBytes = 5 * 1024 * 1024;
         const allowed = ['image/jpeg', 'image/png', 'application/pdf'];
         if (file.size > maxBytes) {
-            showToast('Document is too large. Max size is 5MB.', 'error');
+            showError('Document is too large. Max size is 5MB.');
             return;
         }
         if (!allowed.includes(file.type)) {
-            showToast('Invalid document type. Allowed: JPEG, PNG, PDF.', 'error');
+            showPopup('Invalid document type. Allowed: JPEG, PNG, PDF.', 'error');
             return;
         }
 
@@ -573,7 +573,7 @@ function EmpCompanyProfilePage() {
         try {
             const token = localStorage.getItem('employerToken');
             if (!token) {
-                showToast('Please login again to upload files.', 'warning');
+                showWarning('Please login again to upload files.');
                 return;
             }
             
@@ -593,15 +593,15 @@ function EmpCompanyProfilePage() {
                     ...prev,
                     authorizationLetters: data.profile.authorizationLetters || []
                 }));
-                showToast('Authorization letter uploaded successfully!', 'success');
+                showSuccess('Authorization letter uploaded successfully!');
                 // Clear the file input
                 e.target.value = '';
             } else {
-                showToast(data.message || 'Document upload failed', 'error');
+                showError(data.message || 'Document upload failed');
             }
         } catch (error) {
             console.error('Authorization letter upload error:', error);
-            showToast('Authorization letter upload failed. Please try again.', 'error');
+            showError('Authorization letter upload failed. Please try again.');
         }
     };
 
@@ -609,7 +609,7 @@ function EmpCompanyProfilePage() {
         // Show confirmation toast instead of window.confirm
         const confirmDelete = () => {
             return new Promise((resolve) => {
-                showToast('Click "Delete" to confirm or wait 5 seconds to cancel', 'warning', 5000);
+                showWarning('Click "Delete" to confirm or wait 5 seconds to cancel');
                 
                 // Create confirmation buttons
                 const container = document.getElementById('toast-container');
@@ -659,7 +659,7 @@ function EmpCompanyProfilePage() {
         try {
             const token = localStorage.getItem('employerToken');
             if (!token) {
-                showToast('Please login again to delete files.', 'warning');
+                showWarning('Please login again to delete files.');
                 return;
             }
             
@@ -673,13 +673,13 @@ function EmpCompanyProfilePage() {
                     ...prev,
                     authorizationLetters: data.profile.authorizationLetters || []
                 }));
-                showToast('Authorization letter deleted successfully!', 'success');
+                showSuccess('Authorization letter deleted successfully!');
             } else {
-                showToast(data.message || 'Failed to delete document', 'error');
+                showError(data.message || 'Failed to delete document');
             }
         } catch (error) {
             if (error.name === 'AuthError') {
-                showToast('Session expired. Please login again.', 'warning');
+                showWarning('Session expired. Please login again.');
                 localStorage.removeItem('employerToken');
                 window.location.href = '/employer/login';
                 return;
@@ -694,7 +694,7 @@ function EmpCompanyProfilePage() {
 
         const currentCount = formData.gallery?.length || 0;
         if (currentCount + files.length > 10) {
-            showToast(`Maximum 10 images allowed. Current: ${currentCount}`, 'warning');
+            showWarning(`Maximum 10 images allowed. Current: ${currentCount}`);
             return;
         }
 
@@ -705,11 +705,11 @@ function EmpCompanyProfilePage() {
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
             if (file.size > maxSize) {
-                showToast(`File "${file.name}" is too large. Maximum size is 10MB. Please compress the image.`, 'error');
+                showError(`File "${file.name}" is too large. Maximum size is 10MB. Please compress the image.`);
                 return;
             }
             if (!allowedTypes.includes(file.type)) {
-                showToast(`File "${file.name}" has invalid type. Only JPG, PNG, and SVG are allowed.`, 'error');
+                showPopup(`File "${file.name}" has invalid type. Only JPG, PNG, and SVG are allowed.`, 'error');
                 return;
             }
         }
@@ -732,7 +732,7 @@ function EmpCompanyProfilePage() {
                 const formDataObj = new FormData();
                 batch.forEach(file => formDataObj.append('gallery', file));
 
-                showToast(`Uploading batch ${batchIndex + 1} of ${batches.length}...`, 'info', 2000);
+                showInfo(`Uploading batch ${batchIndex + 1} of ${batches.length}...`);
 
                 try {
                     const controller = new AbortController();
@@ -764,7 +764,7 @@ function EmpCompanyProfilePage() {
                         setFormData(prev => ({ ...prev, gallery: data.gallery }));
                         totalUploaded += batch.length;
                     } else {
-                        showToast(data.message || `Batch ${batchIndex + 1} upload failed`, 'error');
+                        showError(data.message || `Batch ${batchIndex + 1} upload failed`);
                         hasError = true;
                         break;
                     }
@@ -772,13 +772,13 @@ function EmpCompanyProfilePage() {
                     console.error(`Batch ${batchIndex + 1} upload error:`, fetchError);
                     
                     if (fetchError.name === 'AbortError') {
-                        showToast(`Upload timed out. Please try with smaller files or check your connection.`, 'error');
+                        showError(`Upload timed out. Please try with smaller files or check your connection.`);
                     } else if (fetchError.message.includes('413') || fetchError.message.toLowerCase().includes('too large')) {
-                        showToast(`Files too large. Please use smaller images (under 10MB each).`, 'error');
+                        showError(`Files too large. Please use smaller images (under 10MB each).`);
                     } else if (fetchError.message.toLowerCase().includes('network') || fetchError.message.toLowerCase().includes('fetch')) {
-                        showToast(`Network error. Please check your connection and try again.`, 'error');
+                        showError(`Network error. Please check your connection and try again.`);
                     } else {
-                        showToast(`Upload failed: ${fetchError.message}`, 'error');
+                        showError(`Upload failed: ${fetchError.message}`);
                     }
                     
                     hasError = true;
@@ -787,12 +787,12 @@ function EmpCompanyProfilePage() {
             }
             
             if (!hasError) {
-                showToast(`Successfully uploaded ${totalUploaded} images!`, 'success');
+                showSuccess(`Successfully uploaded ${totalUploaded} images!`);
                 e.target.value = '';
             }
         } catch (error) {
             console.error('Gallery upload error:', error);
-            showToast('Upload failed. Please try again.', 'error');
+            showError('Upload failed. Please try again.');
         }
     };
 
@@ -812,10 +812,10 @@ function EmpCompanyProfilePage() {
             
             if (data.success) {
                 setFormData(prev => ({ ...prev, gallery: data.gallery }));
-                showToast('Image deleted', 'success');
+                showSuccess('Image deleted');
             }
         } catch (error) {
-            showToast('Delete failed', 'error');
+            showError('Delete failed');
         }
         setDeleteConfirmation(null);
     };
@@ -853,7 +853,7 @@ function EmpCompanyProfilePage() {
                 firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 firstErrorField.focus();
             }
-            showToast('Please fix the validation errors before submitting', 'warning');
+            showWarning('Please fix the validation errors before submitting');
             return;
         }
         
@@ -942,22 +942,22 @@ function EmpCompanyProfilePage() {
                     successMessage += ' Google Maps and Why Join Us sections have been saved.';
                 }
                 
-                showToast(successMessage, 'success', 4000);
+                showSuccess(successMessage);
                 // Refresh profile data to get latest state
                 fetchProfile();
             } else {
-                showToast(data.message || 'Failed to update profile', 'error');
+                showError(data.message || 'Failed to update profile');
             }
         } catch (error) {
             if (error.name === 'AuthError') {
-                showToast('Session expired. Please login again.', 'warning');
+                showWarning('Session expired. Please login again.');
                 localStorage.removeItem('employerToken');
                 window.location.href = '/employer/login';
                 return;
             }
             
             const errorMessage = getErrorMessage(error, 'profile');
-            showToast(errorMessage, 'error');
+            showError(errorMessage);
         } finally {
             setLoading(false);
         }
