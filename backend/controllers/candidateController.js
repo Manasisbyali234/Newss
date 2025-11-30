@@ -1095,15 +1095,17 @@ exports.getCandidateApplicationsWithInterviews = async (req, res) => {
       };
 
       // Normalize interviewRoundDetails to handle both old and new key formats
-      if (app.jobId?.interviewRoundDetails && app.jobId?.interviewRoundOrder) {
+      if (app.jobId?.interviewRoundDetails && app.jobId?.interviewRoundOrder && app.jobId?.interviewRoundTypes) {
         const normalizedDetails = {};
         
-        // Extract round type from unique key (e.g., 'technical_1764388004810' -> 'technical')
+        // Map unique keys to their round details
         app.jobId.interviewRoundOrder.forEach(uniqueKey => {
-          const roundType = uniqueKey.split('_')[0]; // Extract 'technical' from 'technical_1764388004810'
-          const details = app.jobId.interviewRoundDetails[roundType];
+          // Get the round type from interviewRoundTypes mapping
+          const roundType = app.jobId.interviewRoundTypes[uniqueKey];
           
-          if (details) {
+          if (roundType && app.jobId.interviewRoundDetails[roundType]) {
+            const details = app.jobId.interviewRoundDetails[roundType];
+            // Store details under both the unique key and the round type
             normalizedDetails[uniqueKey] = details;
             normalizedDetails[roundType] = details;
           }

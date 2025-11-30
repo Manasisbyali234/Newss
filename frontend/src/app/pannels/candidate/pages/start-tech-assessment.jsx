@@ -565,7 +565,7 @@ const StartAssessment = () => {
 							fontWeight: "bold",
 						}}
 					>
-						{currentQuestionIndex + 1}. {question.question}
+						{currentQuestionIndex + 1}. {question.question.replace(/<[^>]*>/g, '')}
 					</div>
 					<div style={{ display: "flex", flexDirection: "column" }}>
 						{question.options.map((option, idx) => (

@@ -38,48 +38,18 @@ const jobSchema = new mongoose.Schema({
   benefits: [String],
   interviewRoundsCount: { type: Number },
   interviewRoundTypes: {
-    technical: { type: Boolean, default: false },
-    managerial: { type: Boolean, default: false },
-    nonTechnical: { type: Boolean, default: false },
-    final: { type: Boolean, default: false },
-    hr: { type: Boolean, default: false }
+    type: mongoose.Schema.Types.Mixed,
+    default: {
+      technical: false,
+      managerial: false,
+      nonTechnical: false,
+      final: false,
+      hr: false
+    }
   },
   interviewRoundDetails: {
-    technical: {
-      description: { type: String },
-      date: { type: Date },
-      fromDate: { type: Date },
-      toDate: { type: Date },
-      time: { type: String }
-    },
-    nonTechnical: {
-      description: { type: String },
-      date: { type: Date },
-      fromDate: { type: Date },
-      toDate: { type: Date },
-      time: { type: String }
-    },
-    managerial: {
-      description: { type: String },
-      date: { type: Date },
-      fromDate: { type: Date },
-      toDate: { type: Date },
-      time: { type: String }
-    },
-    final: {
-      description: { type: String },
-      date: { type: Date },
-      fromDate: { type: Date },
-      toDate: { type: Date },
-      time: { type: String }
-    },
-    hr: {
-      description: { type: String },
-      date: { type: Date },
-      fromDate: { type: Date },
-      toDate: { type: Date },
-      time: { type: String }
-    }
+    type: mongoose.Schema.Types.Mixed,
+    default: {}
   },
   // Dynamic interview rounds for multiple instances
   dynamicInterviewRounds: [{
@@ -102,7 +72,7 @@ const jobSchema = new mongoose.Schema({
     twoWay: { type: Boolean, default: false },
     noCab: { type: Boolean, default: false }
   },
-  status: { type: String, enum: ['active', 'inactive', 'draft', 'pending'], default: 'active' },
+  status: { type: String, enum: ['active', 'inactive', 'draft', 'pending', 'closed'], default: 'active' },
   applicationCount: { type: Number, default: 0 },
   interviewScheduled: { type: Boolean, default: false },
   // Store the order of interview rounds
