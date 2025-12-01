@@ -411,7 +411,7 @@ export const api = {
 
   getRegisteredCandidates: (params = {}) => {
     const queryString = new URLSearchParams(params).toString();
-    return fetch(`${API_BASE_URL}/admin/registered-candidates?${queryString}`, {
+    return fetch(`${API_BASE_URL}/admin/candidates/registered?${queryString}`, {
       headers: getAuthHeaders('admin'),
     }).then((res) => res.json());
   },
