@@ -215,9 +215,13 @@ const HeroBody = ({ onSearch }) => {
               onBlur={() => handleFieldBlur('type')}
             >
               <option value="">Select Education</option>
+              <option value="Below 10th">Below 10th</option>
               <option value="10th Pass">10th Pass</option>
               <option value="12th Pass">12th Pass</option>
+              <option value="ITI">ITI</option>
               <option value="Diploma">Diploma</option>
+              <option value="Polytechnic">Polytechnic</option>
+              <option value="Certificate Course">Certificate Course</option>
               <option value="B.E">B.E</option>
               <option value="B.Tech">B.Tech</option>
               <option value="B.Sc">B.Sc</option>
@@ -225,6 +229,29 @@ const HeroBody = ({ onSearch }) => {
               <option value="BBA">BBA</option>
               <option value="B.Com">B.Com</option>
               <option value="BA">BA</option>
+              <option value="B.Pharm">B.Pharm</option>
+              <option value="B.Arch">B.Arch</option>
+              <option value="BDS">BDS</option>
+              <option value="MBBS">MBBS</option>
+              <option value="BAMS">BAMS (Ayurveda)</option>
+              <option value="BHMS">BHMS (Homeopathy)</option>
+              <option value="B.V.Sc">B.V.Sc (Veterinary)</option>
+              <option value="B.Sc Nursing">B.Sc Nursing</option>
+              <option value="GNM">GNM (Nursing)</option>
+              <option value="ANM">ANM (Nursing)</option>
+              <option value="BHM">BHM (Hotel Management)</option>
+              <option value="B.Des">B.Des (Design)</option>
+              <option value="B.F.Tech">B.F.Tech (Fashion)</option>
+              <option value="B.Sc Agriculture">B.Sc Agriculture</option>
+              <option value="LLB">LLB (Law)</option>
+              <option value="B.Ed">B.Ed</option>
+              <option value="B.P.Ed">B.P.Ed (Physical Education)</option>
+              <option value="BFA">BFA (Fine Arts)</option>
+              <option value="B.Lib">B.Lib (Library Science)</option>
+              <option value="Journalism">Journalism</option>
+              <option value="CA">CA (Chartered Accountant)</option>
+              <option value="CS">CS (Company Secretary)</option>
+              <option value="CMA">CMA (Cost Management)</option>
               <option value="M.E">M.E</option>
               <option value="M.Tech">M.Tech</option>
               <option value="M.Sc">M.Sc</option>
@@ -232,7 +259,24 @@ const HeroBody = ({ onSearch }) => {
               <option value="MBA">MBA</option>
               <option value="M.Com">M.Com</option>
               <option value="MA">MA</option>
+              <option value="M.Pharm">M.Pharm</option>
+              <option value="M.Arch">M.Arch</option>
+              <option value="MDS">MDS</option>
+              <option value="MD">MD</option>
+              <option value="MS">MS (Surgery)</option>
+              <option value="M.V.Sc">M.V.Sc (Veterinary)</option>
+              <option value="M.Sc Nursing">M.Sc Nursing</option>
+              <option value="MHM">MHM (Hotel Management)</option>
+              <option value="M.Des">M.Des (Design)</option>
+              <option value="M.Sc Agriculture">M.Sc Agriculture</option>
+              <option value="LLM">LLM (Law)</option>
+              <option value="M.Ed">M.Ed</option>
+              <option value="M.P.Ed">M.P.Ed (Physical Education)</option>
+              <option value="MFA">MFA (Fine Arts)</option>
+              <option value="M.Lib">M.Lib (Library Science)</option>
+              <option value="M.Phil">M.Phil</option>
               <option value="PhD">PhD</option>
+              <option value="Post Doctoral">Post Doctoral</option>
             </select>
             {touched.type && errors.type && (
               <div className="search-error">
