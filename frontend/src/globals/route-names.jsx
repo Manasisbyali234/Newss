@@ -70,7 +70,7 @@ export const candidate = {
 	ASSESSMENT: "/take-assesments",
 	START_ASSESSMENT: "/start-tech-assessment",
 	STEP: "/step",
-	RESULT: "/assessment-result",
+	RESULT: "/assessment-result/:applicationId",
 	SUPPORT: "/support",
 };
 

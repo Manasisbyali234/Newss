@@ -651,9 +651,21 @@ exports.createJob = async (req, res) => {
     // Handle nested assessment object from frontend
     if (jobData.assessment && jobData.assessment.assessmentId) {
       jobData.assessmentId = jobData.assessment.assessmentId;
-      if (jobData.assessment.fromDate) jobData.assessmentStartDate = jobData.assessment.fromDate;
-      if (jobData.assessment.toDate) jobData.assessmentEndDate = jobData.assessment.toDate;
+      if (jobData.assessment.fromDate) {
+        jobData.assessmentStartDate = new Date(jobData.assessment.fromDate);
+      }
+      if (jobData.assessment.toDate) {
+        jobData.assessmentEndDate = new Date(jobData.assessment.toDate);
+      }
       delete jobData.assessment;
+    }
+    
+    // Also handle direct assessment date fields
+    if (jobData.assessmentStartDate && typeof jobData.assessmentStartDate === 'string') {
+      jobData.assessmentStartDate = new Date(jobData.assessmentStartDate);
+    }
+    if (jobData.assessmentEndDate && typeof jobData.assessmentEndDate === 'string') {
+      jobData.assessmentEndDate = new Date(jobData.assessmentEndDate);
     }
 
     // If assessment is selected, automatically enable technical interview round
@@ -924,9 +936,21 @@ exports.updateJob = async (req, res) => {
     // Handle nested assessment object from frontend
     if (req.body.assessment && req.body.assessment.assessmentId) {
       req.body.assessmentId = req.body.assessment.assessmentId;
-      if (req.body.assessment.fromDate) req.body.assessmentStartDate = req.body.assessment.fromDate;
-      if (req.body.assessment.toDate) req.body.assessmentEndDate = req.body.assessment.toDate;
+      if (req.body.assessment.fromDate) {
+        req.body.assessmentStartDate = new Date(req.body.assessment.fromDate);
+      }
+      if (req.body.assessment.toDate) {
+        req.body.assessmentEndDate = new Date(req.body.assessment.toDate);
+      }
       delete req.body.assessment;
+    }
+    
+    // Also handle direct assessment date fields
+    if (req.body.assessmentStartDate && typeof req.body.assessmentStartDate === 'string') {
+      req.body.assessmentStartDate = new Date(req.body.assessmentStartDate);
+    }
+    if (req.body.assessmentEndDate && typeof req.body.assessmentEndDate === 'string') {
+      req.body.assessmentEndDate = new Date(req.body.assessmentEndDate);
     }
     
     // Remove assessment from interviewRoundTypes (it's stored separately in assessmentId)

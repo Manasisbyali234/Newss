@@ -64,7 +64,7 @@ exports.createAssessment = async (req, res) => {
     }
     
     // Generate serial number
-    const lastAssessment = await Assessment.findOne({ employerId: req.user.id })
+    const lastAssessment = await Assessment.findOne({ employerId: req.user._id })
       .sort({ serialNumber: -1 })
       .select('serialNumber');
     
@@ -74,7 +74,7 @@ exports.createAssessment = async (req, res) => {
     }
     
     const assessment = new Assessment({
-      employerId: req.user.id,
+      employerId: req.user._id,
       serialNumber,
       title: title.trim(),
       type: type || 'Technical',
@@ -105,7 +105,7 @@ exports.createAssessment = async (req, res) => {
 // Employer: Get All Assessments
 exports.getAssessments = async (req, res) => {
   try {
-    const assessments = await Assessment.find({ employerId: req.user.id })
+    const assessments = await Assessment.find({ employerId: req.user._id })
       .sort({ serialNumber: 1 });
     res.json({ success: true, assessments });
   } catch (error) {
@@ -118,7 +118,7 @@ exports.getAssessmentDetails = async (req, res) => {
   try {
     const assessment = await Assessment.findOne({
       _id: req.params.id,
-      employerId: req.user.id
+      employerId: req.user._id
     });
     
     if (!assessment) {
@@ -210,7 +210,7 @@ exports.updateAssessment = async (req, res) => {
     };
     
     const assessment = await Assessment.findOneAndUpdate(
-      { _id: req.params.id, employerId: req.user.id },
+      { _id: req.params.id, employerId: req.user._id },
       updateData,
       { new: true }
     );
@@ -231,7 +231,7 @@ exports.deleteAssessment = async (req, res) => {
   try {
     const assessment = await Assessment.findOneAndDelete({
       _id: req.params.id,
-      employerId: req.user.id
+      employerId: req.user._id
     });
     
     if (!assessment) {
@@ -248,7 +248,7 @@ exports.deleteAssessment = async (req, res) => {
 exports.getAvailableAssessments = async (req, res) => {
   try {
     const applications = await Application.find({
-      candidateId: req.user.id,
+      candidateId: req.user._id,
       assessmentStatus: 'available'
     }).populate('jobId');
     
@@ -304,7 +304,7 @@ exports.startAssessment = async (req, res) => {
     // Check if already attempted
     let attempt = await AssessmentAttempt.findOne({
       assessmentId,
-      candidateId: req.user.id,
+      candidateId: req.user._id,
       applicationId
     });
     
@@ -324,7 +324,7 @@ exports.startAssessment = async (req, res) => {
     // Verify application exists and belongs to candidate
     const application = await Application.findOne({
       _id: applicationId,
-      candidateId: req.user.id
+      candidateId: req.user._id
     });
     
     if (!application) {
@@ -335,7 +335,7 @@ exports.startAssessment = async (req, res) => {
       const totalMarks = assessment.questions.reduce((sum, q) => sum + (q.marks || 1), 0);
       attempt = new AssessmentAttempt({
         assessmentId,
-        candidateId: req.user.id,
+        candidateId: req.user._id,
         jobId,
         applicationId,
         totalMarks,
@@ -359,7 +359,7 @@ exports.startAssessment = async (req, res) => {
       assessmentAttemptId: attempt._id
     });
     
-    console.log(`Assessment started for candidate ${req.user.id}, attempt ${attempt._id}`);
+    console.log(`Assessment started for candidate ${req.user._id}, attempt ${attempt._id}`);
     
     res.json({ 
       success: true, 
@@ -399,7 +399,7 @@ exports.submitAnswer = async (req, res) => {
     
     const attempt = await AssessmentAttempt.findOne({
       _id: attemptId,
-      candidateId: req.user.id
+      candidateId: req.user._id
     });
     
     if (!attempt) {
@@ -494,7 +494,7 @@ exports.uploadFileAnswer = async (req, res) => {
     
     const attempt = await AssessmentAttempt.findOne({
       _id: attemptId,
-      candidateId: req.user.id
+      candidateId: req.user._id
     });
     
     if (!attempt) {
@@ -560,7 +560,7 @@ exports.submitAssessment = async (req, res) => {
     
     const attempt = await AssessmentAttempt.findOne({
       _id: attemptId,
-      candidateId: req.user.id
+      candidateId: req.user._id
     });
     
     if (!attempt) {
@@ -699,7 +699,7 @@ exports.getAssessmentResult = async (req, res) => {
   try {
     const attempt = await AssessmentAttempt.findOne({
       _id: req.params.attemptId,
-      candidateId: req.user.id,
+      candidateId: req.user._id,
       status: 'completed'
     }).populate('assessmentId');
     
@@ -738,7 +738,7 @@ exports.recordViolation = async (req, res) => {
     
     const attempt = await AssessmentAttempt.findOne({
       _id: attemptId,
-      candidateId: req.user.id
+      candidateId: req.user._id
     });
     
     if (!attempt) {
@@ -780,7 +780,7 @@ exports.getAssessmentResults = async (req, res) => {
   try {
     const assessment = await Assessment.findOne({
       _id: req.params.id,
-      employerId: req.user.id
+      employerId: req.user._id
     });
     
     if (!assessment) {
@@ -809,11 +809,63 @@ exports.getAttemptDetails = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Attempt not found' });
     }
     
-    if (attempt.assessmentId.employerId.toString() !== req.user.id) {
+    if (attempt.assessmentId.employerId.toString() !== req.user._id.toString()) {
       return res.status(403).json({ success: false, message: 'Unauthorized' });
     }
     
     res.json({ success: true, attempt });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getAssessmentResultByApplication = async (req, res) => {
+  try {
+    const applicationId = req.params.applicationId;
+    const candidateId = req.user._id;
+    
+    console.log('[getAssessmentResultByApplication] Query params:', {
+      applicationId,
+      candidateId: candidateId.toString(),
+      userRole: req.userRole
+    });
+    
+    const attempt = await AssessmentAttempt.findOne({
+      applicationId,
+      candidateId,
+      status: 'completed'
+    }).populate('assessmentId');
+    
+    if (!attempt) {
+      console.log('[getAssessmentResultByApplication] No attempt found, checking all records for this application...');
+      const allAttempts = await AssessmentAttempt.find({ applicationId }).select('_id candidateId status');
+      console.log('[getAssessmentResultByApplication] All attempts for app:', allAttempts);
+      return res.status(404).json({ success: false, message: 'Assessment result not found for this application' });
+    }
+    
+    console.log('[getAssessmentResultByApplication] Found attempt:', attempt._id);
+    
+    res.json({ 
+      success: true, 
+      data: {
+        result: {
+          score: attempt.score,
+          totalMarks: attempt.totalMarks,
+          percentage: attempt.percentage,
+          result: attempt.result,
+          correctAnswers: attempt.answers.filter(a => {
+            const question = attempt.assessmentId.questions[a.questionIndex];
+            return question && parseInt(a.selectedAnswer) === parseInt(question.correctAnswer);
+          }).length,
+          totalQuestions: attempt.assessmentId.totalQuestions,
+          violations: attempt.violations
+        },
+        assessment: {
+          title: attempt.assessmentId.title,
+          description: attempt.assessmentId.description
+        }
+      }
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

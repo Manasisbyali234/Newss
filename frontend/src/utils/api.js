@@ -556,6 +556,12 @@ export const api = {
     }).then(handleApiResponse);
   },
 
+  getApplicationAssessmentResult: (applicationId) => {
+    return fetch(`${API_BASE_URL}/candidate/assessments/result/application/${applicationId}`, {
+      headers: getAuthHeaders('candidate'),
+    }).then(handleApiResponse);
+  },
+
   // Interview Process APIs
   getInterviewProcessDetails: (applicationId) => {
     return fetch(`${API_BASE_URL}/candidate/applications/${applicationId}/interview-process`, {

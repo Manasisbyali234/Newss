@@ -58,6 +58,8 @@ const jobSchema = new mongoose.Schema({
     fromDate: { type: Date },
     toDate: { type: Date },
     time: { type: String },
+    location: { type: String },
+    interviewerName: { type: String },
     order: { type: Number }
   }],
   assessmentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Assessment' },

@@ -140,20 +140,48 @@
 
 // export default AssessmentResults;
 
-import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { api } from "../../../../utils/api";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const AssessmentResults = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
+	const { applicationId } = useParams();
+	const [assessmentResult, setAssessmentResult] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
+
+	useEffect(() => {
+		const fetchAssessmentResult = async () => {
+			try {
+				if (applicationId) {
+					const response = await api.getApplicationAssessmentResult(applicationId);
+					if (response.success) {
+						setAssessmentResult(response.data);
+					} else {
+						setError(response.message || 'Failed to fetch assessment result');
+					}
+				}
+			} catch (err) {
+				console.error('Error fetching assessment result:', err);
+				setError(err.message || 'Error fetching assessment result');
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchAssessmentResult();
+	}, [applicationId]);
+
 	const {
 		result,
 		assessment
-	} = location.state || {};
+	} = location.state || assessmentResult || {};
 
 	// Handle both old format (answers array) and new format (result object)
 	const correctAnswers = result?.correctAnswers || 0;
@@ -202,6 +230,64 @@ const AssessmentResults = () => {
 	const handleCloseAssessment = () => {
 		navigate("/candidate/status");
 	};
+
+	if (loading) {
+		return (
+			<div
+				style={{
+					fontFamily: "Arial, sans-serif",
+					backgroundColor: "#f5f6fa",
+					minHeight: "100vh",
+					padding: "20px",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+				}}
+			>
+				<div style={{ textAlign: "center" }}>
+					<i className="fa fa-spinner fa-spin fa-3x mb-3" style={{ color: "#ff6b35" }}></i>
+					<p className="text-muted">Loading assessment result...</p>
+				</div>
+			</div>
+		);
+	}
+
+	if (error) {
+		return (
+			<div
+				style={{
+					fontFamily: "Arial, sans-serif",
+					backgroundColor: "#f5f6fa",
+					minHeight: "100vh",
+					padding: "20px",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+				}}
+			>
+				<div style={{ textAlign: "center", maxWidth: "500px" }}>
+					<i className="fa fa-exclamation-circle fa-3x mb-3" style={{ color: "#dc3545" }}></i>
+					<h3>Error Loading Assessment</h3>
+					<p className="text-danger">{error}</p>
+					<button
+						onClick={() => navigate("/candidate/status")}
+						style={{
+							padding: "10px 20px",
+							border: "none",
+							borderRadius: "8px",
+							background: "#007bff",
+							color: "#fff",
+							cursor: "pointer",
+							fontSize: "14px",
+							fontWeight: "bold",
+						}}
+					>
+						← Back to Status Page
+					</button>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div

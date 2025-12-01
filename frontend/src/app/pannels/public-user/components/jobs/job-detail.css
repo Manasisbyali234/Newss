@@ -240,16 +240,7 @@
     animation: fadeInUp 0.6s ease-out;
 }
 
-/* Content sections */
-.cabdidate-de-info > p,
-.cabdidate-de-info > div {
-    animation: fadeInUp 0.6s ease-out;
-    animation-fill-mode: both;
-}
-
-.cabdidate-de-info > p:nth-of-type(1) { animation-delay: 0.3s; }
-.cabdidate-de-info > div:nth-of-type(2) { animation-delay: 0.4s; }
-.cabdidate-de-info > div:nth-of-type(3) { animation-delay: 0.5s; }
+/* Content sections - animations disabled to prevent scroll jitter */
 
 /* Job details grid */
 .row .col-md-6 {

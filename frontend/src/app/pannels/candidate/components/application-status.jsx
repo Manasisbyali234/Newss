@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { loadScript } from "../../../../globals/constants";
 import { api } from "../../../../utils/api";
-import { pubRoute, publicUser } from "../../../../globals/route-names";
+import { pubRoute, publicUser, canRoute, candidate } from "../../../../globals/route-names";
 import CanPostedJobs from "./can-posted-jobs";
 import PopupInterviewRoundDetails from "../../../common/popups/popup-interview-round-details";
 import "./status-styles.css";
@@ -318,206 +318,6 @@ function CanStatusPage() {
 		}
 	};
 
-	const getAssessmentButton = (application) => {
-		const assessmentStatus = application.assessmentStatus || 'not_required';
-		const job = application.jobId;
-		const hasAssessment = job?.assessmentId;
-
-		// If no assessment is assigned to the job, show default view details
-		if (!hasAssessment) {
-			return (
-				<button
-					className="btn btn-sm"
-					style={{
-						fontSize: '10px',
-						padding: '4px 8px',
-						backgroundColor: 'transparent',
-						border: '1px solid #ff6b35',
-						color: '#ff6b35',
-						whiteSpace: 'nowrap',
-						display: 'flex',
-						alignItems: 'center',
-						gap: '4px',
-						minWidth: '120px',
-						justifyContent: 'flex-start'
-					}}
-					onClick={() => handleViewRoundDetails('Assessment', null, job?.assessmentId)}
-					title="View Assessment Details"
-				>
-					<i className="fa fa-eye" style={{color: '#ff6b35', width: '14px'}}></i>
-					<span>View Details</span>
-				</button>
-			);
-		}
-
-		const windowInfo = getAssessmentWindowInfo(job);
-
-		const formatDate = (dateString) => {
-			if (!dateString) return null;
-			return new Date(dateString).toLocaleDateString('en-US', {
-				day: '2-digit',
-				month: 'short',
-				year: 'numeric'
-			});
-		};
-
-		const startDate = formatDate(job?.assessmentStartDate);
-		const endDate = formatDate(job?.assessmentEndDate);
-		const dateDisplay = startDate && endDate ? `${startDate} - ${endDate}` :
-						   startDate ? `From ${startDate}` :
-						   endDate ? `Until ${endDate}` : null;
-
-		switch (assessmentStatus) {
-			case 'available': {
-				const isDisabled = !windowInfo.isWithinWindow;
-				const label = windowInfo.isBeforeStart ? 'Opens Soon' : windowInfo.isAfterEnd ? 'Closed' : 'Start Assessment';
-				const buttonStyle = {
-					fontSize: '10px',
-					padding: '4px 8px',
-					backgroundColor: isDisabled ? '#6c757d' : '#28a745',
-					border: `1px solid ${isDisabled ? '#6c757d' : '#28a745'}`,
-					color: 'white',
-					whiteSpace: 'nowrap',
-					display: 'flex',
-					alignItems: 'center',
-					gap: '4px',
-					width: '100%',
-					justifyContent: 'flex-start',
-					cursor: isDisabled ? 'not-allowed' : 'pointer'
-				};
-				return (
-					<div style={{display: 'flex', flexDirection: 'column', gap: '2px', minWidth: '120px'}}>
-						<button
-							className="btn btn-sm"
-							style={buttonStyle}
-							onClick={() => handleStartAssessment(application)}
-							title="Start Assessment"
-							disabled={isDisabled}
-						>
-							<i className="fa fa-play" style={{color: 'white', width: '14px'}}></i>
-							<span>{label}</span>
-						</button>
-						{dateDisplay && (
-							<small style={{fontSize: '8px', color: '#666', textAlign: 'center'}}>
-								{dateDisplay}
-							</small>
-						)}
-					</div>
-				);
-			}
-			case 'in_progress': {
-				const isDisabled = windowInfo.isAfterEnd;
-				const buttonStyle = {
-					fontSize: '10px',
-					padding: '4px 8px',
-					backgroundColor: isDisabled ? '#6c757d' : '#ffc107',
-					border: `1px solid ${isDisabled ? '#6c757d' : '#ffc107'}`,
-					color: isDisabled ? 'white' : '#212529',
-					whiteSpace: 'nowrap',
-					display: 'flex',
-					alignItems: 'center',
-					gap: '4px',
-					width: '100%',
-					justifyContent: 'flex-start',
-					cursor: isDisabled ? 'not-allowed' : 'pointer'
-				};
-				return (
-					<div style={{display: 'flex', flexDirection: 'column', gap: '2px', minWidth: '120px'}}>
-						<button
-							className="btn btn-sm"
-							style={buttonStyle}
-							onClick={() => handleStartAssessment(application)}
-							title="Continue Assessment"
-							disabled={isDisabled}
-						>
-							<i className="fa fa-clock-o" style={{color: isDisabled ? 'white' : '#212529', width: '14px'}}></i>
-							<span>{isDisabled ? 'Closed' : 'Continue'}</span>
-						</button>
-						{dateDisplay && (
-							<small style={{fontSize: '8px', color: '#666', textAlign: 'center'}}>
-								{dateDisplay}
-							</small>
-						)}
-					</div>
-				);
-			}
-			case 'completed':
-				return (
-					<div style={{display: 'flex', flexDirection: 'column', gap: '2px', minWidth: '120px'}}>
-						<button
-							className="btn btn-sm"
-							style={{
-								fontSize: '10px',
-								padding: '4px 8px',
-								backgroundColor: '#17a2b8',
-								border: '1px solid #17a2b8',
-								color: 'white',
-								whiteSpace: 'nowrap',
-								display: 'flex',
-								alignItems: 'center',
-								gap: '4px',
-								width: '100%',
-								justifyContent: 'flex-start'
-							}}
-							onClick={() => navigate('/candidate/assessment-result', {
-								state: {
-									attemptId: application.assessmentAttemptId,
-									assessmentId: job?.assessmentId,
-									applicationId: application._id
-								}
-							})}
-							title="View Assessment Results"
-						>
-							<i className="fa fa-trophy" style={{color: '#ff6b35', width: '14px'}}></i>
-							<span>Results</span>
-						</button>
-						{dateDisplay && (
-							<small style={{fontSize: '8px', color: '#666', textAlign: 'center'}}>
-								{dateDisplay}
-							</small>
-						)}
-					</div>
-				);
-			default: {
-				const isDisabled = !windowInfo.isWithinWindow;
-				const label = windowInfo.isBeforeStart ? 'Opens Soon' : windowInfo.isAfterEnd ? 'Closed' : 'Start Assessment';
-				const buttonStyle = {
-					fontSize: '10px',
-					padding: '4px 8px',
-					backgroundColor: isDisabled ? '#6c757d' : '#28a745',
-					border: `1px solid ${isDisabled ? '#6c757d' : '#28a745'}`,
-					color: 'white',
-					whiteSpace: 'nowrap',
-					display: 'flex',
-					alignItems: 'center',
-					gap: '4px',
-					width: '100%',
-					justifyContent: 'flex-start',
-					cursor: isDisabled ? 'not-allowed' : 'pointer'
-				};
-				return (
-					<div style={{display: 'flex', flexDirection: 'column', gap: '2px', minWidth: '120px'}}>
-						<button
-							className="btn btn-sm"
-							style={buttonStyle}
-							onClick={() => handleStartAssessment(application)}
-							title="Start Assessment"
-							disabled={isDisabled}
-						>
-							<i className="fa fa-play" style={{color: 'white', width: '14px'}}></i>
-							<span>{label}</span>
-						</button>
-						{dateDisplay && (
-							<small style={{fontSize: '8px', color: '#666', textAlign: 'center'}}>
-								{dateDisplay}
-							</small>
-						)}
-					</div>
-				);
-			}
-		}
-	};
-
 	return (
 		<>
 			<div className="twm-right-section-panel site-bg-gray">
@@ -538,8 +338,6 @@ function CanStatusPage() {
 
 				{/* Status Content */}
 				<div style={{ padding: '0 2rem 2rem 2rem' }}>
-
-
 
 					{/* Highlight notification */}
 					{highlightShortlisted && (
@@ -578,245 +376,245 @@ function CanStatusPage() {
 							<div className="card card-shadow border-0">
 								<div className="card-body p-0">
 									<div className="table-responsive" style={{overflowX: 'auto'}}>
-								<table className="table table-hover mb-0">
-									<thead style={{backgroundColor: '#f8f9fa'}}>
-										<tr>
-											<th className="border-0 px-4 py-3 fw-semibold" style={{color: '#232323'}}>
-												<i className="fa fa-calendar me-2" style={{color: '#ff6b35'}}></i>
-												Applied Date
-											</th>
-											<th className={`border-0 px-4 py-3 fw-semibold ${highlightCompanyPosition ? 'highlight-company-position' : ''}`} style={{color: '#232323', transition: 'all 0.3s ease'}}>
-												<i className="fa fa-building me-2" style={{color: '#ff6b35'}}></i>
-												Company
-											</th>
-											<th className={`border-0 px-4 py-3 fw-semibold ${highlightCompanyPosition ? 'highlight-company-position' : ''}`} style={{color: '#232323', transition: 'all 0.3s ease'}}>
-												<i className="fa fa-briefcase me-2" style={{color: '#ff6b35'}}></i>
-												Position
-											</th>
-											<th className="border-0 px-4 py-3 fw-semibold" style={{color: '#232323'}}>
-												<i className="fa fa-tasks me-2" style={{color: '#ff6b35'}}></i>
-												Interview Progress
-											</th>
-											<th className="border-0 px-4 py-3 fw-semibold" style={{color: '#232323'}}>
-												<i className="fa fa-flag me-2" style={{color: '#ff6b35'}}></i>
-												Status
-											</th>
-											<th className="border-0 px-4 py-3 fw-semibold text-center" style={{color: '#232323'}}>
-												<i className="fa fa-eye me-2" style={{color: '#ff6b35'}}></i>
-												View Details
-											</th>
-										</tr>
-									</thead>
+									<table className="table table-hover mb-0">
+										<thead style={{backgroundColor: '#f8f9fa'}}>
+											<tr>
+												<th className="border-0 px-4 py-3 fw-semibold" style={{color: '#232323'}}>
+													<i className="fa fa-calendar me-2" style={{color: '#ff6b35'}}></i>
+													Applied Date
+												</th>
+												<th className={`border-0 px-4 py-3 fw-semibold ${highlightCompanyPosition ? 'highlight-company-position' : ''}`} style={{color: '#232323', transition: 'all 0.3s ease'}}>
+													<i className="fa fa-building me-2" style={{color: '#ff6b35'}}></i>
+													Company
+												</th>
+												<th className={`border-0 px-4 py-3 fw-semibold ${highlightCompanyPosition ? 'highlight-company-position' : ''}`} style={{color: '#232323', transition: 'all 0.3s ease'}}>
+													<i className="fa fa-briefcase me-2" style={{color: '#ff6b35'}}></i>
+													Position
+												</th>
+												<th className="border-0 px-4 py-3 fw-semibold" style={{color: '#232323'}}>
+													<i className="fa fa-tasks me-2" style={{color: '#ff6b35'}}></i>
+													Interview Progress
+												</th>
+												<th className="border-0 px-4 py-3 fw-semibold" style={{color: '#232323'}}>
+													<i className="fa fa-flag me-2" style={{color: '#ff6b35'}}></i>
+													Status
+												</th>
+												<th className="border-0 px-4 py-3 fw-semibold text-center" style={{color: '#232323'}}>
+													<i className="fa fa-eye me-2" style={{color: '#ff6b35'}}></i>
+													View Details
+												</th>
+											</tr>
+										</thead>
 
-									<tbody>
-										{loading ? (
-											<tr>
-												<td colSpan="6" className="text-center py-5">
-													<div className="d-flex flex-column align-items-center">
-														<i className="fa fa-spinner fa-spin fa-3x mb-3" style={{color: '#ff6b35'}}></i>
-														<p className="text-muted mb-0">Loading your applications...</p>
-													</div>
-												</td>
-											</tr>
-										) : applications.length === 0 ? (
-											<tr>
-												<td colSpan="6" className="text-center py-5">
-													<div className="d-flex flex-column align-items-center">
-														<i className="fa fa-search fa-3x mb-3" style={{color: '#ff6b35'}}></i>
-														<h5 style={{color: '#232323'}}>No Applications Yet</h5>
-														<p className="text-muted mb-3">Start applying to jobs to see your application status here</p>
-														<button className="btn btn-outline-primary" onClick={() => navigate(pubRoute(publicUser.jobs.GRID))} style={{backgroundColor: 'transparent'}}>
-															<i className="fa fa-search me-2"></i>
-															Browse Jobs
-														</button>
-													</div>
-												</td>
-											</tr>
-										) : (
-											applications.map((app, index) => {
-												const interviewRounds = getInterviewRounds(app.jobId);
-												const isShortlisted = app.status === 'shortlisted';
-												const shouldHighlightRow = highlightShortlisted && isShortlisted;
-												return (
-													<tr 
-														key={index} 
-														className={`border-bottom ${shouldHighlightRow ? 'highlight-shortlisted' : ''}`}
-														style={{
-															backgroundColor: shouldHighlightRow ? '#e8f5e9' : 'transparent',
-															transition: 'background-color 0.3s ease',
-															border: shouldHighlightRow ? '2px solid #4caf50' : 'none'
-														}}
-													>
-														<td className="px-4 py-3">
-															<span className="text-dark fw-medium">
-																{new Date(app.createdAt || app.appliedAt).toLocaleDateString('en-US', {
-																	day: '2-digit',
-																	month: 'short',
-																	year: 'numeric'
-																})}
-															</span>
-														</td>
-														<td className={`px-4 py-3 ${highlightCompanyPosition ? 'highlight-company-position' : ''}`} style={{transition: 'all 0.3s ease'}}>
-															<div className="d-flex align-items-center">
-																<div className="me-3">
-																	<div className="rounded-circle d-flex align-items-center justify-content-center" style={{width: '45px', height: '45px', backgroundColor: '#fff3e0', border: '2px solid #ff6b35'}}>
-																		<i className="fa fa-building" style={{color: '#ff6b35', fontSize: '18px'}}></i>
+										<tbody>
+											{loading ? (
+												<tr>
+													<td colSpan="6" className="text-center py-5">
+														<div className="d-flex flex-column align-items-center">
+															<i className="fa fa-spinner fa-spin fa-3x mb-3" style={{color: '#ff6b35'}}></i>
+															<p className="text-muted mb-0">Loading your applications...</p>
+														</div>
+													</td>
+												</tr>
+											) : applications.length === 0 ? (
+												<tr>
+													<td colSpan="6" className="text-center py-5">
+														<div className="d-flex flex-column align-items-center">
+															<i className="fa fa-search fa-3x mb-3" style={{color: '#ff6b35'}}></i>
+															<h5 style={{color: '#232323'}}>No Applications Yet</h5>
+															<p className="text-muted mb-3">Start applying to jobs to see your application status here</p>
+															<button className="btn btn-outline-primary" onClick={() => navigate(pubRoute(publicUser.jobs.GRID))} style={{backgroundColor: 'transparent'}}>
+																<i className="fa fa-search me-2"></i>
+																Browse Jobs
+															</button>
+														</div>
+													</td>
+												</tr>
+											) : (
+												applications.map((app, index) => {
+													const interviewRounds = getInterviewRounds(app.jobId);
+													const isShortlisted = app.status === 'shortlisted';
+													const shouldHighlightRow = highlightShortlisted && isShortlisted;
+													return (
+														<tr 
+															key={index} 
+															className={`border-bottom ${shouldHighlightRow ? 'highlight-shortlisted' : ''}`}
+															style={{
+																backgroundColor: shouldHighlightRow ? '#e8f5e9' : 'transparent',
+																transition: 'background-color 0.3s ease',
+																border: shouldHighlightRow ? '2px solid #4caf50' : 'none'
+															}}
+														>
+															<td className="px-4 py-3">
+																<span className="text-dark fw-medium">
+																	{new Date(app.createdAt || app.appliedAt).toLocaleDateString('en-US', {
+																		day: '2-digit',
+																		month: 'short',
+																		year: 'numeric'
+																	})}
+																</span>
+															</td>
+															<td className={`px-4 py-3 ${highlightCompanyPosition ? 'highlight-company-position' : ''}`} style={{transition: 'all 0.3s ease'}}>
+																<div className="d-flex align-items-center">
+																	<div className="me-3">
+																		<div className="rounded-circle d-flex align-items-center justify-content-center" style={{width: '45px', height: '45px', backgroundColor: '#fff3e0', border: '2px solid #ff6b35'}}>
+																			<i className="fa fa-building" style={{color: '#ff6b35', fontSize: '18px'}}></i>
+																		</div>
+																	</div>
+																	<div>
+																		<a href={`/emp-detail/${app.employerId?._id}`} className="text-decoration-none">
+																			<h6 className="mb-1 fw-semibold text-dark hover-primary">
+																				{app.employerId?.companyName || 'Company Name Not Available'}
+																			</h6>
+																		</a>
+																		<small className="text-muted">
+																			<i className="fas fa-map-marker-alt me-1"></i>
+																			{app.jobId?.location || 'Location Not Available'}
+																		</small>
 																	</div>
 																</div>
-																<div>
-																	<a href={`/emp-detail/${app.employerId?._id}`} className="text-decoration-none">
-																		<h6 className="mb-1 fw-semibold text-dark hover-primary">
-																			{app.employerId?.companyName || 'Company Name Not Available'}
-																		</h6>
-																	</a>
-																	<small className="text-muted">
-																		<i className="fas fa-map-marker-alt me-1"></i>
-																		{app.jobId?.location || 'Location Not Available'}
-																	</small>
-																</div>
-															</div>
-														</td>
-														<td className={`px-4 py-3 ${highlightCompanyPosition ? 'highlight-company-position' : ''}`} style={{transition: 'all 0.3s ease'}}>
-															<span className="fw-medium text-dark">
-																{app.jobId?.title || 'Position Not Available'}
-															</span>
-														</td>
-														<td className="px-4 py-3">
-															<div className="interview-progress-wrapper">
-																{interviewRounds.length > 0 ? (
-																	interviewRounds.map((round, roundIndex) => {
-																		// Get interview details for this round
-																		const roundName = typeof round === 'string' ? round : round.name;
-																		const roundStatus = getRoundStatus(app, roundIndex, roundName);
-																		const uniqueKey = typeof round === 'string' ? round.toLowerCase() : round.uniqueKey;
-																		
-																		// Try to find round details with multiple possible keys
-																		let roundDetails = null;
-																		if (app.jobId?.interviewRoundDetails) {
-																			// First try the uniqueKey
-																			roundDetails = app.jobId.interviewRoundDetails[uniqueKey];
+															</td>
+															<td className={`px-4 py-3 ${highlightCompanyPosition ? 'highlight-company-position' : ''}`} style={{transition: 'all 0.3s ease'}}>
+																<span className="fw-medium text-dark">
+																	{app.jobId?.title || 'Position Not Available'}
+																</span>
+															</td>
+															<td className="px-4 py-3">
+																<div className="interview-progress-wrapper">
+																	{interviewRounds.length > 0 ? (
+																		interviewRounds.map((round, roundIndex) => {
+																			// Get interview details for this round
+																			const roundName = typeof round === 'string' ? round : round.name;
+																			const roundStatus = getRoundStatus(app, roundIndex, roundName);
+																			const uniqueKey = typeof round === 'string' ? round.toLowerCase() : round.uniqueKey;
 																			
-																			// If not found, try to find by round type in any key
-																			if (!roundDetails) {
-																				const roundType = typeof round === 'object' ? round.roundType : round.toLowerCase();
-																				for (const [key, details] of Object.entries(app.jobId.interviewRoundDetails)) {
-																					if (key.includes(roundType) && details && (details.description || details.fromDate || details.toDate)) {
-																						roundDetails = details;
-																						break;
+																			// Try to find round details with multiple possible keys
+																			let roundDetails = null;
+																			if (app.jobId?.interviewRoundDetails) {
+																				// First try the uniqueKey
+																				roundDetails = app.jobId.interviewRoundDetails[uniqueKey];
+																				
+																				// If not found, try to find by round type in any key
+																				if (!roundDetails) {
+																					const roundType = typeof round === 'object' ? round.roundType : round.toLowerCase();
+																					for (const [key, details] of Object.entries(app.jobId.interviewRoundDetails)) {
+																						if (key.includes(roundType) && details && (details.description || details.fromDate || details.toDate)) {
+																							roundDetails = details;
+																							break;
+																						}
 																					}
 																				}
+																			};
+																			const formatDate = (dateStr) => {
+																				if (!dateStr) return null;
+																				try {
+																					return new Date(dateStr).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'});
+																				} catch (error) {
+																					console.error('Date formatting error:', error, 'for date:', dateStr);
+																					return null;
+																				}
+																			};
+																			// For Assessment, use job-level dates
+																			let startDate, endDate, dateDisplay;
+																			console.log('=== DATE DEBUG ===');
+																			console.log('Job ID:', app.jobId?._id);
+																			console.log('Assessment fields:', {
+																				assessmentId: app.jobId?.assessmentId,
+																				assessmentStartDate: app.jobId?.assessmentStartDate,
+																				assessmentEndDate: app.jobId?.assessmentEndDate
+																			});
+																			console.log('All job fields:', Object.keys(app.jobId || {}));
+																			
+																			if (roundName === 'Assessment') {
+																				// Try multiple possible field names for assessment dates
+																				startDate = formatDate(app.jobId?.assessmentStartDate || roundDetails?.fromDate);
+																				endDate = formatDate(app.jobId?.assessmentEndDate || roundDetails?.toDate);
+																			} else {
+																				startDate = formatDate(roundDetails?.fromDate || roundDetails?.date);
+																				endDate = formatDate(roundDetails?.toDate);
 																			}
-																		};
-																		const formatDate = (dateStr) => {
-																			if (!dateStr) return null;
-																			try {
-																				return new Date(dateStr).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'});
-																			} catch (error) {
-																				console.error('Date formatting error:', error, 'for date:', dateStr);
-																				return null;
-																			}
-																		};
-																		// For Assessment, use job-level dates
-																		let startDate, endDate, dateDisplay;
-																		console.log('=== DATE DEBUG ===');
-																		console.log('Job ID:', app.jobId?._id);
-																		console.log('Assessment fields:', {
-																			assessmentId: app.jobId?.assessmentId,
-																			assessmentStartDate: app.jobId?.assessmentStartDate,
-																			assessmentEndDate: app.jobId?.assessmentEndDate
-																		});
-																		console.log('All job fields:', Object.keys(app.jobId || {}));
-																		
-																		if (roundName === 'Assessment') {
-																			// Try multiple possible field names for assessment dates
-																			startDate = formatDate(app.jobId?.assessmentStartDate || roundDetails?.fromDate);
-																			endDate = formatDate(app.jobId?.assessmentEndDate || roundDetails?.toDate);
-																		} else {
-																			startDate = formatDate(roundDetails?.fromDate || roundDetails?.date);
-																			endDate = formatDate(roundDetails?.toDate);
-																		}
-																		
-																		dateDisplay = startDate && endDate ? `${startDate} - ${endDate}` : 
+																			
+																			dateDisplay = startDate && endDate ? `${startDate} - ${endDate}` : 
 																						  startDate ? `From: ${startDate}` : 
 																						  endDate ? `Until: ${endDate}` : null;
-																		
-																		console.log('Formatted dates:', {startDate, endDate, dateDisplay});
-																		return (
-																			<div key={roundIndex} className="interview-round-item" style={{minWidth: '100px', padding: '4px'}}>
-																				<div className="round-name" style={{fontSize: '12px', fontWeight: '600', marginBottom: '4px'}}>{roundName}</div>
-																				<div style={{display: 'flex', flexDirection: 'column', gap: '3px', alignItems: 'center'}}>
-																					<span className={`badge ${roundStatus.class}`} style={{fontSize: '10px', padding: '3px 8px', minWidth: '70px', textAlign: 'center'}}>
-																						{roundStatus?.text || 'Pending'}
-																					</span>
-																					{dateDisplay && (
-																						<div style={{fontSize: '9px', color: '#666', textAlign: 'center', padding: '2px 4px', backgroundColor: '#f8f9fa', borderRadius: '3px', marginTop: '2px'}}>
-																							{dateDisplay}
-																						</div>
-																					)}
-																					{!dateDisplay && (
-																						<div style={{fontSize: '9px', color: '#999', textAlign: 'center', padding: '2px 4px', backgroundColor: '#f8f9fa', borderRadius: '3px', marginTop: '2px'}}>
-																							Dates TBD
-																						</div>
-																					)}
+																			
+																			console.log('Formatted dates:', {startDate, endDate, dateDisplay});
+																			return (
+																				<div key={roundIndex} className="interview-round-item" style={{minWidth: '100px', padding: '4px'}}>
+																					<div className="round-name" style={{fontSize: '12px', fontWeight: '600', marginBottom: '4px'}}>{roundName}</div>
+																					<div style={{display: 'flex', flexDirection: 'column', gap: '3px', alignItems: 'center'}}>
+																						<span className={`badge ${roundStatus.class}`} style={{fontSize: '10px', padding: '3px 8px', minWidth: '70px', textAlign: 'center'}}>
+																							{roundStatus?.text || 'Pending'}
+																						</span>
+																						{dateDisplay && (
+																							<div style={{fontSize: '9px', color: '#666', textAlign: 'center', padding: '2px 4px', backgroundColor: '#f8f9fa', borderRadius: '3px', marginTop: '2px'}}>
+																								{dateDisplay}
+																							</div>
+																						)}
+																						{!dateDisplay && (
+																							<div style={{fontSize: '9px', color: '#999', textAlign: 'center', padding: '2px 4px', backgroundColor: '#f8f9fa', borderRadius: '3px', marginTop: '2px'}}>
+																								Dates TBD
+																							</div>
+																						)}
 
 
+																					</div>
 																				</div>
-																			</div>
-																		);
-																	})
-																) : (
-																	<span className="text-muted fst-italic">No rounds specified</span>
-																)}
-															</div>
-														</td>
-														<td className="px-4 py-3">
-															<span className={
-																(app.status === 'pending' && app.isSelectedForProcess) ? 'badge bg-info bg-opacity-10 text-info border border-info' :
-																app.status === 'pending' ? 'badge bg-warning bg-opacity-10 text-warning border border-warning' :
-																app.status === 'shortlisted' ? 'badge bg-info bg-opacity-10 text-info border border-info' :
-																app.status === 'interviewed' ? 'badge bg-primary bg-opacity-10 text-primary border border-primary' :
-																app.status === 'hired' ? 'badge bg-success bg-opacity-10 text-success border border-success' :
-																app.status === 'rejected' ? 'badge bg-danger bg-opacity-10 text-danger border border-danger' : 'badge bg-secondary bg-opacity-10 text-secondary border border-secondary'
-															} style={{fontSize: '12px', padding: '6px 12px'}}>
-																{(app.status === 'pending' && app.isSelectedForProcess) ? 'Shortlisted' : app.status?.charAt(0).toUpperCase() + app.status?.slice(1) || 'Pending'}
-															</span>
-														</td>
-														<td className="px-4 py-3 text-center">
-															<button
-																className="btn btn-sm"
-																style={{
-																	width: '40px',
-																	height: '40px',
-																	borderRadius: '50%',
-																	backgroundColor: '#fff3e0',
-																	border: '2px solid #ff6b35',
-																	display: 'flex',
-																	alignItems: 'center',
-																	justifyContent: 'center',
-																	padding: '0',
-																	transition: 'all 0.3s ease'
-																}}
-																onClick={() => handleViewAllDetails(app)}
-																title="View all interview process details"
-																onMouseEnter={(e) => {
-																	e.currentTarget.style.backgroundColor = '#ff6b35';
-																	e.currentTarget.querySelector('i').style.color = 'white';
-																}}
-																onMouseLeave={(e) => {
-																	e.currentTarget.style.backgroundColor = '#fff3e0';
-																	e.currentTarget.querySelector('i').style.color = '#ff6b35';
-																}}
-															>
-																<i className="fa fa-eye" style={{color: '#ff6b35', fontSize: '18px', transition: 'color 0.3s ease'}}></i>
-															</button>
-														</td>
-													</tr>
-												);
-											})
-										)}
+																			);
+																		})
+																	) : (
+																		<span className="text-muted fst-italic">No rounds specified</span>
+																	)}
+																</div>
+															</td>
+															<td className="px-4 py-3">
+																<span className={
+																	(app.status === 'pending' && app.isSelectedForProcess) ? 'badge bg-info bg-opacity-10 text-info border border-info' :
+																	app.status === 'pending' ? 'badge bg-warning bg-opacity-10 text-warning border border-warning' :
+																	app.status === 'shortlisted' ? 'badge bg-info bg-opacity-10 text-info border border-info' :
+																	app.status === 'interviewed' ? 'badge bg-primary bg-opacity-10 text-primary border border-primary' :
+																	app.status === 'hired' ? 'badge bg-success bg-opacity-10 text-success border border-success' :
+																	app.status === 'rejected' ? 'badge bg-danger bg-opacity-10 text-danger border border-danger' : 'badge bg-secondary bg-opacity-10 text-secondary border border-secondary'
+																} style={{fontSize: '12px', padding: '6px 12px'}}>
+																	{(app.status === 'pending' && app.isSelectedForProcess) ? 'Shortlisted' : app.status?.charAt(0).toUpperCase() + app.status?.slice(1) || 'Pending'}
+																</span>
+															</td>
+															<td className="px-4 py-3 text-center">
+																<button
+																	className="btn btn-sm"
+																	style={{
+																		width: '40px',
+																		height: '40px',
+																		borderRadius: '50%',
+																		backgroundColor: '#fff3e0',
+																		border: '2px solid #ff6b35',
+																		display: 'flex',
+																		alignItems: 'center',
+																		justifyContent: 'center',
+																		padding: '0',
+																		transition: 'all 0.3s ease'
+																	}}
+																	onClick={() => handleViewAllDetails(app)}
+																	title="View all interview process details"
+																	onMouseEnter={(e) => {
+																		e.currentTarget.style.backgroundColor = '#ff6b35';
+																		e.currentTarget.querySelector('i').style.color = 'white';
+																	}}
+																	onMouseLeave={(e) => {
+																		e.currentTarget.style.backgroundColor = '#fff3e0';
+																		e.currentTarget.querySelector('i').style.color = '#ff6b35';
+																	}}
+																>
+																	<i className="fa fa-eye" style={{color: '#ff6b35', fontSize: '18px', transition: 'color 0.3s ease'}}></i>
+																</button>
+															</td>
+														</tr>
+													);
+												})
+											)}
 
-									</tbody>
-								</table>
+										</tbody>
+									</table>
 									</div>
 								</div>
 							</div>
@@ -933,7 +731,7 @@ function CanStatusPage() {
 												</div>
 												
 												{/* Assessment Details */}
-												{roundName === 'Assessment' && assessmentId && (
+												{roundName === 'Assessment' && (
 													<div className="mt-2">
 														{/* Assessment Description */}
 														{roundDetails && roundDetails.description && (
@@ -958,12 +756,55 @@ function CanStatusPage() {
 																</div>
 															</div>
 														)}
-														
-														<div className="mb-2">
-															<small className="text-muted">Assessment Status:</small>
-															<div className="mt-1">
-																{getAssessmentButton(selectedApplication)}
-															</div>
+
+														{/* Assessment Action Buttons */}
+														<div className="mt-3 pt-2 border-top d-flex gap-2 flex-wrap">
+															{selectedApplication.assessmentStatus === 'expired' ? (
+																<button 
+																	className="btn btn-sm btn-danger"
+																	disabled
+																	style={{borderRadius: '6px'}}
+																>
+																	<i className="fa fa-times me-1"></i>
+																	Assessment Expired
+																</button>
+															) : (selectedApplication.assessmentStatus === 'completed' || selectedApplication.assessmentStatus === 'pass' || selectedApplication.assessmentResult === 'pass' || selectedApplication.assessmentResult === 'fail') ? (
+																<button 
+																	className="btn btn-sm btn-success"
+																	onClick={() => {
+																		setShowAllDetails(false);
+																		navigate(canRoute(candidate.RESULT.replace(':applicationId', selectedApplication._id)));
+																	}}
+																	style={{borderRadius: '6px'}}
+																>
+																	<i className="fa fa-bar-chart me-1"></i>
+																	View Result
+																</button>
+															) : selectedApplication.assessmentStatus === 'in_progress' ? (
+																<button 
+																	className="btn btn-sm btn-warning"
+																	onClick={() => {
+																		setShowAllDetails(false);
+																		handleStartAssessment(selectedApplication);
+																	}}
+																	style={{borderRadius: '6px'}}
+																>
+																	<i className="fa fa-play me-1"></i>
+																	Continue Assessment
+																</button>
+															) : (
+																<button 
+																	className="btn btn-sm btn-primary"
+																	onClick={() => {
+																		setShowAllDetails(false);
+																		handleStartAssessment(selectedApplication);
+																	}}
+																	style={{borderRadius: '6px'}}
+																>
+																	<i className="fa fa-play me-1"></i>
+																	Start Assessment
+																</button>
+															)}
 														</div>
 													</div>
 												)}
@@ -1036,10 +877,10 @@ function CanStatusPage() {
 							</div>
 						</div>
 					</div>
-					</div>
-				)}
-			</>
-		);
+				</div>
+			)}
+		</>
+	);
 }
 
 export default CanStatusPage;

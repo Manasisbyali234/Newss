@@ -211,9 +211,9 @@ router.post('/jobs/:jobId/apply', [
 
 router.post('/applications', candidateController.applyForJob);
 router.post('/apply/:jobId', candidateController.applyForJob);
-router.get('/applications', candidateController.getAppliedJobs);
 router.get('/applications/interviews', candidateController.getCandidateApplicationsWithInterviews);
 router.get('/applications/:applicationId/status', candidateController.getApplicationStatus);
+router.get('/applications', candidateController.getAppliedJobs);
 router.get('/applications/:applicationId/interview-process', candidateController.getInterviewProcessDetails);
 router.get('/applications/:applicationId/interview-details', candidateController.getApplicationInterviewDetails);
 router.get('/interview-processes', candidateController.getAllInterviewProcessDetails);
@@ -305,6 +305,7 @@ router.post('/assessments/start', assessmentDebugMiddleware, assessmentControlle
 router.post('/assessments/answer', assessmentDebugMiddleware, assessmentController.submitAnswer);
 router.post('/assessments/upload-answer', upload.single('answerFile'), assessmentController.uploadFileAnswer);
 router.post('/assessments/submit', assessmentDebugMiddleware, assessmentController.submitAssessment);
+router.get('/assessments/result/application/:applicationId', assessmentController.getAssessmentResultByApplication);
 router.get('/assessments/result/:attemptId', assessmentController.getAssessmentResult);
 router.post('/assessments/violation', assessmentDebugMiddleware, assessmentController.recordViolation);
 

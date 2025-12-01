@@ -16,19 +16,18 @@ const generateToken = (id, role) => {
 exports.registerCandidate = async (req, res) => {
   try {
     const { name, email, password, phone, sendWelcomeEmail: shouldSendWelcome } = req.body;
-    const normalizedEmail = email.toLowerCase().trim();
-    console.log('Registration attempt:', { name, email: normalizedEmail, phone, shouldSendWelcome });
+    console.log('Registration attempt:', { name, email, phone, shouldSendWelcome });
 
-    const existingCandidate = await Candidate.findOne({ email: normalizedEmail });
+    const existingCandidate = await Candidate.findOne({ email });
     if (existingCandidate) {
-      console.log('Email already exists:', normalizedEmail);
+      console.log('Email already exists:', email);
       return res.status(400).json({ success: false, message: 'Email already registered' });
     }
 
     // Create candidate without password - they will create it via email link
     const candidate = await Candidate.create({ 
       name, 
-      email: normalizedEmail, 
+      email, 
       phone,
       registrationMethod: 'email_signup',
       credits: 0,
@@ -41,8 +40,8 @@ exports.registerCandidate = async (req, res) => {
 
     // Send welcome email with password creation link
     try {
-      await sendWelcomeEmail(normalizedEmail, name, 'candidate');
-      console.log('Welcome email sent successfully to:', normalizedEmail);
+      await sendWelcomeEmail(email, name, 'candidate');
+      console.log('Welcome email sent successfully to:', email);
     } catch (emailError) {
       console.error('Welcome email failed:', emailError);
       return res.status(500).json({ success: false, message: 'Failed to send welcome email. Please try again.' });
@@ -804,20 +803,13 @@ exports.checkEmail = async (req, res) => {
 exports.createPassword = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log('Create password request:', { email, passwordLength: password?.length });
 
-    if (!email || !password) {
-      return res.status(400).json({ success: false, message: 'Email and password are required' });
-    }
-
-    const candidate = await Candidate.findOne({ email: email.toLowerCase().trim() });
+    const candidate = await Candidate.findOne({ email });
     if (!candidate) {
-      console.log('Candidate not found for email:', email);
       return res.status(404).json({ success: false, message: 'Candidate not found' });
     }
 
     if (candidate.password) {
-      console.log('Password already set for:', email);
       return res.status(400).json({ success: false, message: 'Password already set' });
     }
 
@@ -825,11 +817,9 @@ exports.createPassword = async (req, res) => {
     candidate.status = 'active';
     candidate.registrationMethod = 'signup';
     await candidate.save();
-    console.log('Password created successfully for:', email);
 
     res.json({ success: true, message: 'Password created successfully' });
   } catch (error) {
-    console.error('Create password error:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -920,8 +910,11 @@ exports.updatePasswordReset = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Candidate not found' });
     }
     
-    // Always change to signup method so password gets hashed
-    candidate.registrationMethod = 'signup';
+    // For placement candidates, change to signup method so password gets hashed
+    if (candidate.registrationMethod === 'placement') {
+      candidate.registrationMethod = 'signup';
+    }
+    
     candidate.password = newPassword;
     candidate.markModified('password');
     await candidate.save();
@@ -971,8 +964,10 @@ exports.verifyOTPAndResetPassword = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
     }
 
-    // Always change to signup method for password hashing
-    candidate.registrationMethod = 'signup';
+    if (candidate.registrationMethod === 'placement') {
+      candidate.registrationMethod = 'signup';
+    }
+
     candidate.password = newPassword;
     candidate.resetPasswordOTP = undefined;
     candidate.resetPasswordOTPExpires = undefined;
@@ -1078,49 +1073,26 @@ exports.getCandidateApplicationsWithInterviews = async (req, res) => {
     const applications = await Application.find({ candidateId: req.user._id })
       .populate({
         path: 'jobId',
+        select: 'title location jobType status interviewRoundsCount interviewRoundTypes interviewRoundDetails assessmentId assessmentStartDate assessmentEndDate',
         options: { lean: false }
       })
       .populate('employerId', 'companyName')
       .sort({ createdAt: -1 })
       .lean(); // Use lean for better performance
 
-    // Add assessment status fields to each application and normalize interviewRoundDetails
+    // Add assessment status fields to each application
     const applicationsWithAssessmentStatus = applications.map(app => {
-      const normalizedApp = {
+      console.log('Processing app for job:', app.jobId?._id, {
+        assessmentStartDate: app.jobId?.assessmentStartDate,
+        assessmentEndDate: app.jobId?.assessmentEndDate
+      });
+      return {
         ...app,
         assessmentStatus: app.assessmentStatus || 'not_required',
         assessmentScore: app.assessmentScore || null,
         assessmentPercentage: app.assessmentPercentage || null,
         assessmentResult: app.assessmentResult || null
       };
-
-      // Normalize interviewRoundDetails to handle both old and new key formats
-      if (app.jobId?.interviewRoundDetails && app.jobId?.interviewRoundOrder && app.jobId?.interviewRoundTypes) {
-        const normalizedDetails = {};
-        
-        // Map unique keys to their round details
-        app.jobId.interviewRoundOrder.forEach(uniqueKey => {
-          // Get the round type from interviewRoundTypes mapping
-          const roundType = app.jobId.interviewRoundTypes[uniqueKey];
-          
-          if (roundType && app.jobId.interviewRoundDetails[roundType]) {
-            const details = app.jobId.interviewRoundDetails[roundType];
-            // Store details under both the unique key and the round type
-            normalizedDetails[uniqueKey] = details;
-            normalizedDetails[roundType] = details;
-          }
-        });
-        
-        normalizedApp.jobId = {
-          ...normalizedApp.jobId,
-          interviewRoundDetails: {
-            ...app.jobId.interviewRoundDetails,
-            ...normalizedDetails
-          }
-        };
-      }
-
-      return normalizedApp;
     });
 
     res.json({ success: true, applications: applicationsWithAssessmentStatus });

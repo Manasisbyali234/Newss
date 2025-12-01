@@ -6,6 +6,18 @@ import '../job-card-buttons.css';
 const JobCard = ({ job }) => {
     const navigate = useNavigate();
 
+    const stripHtml = (html) => {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || '';
+    };
+
+    const truncateText = (text, maxLength = 150) => {
+        const cleanText = stripHtml(text);
+        if (cleanText.length <= maxLength) return cleanText;
+        return cleanText.substring(0, maxLength) + '...';
+    };
+
     const handleApplyClick = () => {
         if (isAuthenticated('candidate')) {
             // User is logged in as candidate, proceed with application
@@ -37,7 +49,7 @@ const JobCard = ({ job }) => {
             </div>
 
             <div className="job-details">
-                <p>{job.description}</p>
+                <p>{truncateText(job.description || 'No description available')}</p>
                 <div className="job-meta">
                     <span>CTC: {job.ctc && job.ctc.min && job.ctc.max ?
                         job.ctc.min === job.ctc.max ? `₹${Math.floor(job.ctc.min/100000)}LPA` : `₹${Math.floor(job.ctc.min/100000)} - ${Math.floor(job.ctc.max/100000)} LPA` :
