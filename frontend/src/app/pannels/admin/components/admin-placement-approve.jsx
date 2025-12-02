@@ -91,6 +91,7 @@ function AdminPlacementOfficersApproved() {
                         <table className="table emp-table">
                             <thead>
                                 <tr>
+                                    <th>College Name</th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
@@ -103,7 +104,7 @@ function AdminPlacementOfficersApproved() {
                             <tbody>
                                 {filteredPlacements.length === 0 ? (
                                     <tr>
-                                        <td colSpan="6" className="text-center" style={{padding: '40px', fontSize: '1rem', color: '#6c757d'}}>
+                                        <td colSpan="7" className="text-center" style={{padding: '40px', fontSize: '1rem', color: '#6c757d'}}>
                                             <i className="fa fa-check-circle" style={{fontSize: '2rem', marginBottom: '10px', display: 'block', color: '#dee2e6'}}></i>
                                             No approved placement officers found
                                         </td>
@@ -111,6 +112,7 @@ function AdminPlacementOfficersApproved() {
                                 ) : (
                                     filteredPlacements.map((placement) => (
                                         <tr key={placement._id}>
+                                            <td style={{textAlign: 'center', fontSize: '0.9rem'}}>{placement.collegeName || 'N/A'}</td>
                                             <td style={{textAlign: 'center'}}>
                                                 <span className="company-name">
                                                     {placement.name}

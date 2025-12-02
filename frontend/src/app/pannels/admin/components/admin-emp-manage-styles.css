@@ -170,13 +170,11 @@
 }
 
 .emp-table thead th:nth-child(6) {
-    width: 120px;
-    min-width: 120px;
+    width: auto;
 }
 
 .emp-table thead th:nth-child(7) {
-    width: 420px;
-    min-width: 420px;
+    width: auto;
 }
 
 .emp-table thead th:first-child {
@@ -224,13 +222,11 @@
 }
 
 .emp-table tbody td:nth-child(6) {
-    width: 120px;
-    min-width: 120px;
+    width: auto;
 }
 
 .emp-table tbody td:nth-child(7) {
-    width: 420px;
-    min-width: 420px;
+    width: auto;
 }
 
 .emp-table tbody td:last-child {

@@ -12,6 +12,29 @@
   color: #ff9c00 !important;
 }
 
+/* Active Navigation Link Highlighting */
+.header-nav .nav.navbar-nav li a.active {
+  color: #FF7A00 !important;
+  position: relative;
+}
+
+.header-nav .nav.navbar-nav li a.active::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 3px;
+  background: #FF7A00;
+  border-radius: 2px;
+}
+
+/* Hover State for Navigation Links */
+.header-nav .nav.navbar-nav li a:hover {
+  color: #FF7A00 !important;
+}
+
 @media (min-width: 992px) {
   .hamburger-btn { display: none !important; }
   .header-nav.navbar-collapse { display: flex !important; }
