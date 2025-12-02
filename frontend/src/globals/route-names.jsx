@@ -41,7 +41,8 @@ export const publicUser = {
         RESET_PASSWORD: "/reset-password/:token",
         TERMS:          "/terms-conditions",
         PRIVACY:        "/privacy-policy",
-        SUPPORT:        "/support"
+        SUPPORT:        "/support",
+        TUTORIALS:      "/tutorials"
     },
     candidate: {
         GRID: "/can-grid",

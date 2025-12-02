@@ -648,6 +648,14 @@ export const api = {
       body: JSON.stringify(data),
     }).then((res) => res.json());
   },
+
+  createCandidate: (data) => {
+    return fetch(`${API_BASE_URL}/admin/candidates/create`, {
+      method: 'POST',
+      headers: getAuthHeaders('admin'),
+      body: JSON.stringify(data),
+    }).then((res) => res.json());
+  },
 };
 
 export default api;

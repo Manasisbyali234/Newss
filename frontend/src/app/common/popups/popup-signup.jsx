@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { pubRoute, publicUser } from '../../../globals/route-names';
 import { validatePhoneNumber, handlePhoneInputChange, validatePhoneOnBlur } from '../../../utils/phoneValidation';
+import TermsModal from '../../../components/TermsModal';
 
 function SignUpPopup() {
     const [candidateData, setCandidateData] = useState({
@@ -30,6 +31,9 @@ function SignUpPopup() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [fieldErrors, setFieldErrors] = useState({});
+    const [showTermsModal, setShowTermsModal] = useState(false);
+    const [currentRole, setCurrentRole] = useState('candidate');
+    const [termsAccepted, setTermsAccepted] = useState({ candidate: false, employer: false, placement: false });
 
     useEffect(() => {
         setCandidateData({ username: '', email: '', mobile: '', countryCode: '+91' });
@@ -257,6 +261,12 @@ function SignUpPopup() {
             setError('Please correct the errors below and try again.');
             return;
         }
+
+        if (!termsAccepted.candidate) {
+            setCurrentRole('candidate');
+            setShowTermsModal(true);
+            return;
+        }
         
         setLoading(true);
         setError('');
@@ -302,6 +312,12 @@ function SignUpPopup() {
 
         if (!isFormValid) {
             setError('Please correct the errors below and try again.');
+            return;
+        }
+
+        if (!termsAccepted.employer) {
+            setCurrentRole('employer');
+            setShowTermsModal(true);
             return;
         }
         
@@ -354,6 +370,12 @@ function SignUpPopup() {
             setError('Please correct the errors below and try again.');
             return;
         }
+
+        if (!termsAccepted.placement) {
+            setCurrentRole('placement');
+            setShowTermsModal(true);
+            return;
+        }
         
         setLoading(true);
         setError('');
@@ -391,6 +413,22 @@ function SignUpPopup() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleTermsAccept = () => {
+        setTermsAccepted(prev => ({ ...prev, [currentRole]: true }));
+        setShowTermsModal(false);
+        
+        // Trigger form submission after accepting terms
+        setTimeout(() => {
+            if (currentRole === 'candidate') {
+                document.getElementById('candidate-submit-btn')?.click();
+            } else if (currentRole === 'employer') {
+                document.getElementById('employer-submit-btn')?.click();
+            } else if (currentRole === 'placement') {
+                document.getElementById('placement-submit-btn')?.click();
+            }
+        }, 100);
     };
 
     return (
@@ -554,29 +592,12 @@ function SignUpPopup() {
 
 												
 												<div className="col-lg-12">
-													<div className="form-group mb-1">
-														<div className=" form-check">
-															<input
-																type="checkbox"
-																className="form-check-input"
-																id="agree1"
-																required
-															/>
-															<label
-																className="form-check-label"
-																htmlFor="agree1"
-															>
-																I agree to the{" "}
-																<a href={pubRoute(publicUser.pages.TERMS)} target="_blank" rel="noopener noreferrer">Terms and conditions</a>
-															</label>
-															<p style={{marginTop: "10px"}}>
-																Already registered? <a href="#sign_up_popup2" data-bs-target="#sign_up_popup2" data-bs-toggle="modal" data-bs-dismiss="modal" onClick={() => { setError(''); setSuccess(''); setFieldErrors({}); }} style={{textDecoration: "underline", cursor: "pointer", color: "#fd7e14"}}>Sign in</a>
-															</p>
-														</div>
-													</div>
+													<p style={{marginTop: "10px", marginBottom: "10px", fontSize: "14px"}}>
+														Already registered? <a href="#sign_up_popup2" data-bs-target="#sign_up_popup2" data-bs-toggle="modal" data-bs-dismiss="modal" onClick={() => { setError(''); setSuccess(''); setFieldErrors({}); }} style={{textDecoration: "underline", cursor: "pointer", color: "#fd7e14"}}>Sign in</a>
+													</p>
 												</div>
 												<div className="col-md-12">
-													<button type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%" }} disabled={loading}>
+													<button id="candidate-submit-btn" type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%" }} disabled={loading}>
 														{loading ? 'Signing Up...' : 'Sign Up'}
 													</button>
 												</div>
@@ -692,30 +713,13 @@ function SignUpPopup() {
 												</div>
 
 												<div className="col-lg-12">
-													<div className="form-group mb-1">
-														<div className=" form-check">
-															<input
-																type="checkbox"
-																className="form-check-input"
-																id="agree2"
-																required
-															/>
-															<label
-																className="form-check-label"
-																htmlFor="agree2"
-															>
-																I agree to the{" "}
-																<a href={pubRoute(publicUser.pages.TERMS)} target="_blank" rel="noopener noreferrer">Terms and conditions</a>
-															</label>
-															<p style={{marginTop: "10px"}}>
-																Already registered? <a href="#sign_up_popup2" data-bs-target="#sign_up_popup2" data-bs-toggle="modal" data-bs-dismiss="modal" style={{textDecoration: "underline", cursor: "pointer", color: "#fd7e14"}}>Sign in</a>
-															</p>
-														</div>
-													</div>
+													<p style={{marginTop: "10px", marginBottom: "10px", fontSize: "14px"}}>
+														Already registered? <a href="#sign_up_popup2" data-bs-target="#sign_up_popup2" data-bs-toggle="modal" data-bs-dismiss="modal" style={{textDecoration: "underline", cursor: "pointer", color: "#fd7e14"}}>Sign in</a>
+													</p>
 												</div>
 
 												<div className="col-md-12">
-													<button type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%" }} disabled={loading}>
+													<button id="employer-submit-btn" type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%" }} disabled={loading}>
 														{loading ? 'Signing Up...' : 'Sign Up'}
 													</button>
 												</div>
@@ -830,30 +834,13 @@ function SignUpPopup() {
 												</div>
 
 												<div className="col-lg-12">
-													<div className="form-group mb-1">
-														<div className=" form-check">
-															<input
-																type="checkbox"
-																className="form-check-input"
-																id="agree3"
-																required
-															/>
-															<label
-																className="form-check-label"
-																htmlFor="agree3"
-															>
-																I agree to the{" "}
-																<a href={pubRoute(publicUser.pages.TERMS)} target="_blank" rel="noopener noreferrer">Terms and conditions</a>
-															</label>
-															<p style={{marginTop: "10px"}}>
-																Already registered? <a href="#sign_up_popup2" data-bs-target="#sign_up_popup2" data-bs-toggle="modal" data-bs-dismiss="modal" style={{textDecoration: "underline", cursor: "pointer", color: "#fd7e14"}}>Sign in</a>
-															</p>
-														</div>
-													</div>
+													<p style={{marginTop: "10px", marginBottom: "10px", fontSize: "14px"}}>
+														Already registered? <a href="#sign_up_popup2" data-bs-target="#sign_up_popup2" data-bs-toggle="modal" data-bs-dismiss="modal" style={{textDecoration: "underline", cursor: "pointer", color: "#fd7e14"}}>Sign in</a>
+													</p>
 												</div>
 
 												<div className="col-md-12">
-													<button type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%" }} disabled={loading}>
+													<button id="placement-submit-btn" type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%" }} disabled={loading}>
 														{loading ? 'Signing Up...' : 'Sign Up'}
 													</button>
 												</div>
@@ -866,6 +853,13 @@ function SignUpPopup() {
 						</div>
 					</div>
 				</div>
+
+				<TermsModal 
+					isOpen={showTermsModal}
+					onClose={() => setShowTermsModal(false)}
+					onAccept={handleTermsAccept}
+					role={currentRole}
+				/>
 			</>
 		);
 }

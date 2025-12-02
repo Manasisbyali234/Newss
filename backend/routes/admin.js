@@ -34,6 +34,7 @@ router.put('/employers/:employerId/authorization-letters/:letterId/reject', admi
 router.get('/candidates', adminController.getAllCandidates);
 router.get('/candidates/registered', adminController.getRegisteredCandidates);
 router.get('/candidates/:candidateId', adminController.getCandidateDetails);
+router.post('/candidates/create', adminController.createCandidate);
 router.delete('/candidates/:id', adminController.deleteCandidate);
 router.put('/candidates/:candidateId/credits', adminController.updateCandidateCredits);
 router.post('/candidates/credits/bulk', adminController.bulkUpdateCandidateCredits);

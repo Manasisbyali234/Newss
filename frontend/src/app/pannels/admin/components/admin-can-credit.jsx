@@ -1,12 +1,23 @@
 
 
 import React, { useState, useEffect } from "react";
+import { showSuccess, showError } from '../../../../utils/popupNotification';
 
 function AdminCreditsPage() {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [assignAllCount, setAssignAllCount] = useState(0);
 	const [candidates, setCandidates] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const [showAddModal, setShowAddModal] = useState(false);
+	const [newCandidate, setNewCandidate] = useState({
+		firstName: '',
+		lastName: '',
+		email: '',
+		password: '',
+		collegeName: '',
+		credits: 0
+	});
+	const [creating, setCreating] = useState(false);
 
 	useEffect(() => {
 		fetchCandidates();
@@ -132,6 +143,37 @@ function AdminCreditsPage() {
 		}
 	};
 
+	const handleAddCandidate = async (e) => {
+		e.preventDefault();
+		setCreating(true);
+		
+		try {
+			const token = localStorage.getItem('adminToken');
+			const response = await fetch('http://localhost:5000/api/admin/candidates/create', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`
+				},
+				body: JSON.stringify(newCandidate)
+			});
+			const data = await response.json();
+			
+			if (data.success) {
+				showSuccess('Candidate created successfully! Welcome email sent.');
+				setShowAddModal(false);
+				setNewCandidate({ firstName: '', lastName: '', email: '', password: '', collegeName: '', credits: 0 });
+				fetchCandidates();
+			} else {
+				showError(data.message || 'Failed to create candidate');
+			}
+		} catch (error) {
+			showError('Failed to create candidate');
+		} finally {
+			setCreating(false);
+		}
+	};
+
 	const filteredCandidates = candidates.filter(
 		(candidate) =>
 			candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -161,7 +203,7 @@ function AdminCreditsPage() {
 					</p>
 
 					<div className="row align-items-end mb-4">
-						<div className="col-md-6 mb-2">
+						<div className="col-md-4 mb-2">
 							<input
 								type="text"
 								className="form-control"
@@ -170,7 +212,10 @@ function AdminCreditsPage() {
 								onChange={handleSearchChange}
 							/>
 						</div>
-						<div className="col-md-6 d-flex justify-content-end gap-2">
+						<div className="col-md-8 d-flex justify-content-end gap-2">
+							<button className="btn btn-success" onClick={() => setShowAddModal(true)}>
+								<i className="fa fa-plus me-2"></i>Add New Candidate
+							</button>
 							<input
 								type="number"
 								className="form-control"
@@ -239,6 +284,55 @@ function AdminCreditsPage() {
 					)}
 				</div>
 			</div>
+
+			{showAddModal && (
+				<div className="modal show d-block" style={{backgroundColor: 'rgba(0,0,0,0.5)'}}>
+					<div className="modal-dialog modal-dialog-centered">
+						<div className="modal-content">
+							<div className="modal-header">
+								<h5 className="modal-title">Add New Candidate</h5>
+								<button type="button" className="btn-close" onClick={() => setShowAddModal(false)}></button>
+							</div>
+							<form onSubmit={handleAddCandidate}>
+								<div className="modal-body">
+									<div className="row">
+										<div className="col-md-6 mb-3">
+											<label className="form-label">First Name *</label>
+											<input type="text" className="form-control" value={newCandidate.firstName} onChange={(e) => setNewCandidate({...newCandidate, firstName: e.target.value})} required />
+										</div>
+										<div className="col-md-6 mb-3">
+											<label className="form-label">Last Name *</label>
+											<input type="text" className="form-control" value={newCandidate.lastName} onChange={(e) => setNewCandidate({...newCandidate, lastName: e.target.value})} required />
+										</div>
+										<div className="col-12 mb-3">
+											<label className="form-label">Email *</label>
+											<input type="email" className="form-control" value={newCandidate.email} onChange={(e) => setNewCandidate({...newCandidate, email: e.target.value})} required />
+										</div>
+										<div className="col-12 mb-3">
+											<label className="form-label">Password *</label>
+											<input type="password" className="form-control" value={newCandidate.password} onChange={(e) => setNewCandidate({...newCandidate, password: e.target.value})} required minLength="6" />
+										</div>
+										<div className="col-12 mb-3">
+											<label className="form-label">College Name *</label>
+											<input type="text" className="form-control" value={newCandidate.collegeName} onChange={(e) => setNewCandidate({...newCandidate, collegeName: e.target.value})} required />
+										</div>
+										<div className="col-12 mb-3">
+											<label className="form-label">Initial Credits</label>
+											<input type="number" className="form-control" value={newCandidate.credits} onChange={(e) => setNewCandidate({...newCandidate, credits: parseInt(e.target.value) || 0})} min="0" />
+										</div>
+									</div>
+								</div>
+								<div className="modal-footer">
+									<button type="button" className="btn btn-secondary" onClick={() => setShowAddModal(false)}>Cancel</button>
+									<button type="submit" className="btn btn-primary" disabled={creating}>
+										{creating ? 'Creating...' : 'Create Candidate'}
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }

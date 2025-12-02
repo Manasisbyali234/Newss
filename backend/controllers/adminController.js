@@ -1313,6 +1313,68 @@ exports.getCandidatesForCredits = async (req, res) => {
   }
 };
 
+exports.createCandidate = async (req, res) => {
+  try {
+    const { firstName, lastName, email, password, collegeName, credits } = req.body;
+    
+    if (!firstName || !lastName || !email || !password || !collegeName) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'First name, last name, email, password, and college name are required' 
+      });
+    }
+    
+    const existingCandidate = await Candidate.findOne({ email: email.toLowerCase().trim() });
+    if (existingCandidate) {
+      return res.status(400).json({ success: false, message: 'Email already registered' });
+    }
+    
+    const fullName = `${firstName.trim()} ${lastName.trim()}`;
+    const finalCredits = Math.max(0, Math.min(10000, parseInt(credits) || 0));
+    
+    const candidate = await Candidate.create({
+      name: fullName,
+      email: email.toLowerCase().trim(),
+      password: password.trim(),
+      credits: finalCredits,
+      registrationMethod: 'admin',
+      isVerified: true,
+      status: 'active'
+    });
+    
+    await CandidateProfile.create({ 
+      candidateId: candidate._id,
+      collegeName: collegeName.trim()
+    });
+    
+    try {
+      const { sendPlacementCandidateWelcomeEmail } = require('../utils/emailService');
+      await sendPlacementCandidateWelcomeEmail(
+        candidate.email,
+        candidate.name,
+        password.trim(),
+        'Admin',
+        collegeName.trim()
+      );
+    } catch (emailError) {
+      console.error('Failed to send welcome email:', emailError);
+    }
+    
+    res.status(201).json({
+      success: true,
+      message: 'Candidate created successfully and welcome email sent',
+      candidate: {
+        id: candidate._id,
+        name: candidate.name,
+        email: candidate.email,
+        credits: candidate.credits
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // Sub Admin Management Controllers
 exports.createSubAdmin = async (req, res) => {
   try {

@@ -5,6 +5,7 @@ import CountryCodeSelector from "../../../../components/CountryCodeSelector";
 import { ErrorDisplay, GlobalErrorDisplay } from "../../../../components/ErrorDisplay";
 import { validateField, validateForm, displayError, safeApiCall, getErrorMessage } from "../../../../utils/errorHandler";
 import RichTextEditor from "../../../../components/RichTextEditor";
+import TermsModal from '../../../../components/TermsModal';
 import './emp-company-profile.css';
 import '../../../../components/ErrorDisplay.css';
 import '../../../../remove-profile-hover-effects.css';
@@ -75,6 +76,8 @@ function EmpCompanyProfilePage() {
     const [globalErrors, setGlobalErrors] = useState([]);
     const [fetchingCity, setFetchingCity] = useState(false);
     const [deleteConfirmation, setDeleteConfirmation] = useState(null);
+    const [showTermsModal, setShowTermsModal] = useState(false);
+    const [termsAccepted, setTermsAccepted] = useState(false);
     const [validationRules] = useState({
         companyName: { required: true, minLength: 2 },
         phone: { required: true, phone: true },
@@ -843,10 +846,8 @@ function EmpCompanyProfilePage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
         
         if (!validateFormData()) {
-            setLoading(false);
             // Scroll to first error
             const firstErrorField = document.querySelector('.is-invalid');
             if (firstErrorField) {
@@ -856,6 +857,16 @@ function EmpCompanyProfilePage() {
             showWarning('Please fix the validation errors before submitting');
             return;
         }
+        
+        if (!termsAccepted) {
+            setShowTermsModal(true);
+            return;
+        }
+        
+        await saveProfile();
+    };
+
+    const saveProfile = async () => {
         
         setLoading(true);
         try {
@@ -1978,6 +1989,17 @@ function EmpCompanyProfilePage() {
                 </div>
             </form>
             </div>
+
+            <TermsModal 
+                isOpen={showTermsModal}
+                onClose={() => setShowTermsModal(false)}
+                onAccept={() => {
+                    setTermsAccepted(true);
+                    setShowTermsModal(false);
+                    saveProfile();
+                }}
+                role="employerProfile"
+            />
         </div>
     );
 }

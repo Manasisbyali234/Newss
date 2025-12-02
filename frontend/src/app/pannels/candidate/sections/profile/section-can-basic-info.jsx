@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { api } from "../../../../../utils/api";
 import CountryCodeSelector from "../../../../../components/CountryCodeSelector";
+import TermsModal from "../../../../../components/TermsModal";
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
 const indianCities = [
     'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata', 'Pune', 'Ahmedabad',
@@ -36,6 +37,8 @@ function SectionCandicateBasicInfo() {
     const [locationDropdownOpen, setLocationDropdownOpen] = useState(false);
     const [locationSearch, setLocationSearch] = useState('');
     const [phonePaddingLeft, setPhonePaddingLeft] = useState(130);
+    const [showTermsModal, setShowTermsModal] = useState(false);
+    const [termsAccepted, setTermsAccepted] = useState(false);
     const locationDropdownRef = useRef(null);
 
     useEffect(() => {
@@ -311,6 +314,11 @@ function SectionCandicateBasicInfo() {
         
         if (!validateForm()) {
             setNotification({ type: 'error', message: 'Please fix the validation errors before submitting.' });
+            return;
+        }
+        
+        if (!termsAccepted) {
+            setShowTermsModal(true);
             return;
         }
         
@@ -660,10 +668,22 @@ function SectionCandicateBasicInfo() {
                             <i className={`fa ${saving ? 'fa-spinner fa-spin' : 'fa-save'} me-2`}></i>
                             {saving ? 'Saving Profile...' : 'Save Profile'}
                         </button>
-
                     </div>
                 </div>
             </div>
+            
+            <TermsModal 
+                isOpen={showTermsModal}
+                onClose={() => setShowTermsModal(false)}
+                onAccept={() => {
+                    setTermsAccepted(true);
+                    setShowTermsModal(false);
+                    setTimeout(() => {
+                        document.querySelector('form').requestSubmit();
+                    }, 100);
+                }}
+                role="candidate"
+            />
         </form>
     );
 }

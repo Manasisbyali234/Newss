@@ -22,6 +22,7 @@ import AdminJobsSkills from "../app/pannels/admin/components/admin-jobs-skills";
 import PlacementDetails from "../app/pannels/admin/components/placement-details.jsx";
 import AdminSubAdmin from "../app/pannels/admin/components/admin-sub-admin";
 import AdminSupportTickets from "../app/pannels/admin/components/admin-support-tickets";
+import AdminAddCandidate from "../app/pannels/admin/components/admin-add-candidate.jsx";
 
 import RegisteredCandidatesPage from "../app/pannels/admin/components/registered-candidates";
 import AdminCandidateReviewPage from "../app/pannels/admin/components/admin-candidate-review";
@@ -54,6 +55,7 @@ function AdminRoutes() {
 				<Route path={admin.PLACEMENT_REJECT} element={<AdminPlacementOfficersRejected />} />
 				<Route path={admin.PLACEMENT_DETAILS} element={<PlacementDetails />} />
 				<Route path="/placement-credits" element={<AdminIndividualCredit />} />
+				<Route path="/placement-credits/add-candidate" element={<AdminAddCandidate />} />
 				<Route path="/jobs/skills" element={<AdminJobsSkills />} />
 				<Route path={admin.SUPPORT_TICKETS} element={<AdminSupportTickets />} />
 				<Route path={admin.SUB_ADMIN} element={<AdminSubAdmin />} />

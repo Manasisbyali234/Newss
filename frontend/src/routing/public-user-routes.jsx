@@ -38,6 +38,7 @@ const ResetPassword = lazy(() => import("../app/pannels/public-user/components/p
 const TermsConditionsPage = lazy(() => import("../app/pannels/public-user/components/pages/terms-conditions"));
 const PrivacyPolicyPage = lazy(() => import("../app/pannels/public-user/components/pages/privacy-policy"));
 const SupportPage = lazy(() => import("../app/pannels/public-user/components/pages/support"));
+const TutorialsPage = lazy(() => import("../app/pages/tutorials"));
 const AdminLogin = lazy(() => import("../app/admin-login/page"));
 const SubAdminLogin = lazy(() => import("../app/sub-admin-login/page"));
 const CreatePassword = lazy(() => import("../app/common/CreatePassword"));
@@ -76,6 +77,7 @@ function PublicUserRoutes() {
             <Route path={publicUser.pages.TERMS} element={<TermsConditionsPage />} />
             <Route path={publicUser.pages.PRIVACY} element={<PrivacyPolicyPage />} />
             <Route path={publicUser.pages.SUPPORT} element={<SupportPage />} />
+            <Route path={publicUser.pages.TUTORIALS} element={<TutorialsPage />} />
             <Route path={publicUser.pages.ICONS} element={<IconsPage />} />
             <Route path={publicUser.candidate.GRID} element={<CandidateGridPage />} />
             <Route path={publicUser.candidate.LIST} element={<CandidateListPage />} />

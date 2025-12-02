@@ -110,6 +110,12 @@ function Footer1() {
 															Privacy Policy
 														</NavLink>
 													</li>
+
+													<li>
+														<NavLink to={publicUser.pages.TUTORIALS}>
+															Watch Tutorial
+														</NavLink>
+													</li>
 												</ul>
 											</div>
 										</div>
