@@ -8,6 +8,99 @@
  */
 
 /* ============================================================================
+ * MODAL POPUPS - TABS AND BUTTONS ALIGNMENT
+ * ============================================================================ */
+
+/* Remove gray background from modal tabs at all breakpoints */
+.modal .nav-tabs,
+.modal-body .twm-tabs-style-2 .nav-tabs,
+.twm-tabs-style-2 .nav-tabs {
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 0 20px 0 !important;
+  flex-wrap: nowrap !important;
+  border-bottom: 1px solid #dee2e6 !important;
+  gap: 8px !important;
+}
+
+/* Ensure tab items stay in single row with proper sizing */
+.modal .nav-tabs .nav-item,
+.twm-tabs-style-2 .nav-tabs .nav-item {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  flex-shrink: 1 !important;
+}
+
+.modal .nav-tabs .nav-link,
+.twm-tabs-style-2 .nav-tabs .nav-link {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  padding: 0.5rem !important;
+  font-size: 0.95rem !important;
+  border: none !important;
+}
+
+/* Active tab styling */
+.modal .nav-tabs .nav-link.active,
+.twm-tabs-style-2 .nav-tabs .nav-link.active {
+  color: #ffffff !important;
+  background-color: #fd7e14 !important;
+  border: none !important;
+}
+
+.modal .nav-tabs .nav-link:not(.active),
+.twm-tabs-style-2 .nav-tabs .nav-link:not(.active) {
+  color: #666666 !important;
+}
+
+/* Icon spacing */
+.modal .nav-tabs .nav-link i,
+.twm-tabs-style-2 .nav-tabs .nav-link i {
+  margin-right: 4px !important;
+}
+
+/* Close button size reduction */
+.modal-header .btn-close {
+  width: 1rem !important;
+  height: 1rem !important;
+  padding: 0.2rem !important;
+}
+
+/* Mobile optimization */
+@media (max-width: 767px) {
+  .modal .nav-tabs .nav-link,
+  .twm-tabs-style-2 .nav-tabs .nav-link {
+    padding: 0.4rem 0.3rem !important;
+    font-size: 0.85rem !important;
+  }
+  
+  .modal .nav-tabs .nav-link i,
+  .twm-tabs-style-2 .nav-tabs .nav-link i {
+    margin-right: 3px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .modal .nav-tabs,
+  .twm-tabs-style-2 .nav-tabs {
+    gap: 4px !important;
+  }
+  
+  .modal .nav-tabs .nav-link,
+  .twm-tabs-style-2 .nav-tabs .nav-link {
+    padding: 0.3rem 0.25rem !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .modal .nav-tabs .nav-link i,
+  .twm-tabs-style-2 .nav-tabs .nav-link i {
+    margin-right: 2px !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+/* ============================================================================
  * HOSTING PLATFORM COMPATIBILITY
  * ============================================================================ */
 

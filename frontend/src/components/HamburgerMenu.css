@@ -146,36 +146,45 @@
 
 .auth-btn {
   width: 100% !important;
-  padding: 14px 16px !important;
-  margin-bottom: 12px !important;
-  border: none !important;
-  border-radius: 6px !important;
+  padding: 10px 20px !important;
+  margin-bottom: 10px !important;
+  border-radius: 8px !important;
   cursor: pointer !important;
   font-size: 14px !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
   min-height: auto !important;
   min-width: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-transform: capitalize !important;
 }
 
 .auth-btn.sign-up {
-  background: #fd7e14 !important;
-  color: #fff !important;
+  background: transparent !important;
+  color: #FF7A00 !important;
+  border: 1px solid #FF7A00 !important;
 }
 
 .auth-btn.sign-up:hover {
-  background: #e86c0f !important;
+  background-color: #FFF3E5 !important;
+  color: #FF7A00 !important;
+  border: 1px solid #FF7A00 !important;
+  box-shadow: 0 4px 12px rgba(255, 122, 0, 0.2) !important;
 }
 
 .auth-btn.sign-in {
-  background: #fff !important;
-  color: #fd7e14 !important;
-  border: 1px solid #fd7e14 !important;
+  background: transparent !important;
+  color: #FF7A00 !important;
+  border: 1px solid #FF7A00 !important;
 }
 
 .auth-btn.sign-in:hover {
-  background: #fd7e14 !important;
-  color: #fff !important;
+  background-color: #FFF3E5 !important;
+  color: #FF7A00 !important;
+  border: 1px solid #FF7A00 !important;
+  box-shadow: 0 4px 12px rgba(255, 122, 0, 0.2) !important;
 }
 
 @media (max-width: 991px) {

@@ -18,6 +18,7 @@ import "../../../../../employer-how-it-works.css";
 import "../../../../../ux-improvements.css";
 import "../../../../../container-fixes.css";
 import "../../../../../how-it-works-improvements.css";
+import "../../../../../mobile-section-spacing.css";
 import "./naukri-preview.css";
 
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
@@ -394,10 +395,10 @@ function Home16Page() {
             )}
 
             {/* Hero Section */}
-            <HeroBody className="mt-2 mt-md-4" onSearch={handleSearch} />
+            <HeroBody className="mt-0 mt-md-4" onSearch={handleSearch} />
 
             {/* JOBS CATEGORIES SECTION START */}
-            <div className="section-full p-t20 p-b20 twm-job-categories-hpage-6-area animate-on-scroll" style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
+            <div className="section-full p-t20 p-b20 twm-job-categories-hpage-6-area animate-on-scroll" style={{background: 'transparent !important', backgroundColor: 'transparent !important', paddingTop: 'clamp(10px, 2vw, 20px)', paddingBottom: 'clamp(10px, 2vw, 20px)'}}>
                 <Container style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
                 <div className="section-head center wt-small-separator-outer mb-3">
                     <div className="wt-small-separator site-text-primary">

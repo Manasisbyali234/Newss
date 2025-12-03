@@ -375,7 +375,28 @@ function CanStatusPage() {
 						<div className="col-lg-12 col-md-12 mb-4">
 							<div className="card card-shadow border-0">
 								<div className="card-body p-0">
-									<div className="table-responsive" style={{overflowX: 'auto'}}>
+									<div className="table-responsive" style={{overflowX: 'auto', WebkitOverflowScrolling: 'touch'}}>
+									<style>{`
+										@media (max-width: 768px) {
+											.table-responsive {
+												overflow-x: scroll !important;
+												-webkit-overflow-scrolling: touch !important;
+											}
+											.table-responsive::-webkit-scrollbar {
+												height: 8px;
+											}
+											.table-responsive::-webkit-scrollbar-track {
+												background: #f1f1f1;
+											}
+											.table-responsive::-webkit-scrollbar-thumb {
+												background: #ff6b35;
+												border-radius: 4px;
+											}
+											.table-responsive::-webkit-scrollbar-thumb:hover {
+												background: #e55a25;
+											}
+										}
+									`}</style>
 									<table className="table table-hover mb-0">
 										<thead style={{backgroundColor: '#f8f9fa'}}>
 											<tr>

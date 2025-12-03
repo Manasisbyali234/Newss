@@ -1,0 +1,6 @@
+/* Reduce overlay height on mobile screens */
+@media (max-width: 767px) {
+    .overlay-wraper .overlay-main {
+        height: 50vh !important;
+    }
+}

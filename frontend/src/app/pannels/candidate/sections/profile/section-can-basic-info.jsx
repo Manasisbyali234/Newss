@@ -15,6 +15,13 @@ const indianCities = [
 
 
 function SectionCandicateBasicInfo() {
+    const mobileStyles = `
+        @media (max-width: 576px) {
+            .phone-input-field {
+                padding-left: 90px !important;
+            }
+        }
+    `;
     const [formData, setFormData] = useState({
         name: '',
         middleName: '',
@@ -385,6 +392,8 @@ function SectionCandicateBasicInfo() {
     }
 
     return (
+        <>
+        <style>{mobileStyles}</style>
         <form onSubmit={handleSubmit}>
             <div className="panel panel-default">
                 <div className="panel-heading wt-panel-heading p-a20">
@@ -397,12 +406,12 @@ function SectionCandicateBasicInfo() {
                     {/* Profile Picture Section */}
                     <div className="row mb-4">
                         <div className="col-md-12">
-                            <div className="profile-picture-section text-center">
+                            <div className="profile-picture-section text-center" style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                                 <label className="form-label fw-bold mb-3">
                                     <i className="fa fa-camera me-2" style={{color: '#ff6b35'}}></i>
                                     Profile Picture
                                 </label>
-                                <div className="mb-3">
+                                <div className="mb-3" style={{display: 'flex', justifyContent: 'center'}}>
                                     {imagePreview ? (
                                         <img 
                                             src={imagePreview} 
@@ -418,8 +427,8 @@ function SectionCandicateBasicInfo() {
                                             style={{width: '120px', height: '120px', objectFit: 'cover', border: '3px solid #ff6b35'}}
                                         />
                                     ) : (
-                                        <div className="profile-placeholder rounded-circle d-flex align-items-center justify-content-center" 
-                                             style={{width: '120px', height: '120px', backgroundColor: '#f8f9fa', border: '3px dashed #dee2e6', margin: '0 auto'}}>
+                                        <div className="profile-placeholder rounded-circle" 
+                                             style={{width: '120px', height: '120px', backgroundColor: '#f8f9fa', border: '3px dashed #dee2e6', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                                             <i className="fa fa-user fa-3x text-muted"></i>
                                         </div>
                                     )}
@@ -513,6 +522,7 @@ function SectionCandicateBasicInfo() {
                                     maxLength="15"
                                     required
                                     style={{ paddingLeft: '130px', height: '50px', borderRadius: '0 8px 8px 0', borderLeft: 'none' }}
+                                    className="phone-input-field"
                                 />
                             </div>
                             {errors.phone && <div className="invalid-feedback d-block">{errors.phone}</div>}
@@ -685,6 +695,7 @@ function SectionCandicateBasicInfo() {
                 role="candidate"
             />
         </form>
+        </>
     );
 }
 

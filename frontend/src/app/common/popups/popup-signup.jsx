@@ -433,6 +433,54 @@ function SignUpPopup() {
 
     return (
 			<>
+				<style>{`
+					@media (max-width: 576px) {
+						#sign_up_popup .modal-dialog {
+							margin: 0.5rem;
+							max-width: calc(100% - 1rem);
+						}
+						#sign_up_popup .modal-content {
+							padding: 0;
+						}
+						#sign_up_popup .modal-header {
+							padding: 15px;
+						}
+						#sign_up_popup .modal-header h2 {
+							font-size: 20px;
+						}
+						#sign_up_popup .modal-header p {
+							font-size: 12px;
+						}
+						#sign_up_popup .modal-body {
+							padding: 10px 15px;
+						}
+						#sign_up_popup .nav-tabs .nav-link {
+							font-size: 11px;
+							padding: 8px 6px;
+						}
+						#sign_up_popup .nav-tabs .nav-link i {
+							font-size: 12px;
+							margin-right: 3px;
+						}
+						#sign_up_popup .form-control {
+							font-size: 14px;
+							padding: 10px;
+						}
+						#sign_up_popup button[type="submit"] {
+							font-size: 16px !important;
+							padding: 12px !important;
+							min-height: 48px !important;
+							width: 100% !important;
+							max-width: none !important;
+							min-width: 100% !important;
+						}
+						#sign_up_popup .col-lg-3,
+						#sign_up_popup .col-lg-9 {
+							padding-left: 5px;
+							padding-right: 5px;
+						}
+					}
+				`}</style>
 				<div
 					className="modal fade twm-sign-up"
 					id="sign_up_popup"
@@ -551,7 +599,7 @@ function SignUpPopup() {
 													</div>
 												</div>
 
-												<div className="col-lg-3 col-md-3" style={{ paddingRight: '5px' }}>
+												<div className="col-lg-3 col-md-3 col-sm-12 col-12" style={{ paddingRight: '5px' }}>
 													<div className="form-group mb-3">
 														<select 
 															name="countryCode"
@@ -571,7 +619,7 @@ function SignUpPopup() {
 														</select>
 													</div>
 												</div>
-												<div className="col-lg-9 col-md-9" style={{ paddingLeft: '5px' }}>
+												<div className="col-lg-9 col-md-9 col-sm-12 col-12" style={{ paddingLeft: '5px' }}>
 													<div className="form-group mb-3">
 														<input
 															name="mobile"
@@ -674,7 +722,7 @@ function SignUpPopup() {
 													</div>
 												</div>
 
-												<div className="col-lg-3 col-md-3" style={{ paddingRight: '5px' }}>
+												<div className="col-lg-3 col-md-3 col-sm-12 col-12" style={{ paddingRight: '5px' }}>
 													<div className="form-group mb-3">
 														<select 
 															name="countryCode"
@@ -694,7 +742,7 @@ function SignUpPopup() {
 														</select>
 													</div>
 												</div>
-												<div className="col-lg-9 col-md-9" style={{ paddingLeft: '5px' }}>
+												<div className="col-lg-9 col-md-9 col-sm-12 col-12" style={{ paddingLeft: '5px' }}>
 													<div className="form-group mb-3">
 														<input
 															name="mobile"
@@ -777,7 +825,7 @@ function SignUpPopup() {
 													</div>
 												</div>
 
-												<div className="col-lg-3 col-md-3" style={{ paddingRight: '5px' }}>
+												<div className="col-lg-3 col-md-3 col-sm-12 col-12" style={{ paddingRight: '5px' }}>
 													<div className="form-group mb-3">
 														<select 
 															name="countryCode"
@@ -797,7 +845,7 @@ function SignUpPopup() {
 														</select>
 													</div>
 												</div>
-												<div className="col-lg-9 col-md-9" style={{ paddingLeft: '5px' }}>
+												<div className="col-lg-9 col-md-9 col-sm-12 col-12" style={{ paddingLeft: '5px' }}>
 													<div className="form-group mb-3">
 														<input
 															name="phone"

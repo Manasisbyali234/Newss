@@ -41,6 +41,20 @@
     padding-right: 10px;
   }
 
+  /* Center Top Recruiters title on mobile */
+  div[style*="display: flex"][style*="justify-content: space-between"]:not(.category-card) {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  div[style*="display: flex"][style*="justify-content: space-between"]:not(.category-card) > div[style*="flex: 1"]:empty {
+    display: none !important;
+  }
+
+  div[style*="justify-content: flex-end"]:not(.category-card *) {
+    margin-top: 1rem;
+  }
+
   /* Flexible grid columns */
   .row {
     margin-left: -5px !important;
@@ -265,6 +279,277 @@
   .container, .container-fluid {
     padding-left: max(10px, env(safe-area-inset-left));
     padding-right: max(10px, env(safe-area-inset-right));
+  }
+}
+
+/* ============================================
+   POPUP MODAL RESPONSIVE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  /* Popup modal body padding */
+  .modal-body {
+    padding: 15px !important;
+  }
+
+  /* Form groups in popups */
+  .modal-body .form-group {
+    margin-bottom: 12px !important;
+  }
+
+  /* Country code and phone field layout on mobile */
+  .col-lg-3.col-md-3,
+  .col-lg-9.col-md-9 {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+
+  /* Keep fields inline on mobile */
+  .modal-body .row {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  /* Responsive button styles in popups */
+  [style*="width: '100%'"][style*="minHeight: '48px'"],
+  [style*="width: 100%"][style*="min-height: 48px"],
+  button[type="submit"][style*="width"],
+  #candidate-submit-btn,
+  #employer-submit-btn,
+  #placement-submit-btn {
+    padding: 10px 12px !important;
+    font-size: 14px !important;
+    min-height: 44px !important;
+  }
+
+  /* Modal tab buttons */
+  .modal-body .nav-tabs .nav-link {
+    padding: 10px 12px !important;
+    font-size: 13px !important;
+  }
+
+  /* Alert messages in modals */
+  .modal-body .alert {
+    margin-bottom: 10px !important;
+    padding: 10px !important;
+    font-size: 13px !important;
+  }
+
+  /* Form controls in modals */
+  .modal-body .form-control,
+  .modal-body select {
+    font-size: 14px !important;
+    padding: 8px 10px !important;
+  }
+
+  /* Modal header text sizing */
+  .modal-header h2.modal-title {
+    font-size: 1.2rem !important;
+  }
+
+  .modal-header p {
+    font-size: 12px !important;
+    margin-bottom: 5px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .col-lg-3.col-md-3.col-sm-12,
+  .col-lg-9.col-md-9.col-sm-12 {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-bottom: 8px;
+  }
+
+  /* Extra small screens */
+  .modal-dialog {
+    margin: 10px !important;
+  }
+
+  .modal-content {
+    border-radius: 8px !important;
+  }
+
+  /* More aggressive button styling */
+  button[type="submit"][style*="width"],
+  #candidate-submit-btn,
+  #employer-submit-btn,
+  #placement-submit-btn {
+    padding: 9px 10px !important;
+    font-size: 13px !important;
+    min-height: 42px !important;
+  }
+
+  /* Sign up/login link text */
+  .modal-body .col-md-12 > div {
+    font-size: 12px !important;
+  }
+
+  /* Form input text size */
+  .modal-body input::placeholder,
+  .modal-body select option {
+    font-size: 13px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Ultra small phones */
+  [style*="width: '100%'"][style*="minHeight: '48px'"],
+  button[type="submit"][style*="width"],
+  #candidate-submit-btn,
+  #employer-submit-btn,
+  #placement-submit-btn {
+    padding: 8px 8px !important;
+    font-size: 12px !important;
+    min-height: 40px !important;
+  }
+
+  .modal-header h2.modal-title {
+    font-size: 1.1rem !important;
+  }
+
+  .modal-body .nav-tabs .nav-link {
+    padding: 8px 10px !important;
+    font-size: 12px !important;
+  }
+
+  .modal-body .form-control,
+  .modal-body select {
+    font-size: 13px !important;
+    padding: 7px 8px !important;
+  }
+}
+
+/* ============================================
+   REMOVE GRAY BACKGROUNDS AND ENSURE BUTTONS ARE HORIZONTAL
+   ============================================ */
+
+/* Remove background from modal nav-tabs at ALL breakpoints */
+.modal-body .twm-tabs-style-2 .nav-tabs,
+.twm-tabs-style-2 .nav-tabs,
+.modal .nav-tabs,
+div.modal .twm-tabs-style-2 .nav-tabs {
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 0 20px 0 !important;
+  flex-wrap: nowrap !important;
+  gap: 6px !important;
+}
+
+/* Force tabs to stay in single row with proper sizing */
+.modal .nav-tabs .nav-item,
+.twm-tabs-style-2 .nav-tabs .nav-item {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  flex-shrink: 1 !important;
+}
+
+.modal .nav-tabs .nav-link,
+.twm-tabs-style-2 .nav-tabs .nav-link {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  padding: 0.5rem 0.3rem !important;
+  font-size: 0.9rem !important;
+  border: none !important;
+  color: #666666 !important;
+}
+
+/* Active tab styling */
+.modal .nav-tabs .nav-link.active,
+.twm-tabs-style-2 .nav-tabs .nav-link.active {
+  color: #ffffff !important;
+  background-color: #fd7e14 !important;
+}
+
+/* Icon spacing */
+.modal .nav-tabs .nav-link i,
+.twm-tabs-style-2 .nav-tabs .nav-link i {
+  margin-right: 4px !important;
+}
+
+/* Close button size reduction */
+.modal-header .btn-close {
+  width: 1rem !important;
+  height: 1rem !important;
+  padding: 0.2rem !important;
+}
+
+/* Remove background from password visibility icons */
+.modal-body .form-group span[style*="position: absolute"],
+span[style*="background: #f8f9fa"] {
+  background: transparent !important;
+}
+
+/* Ensure buttons stay inline on mobile and desktop */
+.modal-body .col-md-12,
+.modal-body [class*="col-md-12"] {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+}
+
+button[type="submit"][style*="width"],
+#candidate-submit-btn,
+#employer-submit-btn,
+#placement-submit-btn,
+.modal-body button[type="submit"] {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+/* Override any conflicting Bootstrap styles */
+@media (max-width: 991px) {
+  .modal .nav-tabs,
+  .twm-tabs-style-2 .nav-tabs {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 0 20px 0 !important;
+    border-bottom: 1px solid #dee2e6 !important;
+    gap: 6px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .modal .nav-tabs,
+  .twm-tabs-style-2 .nav-tabs {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 0 15px 0 !important;
+    flex-wrap: nowrap !important;
+    gap: 4px !important;
+  }
+  
+  .modal .nav-tabs .nav-link,
+  .twm-tabs-style-2 .nav-tabs .nav-link {
+    padding: 0.4rem 0.2rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  .modal .nav-tabs .nav-link i,
+  .twm-tabs-style-2 .nav-tabs .nav-link i {
+    margin-right: 3px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .modal .nav-tabs,
+  .twm-tabs-style-2 .nav-tabs {
+    gap: 2px !important;
+  }
+  
+  .modal .nav-tabs .nav-link,
+  .twm-tabs-style-2 .nav-tabs .nav-link {
+    padding: 0.3rem 0.15rem !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .modal .nav-tabs .nav-link i,
+  .twm-tabs-style-2 .nav-tabs .nav-link i {
+    margin-right: 2px !important;
   }
 }
 
