@@ -9,6 +9,7 @@ function AdminIndividualCredit() {
     const [credits, setCredits] = useState('');
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [showUpdateForm, setShowUpdateForm] = useState(false);
 
     useEffect(() => {
         fetchCandidates();
@@ -84,40 +85,31 @@ function AdminIndividualCredit() {
                 </button>
             </div>
 
-            <div className="panel panel-default site-bg-white">
+            {showUpdateForm && (
+            <div className="panel panel-default site-bg-white" style={{marginBottom: '20px'}}>
                 <div className="panel-heading wt-panel-heading p-a20">
-                    <h4 className="panel-tittle m-a0">Update Credits</h4>
+                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                        <h4 className="panel-tittle m-a0">Update Credits</h4>
+                        <button
+                            onClick={() => {
+                                setShowUpdateForm(false);
+                                setSelectedCandidate('');
+                                setCredits('');
+                            }}
+                            style={{
+                                background: 'none',
+                                border: 'none',
+                                fontSize: '1.5rem',
+                                cursor: 'pointer',
+                                color: '#6c757d'
+                            }}
+                        >
+                            ×
+                        </button>
+                    </div>
                 </div>
                 <div className="panel-body wt-panel-body p-a20">
                     <form onSubmit={handleSubmit} style={{maxWidth: '600px', margin: '0 auto'}}>
-                        <div style={{marginBottom: '20px'}}>
-                            <label style={{display: 'block', marginBottom: '8px', fontWeight: '600'}}>Search Candidate</label>
-                            <input 
-                                type="text"
-                                className="form-control"
-                                placeholder="Search by name or email..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                style={{marginBottom: '10px'}}
-                            />
-                            <select 
-                                className="form-control"
-                                value={selectedCandidate}
-                                onChange={(e) => setSelectedCandidate(e.target.value)}
-                                required
-                                style={{padding: '10px'}}
-                            >
-                                <option value="">Select Candidate</option>
-                                {candidates.filter(c => c.registrationMethod === 'admin' || c.registrationMethod === 'placement')
-                                    .filter(c => c.name?.toLowerCase().includes(searchTerm.toLowerCase()) || c.email?.toLowerCase().includes(searchTerm.toLowerCase()))
-                                    .map(candidate => (
-                                    <option key={candidate._id} value={candidate._id}>
-                                        {candidate.name} - {candidate.email} (Current: {candidate.credits || 0} credits)
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
                         {selectedCandidate && (
                             <div style={{marginBottom: '20px', padding: '15px', backgroundColor: '#e7f3ff', borderRadius: '5px', border: '1px solid #b3d9ff'}}>
                                 <strong style={{color: '#004085'}}>Current Credits: </strong>
@@ -154,8 +146,9 @@ function AdminIndividualCredit() {
                     </form>
                 </div>
             </div>
+            )}
 
-            <div className="panel panel-default site-bg-white" style={{marginTop: '20px'}}>
+            <div className="panel panel-default site-bg-white">
                 <div className="panel-heading wt-panel-heading p-a20">
                     <h4 className="panel-tittle m-a0">All Candidates ({filteredCandidates.length})</h4>
                 </div>
@@ -216,6 +209,7 @@ function AdminIndividualCredit() {
                                                 <button
                                                     onClick={() => {
                                                         setSelectedCandidate(candidate._id);
+                                                        setShowUpdateForm(true);
                                                         window.scrollTo({ top: 0, behavior: 'smooth' });
                                                     }}
                                                     style={{

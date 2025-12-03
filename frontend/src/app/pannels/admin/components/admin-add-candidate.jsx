@@ -7,6 +7,8 @@ import './admin-emp-manage-styles.css';
 function AdminAddCandidate() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -22,13 +24,73 @@ function AdminAddCandidate() {
             ...prev,
             [name]: value
         }));
+        
+        // Clear error for this field
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: '' }));
+        }
+    };
+
+    const validateForm = () => {
+        const newErrors = {};
+        
+        // First Name validation
+        if (!formData.firstName.trim()) {
+            newErrors.firstName = 'First name is required';
+        } else if (formData.firstName.trim().length < 2) {
+            newErrors.firstName = 'First name must be at least 2 characters';
+        } else if (!/^[a-zA-Z\s]+$/.test(formData.firstName)) {
+            newErrors.firstName = 'First name can only contain letters';
+        }
+        
+        // Last Name validation
+        if (!formData.lastName.trim()) {
+            newErrors.lastName = 'Last name is required';
+        } else if (formData.lastName.trim().length < 2) {
+            newErrors.lastName = 'Last name must be at least 2 characters';
+        } else if (!/^[a-zA-Z\s]+$/.test(formData.lastName)) {
+            newErrors.lastName = 'Last name can only contain letters';
+        }
+        
+        // Email validation
+        if (!formData.email.trim()) {
+            newErrors.email = 'Email is required';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            newErrors.email = 'Please enter a valid email address';
+        }
+        
+        // Password validation
+        if (!formData.password) {
+            newErrors.password = 'Password is required';
+        } else if (formData.password.length < 6) {
+            newErrors.password = 'Password must be at least 6 characters';
+        } else if (formData.password.length > 20) {
+            newErrors.password = 'Password must not exceed 20 characters';
+        }
+        
+        // College Name validation
+        if (!formData.collegeName.trim()) {
+            newErrors.collegeName = 'College name is required';
+        } else if (formData.collegeName.trim().length < 3) {
+            newErrors.collegeName = 'College name must be at least 3 characters';
+        }
+        
+        // Credits validation
+        if (formData.credits < 0) {
+            newErrors.credits = 'Credits cannot be negative';
+        } else if (formData.credits > 10000) {
+            newErrors.credits = 'Credits cannot exceed 10000';
+        }
+        
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        if (!formData.firstName || !formData.lastName || !formData.email || !formData.password || !formData.collegeName) {
-            showError('Please fill in all required fields');
+        if (!validateForm()) {
+            showError('Please fix all validation errors before submitting');
             return;
         }
 
@@ -38,7 +100,17 @@ function AdminAddCandidate() {
             
             if (response.success) {
                 showSuccess('Candidate created successfully! Welcome email sent with login credentials.');
-                navigate('/admin/placement-credits');
+                setFormData({
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    password: '',
+                    collegeName: '',
+                    credits: 0
+                });
+                setTimeout(() => {
+                    navigate('/admin/placement-credits');
+                }, 1500);
             } else {
                 showError(response.message || 'Failed to create candidate');
             }
@@ -69,12 +141,12 @@ function AdminAddCandidate() {
                                 <input
                                     type="text"
                                     name="firstName"
-                                    className="form-control"
+                                    className={`form-control ${errors.firstName ? 'is-invalid' : ''}`}
                                     value={formData.firstName}
                                     onChange={handleChange}
-                                    required
                                     placeholder="Enter first name"
                                 />
+                                {errors.firstName && <div className="text-danger mt-1" style={{fontSize: '0.875rem'}}>{errors.firstName}</div>}
                             </div>
 
                             <div className="col-md-6 mb-3">
@@ -82,12 +154,12 @@ function AdminAddCandidate() {
                                 <input
                                     type="text"
                                     name="lastName"
-                                    className="form-control"
+                                    className={`form-control ${errors.lastName ? 'is-invalid' : ''}`}
                                     value={formData.lastName}
                                     onChange={handleChange}
-                                    required
                                     placeholder="Enter last name"
                                 />
+                                {errors.lastName && <div className="text-danger mt-1" style={{fontSize: '0.875rem'}}>{errors.lastName}</div>}
                             </div>
 
                             <div className="col-md-6 mb-3">
@@ -95,26 +167,40 @@ function AdminAddCandidate() {
                                 <input
                                     type="email"
                                     name="email"
-                                    className="form-control"
+                                    className={`form-control ${errors.email ? 'is-invalid' : ''}`}
                                     value={formData.email}
                                     onChange={handleChange}
-                                    required
                                     placeholder="Enter email address"
                                 />
+                                {errors.email && <div className="text-danger mt-1" style={{fontSize: '0.875rem'}}>{errors.email}</div>}
                             </div>
 
                             <div className="col-md-6 mb-3">
                                 <label className="form-label">Password <span style={{color: 'red'}}>*</span></label>
-                                <input
-                                    type="password"
-                                    name="password"
-                                    className="form-control"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    required
-                                    minLength="6"
-                                    placeholder="Enter password (min 6 characters)"
-                                />
+                                <div style={{ position: 'relative' }}>
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        name="password"
+                                        className={`form-control ${errors.password ? 'is-invalid' : ''}`}
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        placeholder="Enter password (min 6 characters)"
+                                        style={{ paddingRight: '40px' }}
+                                    />
+                                    <span
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        style={{
+                                            position: 'absolute',
+                                            right: '12px',
+                                            top: '12px',
+                                            cursor: 'pointer',
+                                            color: '#6c757d'
+                                        }}
+                                    >
+                                        <i className={showPassword ? "fa fa-eye-slash" : "fa fa-eye"}></i>
+                                    </span>
+                                </div>
+                                {errors.password && <div className="text-danger mt-1" style={{fontSize: '0.875rem'}}>{errors.password}</div>}
                             </div>
 
                             <div className="col-md-6 mb-3">
@@ -122,12 +208,12 @@ function AdminAddCandidate() {
                                 <input
                                     type="text"
                                     name="collegeName"
-                                    className="form-control"
+                                    className={`form-control ${errors.collegeName ? 'is-invalid' : ''}`}
                                     value={formData.collegeName}
                                     onChange={handleChange}
-                                    required
                                     placeholder="Enter college name"
                                 />
+                                {errors.collegeName && <div className="text-danger mt-1" style={{fontSize: '0.875rem'}}>{errors.collegeName}</div>}
                             </div>
 
                             <div className="col-md-6 mb-3">
@@ -135,13 +221,12 @@ function AdminAddCandidate() {
                                 <input
                                     type="number"
                                     name="credits"
-                                    className="form-control"
+                                    className={`form-control ${errors.credits ? 'is-invalid' : ''}`}
                                     value={formData.credits}
                                     onChange={handleChange}
-                                    min="0"
-                                    max="10000"
                                     placeholder="Enter credits (0-10000)"
                                 />
+                                {errors.credits && <div className="text-danger mt-1" style={{fontSize: '0.875rem'}}>{errors.credits}</div>}
                             </div>
                         </div>
 
