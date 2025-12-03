@@ -433,6 +433,7 @@ function EmpCompanyProfilePage() {
             if (data.success) {
                 handleInputChange('logo', data.logo);
                 showSuccess('Logo uploaded successfully!');
+                window.dispatchEvent(new Event('employerProfileUpdated'));
             } else {
                 showError(data.message || 'Logo upload failed');
             }
@@ -956,6 +957,8 @@ function EmpCompanyProfilePage() {
                 showSuccess(successMessage);
                 // Refresh profile data to get latest state
                 fetchProfile();
+                // Trigger event to update header
+                window.dispatchEvent(new Event('employerProfileUpdated'));
             } else {
                 showError(data.message || 'Failed to update profile');
             }
@@ -1677,31 +1680,7 @@ function EmpCompanyProfilePage() {
                                 </div>
                             </div>
 
-                            <div className="col-md-6">
-                                <div className="form-group">
-                                    <label>Agree to Terms & Conditions</label>
-                                    <div>
-                                        <label className="m-r10">
-                                            <input 
-                                                type="radio" 
-                                                name="terms" 
-                                                value="yes"
-                                                checked={formData.agreeTerms === 'yes'}
-                                                onChange={(e) => handleInputChange('agreeTerms', e.target.value)}
-                                            /> Yes
-                                        </label>
-                                        <label>
-                                            <input 
-                                                type="radio" 
-                                                name="terms" 
-                                                value="no"
-                                                checked={formData.agreeTerms === 'no'}
-                                                onChange={(e) => handleInputChange('agreeTerms', e.target.value)}
-                                            /> No
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>

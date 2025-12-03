@@ -9,6 +9,7 @@ export default function AdminLogin() {
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -104,16 +105,30 @@ export default function AdminLogin() {
                                                                     />
                                                                 </div>
 
-                                                                <div className="form-group mb-3">
+                                                                <div className="form-group mb-3" style={{ position: 'relative' }}>
                                                                     <input
                                                                         name="password"
-                                                                        type="password"
+                                                                        type={showPassword ? "text" : "password"}
                                                                         required
                                                                         className="form-control"
                                                                         placeholder="Password"
                                                                         value={formData.password}
                                                                         onChange={handleChange}
+                                                                        style={{ paddingRight: '40px' }}
                                                                     />
+                                                                    <span
+                                                                        onClick={() => setShowPassword(!showPassword)}
+                                                                        style={{
+                                                                            position: 'absolute',
+                                                                            right: '12px',
+                                                                            top: '50%',
+                                                                            transform: 'translateY(-50%)',
+                                                                            cursor: 'pointer',
+                                                                            color: '#6c757d'
+                                                                        }}
+                                                                    >
+                                                                        <i className={showPassword ? "fa fa-eye-slash" : "fa fa-eye"}></i>
+                                                                    </span>
                                                                 </div>
 
                                                                 <div className="form-group">

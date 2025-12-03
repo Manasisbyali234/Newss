@@ -352,7 +352,7 @@ function SectionCandidateOverview() {
 		icon: "flaticon-job",
 		color: "text-primary",
 		count: candidate.credits || 0,
-		label: "Credits (From Excel)",
+		label: "Credits",
 		clickable: false
 	};
 
@@ -400,11 +400,6 @@ function SectionCandidateOverview() {
 											<CountUp end={card.count} duration={2} />
 										</div>
 										<h5 className="mb-0" style={{ fontSize: '0.95rem', fontWeight: '600' }}>{card.label}</h5>
-										{card.label.includes('Excel') && candidate.placement?.collegeName && (
-											<small className="text-muted d-block" style={{ fontSize: '0.75rem', marginTop: '0.25rem' }}>
-												From: {candidate.placement.collegeName}
-											</small>
-										)}
 									</div>
 								</div>
 							</div>

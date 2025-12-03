@@ -19,10 +19,26 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Immediate auth check without delay
     const timeoutId = setTimeout(checkAuthStatus, 0);
-    return () => clearTimeout(timeoutId);
+    
+    const handleProfileUpdate = () => {
+      checkAuthStatus();
+    };
+    
+    window.addEventListener('employerProfileUpdated', handleProfileUpdate);
+    window.addEventListener('candidateProfileUpdated', handleProfileUpdate);
+    window.addEventListener('placementProfileUpdated', handleProfileUpdate);
+    window.addEventListener('adminProfileUpdated', handleProfileUpdate);
+    
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('employerProfileUpdated', handleProfileUpdate);
+      window.removeEventListener('candidateProfileUpdated', handleProfileUpdate);
+      window.removeEventListener('placementProfileUpdated', handleProfileUpdate);
+      window.removeEventListener('adminProfileUpdated', handleProfileUpdate);
+    };
   }, []);
 
-  const checkAuthStatus = () => {
+  const checkAuthStatus = async () => {
     try {
       // Check tokens in priority order for faster detection
       const tokens = {
@@ -38,7 +54,29 @@ export const AuthProvider = ({ children }) => {
         if (token) {
           try {
             const userDataKey = type === 'sub-admin' ? 'subAdminData' : `${type}User`;
-            const userData = JSON.parse(localStorage.getItem(userDataKey) || '{}');
+            let userData = JSON.parse(localStorage.getItem(userDataKey) || '{}');
+            
+            if (token) {
+              try {
+                let endpoint;
+                if (type === 'employer') endpoint = 'http://localhost:5000/api/employer/profile';
+                else if (type === 'candidate') endpoint = 'http://localhost:5000/api/candidate/profile';
+                else if (type === 'placement') endpoint = 'http://localhost:5000/api/placement/profile';
+                else if (type === 'admin') endpoint = 'http://localhost:5000/api/admin/profile';
+                
+                if (endpoint) {
+                  const response = await fetch(endpoint, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                  });
+                  const data = await response.json();
+                  if (data.success && data.profile) {
+                    userData = { ...userData, ...data.profile };
+                    localStorage.setItem(userDataKey, JSON.stringify(userData));
+                  }
+                }
+              } catch (e) {}
+            }
+            
             setUser(userData);
             setUserType(type);
             setLoading(false);

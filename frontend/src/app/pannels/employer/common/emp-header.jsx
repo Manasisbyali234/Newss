@@ -11,6 +11,16 @@ function EmpHeaderSection(props) {
 
     useEffect(() => {
         fetchProfile();
+        
+        const handleProfileUpdate = () => {
+            fetchProfile();
+        };
+        
+        window.addEventListener('employerProfileUpdated', handleProfileUpdate);
+        
+        return () => {
+            window.removeEventListener('employerProfileUpdated', handleProfileUpdate);
+        };
     }, []);
 
     const fetchProfile = async () => {

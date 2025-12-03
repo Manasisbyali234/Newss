@@ -30,45 +30,27 @@ const TermsModal = ({ isOpen, onClose, onAccept, role = 'candidate' }) => {
         candidate: {
             title: 'Terms & Conditions for Candidates',
             sections: [
-                { heading: 'Account Registration', content: 'You must provide accurate information during registration. You are responsible for maintaining the confidentiality of your account credentials.' },
-                { heading: 'Profile Information', content: 'You agree to keep your profile information up-to-date and accurate. False information may result in account suspension.' },
-                { heading: 'Job Applications', content: 'You may apply to jobs using the credits provided. Each application consumes credits as specified on the platform.' },
-                { heading: 'Code of Conduct', content: 'You agree to maintain professional conduct in all communications with employers and placement officers.' },
-                { heading: 'Data Usage', content: 'Your profile data may be shared with potential employers when you apply for jobs. We will not share your data without your consent.' },
-                { heading: 'Account Termination', content: 'We reserve the right to suspend or terminate accounts that violate these terms or engage in fraudulent activities.' }
+                { heading: 'Registration and Profile Creation', content: 'Candidates must register using accurate, complete, and verifiable personal, educational, and professional details. All profiles, resumes, and supporting information submitted on the platform must be truthful. Any misrepresentation, falsification, or omission may result in immediate disqualification and permanent suspension of the account. By registering, candidates acknowledge that such registration constitutes a valid electronic agreement under Section 10A of the Information Technology Act, 2000 and that they consent to the lawful processing of their data in accordance with the Digital Personal Data Protection Act, 2023 (DPDP Act).' },
+                { heading: 'Application and Fees', content: 'TaleGlobal operates on a pay-per-application system, where a nominal, non-refundable processing fee is charged per job application. The fee is collected solely to maintain platform functionality, verification, and digital-interview infrastructure and shall not be construed as a fee for employment or placement services. Once payment is made, no refund shall be permitted under any circumstances, regardless of interview outcome or employer decision. Candidates are responsible for ensuring stable internet access and device readiness during online interviews. TaleGlobal is not liable for disruptions caused by user connectivity or technical limitations.' },
+                { heading: 'Conduct', content: 'Candidates must maintain professional etiquette, punctuality, and decorum throughout all stages of the recruitment process conducted through TaleGlobal. Use of abusive language, impersonation, unauthorized recording, or sharing of interview content is strictly prohibited and may lead to account suspension and legal consequences under the Information Technology Act, 2000. Any misuse of the platform, attempt to manipulate results, or unethical activity shall result in immediate termination of access without refund.' },
+                { heading: 'Data and Privacy', content: 'Candidate data shall be shared only with verified employers, consultancies, or institutions registered on the TaleGlobal platform for legitimate recruitment purposes. TaleGlobal complies with the Digital Personal Data Protection Act, 2023, Information Technology Act, 2000, and the IT (Data Protection) Rules 2011 to ensure confidentiality, lawful processing, and secure storage of personal data. Candidates retain rights of access, correction, and erasure of their personal data in accordance with applicable privacy laws and may contact the designated Grievance Officer for any related concerns.' },
+                { heading: 'Liability', content: 'TaleGlobal acts solely as an online intermediary connecting candidates with verified employers and does not guarantee interviews, employment, or offer letters. TaleGlobal shall not be liable for any act, omission, or representation made by employers, consultancies, or placement officers, nor for any loss financial, professional, or reputational arising from platform usage. In no event shall TaleGlobal\'s aggregate liability exceed the total fee paid by the candidate for the specific application that gave rise to such claim.' }
             ]
         },
         employer: {
             title: 'Terms & Conditions for Employers',
             sections: [
-                { heading: 'Company Verification', content: 'You must provide accurate company information. Your account will be reviewed and approved by our admin team before activation.' },
-                { heading: 'Job Postings', content: 'All job postings must be legitimate and comply with employment laws. Misleading job descriptions may result in account suspension.' },
-                { heading: 'Candidate Data', content: 'You agree to use candidate information solely for recruitment purposes. Misuse of candidate data is strictly prohibited.' },
-                { heading: 'Payment & Fees', content: 'You agree to pay applicable fees for premium services as per the pricing structure displayed on the platform.' },
-                { heading: 'Professional Conduct', content: 'You must maintain professional standards in all interactions with candidates and respond to applications in a timely manner.' },
-                { heading: 'Account Suspension', content: 'We reserve the right to suspend accounts that violate these terms, post fraudulent jobs, or engage in discriminatory practices.' }
+                { heading: 'Registration and Verification', content: 'Employers must complete the mandatory TaleGlobal verification process prior to posting any job openings. Verification shall include submission of valid business registration certificates, GSTIN, PAN, and other business identity proofs as may be required under the Information Technology Act, 2000 and applicable labour and tax laws. TaleGlobal reserves the right to seek additional documents or conduct background checks to ensure authenticity. Only verified employers shall be permitted to post job listings on the platform. The act of registration constitutes a valid and binding electronic agreement under Section 10A of the Information Technology Act, 2000.' },
+                { heading: 'Job Posting and Process', content: 'Each job listing must accurately specify the job title, eligibility criteria, remuneration or compensation (if applicable), interview schedule, and selection process. Employers must declare the expected timeline for issuing offer letters and adhere to the same to maintain process transparency. Job postings shall be genuine, lawful, and compliant with employment and labour regulations, including those relating to equal opportunity and non-discrimination. TaleGlobal reserves the right to moderate, suspend, or remove any job listing that is false, misleading, discriminatory, or otherwise violates these Terms or any applicable law. Posting of fraudulent, deceptive, or unverifiable job listings shall attract immediate suspension and may invite civil or criminal proceedings.' }
             ]
         },
         placement: {
             title: 'Terms & Conditions for Placement Officers',
             sections: [
-                { heading: 'Institution Verification', content: 'You must provide valid institutional credentials and official contact information. Your account will be verified before activation.' },
-                { heading: 'Student Data Management', content: 'You are responsible for the accuracy of student data uploaded to the platform. Student information must be uploaded with proper consent.' },
-                { heading: 'Credit Allocation', content: 'Credits allocated to students are managed by your institution. You are responsible for fair distribution of credits among students.' },
-                { heading: 'Data Privacy', content: 'You must comply with data protection regulations when handling student information. Student data should only be used for placement purposes.' },
-                { heading: 'Institutional Responsibility', content: 'You represent your institution and must maintain professional standards in all platform activities.' },
-                { heading: 'Account Access', content: 'Your account access may be revoked if institutional verification fails or if terms are violated.' }
-            ]
-        },
-        employerProfile: {
-            title: 'Company Profile Submission Terms & Conditions',
-            sections: [
-                { heading: 'Information Accuracy', content: 'You certify that all information provided in your company profile is accurate, complete, and up-to-date. Any false or misleading information may result in account suspension or termination.' },
-                { heading: 'Document Verification', content: 'All uploaded documents (PAN, GST, CIN, authorization letters, etc.) must be authentic and legally valid. We reserve the right to verify these documents with relevant authorities.' },
-                { heading: 'Profile Review Process', content: 'Your profile will be reviewed by our admin team. Approval is not guaranteed and may take 2-5 business days. You will be notified via email once your profile is approved or if additional information is required.' },
-                { heading: 'Data Usage & Privacy', content: 'The information you provide will be used for verification purposes and may be displayed to candidates. We will handle your data in accordance with our privacy policy and applicable data protection laws.' },
-                { heading: 'Profile Updates', content: 'You are responsible for keeping your profile information current. Any material changes to your company details must be updated promptly and may require re-verification.' },
-                { heading: 'Compliance & Legal', content: 'You agree to comply with all applicable employment laws, anti-discrimination regulations, and platform policies. Violation of these terms may result in immediate account suspension and legal action if necessary.' }
+                { heading: 'Registration and Verification', content: 'Placement Officers must provide valid institutional credentials and official contact information. Your account will be verified before activation to ensure authenticity. Registration constitutes a legally binding electronic agreement under applicable laws.' },
+                { heading: 'Student Data Management', content: 'You are responsible for the accuracy of student data uploaded to the platform. Student information must be uploaded with proper consent from students and the institution. All data must comply with UGC and AICTE guidelines governing campus placements.' },
+                { heading: 'Credit Allocation', content: 'Credits allocated to students are managed by your institution. You are responsible for fair distribution of credits among students. Credit usage and allocation must be transparent and documented.' },
+                { heading: 'Data Privacy', content: 'You must comply with data protection regulations when handling student information. Student data should only be used for placement purposes. Unauthorized sharing or commercial use of student data is strictly prohibited.' }
             ]
         }
     };
@@ -88,9 +70,7 @@ const TermsModal = ({ isOpen, onClose, onAccept, role = 'candidate' }) => {
                 <div className="terms-modal-body" onScroll={handleScroll}>
                     <div className="terms-content">
                         <p className="terms-intro">
-                            {role === 'employerProfile' 
-                                ? 'Please read and accept the following terms and conditions before submitting your company profile for review.'
-                                : 'Please read and accept the following terms and conditions before proceeding with your registration.'}
+                            Please read and accept the following terms and conditions before proceeding with your registration.
                         </p>
                         
                         {content.sections.map((section, index) => (

@@ -54,7 +54,7 @@ function AdminRoutes() {
 				<Route path={admin.PLACEMENT_APPROVE} element={<AdminPlacementOfficersApproved />} />
 				<Route path={admin.PLACEMENT_REJECT} element={<AdminPlacementOfficersRejected />} />
 				<Route path={admin.PLACEMENT_DETAILS} element={<PlacementDetails />} />
-				<Route path="/placement-credits" element={<AdminIndividualCredit />} />
+				<Route path="/placement-credits" element={<AdminAddCandidate />} />
 				<Route path="/placement-credits/add-candidate" element={<AdminAddCandidate />} />
 				<Route path="/jobs/skills" element={<AdminJobsSkills />} />
 				<Route path={admin.SUPPORT_TICKETS} element={<AdminSupportTickets />} />
