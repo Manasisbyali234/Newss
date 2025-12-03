@@ -70,7 +70,12 @@ export const AuthProvider = ({ children }) => {
                   });
                   const data = await response.json();
                   if (data.success && data.profile) {
-                    userData = { ...userData, ...data.profile };
+                    // For candidates, merge candidateId data with profile data
+                    if (type === 'candidate' && data.profile.candidateId) {
+                      userData = { ...userData, ...data.profile, ...data.profile.candidateId };
+                    } else {
+                      userData = { ...userData, ...data.profile };
+                    }
                     localStorage.setItem(userDataKey, JSON.stringify(userData));
                   }
                 }

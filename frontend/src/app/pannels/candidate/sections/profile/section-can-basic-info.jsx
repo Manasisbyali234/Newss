@@ -348,7 +348,7 @@ function SectionCandicateBasicInfo() {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 fetchProfile();
                 setImagePreview(null);
-                window.dispatchEvent(new Event('profileUpdated'));
+                window.dispatchEvent(new Event('candidateProfileUpdated'));
             } else {
                 if (response.errors && Array.isArray(response.errors)) {
                     const errorMessages = response.errors.map(err => err.msg).join(', ');
