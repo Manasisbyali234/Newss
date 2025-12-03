@@ -356,8 +356,8 @@ function SectionCandidateOverview() {
 		clickable: false
 	};
 
-	// Show credits only for placement candidates
-	const hasCredits = candidate.registrationMethod === 'placement';
+	// Show credits for placement and admin-created candidates
+	const hasCredits = candidate.registrationMethod === 'placement' || candidate.registrationMethod === 'admin';
 	const cards = hasCredits ? [creditsCard, ...baseCards] : baseCards;
 
 	return (
@@ -367,7 +367,7 @@ function SectionCandidateOverview() {
 					<h5 className="mb-1" style={{ color: '#111827', fontWeight: '700' }}>Dashboard Overview</h5>
 					<p className="text-muted mb-0" style={{ fontSize: '0.875rem' }}>Track your job applications and profile activity</p>
 				</div>
-				{candidate.registrationMethod === 'placement' && (
+				{(candidate.registrationMethod === 'placement' || candidate.registrationMethod === 'admin') && (
 					<div className="text-end">
 						<small className="text-muted d-block" style={{ fontSize: '0.75rem' }}>Available Credits</small>
 						<span className="fw-bold" style={{ color: '#f97316', fontSize: '1.1rem' }}>{candidate.credits || 0}</span>
