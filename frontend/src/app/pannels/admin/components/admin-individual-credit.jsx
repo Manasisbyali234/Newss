@@ -40,6 +40,7 @@ function AdminIndividualCredit() {
                 showSuccess('Credits updated successfully!');
                 setSelectedCandidate('');
                 setCredits('');
+                setShowUpdateForm(false);
                 fetchCandidates();
             } else {
                 showError('Failed to update credits');

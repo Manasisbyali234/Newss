@@ -211,8 +211,8 @@ function SectionCandidateOverview() {
 
 	useEffect(() => {
 		fetchDashboardData();
-		// Set up interval to refresh data every 30 seconds
-		const interval = setInterval(fetchDashboardData, 30000);
+		// Set up interval to refresh data every 5 seconds for real-time updates
+		const interval = setInterval(fetchDashboardData, 5000);
 		return () => clearInterval(interval);
 	}, []);
 
