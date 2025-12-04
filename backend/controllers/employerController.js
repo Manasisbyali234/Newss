@@ -706,6 +706,15 @@ exports.createJob = async (req, res) => {
       jobData.assessmentEndDate = new Date(jobData.assessmentEndDate);
     }
 
+    // Handle assessment time fields (startTime and endTime)
+    // These remain as strings in HH:MM format and are applied to all days
+    if (jobData.assessmentStartTime && typeof jobData.assessmentStartTime !== 'string') {
+      jobData.assessmentStartTime = String(jobData.assessmentStartTime);
+    }
+    if (jobData.assessmentEndTime && typeof jobData.assessmentEndTime !== 'string') {
+      jobData.assessmentEndTime = String(jobData.assessmentEndTime);
+    }
+
     // If assessment is selected, automatically enable technical interview round
     if (jobData.assessmentId) {
       if (!jobData.interviewRoundTypes) {

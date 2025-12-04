@@ -536,34 +536,22 @@ function EmpCandidateReviewPage () {
 								/>
 							</div>
 
-							<div className="form-check mb-4 p-3 rounded-3" style={{backgroundColor: '#f8f9fa', border: '2px solid #e9ecef'}}>
-								<input
-									className="form-check-input"
-									type="checkbox"
-									id="candidateSelection"
-									checked={isSelected}
-									onChange={(e) => setIsSelected(e.target.checked)}
-									style={{transform: 'scale(1.2)', accentColor: '#ff6600'}}
-								/>
-								<label className="form-check-label fw-semibold ms-2" htmlFor="candidateSelection" style={{color: '#2c3e50'}}>
-									Select for further process
-								</label>
-							</div>
+
 
 							<div style={{display: 'flex', flexDirection: 'column', gap: '12px', width: '100%'}}>
 								<button className="action-btn-consistent" style={{backgroundColor: 'transparent', color: '#ff8a00', border: '1.5px solid #ff8a00', borderRadius: '20px', fontSize: '15px', fontWeight: '500', padding: '12px 20px', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: 'background-color 0.3s ease', whiteSpace: 'nowrap', boxSizing: 'border-box'}} onClick={hireCandidate} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fff3e5'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
 									Offer Letter Shared
 								</button>
-								<button className="action-btn-consistent" style={{backgroundColor: 'transparent', color: '#ff8a00', border: '1.5px solid #ff8a00', borderRadius: '20px', fontSize: '15px', fontWeight: '500', padding: '12px 20px', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: 'background-color 0.3s ease', whiteSpace: 'nowrap', boxSizing: 'border-box'}} onClick={() => updateApplicationStatus('not_attended')} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fff3e5'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+								<button className={`action-btn-consistent ${application?.status === 'not_attended' ? 'btn-not-attended' : ''}`} style={{backgroundColor: 'transparent', color: '#ff8a00', border: '1.5px solid #ff8a00', borderRadius: '20px', fontSize: '15px', fontWeight: '500', padding: '12px 20px', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: 'background-color 0.3s ease', whiteSpace: 'nowrap', boxSizing: 'border-box'}} onClick={() => updateApplicationStatus('not_attended')}>
 									Candidate Not Attended
 								</button>
 								<button className="action-btn-consistent" style={{backgroundColor: 'transparent', color: '#ff8a00', border: '1.5px solid #ff8a00', borderRadius: '20px', fontSize: '15px', fontWeight: '500', padding: '12px 20px', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: 'background-color 0.3s ease', whiteSpace: 'nowrap', boxSizing: 'border-box'}} onClick={saveReview} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fff3e5'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
 									<Save size={16} style={{flexShrink: 0}} />Save Review
 								</button>
-								<button className="action-btn-consistent" style={{backgroundColor: 'transparent', color: '#ff8a00', border: '1.5px solid #ff8a00', borderRadius: '20px', fontSize: '15px', fontWeight: '500', padding: '12px 20px', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: 'background-color 0.3s ease', whiteSpace: 'nowrap', boxSizing: 'border-box'}} onClick={shortlistCandidate} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fff3e5'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+								<button className={`action-btn-consistent ${application?.status === 'shortlisted' ? 'btn-shortlisted' : ''}`} style={{backgroundColor: 'transparent', color: '#ff8a00', border: '1.5px solid #ff8a00', borderRadius: '20px', fontSize: '15px', fontWeight: '500', padding: '12px 20px', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: 'background-color 0.3s ease', whiteSpace: 'nowrap', boxSizing: 'border-box'}} onClick={shortlistCandidate}>
 									<Check size={16} style={{flexShrink: 0}} />Shortlist Candidate
 								</button>
-								<button className="action-btn-consistent" style={{backgroundColor: 'transparent', color: '#ff8a00', border: '1.5px solid #ff8a00', borderRadius: '20px', fontSize: '15px', fontWeight: '500', padding: '12px 20px', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: 'background-color 0.3s ease', whiteSpace: 'nowrap', boxSizing: 'border-box'}} onClick={rejectCandidate} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fff3e5'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+								<button className={`action-btn-consistent ${application?.status === 'rejected' ? 'btn-rejected' : ''}`} style={{backgroundColor: 'transparent', color: '#ff8a00', border: '1.5px solid #ff8a00', borderRadius: '20px', fontSize: '15px', fontWeight: '500', padding: '12px 20px', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: 'background-color 0.3s ease', whiteSpace: 'nowrap', boxSizing: 'border-box'}} onClick={rejectCandidate}>
 									<X size={16} style={{flexShrink: 0}} />Reject Candidate
 								</button>
 							</div>

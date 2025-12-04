@@ -129,13 +129,14 @@ function Footer1() {
 							<style>{`
 								.footer-bottom-info {
 									display: flex;
-									flex-direction: column;
+									justify-content: space-between;
 									align-items: center;
-									gap: 15px;
-									text-align: center;
+									gap: 30px;
+									padding: 0 20px;
 								}
 								.footer-copy-right {
-									width: 100%;
+									flex: 1;
+									padding-left: 20px;
 								}
 								.footer-copy-right .copyrights-text {
 									padding-left: 0 !important;
@@ -143,18 +144,21 @@ function Footer1() {
 								.social-icons {
 									display: flex;
 									flex-direction: row;
-									justify-content: center;
+									justify-content: flex-end;
 									align-items: center;
 									gap: 15px;
 									margin: 0;
-									padding: 0;
+									padding: 0 20px;
 									list-style: none;
 								}
 								@media (max-width: 768px) {
 									.footer-bottom-info {
+										flex-direction: column;
+										text-align: center;
 										padding: 20px 15px;
 									}
 									.social-icons {
+										justify-content: center;
 										gap: 12px;
 									}
 								}

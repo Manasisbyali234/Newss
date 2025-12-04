@@ -839,7 +839,7 @@ function CanStatusPage() {
 																			{roundDetails.fromDate && <span><strong>From:</strong> {new Date(roundDetails.fromDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}</span>}
 																			{roundDetails.fromDate && roundDetails.toDate && <span className="mx-2">-</span>}
 																			{roundDetails.toDate && <span><strong>To:</strong> {new Date(roundDetails.toDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}</span>}
-																			{roundDetails.time && <div className="mt-1"><strong>Time:</strong> {roundDetails.time}</div>}
+																			{roundDetails.time && <div className="mt-1"><strong>Time (Daily):</strong> {roundDetails.time} - This timing continues until {roundDetails.toDate ? new Date(roundDetails.toDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'}) : 'end date'}</div>}
 																		</div>
 																	</div>
 																)}

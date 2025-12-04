@@ -48,7 +48,7 @@ export default function EmpPostJob({ onNext }) {
 			managerial: { description: '', fromDate: '', toDate: '', time: '' },
 			final: { description: '', fromDate: '', toDate: '', time: '' },
 			hr: { description: '', fromDate: '', toDate: '', time: '' },
-			assessment: { description: '', fromDate: '', toDate: '', time: '' }
+			assessment: { description: '', fromDate: '', toDate: '', startTime: '', endTime: '' }
 		},
 		offerLetterDate: "",
 		joiningDate: "",
@@ -492,8 +492,17 @@ export default function EmpPostJob({ onNext }) {
 			if (!assessmentDetails?.toDate) {
 				errorMessages.push('Please select To Date for Assessment');
 			}
+			if (!assessmentDetails?.startTime) {
+				errorMessages.push('Please select Start Time for Assessment');
+			}
+			if (!assessmentDetails?.endTime) {
+				errorMessages.push('Please select End Time for Assessment');
+			}
 			if (assessmentDetails?.fromDate && assessmentDetails?.toDate && new Date(assessmentDetails.fromDate) > new Date(assessmentDetails.toDate)) {
 				errorMessages.push('Assessment From Date cannot be after To Date');
+			}
+			if (assessmentDetails?.startTime && assessmentDetails?.endTime && assessmentDetails.startTime >= assessmentDetails.endTime) {
+				errorMessages.push('Assessment End Time must be after Start Time');
 			}
 		}
 
@@ -584,6 +593,8 @@ export default function EmpPostJob({ onNext }) {
 				assignedAssessment: selectedAssessment || null,
 				assessmentStartDate: assessmentDetails?.fromDate || null,
 				assessmentEndDate: assessmentDetails?.toDate || null,
+				assessmentStartTime: assessmentDetails?.startTime || null,
+				assessmentEndTime: assessmentDetails?.endTime || null,
 				offerLetterDate: formData.offerLetterDate || null,
 				lastDateOfApplication: formData.lastDateOfApplication || null,
 				transportation: formData.transportation,
@@ -1631,7 +1642,9 @@ export default function EmpPostJob({ onNext }) {
 										},
 										interviewRoundDetails: {
 											...s.interviewRoundDetails,
-											[uniqueKey]: { description: '', fromDate: '', toDate: '', time: '' }
+											[uniqueKey]: roundType === 'assessment' 
+												? { description: '', fromDate: '', toDate: '', startTime: '', endTime: '' }
+												: { description: '', fromDate: '', toDate: '', time: '' }
 										}
 									}));
 								}
@@ -1841,7 +1854,7 @@ export default function EmpPostJob({ onNext }) {
 												data-assessment-key={assessmentKey}
 												style={{ 
 													display: 'grid', 
-													gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+													gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr 1fr', 
 													gap: isMobile ? 8 : 12,
 													padding: 12,
 													border: '1px solid #0ea5e9',
@@ -1876,6 +1889,30 @@ export default function EmpPostJob({ onNext }) {
 														onChange={(e) => updateRoundDetails(assessmentKey, 'toDate', e.target.value)}
 													/>
 													<HolidayIndicator date={formData.interviewRoundDetails[assessmentKey]?.toDate} />
+												</div>
+												<div>
+													<label style={{...label, marginBottom: 4}}>
+														<i className="fa fa-clock" style={{marginRight: 4, color: '#ff6b35'}}></i>
+														Start Time
+													</label>
+													<input
+														style={{...input, fontSize: 13}}
+														type="time"
+														value={formData.interviewRoundDetails[assessmentKey]?.startTime || ''}
+														onChange={(e) => updateRoundDetails(assessmentKey, 'startTime', e.target.value)}
+													/>
+												</div>
+												<div>
+													<label style={{...label, marginBottom: 4}}>
+														<i className="fa fa-clock" style={{marginRight: 4, color: '#ff6b35'}}></i>
+														End Time
+													</label>
+													<input
+														style={{...input, fontSize: 13}}
+														type="time"
+														value={formData.interviewRoundDetails[assessmentKey]?.endTime || ''}
+														onChange={(e) => updateRoundDetails(assessmentKey, 'endTime', e.target.value)}
+													/>
 												</div>
 											</div>
 										</div>

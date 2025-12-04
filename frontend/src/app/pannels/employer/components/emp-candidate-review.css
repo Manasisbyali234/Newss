@@ -324,6 +324,21 @@
   min-height: 48px !important;
 }
 
+.emp-candidate-review-page .action-btn-consistent.btn-shortlisted {
+  background-color: #28a745 !important;
+  color: white !important;
+}
+
+.emp-candidate-review-page .action-btn-consistent.btn-rejected {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+.emp-candidate-review-page .action-btn-consistent.btn-not-attended {
+  background-color: #ffc107 !important;
+  color: white !important;
+}
+
 /* Improve overall spacing and readability */
 .emp-candidate-review-page .mb-4 {
   margin-bottom: 1.5rem !important;

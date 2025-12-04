@@ -14,26 +14,33 @@
     overflow-x: hidden;
   }
 
-  /* Ensure header stays on top */
+  /* Force page content to lowest z-index */
+  .page-wraper,
+  .page-content,
+  .section-full {
+    z-index: 1 !important;
+  }
+
+  /* Header above content but below menu */
   .site-header,
   .sticky-header,
   .main-bar-wraper,
   .main-bar {
     position: relative;
-    z-index: 9997 !important;
+    z-index: 100 !important;
   }
 
-  /* Ensure hamburger button and menu are above everything */
+  /* Hamburger elements at highest z-index */
   .hamburger-btn {
-    z-index: 9999 !important;
+    z-index: 999999 !important;
   }
 
   .hamburger-overlay {
-    z-index: 9998 !important;
+    z-index: 999998 !important;
   }
 
   .hamburger-menu {
-    z-index: 9999 !important;
+    z-index: 999999 !important;
   }
 
   /* Flexible margins and padding */
