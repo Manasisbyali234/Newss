@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { api } from '../../../../../utils/api';
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
+import SearchableSelect from '../../../../../components/SearchableSelect';
 function SectionCanEducation({ profile, onUpdate }) {
     const [selectedEducationLevel, setSelectedEducationLevel] = useState('');
     const [educationEntries, setEducationEntries] = useState([]);
@@ -1111,21 +1112,15 @@ function SectionCanEducation({ profile, onUpdate }) {
             <div className="panel-body wt-panel-body p-a20 education-section-body">
                 <div className="twm-panel-inner">
                     {/* Education Level Dropdown */}
-                    <div className="mb-4">
+                    <div className="mb-4" style={{ maxWidth: '300px' }}>
                         <label className="form-label fw-bold">Select Education Level</label>
-                        <select
-                            className={`form-select ${errors.educationLevel ? 'is-invalid' : ''}`}
+                        <SearchableSelect
+                            options={educationLevels}
                             value={selectedEducationLevel}
-                            onChange={(e) => handleEducationLevelChange(e.target.value)}
-                            style={{ maxWidth: '300px' }}
-                        >
-                            <option value="">Choose Education Level</option>
-                            {educationLevels.map(level => (
-                                <option key={level.value} value={level.value}>
-                                    {level.label}
-                                </option>
-                            ))}
-                        </select>
+                            onChange={handleEducationLevelChange}
+                            placeholder="Choose Education Level"
+                            className={`form-select ${errors.educationLevel ? 'is-invalid' : ''}`}
+                        />
                         {errors.educationLevel && <div className="invalid-feedback d-block">{errors.educationLevel}</div>}
                     </div>
 
