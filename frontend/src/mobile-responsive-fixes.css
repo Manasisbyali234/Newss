@@ -14,6 +14,28 @@
     overflow-x: hidden;
   }
 
+  /* Ensure header stays on top */
+  .site-header,
+  .sticky-header,
+  .main-bar-wraper,
+  .main-bar {
+    position: relative;
+    z-index: 9997 !important;
+  }
+
+  /* Ensure hamburger button and menu are above everything */
+  .hamburger-btn {
+    z-index: 9999 !important;
+  }
+
+  .hamburger-overlay {
+    z-index: 9998 !important;
+  }
+
+  .hamburger-menu {
+    z-index: 9999 !important;
+  }
+
   /* Flexible margins and padding */
   [style*="marginLeft: '20px'"],
   [style*="marginLeft: '30px'"],
