@@ -81,13 +81,13 @@ function JobsGridPage() {
         <>
             <div className="section-full py-3 site-bg-white job-grid-page" data-aos="fade-up" style={{paddingLeft: '20px', paddingRight: '20px'}}>
                 <Row className="mb-4">
-                        <Col lg={4} md={12} className="rightSidebar" data-aos="fade-right" data-aos-delay="100">
+                        <Col lg={4} md={12} className="rightSidebar d-none d-lg-block" data-aos="fade-right" data-aos-delay="100">
                             <SectionJobsSidebar1 onFilterChange={handleFilterChange} />
                         </Col>
 
                         <Col lg={8} md={12} data-aos="fade-left" data-aos-delay="200">
-                            {/*Filter Short By*/}
-                            <div className="mb-4">
+                            {/*Filter Short By - Desktop*/}
+                            <div className="mb-4 d-none d-lg-block">
                                 <SectionRecordsFilter
                                     _config={_filterConfig}
                                     onSortChange={handleSortChange}
@@ -95,6 +95,18 @@ function JobsGridPage() {
                                 />
                             </div>
                             <SectionJobsGrid filters={filters} onTotalChange={handleTotalChange} />
+                            {/*Filter Short By - Mobile (After Job Cards)*/}
+                            <div className="mb-4 d-lg-none mt-4">
+                                <SectionRecordsFilter
+                                    _config={_filterConfig}
+                                    onSortChange={handleSortChange}
+                                    onItemsPerPageChange={handleItemsPerPageChange}
+                                />
+                            </div>
+                            {/*Sidebar - Mobile (After Filter Bar)*/}
+                            <div className="d-lg-none mt-4">
+                                <SectionJobsSidebar1 onFilterChange={handleFilterChange} />
+                            </div>
                         </Col>
                     </Row>
             </div>

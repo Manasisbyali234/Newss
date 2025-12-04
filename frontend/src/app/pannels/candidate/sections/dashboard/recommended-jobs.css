@@ -89,6 +89,25 @@
 }
 
 @media (max-width: 576px) {
+    .recommended-jobs-header-wrapper {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+        padding: 15px !important;
+    }
+
+    .recommended-jobs-header-wrapper .panel-tittle {
+        font-size: 16px !important;
+        margin-bottom: 0 !important;
+        line-height: 1.4 !important;
+    }
+
+    .recommended-jobs-header-wrapper p.text-muted {
+        font-size: 13px !important;
+        line-height: 1.5 !important;
+        margin-bottom: 0 !important;
+    }
+
     .job-recommendation-card {
         padding: 0.75rem 0.85rem !important;
     }

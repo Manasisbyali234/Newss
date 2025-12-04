@@ -124,6 +124,19 @@ function SectionCanAttachment({ profile }) {
             pointer-events: auto;
         `;
 
+        if (window.innerWidth <= 576) {
+            container.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 9999;
+                max-width: 400px;
+                width: 90%;
+                pointer-events: none;
+            `;
+        }
+
         toast.innerHTML = `
             <div style="margin-bottom: 15px; font-weight: 600;">Are you sure you want to delete your resume?</div>
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
@@ -164,13 +177,13 @@ function SectionCanAttachment({ profile }) {
         };
 
         yesBtn.onclick = () => {
+            removeToast();
             performDelete();
         };
 
         noBtn.onclick = () => {
-            };
-
-        setTimeout(removeToast, 10000);
+            removeToast();
+        };
     };
 
     const performDelete = async () => {

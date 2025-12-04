@@ -103,39 +103,35 @@ function CanSupport() {
     const handleFileChange = (e) => {
         const selectedFiles = Array.from(e.target.files);
         
-        // Clear file input to prevent partial uploads
         const clearFileInput = () => {
             e.target.value = '';
         };
         
-        // Check file count
         if (selectedFiles.length > 3) {
             setErrors(prev => ({ ...prev, files: 'Too many files selected. Please choose maximum 3 files only.' }));
             clearFileInput();
             return;
         }
         
-        // Check individual file sizes
-        const maxSize = 15 * 1024 * 1024; // 15MB
+        const maxSize = 5 * 1024 * 1024; // 5MB per file for camera images
         const oversizedFiles = selectedFiles.filter(file => file.size > maxSize);
         if (oversizedFiles.length > 0) {
             const fileList = oversizedFiles.map(f => `"${f.name}" (${(f.size / 1024 / 1024).toFixed(1)}MB)`).join(', ');
             setErrors(prev => ({ 
                 ...prev, 
-                files: `File size too large: ${fileList}. Each file must be under 15MB. Please compress or choose smaller files.` 
+                files: `File size too large: ${fileList}. Each file must be under 5MB. Please compress images before uploading.` 
             }));
             clearFileInput();
             return;
         }
         
-        // Check total size
         const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
-        const maxTotalSize = 45 * 1024 * 1024; // 45MB
+        const maxTotalSize = 15 * 1024 * 1024; // 15MB total
         if (totalSize > maxTotalSize) {
             const totalSizeMB = (totalSize / 1024 / 1024).toFixed(1);
             setErrors(prev => ({ 
                 ...prev, 
-                files: `Combined file size too large: ${totalSizeMB}MB exceeds the 45MB limit. Please select smaller files or reduce the number of files.` 
+                files: `Combined file size too large: ${totalSizeMB}MB exceeds the 15MB limit. Please compress images or reduce the number of files.` 
             }));
             clearFileInput();
             return;
@@ -240,7 +236,7 @@ function CanSupport() {
                         <div className="success-icon mb-3">
                             <i className="fa fa-check-circle" style={{fontSize: '4rem', color: '#28a745'}}></i>
                         </div>
-                        <h3 className="text-success mb-3">✓ Support Ticket Submitted!</h3>
+                        <h3 className="text-success mb-3" style={{wordBreak: 'break-word', display: 'block', textAlign: 'center'}}>✓ Support Ticket Submitted!</h3>
                         <p className="mb-4">Thank you for contacting our support team. We have received your ticket and will respond within 24 hours.</p>
                         <button 
                             onClick={() => setIsSubmitted(false)} 
@@ -277,7 +273,7 @@ function CanSupport() {
                     <div className="panel-body wt-panel-body p-a20 m-b30">
                             <form onSubmit={handleSubmit}>
                                 {errors.submit && (
-                                    <div className="alert alert-danger mb-3" style={{position: 'sticky', top: '10px', zIndex: '1000'}}>{errors.submit}</div>
+                                    <div className="alert alert-danger mb-3" style={{padding: '12px', fontSize: '14px', lineHeight: '1.5', wordBreak: 'break-word'}}>{errors.submit}</div>
                                 )}
                                 
                                 <div className="row">
@@ -387,7 +383,7 @@ function CanSupport() {
                                             />
                                             <small className="form-text text-muted">
                                                 <i className="fa fa-info-circle me-1"></i>
-                                                Upload up to 3 files (max 15MB each, 45MB total). Supported formats: PDF, DOC, DOCX, XLS, XLSX, CSV, TXT, JPG, PNG, GIF, WEBP
+                                                Upload up to 3 files (max 5MB each, 15MB total). Supported formats: PDF, DOC, DOCX, XLS, XLSX, CSV, TXT, JPG, PNG, GIF, WEBP
                                             </small>
                                             {errors.files && (
                                                 <div className="invalid-feedback d-block">
@@ -413,7 +409,7 @@ function CanSupport() {
                                                         ))}
                                                     </ul>
                                                     <small className="text-muted">
-                                                        Total size: {(files.reduce((sum, file) => sum + file.size, 0) / 1024 / 1024).toFixed(1)} MB / 45 MB
+                                                        Total size: {(files.reduce((sum, file) => sum + file.size, 0) / 1024 / 1024).toFixed(1)} MB / 15 MB
                                                     </small>
                                                 </div>
                                             )}

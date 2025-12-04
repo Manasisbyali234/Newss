@@ -27,6 +27,12 @@ const TermsModal = ({ isOpen, onClose, onAccept, role = 'candidate' }) => {
     };
 
     const termsContent = {
+        candidateApplication: {
+            title: 'Application and Fees',
+            sections: [
+                { heading: 'Application and Fees', content: 'TaleGlobal operates on a pay-per-application system, where a nominal, non-refundable processing fee is charged per job application. The fee is collected solely to maintain platform functionality, verification, and digital-interview infrastructure and shall not be construed as a fee for employment or placement services. Once payment is made, no refund shall be permitted under any circumstances, regardless of interview outcome or employer decision. Candidates are responsible for ensuring stable internet access and device readiness during online interviews. TaleGlobal is not liable for disruptions caused by user connectivity or technical limitations.' }
+            ]
+        },
         candidate: {
             title: 'Terms & Conditions for Candidates',
             sections: [

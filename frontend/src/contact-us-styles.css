@@ -236,10 +236,15 @@
         margin-left: 1rem !important;
     }
     
+    .contact-one-inner .row {
+        display: flex !important;
+        flex-direction: column-reverse !important;
+    }
+    
     .contact-form-outer,
     .contact-info-wrap {
         padding: 0 !important;
-        margin-bottom: 0 !important;
+        margin-bottom: 2rem !important;
     }
     
     .contact-form-outer .section-head h2.wt-title {

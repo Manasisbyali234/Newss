@@ -5,6 +5,7 @@ import JobZImage from "../../../../common/jobz-img";
 import ApplyJobPopup from "../../../../common/popups/popup-apply-job";
 import SectionShareProfile from "../../sections/common/section-share-profile";
 import SectionJobsSidebar2 from "../../sections/jobs/sidebar/section-jobs-sidebar2";
+import TermsModal from "../../../../../components/TermsModal";
 import "./job-detail.css";
 import "../../../../../job-detail-spacing.css";
 
@@ -20,6 +21,9 @@ function JobDetail1Page() {
     const [candidateId, setCandidateId] = useState(null);
     const [scrollProgress, setScrollProgress] = useState(0);
     const [candidateCredits, setCandidateCredits] = useState(0);
+    const [showTermsModal, setShowTermsModal] = useState(false);
+    const [termsAccepted, setTermsAccepted] = useState(false);
+    const [pendingJobApplication, setPendingJobApplication] = useState(false);
 
     const authState = useMemo(() => {
         const token = localStorage.getItem('candidateToken');
@@ -139,6 +143,60 @@ function JobDetail1Page() {
         );
     }
 
+    const submitJobApplication = async () => {
+        try {
+            const token = localStorage.getItem('candidateToken');
+            
+            const statsResponse = await fetch('http://localhost:5000/api/candidate/dashboard/stats', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const statsData = await statsResponse.json();
+            
+            if (statsData.success && statsData.candidate.registrationMethod === 'placement') {
+                const credits = statsData.candidate.credits || 0;
+                if (credits <= 0) {
+                    showError('You have insufficient credits to apply for jobs. Please contact your placement coordinator to get more credits.');
+                    return;
+                }
+                
+                const confirmApply = window.confirm(`You have ${credits} credits remaining. Applying for this job will deduct 1 credit. Do you want to continue?`);
+                if (!confirmApply) {
+                    return;
+                }
+            }
+            
+            const profileResponse = await fetch('http://localhost:5000/api/candidate/profile', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const profileData = await profileResponse.json();
+            
+            if (!profileData.success || !profileData.profile?.resume) {
+                showWarning('Please upload your resume first before applying for jobs. Go to My Resume section to upload.');
+                navigate('/candidate/my-resume');
+                return;
+            }
+            
+            const response = await fetch('http://localhost:5000/api/candidate/applications', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ jobId: jobId })
+            });
+            const data = await response.json();
+            if (data.success) {
+                setHasApplied(true);
+                showSuccess('Application submitted successfully!');
+            } else {
+                showError(data.message || 'Failed to submit application');
+            }
+        } catch (error) {
+            console.error('Error applying for job:', error);
+            showError('Failed to submit application');
+        }
+    };
+
     const handleApplyClick = async () => {
         if (isEnded) return;
         if (!isLoggedIn) {
@@ -147,57 +205,9 @@ function JobDetail1Page() {
         } else if (hasApplied) {
             showInfo('You have already applied for this job!');
         } else {
-            try {
-                const token = localStorage.getItem('candidateToken');
-                
-                const statsResponse = await fetch('http://localhost:5000/api/candidate/dashboard/stats', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const statsData = await statsResponse.json();
-                
-                if (statsData.success && statsData.candidate.registrationMethod === 'placement') {
-                    const credits = statsData.candidate.credits || 0;
-                    if (credits <= 0) {
-                        showError('You have insufficient credits to apply for jobs. Please contact your placement coordinator to get more credits.');
-                        return;
-                    }
-                    
-                    const confirmApply = window.confirm(`You have ${credits} credits remaining. Applying for this job will deduct 1 credit. Do you want to continue?`);
-                    if (!confirmApply) {
-                        return;
-                    }
-                }
-                
-                const profileResponse = await fetch('http://localhost:5000/api/candidate/profile', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const profileData = await profileResponse.json();
-                
-                if (!profileData.success || !profileData.profile?.resume) {
-                    showWarning('Please upload your resume first before applying for jobs. Go to My Resume section to upload.');
-                    navigate('/candidate/my-resume');
-                    return;
-                }
-                
-                const response = await fetch('http://localhost:5000/api/candidate/applications', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ jobId: jobId })
-                });
-                const data = await response.json();
-                if (data.success) {
-                    setHasApplied(true);
-                    showSuccess('Application submitted successfully!');
-                } else {
-                    showError(data.message || 'Failed to submit application');
-                }
-            } catch (error) {
-                console.error('Error applying for job:', error);
-                showError('Failed to submit application');
-            }
+            setTermsAccepted(false);
+            setPendingJobApplication(true);
+            setShowTermsModal(true);
         }
     };
 
@@ -420,6 +430,20 @@ function JobDetail1Page() {
                 </div>
             </div>
             <ApplyJobPopup />
+            <TermsModal 
+                isOpen={showTermsModal}
+                onClose={() => {
+                    setShowTermsModal(false);
+                    setPendingJobApplication(false);
+                    setTermsAccepted(false);
+                }}
+                onAccept={() => {
+                    setTermsAccepted(true);
+                    setShowTermsModal(false);
+                    submitJobApplication();
+                }}
+                role="candidateApplication"
+            />
         </>
     );
 }

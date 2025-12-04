@@ -2,6 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { canRoute, candidate, empRoute, employer, placementRoute, placement, pubRoute, publicUser } from "../../../globals/route-names";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
+import '../../../popup-nav-buttons.css';
 
 function SignInPopup() {
 
@@ -151,7 +152,7 @@ function SignInPopup() {
         color: '#f0f6fe',
         border: '1px solid #1967d2',
         borderRadius: '10px',
-        padding: '12px 16px',
+        padding: '12px',
         fontWeight: 700,
         fontSize: '16px',
         minHeight: '48px',
@@ -160,7 +161,8 @@ function SignInPopup() {
         maxWidth: 'none',
         minWidth: '100%',
         display: 'block',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        flex: '1 1 100%'
     };
 
     const handleButtonEnter = (event) => {
@@ -177,49 +179,6 @@ function SignInPopup() {
 
     return (
 			<>
-				<style>{`
-					@media (max-width: 576px) {
-						#sign_up_popup2 .modal-dialog {
-							margin: 0.5rem;
-							max-width: calc(100% - 1rem);
-						}
-						#sign_up_popup2 .modal-content {
-							padding: 0;
-						}
-						#sign_up_popup2 .modal-header {
-							padding: 15px;
-						}
-						#sign_up_popup2 .modal-header h2 {
-							font-size: 20px;
-						}
-						#sign_up_popup2 .modal-header p {
-							font-size: 12px;
-						}
-						#sign_up_popup2 .modal-body {
-							padding: 10px 15px;
-						}
-						#sign_up_popup2 .nav-tabs .nav-link {
-							font-size: 11px;
-							padding: 8px 6px;
-						}
-						#sign_up_popup2 .nav-tabs .nav-link i {
-							font-size: 12px;
-							margin-right: 3px;
-						}
-						#sign_up_popup2 .form-control {
-							font-size: 14px;
-							padding: 10px;
-						}
-						#sign_up_popup2 button[type="submit"] {
-							font-size: 16px !important;
-							padding: 12px 16px !important;
-							min-height: 48px !important;
-							width: 100% !important;
-							max-width: none !important;
-							min-width: 100% !important;
-						}
-					}
-				`}</style>
 				<div
 					className="modal fade twm-sign-up"
 					id="sign_up_popup2"
@@ -335,7 +294,7 @@ function SignInPopup() {
 															}}
 														/>
 														<span
-															style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', userSelect: 'none', padding: '5px 8px', color: '#666' }}
+															style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', userSelect: 'none', background: '#f8f9fa', padding: '5px 8px', borderRadius: '4px' }}
 															onClick={() => setShowCanPassword(!showCanPassword)}
 														>
 															<i className={showCanPassword ? "fas fa-eye-slash" : "fas fa-eye"} />
@@ -417,7 +376,7 @@ function SignInPopup() {
 															}}
 														/>
 														<span
-															style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', userSelect: 'none', padding: '5px 8px', color: '#666' }}
+															style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', userSelect: 'none', background: '#f8f9fa', padding: '5px 8px', borderRadius: '4px' }}
 															onClick={() => setShowEmpPassword(!showEmpPassword)}
 														>
 															<i className={showEmpPassword ? "fas fa-eye-slash" : "fas fa-eye"} />
@@ -499,7 +458,7 @@ function SignInPopup() {
 															}}
 														/>
 														<span
-															style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', userSelect: 'none', padding: '5px 8px', color: '#666' }}
+															style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', userSelect: 'none', background: '#f8f9fa', padding: '5px 8px', borderRadius: '4px' }}
 															onClick={() => setShowPlacementPassword(!showPlacementPassword)}
 														>
 															<i className={showPlacementPassword ? "fas fa-eye-slash" : "fas fa-eye"} />

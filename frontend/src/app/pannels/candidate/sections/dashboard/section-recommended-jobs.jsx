@@ -116,7 +116,7 @@ function SectionRecommendedJobs() {
 
     return (
         <div className="panel panel-default">
-            <div className="panel-heading wt-panel-heading p-a20">
+            <div className="panel-heading wt-panel-heading p-a20 recommended-jobs-header-wrapper">
                 <h4 className="panel-tittle m-a0">
                     <i className="fa fa-lightbulb-o site-text-primary me-2"></i>
                     Recommended Jobs
