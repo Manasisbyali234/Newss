@@ -50,6 +50,7 @@ router.put('/placements/:id/files/:fileId/approve', adminController.approveIndiv
 router.put('/placements/:id/files/:fileId/reject', adminController.rejectIndividualFile);
 router.post('/placements/:id/files/:fileId/process', adminController.approveIndividualFile);
 router.put('/placements/:placementId/files/credits', adminController.assignBulkFileCredits);
+router.put('/placements/:id/files/:fileId/credits', adminController.updateFileCredits);
 router.post('/placements/:id/store-excel', adminController.storeExcelDataInMongoDB);
 router.get('/placements/:id/excel-data', adminController.getStoredExcelData);
 router.get('/placements/:id/excel-data/:fileId', adminController.getStoredExcelData);

@@ -1,5 +1,5 @@
 
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import { candidate } from "../globals/route-names";
 import CanDashboardPage from "../app/pannels/candidate/components/can-dashboard";
 import CanProfilePage from "../app/pannels/candidate/components/can-profile";
@@ -40,6 +40,7 @@ function CandidateRoutes() {
 					element={<StartAssessment />}
 				/>
 				<Route path={candidate.RESULT} element={< AssessmentResults/>} />
+				<Route path="/assessment-result" element={<Navigate to="/candidate/status" replace />} />
 				<Route
 					path={candidate.CHANGE_PASSWORD}
 					element={<CanChangePasswordPage />}

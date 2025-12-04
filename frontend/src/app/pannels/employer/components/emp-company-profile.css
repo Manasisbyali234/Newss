@@ -744,6 +744,33 @@ html {
   content: ' *';
   color: #e53e3e;
   font-weight: bold;
+  font-size: 16px;
+  margin-left: 2px;
+}
+
+/* Required field label styling */
+.required-field {
+  font-weight: 600;
+  color: #2d3748;
+  position: relative;
+}
+
+/* Highlight required fields that are missing */
+.form-control.is-invalid + .required-field::after {
+  animation: pulse 1s infinite;
+}
+
+/* Required document upload styling */
+.form-group:has(.required-field) .form-control {
+  border-left: 3px solid #ff6b35;
+}
+
+.form-group:has(.required-field) .form-control.is-invalid {
+  border-left: 3px solid #e53e3e;
+}
+
+.form-group:has(.required-field) .form-control:focus {
+  border-left: 3px solid #ff6b35;
 }
 
 /* Edit icons - Black color without orange background */

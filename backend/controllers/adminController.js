@@ -1944,6 +1944,141 @@ exports.rejectIndividualFile = async (req, res) => {
   }
 };
 
+// Update credits for specific file
+exports.updateFileCredits = async (req, res) => {
+  try {
+    const { id: placementId, fileId } = req.params;
+    const { credits } = req.body;
+    
+    if (typeof credits !== 'number' || credits < 0 || credits > 10000) {
+      return res.status(400).json({ success: false, message: 'Credits must be between 0 and 10000' });
+    }
+    
+    const placement = await Placement.findById(placementId);
+    if (!placement) {
+      return res.status(404).json({ success: false, message: 'Placement officer not found' });
+    }
+
+    const file = placement.fileHistory.id(fileId);
+    if (!file) {
+      return res.status(404).json({ success: false, message: 'File not found' });
+    }
+
+    // Check if file is rejected
+    if (file.status === 'rejected') {
+      return res.status(400).json({ success: false, message: 'Cannot update credits for rejected files' });
+    }
+
+    // Update file credits
+    file.credits = credits;
+    
+    // Update the file data with new credits
+    if (file.fileData) {
+      try {
+        const result = base64ToBuffer(file.fileData);
+        const buffer = result.buffer;
+
+        let workbook;
+        if (file.fileType && file.fileType.includes('csv')) {
+          const csvData = buffer.toString('utf8');
+          workbook = XLSX.read(csvData, { type: 'string' });
+        } else {
+          workbook = XLSX.read(buffer, { type: 'buffer' });
+        }
+        
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+        
+        // Update all rows with new credits
+        const updatedData = jsonData.map(row => ({
+          ...row,
+          'Credits Assigned': credits,
+          'credits assigned': credits,
+          'CREDITS ASSIGNED': credits,
+          Credits: credits,
+          credits: credits,
+          CREDITS: credits,
+          Credit: credits,
+          credit: credits
+        }));
+        
+        // Convert back to Excel/CSV
+        const newWorksheet = XLSX.utils.json_to_sheet(updatedData);
+        const newWorkbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(newWorkbook, newWorksheet, sheetName);
+        
+        let newBuffer;
+        let mimeType;
+        if (file.fileType && file.fileType.includes('csv')) {
+          const csvOutput = XLSX.utils.sheet_to_csv(newWorksheet);
+          newBuffer = Buffer.from(csvOutput, 'utf8');
+          mimeType = 'text/csv';
+        } else {
+          newBuffer = XLSX.write(newWorkbook, { type: 'buffer', bookType: 'xlsx' });
+          mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        }
+        
+        file.fileData = `data:${mimeType};base64,${newBuffer.toString('base64')}`;
+      } catch (fileError) {
+        console.error('Error updating file data with credits:', fileError);
+      }
+    }
+    
+    await placement.save();
+    
+    // Update all candidates linked to this specific file with new credits
+    const candidatesToUpdate = await Candidate.find(
+      { placementId: placementId, fileId: fileId },
+      { _id: 1 }
+    );
+    
+    const updateResult = await Candidate.updateMany(
+      { placementId: placementId, fileId: fileId },
+      { $set: { credits: credits } }
+    );
+    
+    // Emit real-time credit updates to affected candidates
+    if (candidatesToUpdate.length > 0) {
+      const candidateIds = candidatesToUpdate.map(c => c._id.toString());
+      emitBulkCreditUpdate(candidateIds, credits);
+    }
+    
+    // Also update candidates who don't have fileId but belong to this placement
+    // This handles legacy candidates created before fileId tracking
+    const legacyCandidatesToUpdate = await Candidate.find(
+      { placementId: placementId, fileId: { $exists: false } },
+      { _id: 1 }
+    );
+    
+    let legacyUpdateResult = { modifiedCount: 0 };
+    if (legacyCandidatesToUpdate.length > 0) {
+      legacyUpdateResult = await Candidate.updateMany(
+        { placementId: placementId, fileId: { $exists: false } },
+        { $set: { credits: credits } }
+      );
+      
+      const legacyCandidateIds = legacyCandidatesToUpdate.map(c => c._id.toString());
+      emitBulkCreditUpdate(legacyCandidateIds, credits);
+    }
+    
+    res.json({
+      success: true,
+      message: `File credits updated successfully. ${updateResult.modifiedCount} candidates updated.`,
+      file: {
+        id: file._id,
+        fileName: file.fileName,
+        credits: file.credits
+      },
+      candidatesUpdated: updateResult.modifiedCount + legacyUpdateResult.modifiedCount
+    });
+    
+  } catch (error) {
+    console.error('Error updating file credits:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // Assign credits to all files in a placement
 exports.assignBulkFileCredits = async (req, res) => {
   try {

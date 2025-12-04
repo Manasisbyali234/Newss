@@ -220,13 +220,19 @@ exports.updateProfile = async (req, res) => {
     try {
       const { createNotification } = require('./notificationController');
       const requiredFields = ['companyName', 'description', 'location', 'phone', 'email'];
-      const isProfileComplete = requiredFields.every(field => profile[field]);
+      const requiredDocuments = ['panCardImage', 'cinImage', 'gstImage', 'certificateOfIncorporation'];
+      const allRequiredItems = [...requiredFields, ...requiredDocuments];
+      
+      const isProfileComplete = allRequiredItems.every(field => {
+        const value = profile[field];
+        return value && (typeof value !== 'string' || value.trim() !== '');
+      });
       
       if (isProfileComplete && !req.user.isApproved) {
         // Profile is complete but not yet approved - notify admin
         await createNotification({
           title: 'Company Profile Ready for Review',
-          message: `${profile.companyName || 'A company'} has completed their profile and is ready for admin approval to post jobs.`,
+          message: `${profile.companyName || 'A company'} has completed their profile with all required documents and is ready for admin approval to post jobs.`,
           type: 'profile_submitted',
           role: 'admin',
           relatedId: profile._id,
@@ -259,7 +265,13 @@ exports.updateProfile = async (req, res) => {
     // Check if this is the first time profile is being completed
     const employer = await Employer.findById(req.user._id);
     const requiredFields = ['companyName', 'description', 'location', 'phone', 'email'];
-    const isProfileComplete = requiredFields.every(field => profile[field]);
+    const requiredDocuments = ['panCardImage', 'cinImage', 'gstImage', 'certificateOfIncorporation'];
+    const allRequiredItems = [...requiredFields, ...requiredDocuments];
+    
+    const isProfileComplete = allRequiredItems.every(field => {
+      const value = profile[field];
+      return value && (typeof value !== 'string' || value.trim() !== '');
+    });
     
     let message = 'Profile updated successfully!';
     if (isProfileComplete && !employer.isApproved && !employer.profileSubmittedForReview) {
@@ -531,12 +543,21 @@ exports.createJob = async (req, res) => {
       });
     }
 
-    // Check required profile fields - be more flexible with validation
+    // Check required profile fields and documents
     const requiredFields = ['companyName', 'description', 'location', 'phone', 'email'];
+    const requiredDocuments = ['panCardImage', 'cinImage', 'gstImage', 'certificateOfIncorporation'];
+    
     const missingFields = requiredFields.filter(field => {
       const value = profile[field];
       return !value || (typeof value === 'string' && value.trim() === '');
     });
+    
+    const missingDocuments = requiredDocuments.filter(field => {
+      const value = profile[field];
+      return !value || (typeof value === 'string' && value.trim() === '');
+    });
+    
+    const allMissingItems = [...missingFields, ...missingDocuments];
     
     // Log for debugging
     console.log('Profile validation check:', {
@@ -545,15 +566,32 @@ exports.createJob = async (req, res) => {
       location: profile.location,
       phone: profile.phone,
       email: profile.email,
-      missingFields
+      panCardImage: profile.panCardImage ? 'Present' : 'Missing',
+      cinImage: profile.cinImage ? 'Present' : 'Missing',
+      gstImage: profile.gstImage ? 'Present' : 'Missing',
+      certificateOfIncorporation: profile.certificateOfIncorporation ? 'Present' : 'Missing',
+      missingFields,
+      missingDocuments,
+      allMissingItems
     });
     
-    if (missingFields.length > 0) {
+    if (allMissingItems.length > 0) {
+      const documentLabels = {
+        panCardImage: 'PAN Card Image',
+        cinImage: 'CIN Document',
+        gstImage: 'GST Certificate',
+        certificateOfIncorporation: 'Certificate of Incorporation'
+      };
+      
+      const missingLabels = allMissingItems.map(item => 
+        documentLabels[item] || item
+      );
+      
       return res.status(403).json({ 
         success: false, 
-        message: `Please complete your company profile. Missing fields: ${missingFields.join(', ')}`,
+        message: `Please complete your company profile. Missing: ${missingLabels.join(', ')}`,
         requiresProfile: true,
-        missingFields
+        missingFields: allMissingItems
       });
     }
 
@@ -1492,6 +1530,12 @@ exports.getProfileCompletion = async (req, res) => {
       phone: { weight: 2, required: true },
       email: { weight: 2, required: true },
       
+      // Required documents (weight: 2 each)
+      panCardImage: { weight: 2, required: true },
+      cinImage: { weight: 2, required: true },
+      gstImage: { weight: 2, required: true },
+      certificateOfIncorporation: { weight: 2, required: true },
+      
       // Important additional fields (weight: 1.5 each)
       website: { weight: 1.5, required: false },
       establishedSince: { weight: 1.5, required: false },
@@ -1545,6 +1589,10 @@ exports.getProfileCompletion = async (req, res) => {
       location: profile.location ? 'Present' : 'Missing',
       phone: profile.phone ? 'Present' : 'Missing',
       email: profile.email ? 'Present' : 'Missing',
+      panCardImage: profile.panCardImage ? 'Present' : 'Missing',
+      cinImage: profile.cinImage ? 'Present' : 'Missing',
+      gstImage: profile.gstImage ? 'Present' : 'Missing',
+      certificateOfIncorporation: profile.certificateOfIncorporation ? 'Present' : 'Missing',
       completedWeight,
       totalWeight,
       completion,
@@ -1559,7 +1607,18 @@ exports.getProfileCompletion = async (req, res) => {
     
     let message = '';
     if (missingRequiredFields.length > 0) {
-      message = "Kindly complete your profile and wait for the admin's approval.";
+      const documentLabels = {
+        panCardImage: 'PAN Card Image',
+        cinImage: 'CIN Document', 
+        gstImage: 'GST Certificate',
+        certificateOfIncorporation: 'Certificate of Incorporation'
+      };
+      
+      const missingLabels = missingRequiredFields.map(field => 
+        documentLabels[field] || field
+      );
+      
+      message = `Please complete your profile by uploading: ${missingLabels.join(', ')}. Then wait for admin approval.`;
     } else if (!profileSubmittedForReview) {
       message = 'Your profile is complete. Save your profile to submit it for admin review.';
     } else if (profileSubmittedForReview && !isApproved) {

@@ -3,6 +3,7 @@ import { api } from "../../../../../utils/api";
 import CountryCodeSelector from "../../../../../components/CountryCodeSelector";
 import TermsModal from "../../../../../components/TermsModal";
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
+import { fetchLocationFromPincode } from '../../../../../utils/pincodeService';
 const indianCities = [
     'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata', 'Pune', 'Ahmedabad',
     'Surat', 'Jaipur', 'Lucknow', 'Kanpur', 'Nagpur', 'Indore', 'Thane', 'Bhopal',
@@ -46,6 +47,7 @@ function SectionCandicateBasicInfo() {
     const [phonePaddingLeft, setPhonePaddingLeft] = useState(130);
     const [showTermsModal, setShowTermsModal] = useState(false);
     const [termsAccepted, setTermsAccepted] = useState(false);
+    const [fetchingLocation, setFetchingLocation] = useState(false);
     const locationDropdownRef = useRef(null);
 
     useEffect(() => {
@@ -227,12 +229,17 @@ function SectionCandicateBasicInfo() {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleInputChange = (e) => {
+    const handleInputChange = async (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
         }));
+        
+        // Auto-fetch location when pincode is entered
+        if (name === 'pincode' && value.length === 6 && /^\d{6}$/.test(value)) {
+            await handlePincodeChange(value);
+        }
         
         // Validate field if it has been touched
         if (touched[name]) {
@@ -240,10 +247,47 @@ function SectionCandicateBasicInfo() {
         }
     };
 
-    const handleBlur = (e) => {
+    const handleBlur = async (e) => {
         const { name, value } = e.target;
         setTouched(prev => ({ ...prev, [name]: true }));
+        
+        // Auto-fetch location on pincode blur if not already fetched
+        if (name === 'pincode' && value.length === 6 && /^\d{6}$/.test(value) && !formData.location) {
+            await handlePincodeChange(value);
+        }
+        
         validateField(name, value);
+    };
+
+    const handlePincodeChange = async (pincode) => {
+        if (!pincode || pincode.length !== 6) return;
+        
+        setFetchingLocation(true);
+        try {
+            const locationData = await fetchLocationFromPincode(pincode);
+            
+            if (locationData.success) {
+                setFormData(prev => ({
+                    ...prev,
+                    location: locationData.location,
+                    stateCode: locationData.stateCode
+                }));
+                
+                // Clear location error if it exists
+                setErrors(prev => {
+                    const newErrors = { ...prev };
+                    delete newErrors.location;
+                    return newErrors;
+                });
+            } else {
+                showError(locationData.message || 'Could not fetch location for this pincode');
+            }
+        } catch (error) {
+            console.error('Error fetching location:', error);
+            showError('Failed to fetch location. Please enter manually.');
+        } finally {
+            setFetchingLocation(false);
+        }
     };
 
     const handleFileChange = (e) => {
@@ -604,7 +648,11 @@ function SectionCandicateBasicInfo() {
                             {errors.location && <div className="invalid-feedback">{errors.location}</div>}
                         </div>
                         <div className="col-md-4 mb-3">
-                            <label className="form-label"><i className="fa fa-map-pin me-2" style={{color: '#ff6b35'}}></i>Pincode *</label>
+                            <label className="form-label">
+                                <i className="fa fa-map-pin me-2" style={{color: '#ff6b35'}}></i>
+                                Pincode *
+                                {fetchingLocation && <i className="fa fa-spinner fa-spin ms-2" style={{color: '#ff6b35'}}></i>}
+                            </label>
                             <input
                                 className={`form-control ${errors.pincode ? 'is-invalid' : ''}`}
                                 type="text"
@@ -614,10 +662,13 @@ function SectionCandicateBasicInfo() {
                                 onBlur={handleBlur}
                                 placeholder="Enter 6-digit pincode"
                                 maxLength="6"
+                                disabled={fetchingLocation}
                                 required
                             />
                             {errors.pincode && <div className="invalid-feedback">{errors.pincode}</div>}
-                            <small className="text-muted">Enter 6-digit pincode</small>
+                            <small className="text-muted">
+                                {fetchingLocation ? 'Fetching location...' : 'Enter 6-digit pincode (location will auto-fill)'}
+                            </small>
                         </div>
                         <div className="col-md-4 mb-3">
                             <label className="form-label"><i className="fa fa-map me-2" style={{color: '#ff6b35'}}></i>State Code</label>

@@ -20,6 +20,45 @@ function SectionCanEducation({ profile, onUpdate }) {
     const [additionalErrors, setAdditionalErrors] = useState([]);
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
+    const indianStates = [
+        { value: 'Andhra Pradesh', label: 'Andhra Pradesh' },
+        { value: 'Arunachal Pradesh', label: 'Arunachal Pradesh' },
+        { value: 'Assam', label: 'Assam' },
+        { value: 'Bihar', label: 'Bihar' },
+        { value: 'Chhattisgarh', label: 'Chhattisgarh' },
+        { value: 'Goa', label: 'Goa' },
+        { value: 'Gujarat', label: 'Gujarat' },
+        { value: 'Haryana', label: 'Haryana' },
+        { value: 'Himachal Pradesh', label: 'Himachal Pradesh' },
+        { value: 'Jharkhand', label: 'Jharkhand' },
+        { value: 'Karnataka', label: 'Karnataka' },
+        { value: 'Kerala', label: 'Kerala' },
+        { value: 'Madhya Pradesh', label: 'Madhya Pradesh' },
+        { value: 'Maharashtra', label: 'Maharashtra' },
+        { value: 'Manipur', label: 'Manipur' },
+        { value: 'Meghalaya', label: 'Meghalaya' },
+        { value: 'Mizoram', label: 'Mizoram' },
+        { value: 'Nagaland', label: 'Nagaland' },
+        { value: 'Odisha', label: 'Odisha' },
+        { value: 'Punjab', label: 'Punjab' },
+        { value: 'Rajasthan', label: 'Rajasthan' },
+        { value: 'Sikkim', label: 'Sikkim' },
+        { value: 'Tamil Nadu', label: 'Tamil Nadu' },
+        { value: 'Telangana', label: 'Telangana' },
+        { value: 'Tripura', label: 'Tripura' },
+        { value: 'Uttar Pradesh', label: 'Uttar Pradesh' },
+        { value: 'Uttarakhand', label: 'Uttarakhand' },
+        { value: 'West Bengal', label: 'West Bengal' },
+        { value: 'Andaman and Nicobar Islands', label: 'Andaman and Nicobar Islands' },
+        { value: 'Chandigarh', label: 'Chandigarh' },
+        { value: 'Dadra and Nagar Haveli and Daman and Diu', label: 'Dadra and Nagar Haveli and Daman and Diu' },
+        { value: 'Delhi', label: 'Delhi' },
+        { value: 'Jammu and Kashmir', label: 'Jammu and Kashmir' },
+        { value: 'Ladakh', label: 'Ladakh' },
+        { value: 'Lakshadweep', label: 'Lakshadweep' },
+        { value: 'Puducherry', label: 'Puducherry' }
+    ];
+
     const educationLevels = [
         { value: '10th_pass', label: '10th Pass / SSLC' },
         { value: '12th_pass', label: '12th Pass / PUC / Higher Secondary' },
@@ -1138,14 +1177,19 @@ function SectionCanEducation({ profile, onUpdate }) {
 
                                     <div className="col-md-4">
                                         <label className="form-label">State</label>
-                                        <input
-                                            type="text"
-                                            className={`form-control ${errors.state ? 'is-invalid' : ''}`}
+                                        <select
+                                            className={`form-select ${errors.state ? 'is-invalid' : ''}`}
                                             name="state"
                                             value={formData.state}
                                             onChange={handleInputChange}
-                                            placeholder="Enter state"
-                                        />
+                                        >
+                                            <option value="">Select State</option>
+                                            {indianStates.map(state => (
+                                                <option key={state.value} value={state.value}>
+                                                    {state.label}
+                                                </option>
+                                            ))}
+                                        </select>
                                         {errors.state && <div className="invalid-feedback">{errors.state}</div>}
                                     </div>
 

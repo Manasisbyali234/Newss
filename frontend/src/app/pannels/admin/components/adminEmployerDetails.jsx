@@ -461,7 +461,9 @@ function EmployerDetails() {
                             <tr>
                                 <th><i className="fa fa-file me-2"></i>Document Type</th>
                                 <th><i className="fa fa-upload me-2"></i>Upload Status</th>
-                                <th style={{textAlign: 'center'}}><i className="fa fa-eye me-2"></i>View Details</th>
+                                <th><i className="fa fa-check-circle me-2"></i>Verification Status</th>
+                                <th style={{textAlign: 'center'}}><i className="fa fa-eye me-2"></i>View</th>
+                                <th style={{textAlign: 'center'}}><i className="fa fa-cogs me-2"></i>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -472,6 +474,19 @@ function EmployerDetails() {
                                         <span className="status-badge badge-uploaded"><i className="fa fa-check"></i>Uploaded</span> : 
                                         <span className="status-badge badge-not-uploaded"><i className="fa fa-times"></i>Not Uploaded</span>
                                     }
+                                </td>
+                                <td>
+                                    <span className={`status-badge ${
+                                        profile.panCardVerified === 'approved' ? 'badge-approved' : 
+                                        profile.panCardVerified === 'rejected' ? 'badge-rejected' : 'badge-pending'
+                                    }`}>
+                                        <i className={`fa ${
+                                            profile.panCardVerified === 'approved' ? 'fa-check' :
+                                            profile.panCardVerified === 'rejected' ? 'fa-times' : 'fa-clock'
+                                        }`}></i>
+                                        {profile.panCardVerified === 'approved' ? 'Approved' : 
+                                         profile.panCardVerified === 'rejected' ? 'Rejected' : 'Pending'}
+                                    </span>
                                 </td>
                                 <td style={{textAlign: 'center'}}>
                                     <button 
@@ -489,6 +504,32 @@ function EmployerDetails() {
                                         <i className="fa fa-eye"></i>
                                     </button>
                                 </td>
+                                <td style={{textAlign: 'center'}}>
+                                    <div className="action-buttons-container">
+                                        {profile.panCardImage && profile.panCardVerified !== 'approved' && (
+                                            <button 
+                                                className="btn btn-outline-success btn-sm"
+                                                onClick={() => updateDocumentStatus(id, 'panCardVerified', 'approved')}
+                                                style={{ marginRight: '5px' }}
+                                                title="Approve Document"
+                                            >
+                                                <i className="fa fa-check"></i>
+                                            </button>
+                                        )}
+                                        {profile.panCardImage && profile.panCardVerified !== 'rejected' && (
+                                            <button 
+                                                className="btn btn-outline-danger btn-sm"
+                                                onClick={() => updateDocumentStatus(id, 'panCardVerified', 'rejected')}
+                                                title="Reject Document"
+                                            >
+                                                <i className="fa fa-times"></i>
+                                            </button>
+                                        )}
+                                        {!profile.panCardImage && (
+                                            <span className="text-muted">No document</span>
+                                        )}
+                                    </div>
+                                </td>
                             </tr>
                             <tr data-aos="fade-left" data-aos-delay="450">
                                 <td><i className="fa fa-certificate me-2 text-muted"></i>CIN Document</td>
@@ -497,6 +538,19 @@ function EmployerDetails() {
                                         <span className="status-badge badge-uploaded"><i className="fa fa-check"></i>Uploaded</span> : 
                                         <span className="status-badge badge-not-uploaded"><i className="fa fa-times"></i>Not Uploaded</span>
                                     }
+                                </td>
+                                <td>
+                                    <span className={`status-badge ${
+                                        profile.cinVerified === 'approved' ? 'badge-approved' : 
+                                        profile.cinVerified === 'rejected' ? 'badge-rejected' : 'badge-pending'
+                                    }`}>
+                                        <i className={`fa ${
+                                            profile.cinVerified === 'approved' ? 'fa-check' :
+                                            profile.cinVerified === 'rejected' ? 'fa-times' : 'fa-clock'
+                                        }`}></i>
+                                        {profile.cinVerified === 'approved' ? 'Approved' : 
+                                         profile.cinVerified === 'rejected' ? 'Rejected' : 'Pending'}
+                                    </span>
                                 </td>
                                 <td style={{textAlign: 'center'}}>
                                     <button 
@@ -514,6 +568,32 @@ function EmployerDetails() {
                                         <i className="fa fa-eye"></i>
                                     </button>
                                 </td>
+                                <td style={{textAlign: 'center'}}>
+                                    <div className="action-buttons-container">
+                                        {profile.cinImage && profile.cinVerified !== 'approved' && (
+                                            <button 
+                                                className="btn btn-outline-success btn-sm"
+                                                onClick={() => updateDocumentStatus(id, 'cinVerified', 'approved')}
+                                                style={{ marginRight: '5px' }}
+                                                title="Approve Document"
+                                            >
+                                                <i className="fa fa-check"></i>
+                                            </button>
+                                        )}
+                                        {profile.cinImage && profile.cinVerified !== 'rejected' && (
+                                            <button 
+                                                className="btn btn-outline-danger btn-sm"
+                                                onClick={() => updateDocumentStatus(id, 'cinVerified', 'rejected')}
+                                                title="Reject Document"
+                                            >
+                                                <i className="fa fa-times"></i>
+                                            </button>
+                                        )}
+                                        {!profile.cinImage && (
+                                            <span className="text-muted">No document</span>
+                                        )}
+                                    </div>
+                                </td>
                             </tr>
                             <tr data-aos="fade-left" data-aos-delay="500">
                                 <td><i className="fa fa-receipt me-2 text-muted"></i>GST Certificate</td>
@@ -522,6 +602,19 @@ function EmployerDetails() {
                                         <span className="status-badge badge-uploaded"><i className="fa fa-check"></i>Uploaded</span> : 
                                         <span className="status-badge badge-not-uploaded"><i className="fa fa-times"></i>Not Uploaded</span>
                                     }
+                                </td>
+                                <td>
+                                    <span className={`status-badge ${
+                                        profile.gstVerified === 'approved' ? 'badge-approved' : 
+                                        profile.gstVerified === 'rejected' ? 'badge-rejected' : 'badge-pending'
+                                    }`}>
+                                        <i className={`fa ${
+                                            profile.gstVerified === 'approved' ? 'fa-check' :
+                                            profile.gstVerified === 'rejected' ? 'fa-times' : 'fa-clock'
+                                        }`}></i>
+                                        {profile.gstVerified === 'approved' ? 'Approved' : 
+                                         profile.gstVerified === 'rejected' ? 'Rejected' : 'Pending'}
+                                    </span>
                                 </td>
                                 <td style={{textAlign: 'center'}}>
                                     <button 
@@ -539,6 +632,32 @@ function EmployerDetails() {
                                         <i className="fa fa-eye"></i>
                                     </button>
                                 </td>
+                                <td style={{textAlign: 'center'}}>
+                                    <div className="action-buttons-container">
+                                        {profile.gstImage && profile.gstVerified !== 'approved' && (
+                                            <button 
+                                                className="btn btn-outline-success btn-sm"
+                                                onClick={() => updateDocumentStatus(id, 'gstVerified', 'approved')}
+                                                style={{ marginRight: '5px' }}
+                                                title="Approve Document"
+                                            >
+                                                <i className="fa fa-check"></i>
+                                            </button>
+                                        )}
+                                        {profile.gstImage && profile.gstVerified !== 'rejected' && (
+                                            <button 
+                                                className="btn btn-outline-danger btn-sm"
+                                                onClick={() => updateDocumentStatus(id, 'gstVerified', 'rejected')}
+                                                title="Reject Document"
+                                            >
+                                                <i className="fa fa-times"></i>
+                                            </button>
+                                        )}
+                                        {!profile.gstImage && (
+                                            <span className="text-muted">No document</span>
+                                        )}
+                                    </div>
+                                </td>
                             </tr>
                             <tr data-aos="fade-left" data-aos-delay="550">
                                 <td><i className="fa fa-file-contract me-2 text-muted"></i>Certificate of Incorporation</td>
@@ -547,6 +666,19 @@ function EmployerDetails() {
                                         <span className="status-badge badge-uploaded"><i className="fa fa-check"></i>Uploaded</span> : 
                                         <span className="status-badge badge-not-uploaded"><i className="fa fa-times"></i>Not Uploaded</span>
                                     }
+                                </td>
+                                <td>
+                                    <span className={`status-badge ${
+                                        profile.incorporationVerified === 'approved' ? 'badge-approved' : 
+                                        profile.incorporationVerified === 'rejected' ? 'badge-rejected' : 'badge-pending'
+                                    }`}>
+                                        <i className={`fa ${
+                                            profile.incorporationVerified === 'approved' ? 'fa-check' :
+                                            profile.incorporationVerified === 'rejected' ? 'fa-times' : 'fa-clock'
+                                        }`}></i>
+                                        {profile.incorporationVerified === 'approved' ? 'Approved' : 
+                                         profile.incorporationVerified === 'rejected' ? 'Rejected' : 'Pending'}
+                                    </span>
                                 </td>
                                 <td style={{textAlign: 'center'}}>
                                     <button 
@@ -563,6 +695,32 @@ function EmployerDetails() {
                                     >
                                         <i className="fa fa-eye"></i>
                                     </button>
+                                </td>
+                                <td style={{textAlign: 'center'}}>
+                                    <div className="action-buttons-container">
+                                        {profile.certificateOfIncorporation && profile.incorporationVerified !== 'approved' && (
+                                            <button 
+                                                className="btn btn-outline-success btn-sm"
+                                                onClick={() => updateDocumentStatus(id, 'incorporationVerified', 'approved')}
+                                                style={{ marginRight: '5px' }}
+                                                title="Approve Document"
+                                            >
+                                                <i className="fa fa-check"></i>
+                                            </button>
+                                        )}
+                                        {profile.certificateOfIncorporation && profile.incorporationVerified !== 'rejected' && (
+                                            <button 
+                                                className="btn btn-outline-danger btn-sm"
+                                                onClick={() => updateDocumentStatus(id, 'incorporationVerified', 'rejected')}
+                                                title="Reject Document"
+                                            >
+                                                <i className="fa fa-times"></i>
+                                            </button>
+                                        )}
+                                        {!profile.certificateOfIncorporation && (
+                                            <span className="text-muted">No document</span>
+                                        )}
+                                    </div>
                                 </td>
                             </tr>
 

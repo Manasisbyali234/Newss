@@ -197,16 +197,16 @@
     text-align: center !important;
 }
 
-.documents-table thead th:nth-child(1) { width: 25% !important; min-width: 150px !important; }
-.documents-table thead th:nth-child(2) { width: 25% !important; min-width: 150px !important; }
-.documents-table thead th:nth-child(3) { width: 15% !important; min-width: 100px !important; }
-.documents-table thead th:nth-child(4) { width: 15% !important; min-width: 100px !important; }
+.documents-table thead th:nth-child(1) { width: 20% !important; min-width: 150px !important; }
+.documents-table thead th:nth-child(2) { width: 15% !important; min-width: 120px !important; }
+.documents-table thead th:nth-child(3) { width: 15% !important; min-width: 120px !important; }
+.documents-table thead th:nth-child(4) { width: 10% !important; min-width: 80px !important; }
 .documents-table thead th:nth-child(5) { width: 20% !important; min-width: 150px !important; }
 
-.documents-table tbody td:nth-child(1) { width: 25% !important; min-width: 150px !important; }
-.documents-table tbody td:nth-child(2) { width: 25% !important; min-width: 150px !important; }
-.documents-table tbody td:nth-child(3) { width: 15% !important; min-width: 100px !important; }
-.documents-table tbody td:nth-child(4) { width: 15% !important; min-width: 100px !important; }
+.documents-table tbody td:nth-child(1) { width: 20% !important; min-width: 150px !important; }
+.documents-table tbody td:nth-child(2) { width: 15% !important; min-width: 120px !important; }
+.documents-table tbody td:nth-child(3) { width: 15% !important; min-width: 120px !important; }
+.documents-table tbody td:nth-child(4) { width: 10% !important; min-width: 80px !important; }
 .documents-table tbody td:nth-child(5) { width: 20% !important; min-width: 150px !important; }
 
 .documents-table thead th i {
@@ -319,21 +319,21 @@
 }
 
 .badge-approved {
-    background: rgba(255, 122, 0, 0.08) !important;
-    color: #FF7A00 !important;
-    border-color: #FF7A00 !important;
+    background: rgba(40, 167, 69, 0.1) !important;
+    color: #28a745 !important;
+    border-color: #28a745 !important;
 }
 
 .badge-rejected {
-    background: rgba(255, 122, 0, 0.08) !important;
-    color: #FF7A00 !important;
-    border-color: #FF7A00 !important;
+    background: rgba(220, 53, 69, 0.1) !important;
+    color: #dc3545 !important;
+    border-color: #dc3545 !important;
 }
 
 .badge-pending {
-    background: rgba(255, 122, 0, 0.08) !important;
-    color: #FF7A00 !important;
-    border-color: #FF7A00 !important;
+    background: rgba(255, 193, 7, 0.1) !important;
+    color: #ffc107 !important;
+    border-color: #ffc107 !important;
 }
 
 .badge-pending i {
@@ -808,16 +808,33 @@
 /* Action buttons container */
 .action-buttons-container {
     display: flex !important;
-    flex-direction: column !important;
-    gap: 6px !important;
+    flex-direction: row !important;
+    gap: 4px !important;
     justify-content: center !important;
     align-items: center !important;
-    padding: 8px 4px !important;
+    padding: 4px !important;
+    flex-wrap: nowrap !important;
 }
 
 .action-buttons-container .btn {
-    width: 100% !important;
-    min-width: 100px !important;
+    min-width: 32px !important;
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 4px !important;
+    font-size: 0.8rem !important;
+}
+
+.action-buttons-container .btn i {
+    margin: 0 !important;
+}
+
+.action-buttons-container .text-muted {
+    font-size: 0.75rem !important;
+    white-space: nowrap !important;
 }
 
 /* Authorization Letters specific action buttons */
@@ -1028,6 +1045,7 @@
     .documents-table thead th:first-child,
     .documents-table thead th:nth-child(2),
     .documents-table thead th:nth-child(3),
+    .documents-table thead th:nth-child(4),
     .documents-table thead th:last-child {
         width: auto;
     }
@@ -1173,6 +1191,30 @@
         text-transform: uppercase;
     }
     
+    .documents-table tbody tr:nth-child(1) td:nth-child(1):before { content: "Document Type: "; }
+    .documents-table tbody tr:nth-child(1) td:nth-child(2):before { content: "Upload Status: "; }
+    .documents-table tbody tr:nth-child(1) td:nth-child(3):before { content: "Verification Status: "; }
+    .documents-table tbody tr:nth-child(1) td:nth-child(4):before { content: "View: "; }
+    .documents-table tbody tr:nth-child(1) td:nth-child(5):before { content: "Actions: "; }
+    
+    .documents-table tbody tr:nth-child(2) td:nth-child(1):before { content: "Document Type: "; }
+    .documents-table tbody tr:nth-child(2) td:nth-child(2):before { content: "Upload Status: "; }
+    .documents-table tbody tr:nth-child(2) td:nth-child(3):before { content: "Verification Status: "; }
+    .documents-table tbody tr:nth-child(2) td:nth-child(4):before { content: "View: "; }
+    .documents-table tbody tr:nth-child(2) td:nth-child(5):before { content: "Actions: "; }
+    
+    .documents-table tbody tr:nth-child(3) td:nth-child(1):before { content: "Document Type: "; }
+    .documents-table tbody tr:nth-child(3) td:nth-child(2):before { content: "Upload Status: "; }
+    .documents-table tbody tr:nth-child(3) td:nth-child(3):before { content: "Verification Status: "; }
+    .documents-table tbody tr:nth-child(3) td:nth-child(4):before { content: "View: "; }
+    .documents-table tbody tr:nth-child(3) td:nth-child(5):before { content: "Actions: "; }
+    
+    .documents-table tbody tr:nth-child(4) td:nth-child(1):before { content: "Document Type: "; }
+    .documents-table tbody tr:nth-child(4) td:nth-child(2):before { content: "Upload Status: "; }
+    .documents-table tbody tr:nth-child(4) td:nth-child(3):before { content: "Verification Status: "; }
+    .documents-table tbody tr:nth-child(4) td:nth-child(4):before { content: "View: "; }
+    .documents-table tbody tr:nth-child(4) td:nth-child(5):before { content: "Actions: "; }
+    
     .documents-table tbody td:first-child {
         border-top: none;
         padding-top: 0 !important;
@@ -1192,7 +1234,13 @@
     .action-buttons-container .btn {
         width: auto !important;
         min-width: 80px !important;
+        height: auto !important;
+        padding: 8px 12px !important;
         flex: 0 0 auto;
+    }
+    
+    .action-buttons-container .text-muted {
+        font-size: 0.8rem !important;
     }
     
     .status-badge {

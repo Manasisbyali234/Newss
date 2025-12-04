@@ -318,14 +318,22 @@ function EmpCompanyProfilePage() {
             if (data && data[0]?.Status === 'Success' && data[0]?.PostOffice?.length > 0) {
                 const city = data[0].PostOffice[0].District;
                 const state = data[0].PostOffice[0].State;
+                
+                // Update form data
                 setFormData(prev => ({ 
                     ...prev, 
                     city, 
                     // Only auto-fill state if it's not already selected
                     state: prev.state || state 
                 }));
-                const message = formData.state ? `City auto-filled: ${city}` : `City and State auto-filled: ${city}, ${state}`;
-                showSuccess(message);
+                
+                // Clear validation errors for city and state since they're now populated
+                setErrors(prev => {
+                    const newErrors = { ...prev };
+                    delete newErrors.city;
+                    delete newErrors.state;
+                    return newErrors;
+                });
             } else {
                 setFormData(prev => ({ ...prev, city: '' }));
                 showWarning('Invalid pincode or city not found');
@@ -340,6 +348,28 @@ function EmpCompanyProfilePage() {
 
     const validateFormData = () => {
         const formErrors = validateForm(formData, validationRules);
+        
+        // Add document upload validation
+        const requiredDocuments = {
+            panCardImage: 'PAN Card Image',
+            cinImage: 'CIN Document',
+            gstImage: 'GST Certificate',
+            certificateOfIncorporation: 'Certificate of Incorporation (Issued by RoC)'
+        };
+        
+        Object.entries(requiredDocuments).forEach(([field, label]) => {
+            if (!formData[field] || formData[field].trim() === '') {
+                if (!formErrors[field]) {
+                    formErrors[field] = [];
+                }
+                if (Array.isArray(formErrors[field])) {
+                    formErrors[field].push(`${label} is required`);
+                } else {
+                    formErrors[field] = [`${label} is required`];
+                }
+            }
+        });
+        
         setErrors(formErrors);
         
         const errorCount = Object.keys(formErrors).length;
@@ -539,6 +569,12 @@ function EmpCompanyProfilePage() {
             
             if (data.success) {
                 handleInputChange(fieldName, data.filePath);
+                // Clear validation error for this field
+                setErrors(prev => {
+                    const newErrors = { ...prev };
+                    delete newErrors[fieldName];
+                    return newErrors;
+                });
                 showSuccess('Document uploaded successfully!');
             } else {
                 showError(data.message || 'Document upload failed');
@@ -992,7 +1028,7 @@ function EmpCompanyProfilePage() {
                 
                 <div className="alert alert-info mt-3" style={{fontSize: '14px'}}>
                     <i className="fas fa-info-circle me-2"></i>
-                    <strong>Important:</strong> Complete all required fields and click "Save Profile" to submit your profile for admin review. You can post jobs only after admin approval.
+                    <strong>Important:</strong> Complete all required fields and upload all required documents (PAN Card, CIN Document, GST Certificate, and Certificate of Incorporation) before clicking "Save Profile". You can post jobs only after admin approval.
                 </div>
                 
                 {globalErrors.length > 0 && (
@@ -1529,61 +1565,73 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label><Upload size={16} className="me-2" /> Upload PAN Card Image</label>
+                                    <label className="required-field"><Upload size={16} className="me-2" /> Upload PAN Card Image</label>
                                     <input
-                                        className="form-control"
+                                        className={`form-control ${errors.panCardImage ? 'is-invalid' : ''}`}
                                         type="file"
                                         accept=".jpg,.jpeg,.png,.pdf"
                                         onChange={(e) => handleDocumentUpload(e, 'panCardImage')}
                                     />
-                                    {formData.panCardImage && (
+                                    {formData.panCardImage ? (
                                         <p className="text-success mt-1">✓ PAN Card uploaded</p>
+                                    ) : (
+                                        <p className="text-muted mt-1">No file chosen</p>
                                     )}
+                                    <ErrorDisplay errors={errors} fieldName="panCardImage" />
                                 </div>
                             </div>
 
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label><Upload size={16} className="me-2" /> Upload CIN Document</label>
+                                    <label className="required-field"><Upload size={16} className="me-2" /> Upload CIN Document</label>
                                     <input
-                                        className="form-control"
+                                        className={`form-control ${errors.cinImage ? 'is-invalid' : ''}`}
                                         type="file"
                                         accept=".jpg,.jpeg,.png,.pdf"
                                         onChange={(e) => handleDocumentUpload(e, 'cinImage')}
                                     />
-                                    {formData.cinImage && (
+                                    {formData.cinImage ? (
                                         <p className="text-success mt-1">✓ CIN Document uploaded</p>
+                                    ) : (
+                                        <p className="text-muted mt-1">No file chosen</p>
                                     )}
+                                    <ErrorDisplay errors={errors} fieldName="cinImage" />
                                 </div>
                             </div>
 
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label><Upload size={16} className="me-2" /> Upload GST Certificate</label>
+                                    <label className="required-field"><Upload size={16} className="me-2" /> Upload GST Certificate</label>
                                     <input
-                                        className="form-control"
+                                        className={`form-control ${errors.gstImage ? 'is-invalid' : ''}`}
                                         type="file"
                                         accept=".jpg,.jpeg,.png,.pdf"
                                         onChange={(e) => handleDocumentUpload(e, 'gstImage')}
                                     />
-                                    {formData.gstImage && (
+                                    {formData.gstImage ? (
                                         <p className="text-success mt-1">✓ GST Certificate uploaded</p>
+                                    ) : (
+                                        <p className="text-muted mt-1">No file chosen</p>
                                     )}
+                                    <ErrorDisplay errors={errors} fieldName="gstImage" />
                                 </div>
                             </div>
 
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label><Upload size={16} className="me-2" /> Certificate of Incorporation (Issued by RoC)</label>
+                                    <label className="required-field"><Upload size={16} className="me-2" /> Certificate of Incorporation (Issued by RoC)</label>
                                     <input
-                                        className="form-control"
+                                        className={`form-control ${errors.certificateOfIncorporation ? 'is-invalid' : ''}`}
                                         type="file"
                                         accept=".jpg,.jpeg,.png,.pdf"
                                         onChange={(e) => handleDocumentUpload(e, 'certificateOfIncorporation')}
                                     />
-                                    {formData.certificateOfIncorporation && (
+                                    {formData.certificateOfIncorporation ? (
                                         <p className="text-success mt-1">✓ Certificate of Incorporation uploaded</p>
+                                    ) : (
+                                        <p className="text-muted mt-1">No file chosen</p>
                                     )}
+                                    <ErrorDisplay errors={errors} fieldName="certificateOfIncorporation" />
                                 </div>
                             </div>
 
