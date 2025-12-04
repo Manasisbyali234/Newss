@@ -204,7 +204,7 @@ function EmployersDetail1Page() {
 														</div>
 
 														<h4 className="twm-job-title">
-															{employer.employerId?.companyName || employer.companyName || 'Company Name'}
+															{employer.companyName || employer.employerId?.companyName || 'Company Name'}
 														</h4>
 														<p className="twm-job-address">
 															<i className="feather-map-pin" />

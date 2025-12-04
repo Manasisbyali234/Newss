@@ -1069,7 +1069,7 @@ function SectionCanEducation({ profile, onUpdate }) {
             <div className="panel-heading wt-panel-heading p-a20">
                 <h4 className="panel-tittle m-a0">Educational Qualification Details</h4>
             </div>
-            <div className="panel-body wt-panel-body p-a20">
+            <div className="panel-body wt-panel-body p-a20 education-section-body">
                 <div className="twm-panel-inner">
                     {/* Education Level Dropdown */}
                     <div className="mb-4">
@@ -1326,8 +1326,47 @@ function SectionCanEducation({ profile, onUpdate }) {
                     {educationEntries.length > 0 && (
                         <div className="mt-4">
                             <h5 className="mb-3">Education Summary</h5>
-                            <div className="table-responsive" style={{overflowX: 'auto'}}>
-                                <table className="table table-bordered table-sm" style={{minWidth: '100%', fontSize: '14px'}}>
+                            <style>{`
+                                .education-section-body {
+                                    overflow: hidden !important;
+                                }
+                                .twm-panel-inner {
+                                    overflow: hidden !important;
+                                }
+                                .education-table-wrapper {
+                                    overflow-x: scroll !important;
+                                    -webkit-overflow-scrolling: touch !important;
+                                    max-width: 100% !important;
+                                    scrollbar-width: thin !important;
+                                    scrollbar-color: #888 #f1f1f1 !important;
+                                }
+                                .education-table-wrapper::-webkit-scrollbar {
+                                    height: 14px !important;
+                                    -webkit-appearance: none !important;
+                                    display: block !important;
+                                }
+                                .education-table-wrapper::-webkit-scrollbar-track {
+                                    background: #f1f1f1 !important;
+                                    border-radius: 4px !important;
+                                    display: block !important;
+                                }
+                                .education-table-wrapper::-webkit-scrollbar-thumb {
+                                    background: #888 !important;
+                                    border-radius: 4px !important;
+                                    display: block !important;
+                                    min-width: 50px !important;
+                                }
+                                @media (max-width: 768px) {
+                                    .education-table-wrapper {
+                                        padding-bottom: 5px !important;
+                                    }
+                                    .education-table-wrapper::-webkit-scrollbar {
+                                        height: 16px !important;
+                                    }
+                                }
+                            `}</style>
+                            <div className="table-responsive education-table-wrapper" style={{border: '1px solid #dee2e6', borderRadius: '4px', marginBottom: '10px'}}>
+                                <table className="table table-bordered table-sm mb-0" style={{minWidth: '800px', fontSize: '14px', width: '100%'}}>
                                 <style>{`
                                     .table tbody tr:hover {
                                         background-color: transparent !important;

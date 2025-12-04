@@ -90,7 +90,7 @@ function SectionCanKeySkills({ profile }) {
 
     return (
         <>
-            <div className="panel-heading wt-panel-heading p-a20 panel-heading-with-btn">
+            <div className="panel-heading wt-panel-heading p-a20 d-flex justify-content-between align-items-center">
                 <h4 className="panel-tittle m-a0">
                     Key Skills
                 </h4>
@@ -100,7 +100,7 @@ function SectionCanKeySkills({ profile }) {
                 <div className="panel panel-default">
                     <div className="panel-body wt-panel-body p-a20 m-b30">
                         <div className="row">
-                            <div className="col-md-8">
+                            <div className="col-12 col-md-8 mb-2">
                                 <label><i className="fa fa-cogs me-1"></i> Select a skill from list</label>
                                 <select 
                                     className="form-control"
@@ -114,10 +114,10 @@ function SectionCanKeySkills({ profile }) {
                                     ))}
                                 </select>
                             </div>
-                            <div className="col-md-4 d-flex align-items-end">
+                            <div className="col-12 col-md-4 d-flex align-items-end">
                                 <button 
                                     type="button"
-                                    className="btn btn-outline-primary me-2"
+                                    className="btn btn-outline-primary w-100"
                                     onClick={handleAddFromDropdown}
                                     disabled={!selectedSkill || loading}
                                     style={{backgroundColor: 'transparent'}}
@@ -130,7 +130,7 @@ function SectionCanKeySkills({ profile }) {
                         
                         {showCustomInput && (
                             <div className="row mt-3">
-                                <div className="col-md-8">
+                                <div className="col-12 col-md-8 mb-2">
                                     <label><i className="fa fa-keyboard me-1"></i> Enter custom skill</label>
                                     <input 
                                         className="form-control"
@@ -142,9 +142,9 @@ function SectionCanKeySkills({ profile }) {
                                         autoFocus
                                     />
                                 </div>
-                                <div className="col-md-4 d-flex align-items-end">
+                                <div className="col-12 col-md-4 d-flex gap-2">
                                     <button 
-                                        className="btn btn-outline-primary me-2"
+                                        className="btn btn-outline-primary flex-fill"
                                         onClick={handleAddCustom}
                                         disabled={!customSkill.trim() || loading}
                                         style={{backgroundColor: 'transparent'}}
@@ -153,7 +153,7 @@ function SectionCanKeySkills({ profile }) {
                                         Add
                                     </button>
                                     <button 
-                                        className="btn btn-secondary"
+                                        className="btn btn-secondary flex-fill"
                                         onClick={() => {setShowCustomInput(false); setCustomSkill('');}}
                                     >
                                         <i className="fa fa-times me-1"></i>
@@ -179,14 +179,35 @@ function SectionCanKeySkills({ profile }) {
                         {skills.length > 0 ? (
                             <div className="mt-4">
                                 <label><i className="fa fa-tags me-1"></i> Your Skills</label>
+                                <style>{`
+                                    @media (max-width: 576px) {
+                                        .skill-badge {
+                                            font-size: 11px !important;
+                                            padding: 5px 8px !important;
+                                            max-width: fit-content !important;
+                                            width: auto !important;
+                                        }
+                                        .skill-badge .skill-text {
+                                            overflow: hidden;
+                                            text-overflow: ellipsis;
+                                            white-space: nowrap;
+                                            max-width: calc(100vw - 120px);
+                                        }
+                                        .skill-badge .btn-sm {
+                                            width: 10px !important;
+                                            height: 10px !important;
+                                            font-size: 7px !important;
+                                        }
+                                    }
+                                `}</style>
                                 <div className="d-flex flex-wrap gap-2 mt-2">
                                     {skills.map((skill, index) => (
-                                        <span key={index} className="badge bg-light d-flex align-items-center" style={{fontSize: '13px', padding: '8px 12px', borderRadius: '20px', color: '#333', border: '1px solid #ddd'}}>
-                                            <i className="fa fa-tag me-2" style={{color: '#0056b3', fontSize: '11px'}}></i>
-                                            {skill}
+                                        <span key={index} className="badge bg-light skill-badge" style={{fontSize: '13px', padding: '8px 12px', borderRadius: '20px', color: '#333', border: '1px solid #ddd', display: 'inline-flex', alignItems: 'center', flexDirection: 'row'}}>
+                                            <i className="fa fa-tag me-2" style={{color: '#0056b3', fontSize: '11px', flexShrink: 0}}></i>
+                                            <span className="skill-text" style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{skill}</span>
                                             <button 
                                                 className="btn btn-sm ms-2 p-0"
-                                                style={{background: 'none', border: 'none', color: '#dc3545', fontSize: '12px', width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}
+                                                style={{background: 'none', border: 'none', color: '#dc3545', fontSize: '12px', width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}
                                                 onClick={() => removeSkill(skill)}
                                                 disabled={loading}
                                                 title="Remove skill"

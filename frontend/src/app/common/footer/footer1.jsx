@@ -126,9 +126,42 @@ function Footer1() {
 
 						{/* FOOTER COPYRIGHT */}
 						<div className="footer-bottom">
+							<style>{`
+								.footer-bottom-info {
+									display: flex;
+									flex-direction: column;
+									align-items: center;
+									gap: 15px;
+									text-align: center;
+								}
+								.footer-copy-right {
+									width: 100%;
+								}
+								.footer-copy-right .copyrights-text {
+									padding-left: 0 !important;
+								}
+								.social-icons {
+									display: flex;
+									flex-direction: row;
+									justify-content: center;
+									align-items: center;
+									gap: 15px;
+									margin: 0;
+									padding: 0;
+									list-style: none;
+								}
+								@media (max-width: 768px) {
+									.footer-bottom-info {
+										padding: 20px 15px;
+									}
+									.social-icons {
+										gap: 12px;
+									}
+								}
+							`}</style>
 							<div className="footer-bottom-info">
 								<div className="footer-copy-right">
-									<span className="copyrights-text" style={{paddingLeft: '15px'}}>
+									<span className="copyrights-text">
 										Copyright © 2025 by Tale Global. All Rights Reserved.
 									</span>
 								</div>

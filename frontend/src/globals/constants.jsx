@@ -16,25 +16,19 @@ export function publicUrlFor(path) {
 }
 
 export function loadScript(src, fromPublic) {
-
     return new Promise(function (resolve, reject) {
-        var script = document.createElement('script');
-
-        script.src = (
-            fromPublic === undefined ||
-            fromPublic == null ||
-            fromPublic
-        ) ? publicUrlFor(src) : src;
-
-        script.addEventListener('load', function () {
+        const scriptSrc = (fromPublic === undefined || fromPublic == null || fromPublic) ? publicUrlFor(src) : src;
+        const existingScript = document.querySelector(`script[src="${scriptSrc}"]`);
+        if (existingScript) {
             resolve();
-        });
-        script.addEventListener('error', function (e) {
-            reject(e);
-        });
+            return;
+        }
+        const script = document.createElement('script');
+        script.src = scriptSrc;
+        script.onload = () => resolve();
+        script.onerror = (e) => reject(e);
         document.body.appendChild(script);
-        document.body.removeChild(script);
-    })
+    });
 };
 
 export function setMenuActive(currentpath, path) {

@@ -107,12 +107,7 @@ function CanStatusPage() {
 			}, 5000);
 		}
 		
-		// Set up polling to refresh data every 30 seconds
-		const interval = setInterval(() => {
-			fetchApplications();
-		}, 30000);
-		
-		return () => clearInterval(interval);
+
 	}, []);
 
 	const fetchApplications = async () => {
@@ -355,11 +350,7 @@ function CanStatusPage() {
 					)}
 
 					{/* Refresh Controls */}
-					<div className="d-flex justify-content-between align-items-center mb-3">
-						<div className="d-flex align-items-center">
-							<i className="fa fa-clock-o me-2" style={{color: '#ff6b35'}}></i>
-							<small className="text-muted">Updates automatically every 30 seconds</small>
-						</div>
+					<div className="d-flex justify-content-end align-items-center mb-3">
 						<button 
 							className="btn btn-sm btn-outline-primary refresh-btn"
 							onClick={fetchApplications}

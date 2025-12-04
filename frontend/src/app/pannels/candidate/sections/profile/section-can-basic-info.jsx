@@ -521,7 +521,7 @@ function SectionCandicateBasicInfo() {
                                     placeholder="Enter mobile number"
                                     maxLength="15"
                                     required
-                                    style={{ paddingLeft: '130px', height: '50px', borderRadius: '0 8px 8px 0', borderLeft: 'none' }}
+                                    style={{ paddingLeft: '80px', height: '50px', borderRadius: '0 8px 8px 0', borderLeft: 'none' }}
                                     className="phone-input-field"
                                 />
                             </div>
@@ -604,6 +604,22 @@ function SectionCandicateBasicInfo() {
                             {errors.location && <div className="invalid-feedback">{errors.location}</div>}
                         </div>
                         <div className="col-md-4 mb-3">
+                            <label className="form-label"><i className="fa fa-map-pin me-2" style={{color: '#ff6b35'}}></i>Pincode *</label>
+                            <input
+                                className={`form-control ${errors.pincode ? 'is-invalid' : ''}`}
+                                type="text"
+                                name="pincode"
+                                value={formData.pincode}
+                                onChange={handleInputChange}
+                                onBlur={handleBlur}
+                                placeholder="Enter 6-digit pincode"
+                                maxLength="6"
+                                required
+                            />
+                            {errors.pincode && <div className="invalid-feedback">{errors.pincode}</div>}
+                            <small className="text-muted">Enter 6-digit pincode</small>
+                        </div>
+                        <div className="col-md-4 mb-3">
                             <label className="form-label"><i className="fa fa-map me-2" style={{color: '#ff6b35'}}></i>State Code</label>
                             <select 
                                 className="form-control"
@@ -650,22 +666,6 @@ function SectionCandicateBasicInfo() {
                                 <option value="PY">PY - Puducherry</option>
                             </select>
                         </div>
-                        <div className="col-md-4 mb-3">
-                            <label className="form-label"><i className="fa fa-map-pin me-2" style={{color: '#ff6b35'}}></i>Pincode *</label>
-                            <input
-                                className={`form-control ${errors.pincode ? 'is-invalid' : ''}`}
-                                type="text"
-                                name="pincode"
-                                value={formData.pincode}
-                                onChange={handleInputChange}
-                                onBlur={handleBlur}
-                                placeholder="Enter 6-digit pincode"
-                                maxLength="6"
-                                required
-                            />
-                            {errors.pincode && <div className="invalid-feedback">{errors.pincode}</div>}
-                            <small className="text-muted">Enter 6-digit pincode</small>
-                        </div>
                     </div>
 
                     <div className="text-center mt-4">
@@ -692,7 +692,7 @@ function SectionCandicateBasicInfo() {
                         document.querySelector('form').requestSubmit();
                     }, 100);
                 }}
-                role="candidate"
+                role="candidateProfile"
             />
         </form>
         </>

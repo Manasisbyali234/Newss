@@ -322,7 +322,7 @@ function SectionCanPersonalDetail({ profile }) {
                 <div className="panel panel-default">
                     <div className="panel-body wt-panel-body p-a20 m-b30">
                         <div className="row">
-                            <div className="col-md-6">
+                            <div className="col-12 col-md-6 mb-3">
                                 <label><i className="fa fa-user me-1"></i> First Name *</label>
                                 <input
                                     className="form-control"
@@ -335,7 +335,7 @@ function SectionCanPersonalDetail({ profile }) {
                                 <small className="text-muted">Name is fetched from your profile page</small>
                             </div>
 
-                            <div className="col-md-6">
+                            <div className="col-12 col-md-6 mb-3">
                                 <label><i className="fa fa-user me-1"></i> Middle Name</label>
                                 <input
                                     className="form-control"
@@ -348,7 +348,7 @@ function SectionCanPersonalDetail({ profile }) {
                                 <small className="text-muted">Name is fetched from your profile page</small>
                             </div>
 
-                            <div className="col-md-6">
+                            <div className="col-12 col-md-6 mb-3">
                                 <label><i className="fa fa-user me-1"></i> Last Name *</label>
                                 <input
                                     className="form-control"
@@ -361,10 +361,24 @@ function SectionCanPersonalDetail({ profile }) {
                                 <small className="text-muted">Name is fetched from your profile page</small>
                             </div>
 
-                            <div className="col-md-6">
+                            <div className="col-12 col-md-6 mb-3">
+                                <style>{`
+                                    @media (max-width: 576px) {
+                                        .mobile-input-wrapper input {
+                                            font-size: 13px !important;
+                                            padding-left: 60px !important;
+                                        }
+                                        .mobile-country-code {
+                                            width: 50px !important;
+                                            padding-left: 8px !important;
+                                            padding-right: 8px !important;
+                                            font-size: 13px !important;
+                                        }
+                                    }
+                                `}</style>
                                 <label><i className="fa fa-phone me-1"></i> Mobile Number *</label>
-                                <div style={{position: 'relative'}}>
-                                    <div style={{
+                                <div style={{position: 'relative'}} className="mobile-input-wrapper">
+                                    <div className="mobile-country-code" style={{
                                         position: 'absolute',
                                         left: '0',
                                         top: '0',
@@ -387,7 +401,7 @@ function SectionCanPersonalDetail({ profile }) {
                                     <input
                                         className="form-control"
                                         type="tel"
-                                        placeholder="Mobile number fetched from profile"
+                                        placeholder="Mobile number"
                                         value={formData.mobileNumber}
                                         readOnly
                                         style={{ 
@@ -402,7 +416,7 @@ function SectionCanPersonalDetail({ profile }) {
                                 <small className="text-muted">Mobile number is fetched from your profile page</small>
                             </div>
 
-                            <div className="col-md-6">
+                            <div className="col-12 col-md-6 mb-3">
                                 <label><i className="fa fa-envelope me-1"></i> Email Address *</label>
                                 <input
                                     className="form-control"
@@ -415,7 +429,7 @@ function SectionCanPersonalDetail({ profile }) {
                                 <small className="text-muted">Email is fetched from your profile page</small>
                             </div>
 
-                            <div className="col-md-6">
+                            <div className="col-12 col-md-6 mb-3">
                                 <label><i className="fa fa-map-marker me-1"></i> Location *</label>
                                 <input
                                     className={`form-control ${errors.location ? 'is-invalid' : ''}`}
@@ -431,7 +445,7 @@ function SectionCanPersonalDetail({ profile }) {
                                 {errors.location && <div className="text-danger mt-1"><small>{errors.location}</small></div>}
                             </div>
 
-                            <div className="col-md-6">
+                            <div className="col-12 col-md-6 mb-3">
                                 <label><i className="fa fa-map me-1"></i> State Code</label>
                                 <select 
                                     className="form-control"
@@ -445,7 +459,7 @@ function SectionCanPersonalDetail({ profile }) {
                                 </select>
                             </div>
 
-                            <div className="col-md-6">
+                            <div className="col-12 col-md-6 mb-3">
                                 <label><i className="fa fa-map-pin me-1"></i> Pincode *</label>
                                 <input
                                     className={`form-control ${errors.pincode ? 'is-invalid' : ''}`}
@@ -462,7 +476,7 @@ function SectionCanPersonalDetail({ profile }) {
                                 />
                                 {errors.pincode && <div className="text-danger mt-1"><small>{errors.pincode}</small></div>}
                             </div>
-                            <div className="col-md-6">
+                            <div className="col-12 col-md-6 mb-3">
                                 <label><i className="fa fa-calendar me-1"></i> Date of Birth *</label>
                                 <input
                                     className={`form-control ${errors.dateOfBirth ? 'is-invalid' : ''}`}
@@ -479,7 +493,7 @@ function SectionCanPersonalDetail({ profile }) {
                                 {errors.dateOfBirth && <div className="text-danger mt-1"><small>{errors.dateOfBirth}</small></div>}
                             </div>
 
-                            <div className="col-md-6">
+                            <div className="col-12 col-md-6 mb-3">
                                 <label><i className="fa fa-venus-mars me-1"></i> Gender *</label>
                                 <select 
                                     className={`form-control ${errors.gender ? 'is-invalid' : ''}`}
@@ -498,7 +512,7 @@ function SectionCanPersonalDetail({ profile }) {
                                 {errors.gender && <div className="text-danger mt-1"><small>{errors.gender}</small></div>}
                             </div>
 
-                            <div className="col-md-6">
+                            <div className="col-12 col-md-6 mb-3">
                                 <label><i className="fa fa-male me-1"></i> Father's / Husband's Name *</label>
                                 <input
                                     className={`form-control ${errors.fatherName ? 'is-invalid' : ''}`}
@@ -514,7 +528,7 @@ function SectionCanPersonalDetail({ profile }) {
                                 {errors.fatherName && <div className="text-danger mt-1"><small>{errors.fatherName}</small></div>}
                             </div>
 
-                            <div className="col-md-6">
+                            <div className="col-12 col-md-6 mb-3">
                                 <label><i className="fa fa-female me-1"></i> Mother's Name *</label>
                                 <input
                                     className={`form-control ${errors.motherName ? 'is-invalid' : ''}`}
@@ -530,7 +544,7 @@ function SectionCanPersonalDetail({ profile }) {
                                 {errors.motherName && <div className="text-danger mt-1"><small>{errors.motherName}</small></div>}
                             </div>
 
-                            <div className="col-md-12">
+                            <div className="col-12 mb-3">
                                 <label><i className="fa fa-home me-1"></i> Residential Address *</label>
                                 <textarea
                                     className={`form-control ${errors.residentialAddress ? 'is-invalid' : ''}`}
@@ -546,10 +560,17 @@ function SectionCanPersonalDetail({ profile }) {
                                 {errors.residentialAddress && <div className="text-danger mt-1"><small>{errors.residentialAddress}</small></div>}
                             </div>
 
-                            <div className="col-md-12">
-                                <div className="d-flex align-items-center mb-2">
+                            <div className="col-12 mb-3">
+                                <style>{`
+                                    @media (max-width: 576px) {
+                                        .address-toggle-wrapper {
+                                            gap: 10px !important;
+                                        }
+                                    }
+                                `}</style>
+                                <div className="d-flex align-items-center mb-2 address-toggle-wrapper" style={{gap: '8px'}}>
                                     <div 
-                                        className="toggle-switch me-2"
+                                        className="toggle-switch"
                                         onClick={() => handleSameAsResidentialChange(!sameAsResidential)}
                                         style={{
                                             width: '40px',
@@ -558,7 +579,8 @@ function SectionCanPersonalDetail({ profile }) {
                                             borderRadius: '9px',
                                             position: 'relative',
                                             cursor: 'pointer',
-                                            transition: 'background-color 0.3s'
+                                            transition: 'background-color 0.3s',
+                                            flexShrink: 0
                                         }}
                                     >
                                         <div 
@@ -574,7 +596,7 @@ function SectionCanPersonalDetail({ profile }) {
                                             }}
                                         ></div>
                                     </div>
-                                    <label style={{ cursor: 'pointer' }} onClick={() => handleSameAsResidentialChange(!sameAsResidential)}>
+                                    <label style={{ cursor: 'pointer', margin: 0 }} onClick={() => handleSameAsResidentialChange(!sameAsResidential)}>
                                         <i className="fa fa-copy me-1"></i> Same as Residential Address
                                     </label>
                                 </div>

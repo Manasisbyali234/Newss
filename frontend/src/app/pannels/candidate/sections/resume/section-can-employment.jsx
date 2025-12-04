@@ -300,15 +300,15 @@ function SectionCanEmployment({ profile }) {
                     <div className="modal-dialog modal-dialog-centered">
                         <div className="modal-content">
                             <form onSubmit={(e) => e.preventDefault()}>
-                                <div className="modal-header">
-                                    <h2 className="modal-title">Add Present Employment Details</h2>
-                                    <div className="d-flex align-items-center">
-                                        <small className="text-muted me-3">
-                                            <i className="fa fa-save me-1"></i>
-                                            Form auto-saves as you type
-                                        </small>
+                                <div className="modal-header flex-column align-items-start" style={{gap: '12px'}}>
+                                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
+                                        <h2 className="modal-title" style={{margin: 0, fontSize: 'clamp(16px, 4vw, 24px)'}}>Add Present Employment Details</h2>
                                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
                                     </div>
+                                    <small className="text-muted" style={{fontSize: 'clamp(12px, 2vw, 14px)'}}>
+                                        <i className="fa fa-save me-1"></i>
+                                        Form auto-saves as you type
+                                    </small>
                                 </div>
                                 <div className="modal-body">
                                     <div className="row">

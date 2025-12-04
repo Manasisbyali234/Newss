@@ -82,20 +82,27 @@ function EmpCompanyProfilePage() {
         companyName: { required: true, minLength: 2 },
         phone: { required: true, phone: true },
         email: { required: true, email: true },
-        website: { url: true },
-        establishedSince: { year: true },
-        corporateAddress: { minLength: 10 },
-        officialEmail: { email: true },
-        officialMobile: { phone: true },
-        cin: { pattern: /^[A-Z]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/, patternMessage: 'Invalid CIN format. Must be 21 characters (e.g., U12345AB1234ABC123456)' },
-        gstNumber: { pattern: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/, patternMessage: 'Invalid GST format. Must be 15 characters (e.g., 12ABCDE1234F1Z5)' },
-        panNumber: { pattern: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, patternMessage: 'Invalid PAN format. Must be 10 characters (e.g., ABCDE1234F)' },
+        website: { required: true, url: true },
+        establishedSince: { required: true, year: true },
+        teamSize: { required: true },
+        description: { required: true, minLength: 10 },
+        location: { required: true, minLength: 2 },
+        corporateAddress: { required: true, minLength: 10 },
+        pincode: { required: true, pattern: /^\d{6}$/, patternMessage: 'Pincode must be 6 digits' },
+        city: { required: true, minLength: 2 },
+        state: { required: true },
+        officialEmail: { required: true, email: true },
+        officialMobile: { required: true, phone: true },
+        companyType: { required: true },
+        cin: { required: true, pattern: /^[A-Z]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/, patternMessage: 'Invalid CIN format. Must be 21 characters (e.g., U12345AB1234ABC123456)' },
+        gstNumber: { required: true, pattern: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/, patternMessage: 'Invalid GST format. Must be 15 characters (e.g., 12ABCDE1234F1Z5)' },
+        industrySector: { required: true },
+        panNumber: { required: true, pattern: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, patternMessage: 'Invalid PAN format. Must be 10 characters (e.g., ABCDE1234F)' },
         contactFullName: { required: true, minLength: 2 },
         contactLastName: { required: true, minLength: 2 },
         contactDesignation: { required: true, minLength: 2 },
         contactOfficialEmail: { required: true, email: true },
-        contactMobile: { required: true, phone: true },
-        alternateContact: { phone: true }
+        contactMobile: { required: true, phone: true }
     });
 
     useEffect(() => {
@@ -1143,7 +1150,7 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-xl-4 col-lg-12 col-md-12">
                                 <div className="form-group">
-                                    <label><Globe size={16} className="me-2" /> Website</label>
+                                    <label className="required-field"><Globe size={16} className="me-2" /> Website</label>
                                     <input
                                         className={`form-control ${errors.website ? 'is-invalid' : ''}`}
                                         type="text"
@@ -1157,7 +1164,7 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-xl-4 col-lg-12 col-md-12">
                                 <div className="form-group">
-                                    <label><Calendar size={16} className="me-2" /> Est. Since</label>
+                                    <label className="required-field"><Calendar size={16} className="me-2" /> Est. Since</label>
                                     <input
                                         className={`form-control ${errors.establishedSince ? 'is-invalid' : ''}`}
                                         type="text"
@@ -1171,9 +1178,9 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-xl-4 col-lg-12 col-md-12">
                                 <div className="form-group">
-                                    <label><UsersIcon size={16} className="me-2" /> Team Size</label>
+                                    <label className="required-field"><UsersIcon size={16} className="me-2" /> Team Size</label>
                                     <select
-                                        className="form-control"
+                                        className={`form-control ${errors.teamSize ? 'is-invalid' : ''}`}
                                         value={formData.teamSize}
                                         onChange={(e) => handleInputChange('teamSize', e.target.value)}
                                     >
@@ -1186,6 +1193,7 @@ function EmpCompanyProfilePage() {
                                         <option value="1000+">1000+ (Enterprise)</option>
                                         <option value="custom">Other (Enter manually)</option>
                                     </select>
+                                    <ErrorDisplay errors={errors} fieldName="teamSize" />
                                     {formData.teamSize === 'custom' && (
                                         <input
                                             className="form-control mt-2"
@@ -1202,27 +1210,29 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-md-12">
                                 <div className="form-group">
-                                    <label><FileText size={16} className="me-2" /> Description</label>
+                                    <label className="required-field"><FileText size={16} className="me-2" /> Description</label>
                                     <RichTextEditor
                                         value={formData.description || 'We are a dynamic company focused on delivering excellent services and creating opportunities for talented professionals.'}
                                         onChange={(value) => handleInputChange('description', value)}
                                         placeholder="Enter company description..."
-                                        className="form-control-editor"
+                                        className={`form-control-editor ${errors.description ? 'is-invalid' : ''}`}
                                     />
+                                    <ErrorDisplay errors={errors} fieldName="description" />
                                     <small className="text-muted mt-1">Use the toolbar above to format your company description with bold, italic, lists, and alignment options.</small>
                                 </div>
                             </div>
 
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label><MapPin size={16} className="me-2" /> Primary Office Location</label>
+                                    <label className="required-field"><MapPin size={16} className="me-2" /> Primary Office Location</label>
                                     <input
-                                        className="form-control"
+                                        className={`form-control ${errors.location ? 'is-invalid' : ''}`}
                                         type="text"
                                         value={formData.location || 'Bangalore, India'}
                                         onChange={(e) => handleInputChange('location', e.target.value)}
                                         placeholder="e.g., Bangalore, India"
                                     />
+                                    <ErrorDisplay errors={errors} fieldName="location" />
                                     <small className="text-muted">A default location has been provided. You can edit it as needed.</small>
                                 </div>
                             </div>
@@ -1291,7 +1301,7 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label><MapPin size={16} className="me-2" /> Corporate Office Address</label>
+                                    <label className="required-field"><MapPin size={16} className="me-2" /> Corporate Office Address</label>
                                     <input
                                         className={`form-control ${errors.corporateAddress ? 'is-invalid' : ''}`}
                                         type="text"
@@ -1318,37 +1328,39 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label><MapPin size={16} className="me-2" /> Pincode</label>
+                                    <label className="required-field"><MapPin size={16} className="me-2" /> Pincode</label>
                                     <input
-                                        className="form-control"
+                                        className={`form-control ${errors.pincode ? 'is-invalid' : ''}`}
                                         type="text"
                                         value={formData.pincode}
                                         onChange={(e) => handleInputChange('pincode', e.target.value)}
                                         placeholder="Enter 6-digit pincode"
                                         maxLength="6"
                                     />
+                                    <ErrorDisplay errors={errors} fieldName="pincode" />
                                     {fetchingCity && <small className="text-info">Fetching city...</small>}
                                 </div>
                             </div>
 
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label><MapPin size={16} className="me-2" /> City</label>
+                                    <label className="required-field"><MapPin size={16} className="me-2" /> City</label>
                                     <input
-                                        className="form-control"
+                                        className={`form-control ${errors.city ? 'is-invalid' : ''}`}
                                         type="text"
                                         value={formData.city}
                                         onChange={(e) => handleInputChange('city', e.target.value)}
                                         placeholder="Enter city or auto-fill from pincode"
                                     />
+                                    <ErrorDisplay errors={errors} fieldName="city" />
                                 </div>
                             </div>
 
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label><MapPin size={16} className="me-2" /> State</label>
+                                    <label className="required-field"><MapPin size={16} className="me-2" /> State</label>
                                     <select 
-                                        className="form-control"
+                                        className={`form-control ${errors.state ? 'is-invalid' : ''}`}
                                         value={formData.state}
                                         onChange={(e) => handleInputChange('state', e.target.value)}
                                     >
@@ -1390,12 +1402,13 @@ function EmpCompanyProfilePage() {
                                         <option value="Lakshadweep">Lakshadweep</option>
                                         <option value="Puducherry">Puducherry</option>
                                     </select>
+                                    <ErrorDisplay errors={errors} fieldName="state" />
                                 </div>
                             </div>
 
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label><Mail size={16} className="me-2" /> Official Email ID</label>
+                                    <label className="required-field"><Mail size={16} className="me-2" /> Official Email ID</label>
                                     <input
                                         className={`form-control ${errors.officialEmail ? 'is-invalid' : ''}`}
                                         type="email"
@@ -1409,7 +1422,7 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label><Phone size={16} className="me-2" /> Official Mobile Number</label>
+                                    <label className="required-field"><Phone size={16} className="me-2" /> Official Mobile Number</label>
                                     <div style={{position: 'relative'}}>
                                         <div style={{position: 'absolute', left: '0', top: '0', bottom: '0', zIndex: 10}}>
                                             <CountryCodeSelector
@@ -1432,9 +1445,9 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label><Briefcase size={16} className="me-2" /> Type of Company / Business</label>
+                                    <label className="required-field"><Briefcase size={16} className="me-2" /> Type of Company / Business</label>
                                     <select 
-                                        className="form-control"
+                                        className={`form-control ${errors.companyType ? 'is-invalid' : ''}`}
                                         value={formData.companyType}
                                         onChange={(e) => handleInputChange('companyType', e.target.value)}
                                     >
@@ -1447,12 +1460,13 @@ function EmpCompanyProfilePage() {
                                         <option value="Startup">Startup</option>
                                         <option value="Others">Others</option>
                                     </select>
+                                    <ErrorDisplay errors={errors} fieldName="companyType" />
                                 </div>
                             </div>
 
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label><Hash size={16} className="me-2" /> Corporate Identification Number (CIN)</label>
+                                    <label className="required-field"><Hash size={16} className="me-2" /> Corporate Identification Number (CIN)</label>
                                     <input
                                         className={`form-control ${errors.cin ? 'is-invalid' : ''}`}
                                         type="text"
@@ -1466,7 +1480,7 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label><Hash size={16} className="me-2" /> GST Number</label>
+                                    <label className="required-field"><Hash size={16} className="me-2" /> GST Number</label>
                                     <input
                                         className={`form-control ${errors.gstNumber ? 'is-invalid' : ''}`}
                                         type="text"
@@ -1480,9 +1494,9 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label><Briefcase size={16} className="me-2" /> Industry Sector</label>
+                                    <label className="required-field"><Briefcase size={16} className="me-2" /> Industry Sector</label>
                                     <select 
-                                        className="form-control"
+                                        className={`form-control ${errors.industrySector ? 'is-invalid' : ''}`}
                                         value={formData.industrySector}
                                         onChange={(e) => handleInputChange('industrySector', e.target.value)}
                                     >
@@ -1495,12 +1509,13 @@ function EmpCompanyProfilePage() {
                                         <option value="manufacturing">Manufacturing</option>
                                         <option value="other">Other</option>
                                     </select>
+                                    <ErrorDisplay errors={errors} fieldName="industrySector" />
                                 </div>
                             </div>
 
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label><Hash size={16} className="me-2" /> Company PAN Card Number</label>
+                                    <label className="required-field"><Hash size={16} className="me-2" /> Company PAN Card Number</label>
                                     <input
                                         className={`form-control ${errors.panNumber ? 'is-invalid' : ''}`}
                                         type="text"
