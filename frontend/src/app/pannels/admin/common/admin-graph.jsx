@@ -32,7 +32,7 @@ function AdminDashboardActivityChart() {
 	const fetchChartData = async () => {
 		try {
 			const token = localStorage.getItem('adminToken');
-			const response = await fetch('http://localhost:5000/api/admin/dashboard/chart-data', {
+			const response = await fetch('http://localhost:5000/api/admin/dashboard/charts', {
 				headers: { 'Authorization': `Bearer ${token}` }
 			});
 			const data = await response.json();
@@ -152,5 +152,4 @@ function AdminDashboardActivityChart() {
 }
 
 export default AdminDashboardActivityChart;
-
 

@@ -2,11 +2,13 @@ import {
     MapPin
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CountUp from "react-countup";
 import './emp-dashboard.css';
 
 
 function EmpDashboardPage() {
+    const navigate = useNavigate();
     const [stats, setStats] = useState({
         totalJobs: 0,
         activeJobs: 0,
@@ -181,7 +183,7 @@ function EmpDashboardPage() {
                 {/* Stats Cards */}
                 <div style={{ padding: isMobile ? '1rem' : '0 2rem 2rem 2rem' }}>
                     <div className="row" style={{ marginBottom: '2rem' }}>
-                        <div className="col-xl-4 col-lg-4 col-md-12 mb-3">
+                        <div className="col-xl-4 col-lg-4 col-md-12 mb-3" onClick={() => navigate('/employer/manage-jobs')} style={{ cursor: 'pointer' }}>
                             <div className="panel panel-default">
                                 <div className="panel-body wt-panel-body dashboard-card-2" style={{ backgroundColor: '#e0f7fa' }}>
                                     <div className="d-flex align-items-center" style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -199,7 +201,7 @@ function EmpDashboardPage() {
                             </div>
                         </div>
 
-                        <div className="col-xl-4 col-lg-4 col-md-12 mb-3">
+                        <div className="col-xl-4 col-lg-4 col-md-12 mb-3" onClick={() => navigate('/employer/candidates-list')} style={{ cursor: 'pointer' }}>
                             <div className="panel panel-default">
                                 <div className="panel-body wt-panel-body dashboard-card-2" style={{ backgroundColor: '#fff3e0' }}>
                                     <div className="d-flex align-items-center" style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -217,7 +219,7 @@ function EmpDashboardPage() {
                             </div>
                         </div>
 
-                        <div className="col-xl-4 col-lg-4 col-md-12 mb-3">
+                        <div className="col-xl-4 col-lg-4 col-md-12 mb-3" onClick={() => navigate('/employer/candidates-list')} style={{ cursor: 'pointer' }}>
                             <div className="panel panel-default">
                                 <div className="panel-body wt-panel-body dashboard-card-2" style={{ backgroundColor: '#e8f5e9' }}>
                                     <div className="d-flex align-items-center" style={{ display: "flex", justifyContent: "flex-end" }}>

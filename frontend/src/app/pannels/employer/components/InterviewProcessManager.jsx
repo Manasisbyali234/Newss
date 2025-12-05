@@ -123,6 +123,10 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
       showError('Please provide interview date and time');
       return;
     }
+    if (!emailData.meetingLink) {
+      showError('Google Meet link is mandatory');
+      return;
+    }
 
     setSendingEmail(true);
     try {
@@ -308,7 +312,7 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
                     />
                   </div>
                   <div className="mb-3">
-                    <label className="form-label fw-semibold">Meeting Link (Optional)</label>
+                    <label className="form-label fw-semibold">Google Meet Link <span style={{color: 'red'}}>*</span></label>
                     <input
                       type="url"
                       className="form-control"
@@ -316,6 +320,7 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
                       value={emailData.meetingLink}
                       onChange={(e) => setEmailData({...emailData, meetingLink: e.target.value})}
                       style={{ borderColor: '#ff6600' }}
+                      required
                     />
                   </div>
                   <div className="mb-3">

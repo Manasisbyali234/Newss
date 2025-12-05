@@ -272,7 +272,7 @@ function PlacementDetails() {
             
             const data = await response.json();
             if (data.success) {
-                showSuccess(`File credits updated successfully! ${data.message}. All candidates will see updated credits immediately.`);
+                showSuccess(`${data.message}. All candidates will see updated credits immediately.`);
                 setShowCreditsModal(false);
                 fetchPlacementDetails();
                 // Refresh student data if currently viewing this file
@@ -606,7 +606,7 @@ function PlacementDetails() {
                                 </p>
                             </div>
                             <div className="col-md-6 mb-3">
-                                <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600', fontSize: '0.95rem'}}>Personal Email</h4>
+                                <h4 className="mb-1" style={{color: '#2c3e50', fontWeight: '600', fontSize: '0.95rem'}}>Official Placement Officer Email</h4>
                                 <p className="mb-0" style={{color: '#6c757d', fontSize: '1rem'}}>
                                     <i className="fa fa-envelope mr-2" style={{color: '#fd7e14'}}></i>
                                     {placement.email}
