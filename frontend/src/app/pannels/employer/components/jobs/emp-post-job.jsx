@@ -1434,44 +1434,102 @@ export default function EmpPostJob({ onNext }) {
 								({formData.requiredSkills.length} skills selected)
 							</span>
 						</label>
-						<select
-							multiple
-							style={{...input, minHeight: '120px', padding: '8px'}}
-							value={formData.requiredSkills}
-							onChange={(e) => {
-								const selected = Array.from(e.target.selectedOptions, option => option.value);
-								update({ requiredSkills: selected });
-							}}
-						>
-							<option value="">-- Select Skills --</option>
-							<option value="React">React</option>
-							<option value="Vue.js">Vue.js</option>
-							<option value="Angular">Angular</option>
-							<option value="Node.js">Node.js</option>
-							<option value="Python">Python</option>
-							<option value="Java">Java</option>
-							<option value="C++">C++</option>
-							<option value="C#">C#</option>
-							<option value="PHP">PHP</option>
-							<option value="Ruby">Ruby</option>
-							<option value="Go">Go</option>
-							<option value="Rust">Rust</option>
-							<option value="SQL">SQL</option>
-							<option value="MongoDB">MongoDB</option>
-							<option value="AWS">AWS</option>
-							<option value="Docker">Docker</option>
-							<option value="Kubernetes">Kubernetes</option>
-							<option value="Git">Git</option>
-							<option value="REST API">REST API</option>
-							<option value="GraphQL">GraphQL</option>
-							<option value="Machine Learning">Machine Learning</option>
-							<option value="Data Science">Data Science</option>
-							<option value="DevOps">DevOps</option>
-							<option value="Agile">Agile</option>
-							<option value="Scrum">Scrum</option>
-						</select>
-						<small style={{color: '#6b7280', fontSize: 12, marginTop: 8, display: 'block'}}>
-							Hold Ctrl (Cmd on Mac) to select multiple skills
+						<div style={{position: 'relative'}}>
+							<input
+								style={{...input, paddingRight: '40px'}}
+								type="text"
+								placeholder="Search and select skills..."
+								value={formData.skillInput}
+								onChange={(e) => update({ skillInput: e.target.value })}
+								onFocus={() => update({ skillInput: formData.skillInput || '' })}
+							/>
+							<i className="fa fa-search" style={{
+								position: 'absolute',
+								right: '12px',
+								top: '50%',
+								transform: 'translateY(-50%)',
+								color: '#9ca3af',
+								pointerEvents: 'none',
+								fontSize: '14px'
+							}}></i>
+							{formData.skillInput && (() => {
+								const allSkills = [
+									"React", "Vue.js", "Angular", "Node.js", "Python", "Java", "C++", "C#", "PHP", "Ruby",
+									"Go", "Rust", "Swift", "Kotlin", "TypeScript", "JavaScript", "HTML", "CSS", "SASS", "LESS",
+									"SQL", "MySQL", "PostgreSQL", "MongoDB", "Redis", "Cassandra", "Oracle", "SQLite",
+									"AWS", "Azure", "Google Cloud", "Docker", "Kubernetes", "Jenkins", "Git", "GitHub", "GitLab",
+									"REST API", "GraphQL", "SOAP", "Microservices", "Spring Boot", "Django", "Flask", "Express.js",
+									"Machine Learning", "Deep Learning", "Data Science", "AI", "TensorFlow", "PyTorch", "Pandas", "NumPy",
+									"DevOps", "CI/CD", "Agile", "Scrum", "Jira", "Confluence", "Linux", "Unix", "Windows Server",
+									"Networking", "Security", "Cybersecurity", "Penetration Testing", "Ethical Hacking",
+									"Salesforce", "SAP", "Oracle ERP", "Power BI", "Tableau", "Excel", "Data Analysis",
+									"UI/UX Design", "Figma", "Adobe XD", "Sketch", "Photoshop", "Illustrator", "InDesign",
+									"Digital Marketing", "SEO", "SEM", "Content Writing", "Social Media Marketing", "Email Marketing",
+									"Project Management", "Product Management", "Business Analysis", "Financial Analysis",
+									"Communication", "Leadership", "Team Management", "Problem Solving", "Critical Thinking"
+								];
+								const filtered = allSkills.filter(skill => 
+									skill.toLowerCase().includes(formData.skillInput.toLowerCase()) &&
+									!formData.requiredSkills.includes(skill)
+								);
+								return filtered.length > 0 ? (
+									<div style={{
+										position: 'absolute',
+										top: '100%',
+										left: 0,
+										right: 0,
+										background: '#fff',
+										border: '1px solid #d1d5db',
+										borderTop: 'none',
+										borderRadius: '0 0 8px 8px',
+										maxHeight: '200px',
+										overflowY: 'auto',
+										zIndex: 1000,
+										boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+									}}>
+										{filtered.slice(0, 10).map((skill, index) => (
+											<div
+												key={index}
+												style={{
+													padding: '10px 12px',
+													cursor: 'pointer',
+													borderBottom: index < Math.min(filtered.length, 10) - 1 ? '1px solid #f3f4f6' : 'none',
+													transition: 'background-color 0.2s'
+												}}
+												onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+												onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#fff'}
+												onClick={() => {
+													update({ 
+														requiredSkills: [...formData.requiredSkills, skill],
+														skillInput: ''
+													});
+												}}
+											>
+												<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+													<i className="fa fa-plus-circle" style={{ color: '#ff6b35', fontSize: '12px' }}></i>
+													<span style={{ fontSize: '14px', color: '#374151' }}>{skill}</span>
+												</div>
+											</div>
+										))}
+										{filtered.length > 10 && (
+											<div style={{
+												padding: '8px 12px',
+												background: '#f9fafb',
+												color: '#6b7280',
+												fontSize: '12px',
+												textAlign: 'center',
+												borderTop: '1px solid #e5e7eb'
+											}}>
+												+{filtered.length - 10} more skills. Keep typing to narrow down...
+											</div>
+										)}
+									</div>
+								) : null;
+							})()}
+						</div>
+						<small style={{color: '#6b7280', fontSize: 12, marginTop: 4, display: 'block'}}>
+							<i className="fa fa-info-circle" style={{marginRight: 4}}></i>
+							Type to search from 90+ skills or click suggestions below
 						</small>
 						{formData.requiredSkills.length > 0 && (
 							<div

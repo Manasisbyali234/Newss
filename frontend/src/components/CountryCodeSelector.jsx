@@ -231,8 +231,18 @@ const CountryCodeSelector = ({ value, onChange, className = "" }) => {
   const selectedCountry = countryCodes.find(c => c.code === value) || countryCodes[40];
 
   return (
-    <div ref={dropdownRef} style={{ position: 'relative', width: '70px', height: '50px', flexShrink: 0 }} className="country-code-selector">
+    <div ref={dropdownRef} style={{ position: 'relative', width: '70px', height: '57px', flexShrink: 0 }} className="country-code-selector">
       <style>{`
+        .country-code-selector-btn {
+          background-color: transparent !important;
+          color: #232323 !important;
+          border: 2px solid #e1e5e9 !important;
+          border-radius: 6px !important;
+        }
+        .country-code-selector-btn:hover {
+          background-color: transparent !important;
+          border: 2px solid #b8c6db !important;
+        }
         @media (max-width: 576px) {
           .country-code-selector {
             width: 80px !important;
@@ -242,13 +252,10 @@ const CountryCodeSelector = ({ value, onChange, className = "" }) => {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={className}
+        className={`country-code-selector-btn ${className}`}
         style={{
-          backgroundColor: 'white',
-          color: '#232323',
-          border: '1px solid white',
           width: '100%',
-          height: '50px',
+          height: '57px',
           padding: '12px 8px',
           fontSize: '14px',
           fontWeight: '500',
