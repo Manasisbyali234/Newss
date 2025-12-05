@@ -125,11 +125,7 @@ function AdminDashboardPage() {
                                     </div>
 
                                     <div className="wt-card-bottom">
-<<<<<<< HEAD
                                         <h4 className="m-b0">Total Placements</h4>
-=======
-                                        <h4 className="m-b0">Number of Colleges</h4>
->>>>>>> d2a7381317fb96d2fb4d9ac1d133b4e1b48820f4
                                     </div>
                                 </div>
                             </div>

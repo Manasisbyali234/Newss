@@ -140,8 +140,8 @@ function AdminCandidateReviewPage() {
                             </div>
                             <div className="stat">
                                 <span className="label">Status</span>
-                                <span className={`value status ${candidate.hasProfile ? 'complete' : 'incomplete'}`}>
-                                    {candidate.hasProfile ? 'Complete' : 'Incomplete'}
+                                <span className={`value status ${candidate.isProfileComplete ? 'complete' : 'incomplete'}`}>
+                                    {candidate.isProfileComplete ? 'Complete' : `Incomplete ${candidate.profileCompletionPercentage || 0}%`}
                                 </span>
                             </div>
                         </div>
@@ -515,11 +515,9 @@ function AdminCandidateReviewPage() {
                                     <thead>
                                         <tr>
                                             <th>Company Name</th>
-                                            <th>Job Categories</th>
-                                            <th>Shortlisted Status</th>
-                                            <th>Current Round</th>
-                                            <th>Selected</th>
-                                            <th>Registered Date</th>
+                                            <th>Job Title</th>
+                                            <th>Application Status</th>
+                                            <th>Applied Date</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -528,32 +526,27 @@ function AdminCandidateReviewPage() {
                                                 <td>
                                                     <div className="company-cell">
                                                         <i className="fas fa-building company-icon"></i>
-                                                        <span>{application.companyName || 'N/A'}</span>
+                                                        <span>{application.employerId?.companyName || application.companyName || 'N/A'}</span>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <span className="job-category">
-                                                        {application.jobCategory || 'N/A'}
+                                                        {application.jobId?.title || application.jobTitle || 'N/A'}
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <span className={`status-badge ${application.shortlistedStatus ? 'shortlisted' : 'pending'}`}>
-                                                        {application.shortlistedStatus ? 'Shortlisted' : 'Pending'}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <span className="round-info">
-                                                        {application.currentRound || 'Initial'}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <span className={`status-badge ${application.selected ? 'selected' : 'not-selected'}`}>
-                                                        {application.selected ? 'Selected' : 'Not Selected'}
+                                                    <span className={`status-badge ${
+                                                        application.status === 'hired' ? 'selected' :
+                                                        application.status === 'shortlisted' ? 'shortlisted' :
+                                                        application.status === 'rejected' ? 'not-selected' :
+                                                        'pending'
+                                                    }`}>
+                                                        {application.status ? application.status.charAt(0).toUpperCase() + application.status.slice(1) : 'Pending'}
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <span className="date-info">
-                                                        {formatDate(application.appliedDate || application.createdAt)}
+                                                        {formatDate(application.createdAt || application.appliedDate)}
                                                     </span>
                                                 </td>
                                             </tr>
