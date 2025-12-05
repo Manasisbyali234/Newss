@@ -107,6 +107,10 @@
     text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+.wt-card-bottom {
+    text-align: center;
+}
+
 .wt-card-bottom h4 {
     font-size: 16px;
     font-weight: 600;
@@ -114,6 +118,7 @@
     opacity: 0.95;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    text-align: center;
 }
 
 /* Chart section */
