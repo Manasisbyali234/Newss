@@ -68,8 +68,25 @@ function CanStatusPage() {
 		const startRaw = job?.assessmentStartDate ? new Date(job.assessmentStartDate) : null;
 		const endRaw = job?.assessmentEndDate ? new Date(job.assessmentEndDate) : null;
 		const isValid = (date) => date instanceof Date && !isNaN(date.getTime());
-		const startDate = isValid(startRaw) ? startRaw : null;
-		const endDate = isValid(endRaw) ? endRaw : null;
+		let startDate = isValid(startRaw) ? startRaw : null;
+		let endDate = isValid(endRaw) ? endRaw : null;
+		
+		// Apply time if available
+		if (startDate && job?.assessmentStartTime) {
+			const [hours, minutes] = job.assessmentStartTime.split(':').map(Number);
+			if (!isNaN(hours) && !isNaN(minutes)) {
+				startDate = new Date(startDate);
+				startDate.setHours(hours, minutes, 0, 0);
+			}
+		}
+		if (endDate && job?.assessmentEndTime) {
+			const [hours, minutes] = job.assessmentEndTime.split(':').map(Number);
+			if (!isNaN(hours) && !isNaN(minutes)) {
+				endDate = new Date(endDate);
+				endDate.setHours(hours, minutes, 59, 999);
+			}
+		}
+		
 		const isBeforeStart = startDate ? now < startDate : false;
 		const isAfterEnd = endDate ? now > endDate : false;
 		return {

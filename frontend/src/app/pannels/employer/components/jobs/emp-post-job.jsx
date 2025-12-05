@@ -654,8 +654,16 @@ export default function EmpPostJob({ onNext }) {
 			if (assessmentDetails?.fromDate && assessmentDetails?.toDate && new Date(assessmentDetails.fromDate) > new Date(assessmentDetails.toDate)) {
 				errorMessages.push('Assessment From Date cannot be after To Date');
 			}
-			if (assessmentDetails?.startTime && assessmentDetails?.endTime && assessmentDetails.startTime >= assessmentDetails.endTime) {
-				errorMessages.push('Assessment End Time must be after Start Time');
+			if (assessmentDetails?.startTime && assessmentDetails?.endTime) {
+				// Compare times properly
+				const [startHour, startMin] = assessmentDetails.startTime.split(':').map(Number);
+				const [endHour, endMin] = assessmentDetails.endTime.split(':').map(Number);
+				const startMinutes = startHour * 60 + startMin;
+				const endMinutes = endHour * 60 + endMin;
+				
+				if (startMinutes >= endMinutes) {
+					errorMessages.push('Assessment End Time must be after Start Time');
+				}
 			}
 		}
 
