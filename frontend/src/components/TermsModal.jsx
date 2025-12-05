@@ -14,11 +14,28 @@ const TermsModal = ({ isOpen, onClose, onAccept, role = 'candidate' }) => {
 
     const handleScroll = (e) => {
         const element = e.target;
-        const isAtBottom = element.scrollHeight - element.scrollTop <= element.clientHeight + 50;
+        const isAtBottom = element.scrollHeight - element.scrollTop <= element.clientHeight + 10;
         if (isAtBottom && !hasScrolled) {
             setHasScrolled(true);
         }
     };
+
+    // Check if content is short enough to not require scrolling
+    useEffect(() => {
+        if (isOpen) {
+            const checkScrollNeeded = () => {
+                const modalBody = document.querySelector('.terms-modal-body');
+                if (modalBody) {
+                    const isScrollable = modalBody.scrollHeight > modalBody.clientHeight;
+                    if (!isScrollable) {
+                        setHasScrolled(true); // Auto-enable if no scrolling needed
+                    }
+                }
+            };
+            // Small delay to ensure DOM is rendered
+            setTimeout(checkScrollNeeded, 100);
+        }
+    }, [isOpen]);
 
     const handleAccept = () => {
         if (accepted && hasScrolled) {
@@ -114,6 +131,11 @@ const TermsModal = ({ isOpen, onClose, onAccept, role = 'candidate' }) => {
                 </div>
 
                 <div className="terms-modal-footer">
+                    {!hasScrolled && (
+                        <div className="scroll-hint" style={{marginBottom: '12px', fontSize: '13px', color: '#fd7e14'}}>
+                            📜 Please scroll to the bottom to read all terms and conditions
+                        </div>
+                    )}
                     <div className="terms-checkbox-wrapper">
                         <input
                             type="checkbox"
@@ -133,7 +155,8 @@ const TermsModal = ({ isOpen, onClose, onAccept, role = 'candidate' }) => {
                         <button 
                             className="terms-btn terms-btn-accept" 
                             onClick={handleAccept}
-                            disabled={!accepted}
+                            disabled={!accepted || !hasScrolled}
+                            title={!hasScrolled ? "Please scroll to the bottom to read all terms" : ""}
                         >
                             Accept & Continue
                         </button>
