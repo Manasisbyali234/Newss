@@ -125,23 +125,8 @@ function EmpCandidateReviewPage () {
 				// Load interview processes
 				let processes = [];
 				
-				console.log('=== INTERVIEW PROCESSES DEBUG ===');
-				console.log('interviewProcesses:', data.application.interviewProcesses);
-				console.log('interviewProcess.stages:', data.application.interviewProcess?.stages);
-				
-				// First check saved interviewProcesses (from review form)
-				if (data.application.interviewProcesses && data.application.interviewProcesses.length > 0) {
-					console.log('Using interviewProcesses, count:', data.application.interviewProcesses.length);
-					processes = data.application.interviewProcesses.filter(p => {
-						const valid = p && p.name && p.type && p.name !== 'undefined' && !p.type.match(/_(\d{13})$/);
-						console.log('Process:', p, 'Valid:', valid);
-						return valid;
-					});
-					console.log('Filtered processes:', processes);
-				}
-				// Fallback to interview process stages (from InterviewProcessManager)
-				else if (data.application.interviewProcess?.stages && data.application.interviewProcess.stages.length > 0) {
-					console.log('Using interviewProcess.stages, count:', data.application.interviewProcess.stages.length);
+				// PRIORITY 1: Check interviewProcess.stages (from InterviewProcessManager)
+				if (data.application.interviewProcess?.stages && data.application.interviewProcess.stages.length > 0) {
 					processes = data.application.interviewProcess.stages
 						.filter(stage => stage && stage.stageName && stage.stageType)
 						.map(stage => ({
@@ -150,13 +135,44 @@ function EmpCandidateReviewPage () {
 							type: stage.stageType,
 							status: stage.status,
 							isCompleted: stage.status === 'completed' || stage.status === 'passed',
-							result: stage.assessmentResult,
-							remarks: stage.interviewerNotes || '',
-							feedback: stage.feedback || ''
+							result: stage.assessmentResult
 						}));
 				}
-				console.log('Final processes to display:', processes);
-				console.log('=== END DEBUG ===');
+				// PRIORITY 2: Check saved interviewProcesses (from review form - legacy)
+				else if (data.application.interviewProcesses && data.application.interviewProcesses.length > 0) {
+					processes = data.application.interviewProcesses.filter(p => p && p.name && p.type).map(p => ({
+						id: p.id,
+						name: p.name,
+						type: p.type,
+						status: p.status,
+						isCompleted: p.isCompleted,
+						result: p.result
+					}));
+				}
+				// PRIORITY 3: Use job's interview rounds (from job posting)
+				else if (job?.interviewRoundOrder && job.interviewRoundOrder.length > 0) {
+					job.interviewRoundOrder.forEach(uniqueKey => {
+						const roundType = job.interviewRoundTypes?.[uniqueKey];
+						if (roundType) {
+							const roundNames = {
+								technical: 'Technical Round',
+								nonTechnical: 'Non-Technical Round',
+								managerial: 'Managerial Round',
+								final: 'Final Round',
+								hr: 'HR Round',
+								assessment: 'Assessment'
+							};
+							processes.push({
+								id: uniqueKey,
+								name: roundNames[roundType] || roundType,
+								type: roundType,
+								status: 'pending',
+								isCompleted: false,
+								result: null
+							});
+						}
+					});
+				}
 				
 				setInterviewProcesses(processes);
 				console.log('Set interviewProcesses state to:', processes);

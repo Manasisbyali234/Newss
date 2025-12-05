@@ -268,7 +268,31 @@ function CanStatusPage() {
 			if (rounds.length > 0) return rounds;
 		}
 		
-		// PRIORITY 3: Fallback to old format
+		// PRIORITY 3: Use job's interview rounds (from job posting)
+		if (job?.interviewRoundOrder && job.interviewRoundOrder.length > 0) {
+			const rounds = [];
+			job.interviewRoundOrder.forEach(uniqueKey => {
+				const roundType = job.interviewRoundTypes?.[uniqueKey];
+				if (roundType) {
+					const roundNames = {
+						technical: 'Technical',
+						nonTechnical: 'Non-Technical',
+						managerial: 'Managerial',
+						final: 'Final',
+						hr: 'HR',
+						assessment: 'Assessment'
+					};
+					rounds.push({
+						name: roundNames[roundType] || roundType,
+						uniqueKey: uniqueKey,
+						roundType: roundType
+					});
+				}
+			});
+			if (rounds.length > 0) return rounds;
+		}
+		
+		// PRIORITY 4: Fallback to old format
 		if (job?.interviewRoundTypes) {
 			const rounds = [];
 			const roundTypes = job.interviewRoundTypes;
