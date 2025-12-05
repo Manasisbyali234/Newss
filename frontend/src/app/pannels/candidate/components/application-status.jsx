@@ -221,7 +221,17 @@ function CanStatusPage() {
 	};
 
 	const getInterviewRounds = (job, application) => {
-		// PRIORITY 1: Check if application has interviewProcesses from employer review
+		// PRIORITY 1: Check if application has interviewProcess.stages from InterviewProcessManager
+		if (application?.interviewProcess?.stages && application.interviewProcess.stages.length > 0) {
+			console.log('Using interviewProcess.stages:', application.interviewProcess.stages);
+			return application.interviewProcess.stages.map(stage => ({
+				name: stage.stageName,
+				uniqueKey: stage._id || stage.stageType,
+				roundType: stage.stageType
+			}));
+		}
+		
+		// PRIORITY 2: Check if application has interviewProcesses from employer review (legacy)
 		if (application?.interviewProcesses && application.interviewProcesses.length > 0) {
 			console.log('Using interviewProcesses from application:', application.interviewProcesses);
 			return application.interviewProcesses.map(process => ({

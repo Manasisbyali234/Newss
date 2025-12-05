@@ -1427,6 +1427,7 @@ exports.getApplicationDetails = async (req, res) => {
     const { applicationId } = req.params;
     const CandidateProfile = require('../models/CandidateProfile');
     const AssessmentAttempt = require('../models/AssessmentAttempt');
+    const InterviewProcess = require('../models/InterviewProcess');
     
     const application = await Application.findOne({
       _id: applicationId,
@@ -1451,6 +1452,9 @@ exports.getApplicationDetails = async (req, res) => {
       }).populate('assessmentId', 'title timer totalQuestions passingPercentage');
     }
     
+    // Get interview process if exists
+    const interviewProcess = await InterviewProcess.findOne({ applicationId: application._id });
+    
     // Merge candidate and profile data
     const candidateData = {
       ...application.candidateId.toObject(),
@@ -1461,6 +1465,7 @@ exports.getApplicationDetails = async (req, res) => {
       ...application.toObject(),
       candidateId: candidateData,
       assessmentAttempt: assessmentAttempt,
+      interviewProcess: interviewProcess,
       jobId: {
         ...application.jobId.toObject(),
         assessmentId: application.jobId.assessmentId

@@ -1125,7 +1125,6 @@ function getAssessmentTimerInfo(job) {
 
 exports.getCandidateApplicationsWithInterviews = async (req, res) => {
   try {
-    // Set cache-control headers to prevent browser caching
     res.set({
       'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
       'Pragma': 'no-cache',
@@ -1140,23 +1139,26 @@ exports.getCandidateApplicationsWithInterviews = async (req, res) => {
       })
       .populate('employerId', 'companyName')
       .sort({ createdAt: -1 })
-      .lean(); // Use lean for better performance
+      .lean();
 
-    // Add assessment status fields and timer info to each application
-    const applicationsWithAssessmentStatus = applications.map(app => {
-      const assessmentTimerInfo = getAssessmentTimerInfo(app.jobId);
-      
-      return {
-        ...app,
-        assessmentStatus: app.assessmentStatus || 'not_required',
-        assessmentScore: app.assessmentScore || null,
-        assessmentPercentage: app.assessmentPercentage || null,
-        assessmentResult: app.assessmentResult || null,
-        assessmentTimerInfo
-      };
-    });
+    const applicationsWithInterviewProcess = await Promise.all(
+      applications.map(async (app) => {
+        const interviewProcess = await InterviewProcess.findOne({ applicationId: app._id }).lean();
+        const assessmentTimerInfo = getAssessmentTimerInfo(app.jobId);
+        
+        return {
+          ...app,
+          assessmentStatus: app.assessmentStatus || 'not_required',
+          assessmentScore: app.assessmentScore || null,
+          assessmentPercentage: app.assessmentPercentage || null,
+          assessmentResult: app.assessmentResult || null,
+          assessmentTimerInfo,
+          interviewProcess: interviewProcess
+        };
+      })
+    );
 
-    res.json({ success: true, applications: applicationsWithAssessmentStatus });
+    res.json({ success: true, applications: applicationsWithInterviewProcess });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
