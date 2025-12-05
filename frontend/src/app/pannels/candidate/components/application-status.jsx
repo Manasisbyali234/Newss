@@ -297,15 +297,8 @@ function CanStatusPage() {
 			const rounds = [];
 			const roundTypes = job.interviewRoundTypes;
 
-			// If assessment is assigned, always show it first
-			if (job.assessmentId) {
-				rounds.push({ name: 'Assessment', uniqueKey: 'assessment', roundType: 'assessment' });
-			}
-
-			// Show other rounds
-			if (roundTypes.technical && !job.assessmentId) {
-				rounds.push({ name: 'Technical', uniqueKey: 'technical', roundType: 'technical' });
-			}
+			if (job.assessmentId) rounds.push({ name: 'Assessment', uniqueKey: 'assessment', roundType: 'assessment' });
+			if (roundTypes.technical) rounds.push({ name: 'Technical', uniqueKey: 'technical', roundType: 'technical' });
 			if (roundTypes.hr) rounds.push({ name: 'HR', uniqueKey: 'hr', roundType: 'hr' });
 			if (roundTypes.managerial) rounds.push({ name: 'Managerial', uniqueKey: 'managerial', roundType: 'managerial' });
 			if (roundTypes.nonTechnical) rounds.push({ name: 'Non-Technical', uniqueKey: 'nonTechnical', roundType: 'nonTechnical' });
