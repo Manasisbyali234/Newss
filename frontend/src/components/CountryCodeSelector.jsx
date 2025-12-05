@@ -246,7 +246,7 @@ const CountryCodeSelector = ({ value, onChange, className = "" }) => {
         style={{
           backgroundColor: 'white',
           color: '#232323',
-          border: 'none',
+          border: '1px solid white',
           width: '100%',
           height: '50px',
           padding: '12px 8px',

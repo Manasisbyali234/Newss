@@ -241,7 +241,7 @@ function Home1Page() {
                         <div className="col-xl-6 col-lg-6 col-md-12">
                             <div className="twm-bnr-left-section">
                                 <div className="twm-bnr-title-small">We Have <span className="site-text-primary">208,000+</span> Live Jobs</div>
-                                <div className="twm-bnr-title-large">Find the <span className="site-text-primary">job</span> that fits your life</div>
+                                <div className="twm-bnr-title-large">Find the <span className="site-text-primary" style={{fontWeight: 'normal'}}>job</span> that fits your life</div>
                                 <div className="twm-bnr-discription">Type your keyword, then click search to find your perfect job.</div>
                                 <div className="twm-bnr-search-bar">
                                     <form>

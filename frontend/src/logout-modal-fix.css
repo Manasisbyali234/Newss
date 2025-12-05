@@ -31,3 +31,30 @@
     max-width: calc(100% - 2rem) !important;
   }
 }
+
+
+/* Fix for logout modal buttons - both same style */
+.twm-model-popup .modal-footer .site-button {
+  position: relative !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+  padding: 12px 26px !important;
+  border-radius: 9999px !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  cursor: pointer !important;
+  background: rgba(255, 122, 0, 0.08) !important;
+  border: 1px solid rgba(255, 122, 0, 0.3) !important;
+  color: rgba(255, 122, 0, 0.7) !important;
+}
+
+.twm-model-popup .modal-footer .site-button::before,
+.twm-model-popup .modal-footer .site-button::after {
+  display: none !important;
+}
+
+.twm-model-popup .modal-footer .site-button:hover {
+  background: rgba(255, 122, 0, 0.12) !important;
+  border: 1px solid rgba(255, 122, 0, 0.4) !important;
+  color: rgba(255, 122, 0, 0.8) !important;
+}

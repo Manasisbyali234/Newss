@@ -272,6 +272,12 @@
     white-space: nowrap !important;
     font-size: 0.8rem !important;
   }
+
+  /* Header badges - keep horizontal */
+  .emp-candidate-review-page .d-flex.justify-content-between .d-flex.gap-2 {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+  }
 }
 
 @media (max-width: 575px) {
@@ -362,5 +368,81 @@
 @media (max-width: 767px) {
   .emp-candidate-review-page .row {
     --bs-gutter-x: 1rem;
+  }
+}
+
+/* Interview Process Cards */
+.emp-candidate-review-page .border.rounded-3 {
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: visible !important;
+  width: 100% !important;
+}
+
+/* Checkbox alignment in interview cards */
+.emp-candidate-review-page .form-check {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.emp-candidate-review-page .form-check-input {
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+  width: 22px !important;
+  height: 22px !important;
+}
+
+/* Improve label and textarea appearance on all devices */
+.emp-candidate-review-page .form-label {
+  display: block !important;
+  margin-bottom: 8px !important;
+  font-weight: 500 !important;
+}
+
+.emp-candidate-review-page .form-control {
+  border-radius: 8px !important;
+  padding: 10px 12px !important;
+  font-size: 0.9rem !important;
+  line-height: 1.5 !important;
+}
+
+/* Improve textarea specifically */
+.emp-candidate-review-page textarea.form-control {
+  resize: vertical !important;
+  min-height: 80px !important;
+}
+
+/* Mobile: Stack interview process cards in single column */
+@media (max-width: 767px) {
+  .emp-candidate-review-page .card-body > div[style*="display: grid"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  .emp-candidate-review-page .border.rounded-3 {
+    padding: 16px !important;
+  }
+
+  /* Improved textarea on mobile */
+  .emp-candidate-review-page textarea {
+    font-size: 16px !important;
+    min-height: 80px !important;
+  }
+
+  /* Process card badges wrap properly */
+  .emp-candidate-review-page .badge {
+    font-size: 0.75rem !important;
+    padding: 4px 8px !important;
+  }
+}
+
+@media (max-width: 575px) {
+  .emp-candidate-review-page .border.rounded-3 {
+    padding: 12px !important;
+  }
+
+  /* Assessment result badge */
+  .emp-candidate-review-page .badge {
+    font-size: 0.75rem !important;
+    padding: 4px 8px !important;
   }
 }

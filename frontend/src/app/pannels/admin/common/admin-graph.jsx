@@ -23,10 +23,12 @@ ChartJS.register(
 
 function AdminDashboardActivityChart() {
 	const [chartData, setChartData] = useState(null);
+	const [stats, setStats] = useState(null);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		fetchChartData();
+		fetchStats();
 	}, []);
 
 	const fetchChartData = async () => {
@@ -46,12 +48,27 @@ function AdminDashboardActivityChart() {
 		}
 	};
 
+	const fetchStats = async () => {
+		try {
+			const token = localStorage.getItem('adminToken');
+			const response = await fetch('http://localhost:5000/api/admin/dashboard/stats', {
+				headers: { 'Authorization': `Bearer ${token}` }
+			});
+			const data = await response.json();
+			if (data.success) {
+				setStats(data.stats);
+			}
+		} catch (error) {
+			
+		}
+	};
+
 	const getMonthName = (monthNum) => {
 		const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 		return months[monthNum - 1];
 	};
 
-	if (loading || !chartData) {
+	if (loading || !chartData || !stats) {
 		return <div className="text-center p-5">Loading charts...</div>;
 	}
 
@@ -85,16 +102,14 @@ function AdminDashboardActivityChart() {
 
 	// Pie chart data
 	const pieData = {
-		labels: chartData.topEmployers.map(emp => emp.companyName || 'Unknown'),
+		labels: ['Total Candidates', 'Total Placements', 'Total Employers'],
 		datasets: [
 			{
-				data: chartData.topEmployers.map(emp => emp.jobCount),
+				data: [stats.completedProfileCandidates, stats.totalPlacements, stats.totalEmployers],
 				backgroundColor: [
 					"#4e73df",
 					"#1cc88a",
 					"#36b9cc",
-					"#f6c23e",
-					"#e74a3b",
 				],
 				borderColor: "#fff",
 				borderWidth: 2,
@@ -138,7 +153,7 @@ function AdminDashboardActivityChart() {
 				<div className="panel panel-default site-bg-white" style={{ borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}>
 					<div className="panel-heading wt-panel-heading p-a25" style={{ background: '#f8f9fa', borderBottom: '1px solid #dee2e6' }}>
 						<h4 className="panel-tittle m-a0" style={{ color: '#333', fontSize: '16px', fontWeight: '600' }}>
-							<i className="fas fa-chart-pie" style={{ color: '#ff6b35', marginRight: '8px' }} /> Top Employers by Job Count
+							<i className="fas fa-chart-pie" style={{ color: '#ff6b35', marginRight: '8px' }} /> Platform Overview
 						</h4>
 					</div>
 					

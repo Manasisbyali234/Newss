@@ -2065,3 +2065,53 @@ exports.getInterviewResponse = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+exports.saveInterviewReview = async (req, res) => {
+  try {
+    const { applicationId } = req.params;
+    const { interviewRounds, remarks, isSelected, interviewProcesses, processRemarks } = req.body;
+    
+    const updateData = { 
+      reviewedAt: new Date()
+    };
+    
+    if (interviewRounds) updateData.interviewRounds = interviewRounds;
+    if (remarks) updateData.employerRemarks = remarks;
+    if (typeof isSelected === 'boolean') updateData.isSelectedForProcess = isSelected;
+    
+    if (interviewProcesses && Array.isArray(interviewProcesses)) {
+      updateData.interviewProcesses = interviewProcesses.map(p => ({
+        id: String(p.id || ''),
+        name: String(p.name || ''),
+        type: String(p.type || ''),
+        status: String(p.status || ''),
+        isCompleted: Boolean(p.isCompleted),
+        result: p.result ? String(p.result) : null
+      }));
+    }
+    
+    if (processRemarks && typeof processRemarks === 'object') {
+      const remarksMap = {};
+      for (const [key, value] of Object.entries(processRemarks)) {
+        remarksMap[key] = String(value || '');
+      }
+      updateData.processRemarks = remarksMap;
+    }
+    
+    const application = await Application.findOneAndUpdate(
+      { _id: applicationId, employerId: req.user._id },
+      updateData,
+      { new: true }
+    ).populate('candidateId', 'name email')
+    .populate('jobId', 'title');
+    
+    if (!application) {
+      return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+    
+    res.json({ success: true, message: 'Interview review saved successfully', application });
+  } catch (error) {
+    console.error('Error saving interview review:', error);
+    res.status(500).json({ success: false, message: error.message, details: error.toString() });
+  }
+};

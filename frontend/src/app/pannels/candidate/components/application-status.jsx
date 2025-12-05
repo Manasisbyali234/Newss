@@ -220,8 +220,18 @@ function CanStatusPage() {
 		}
 	};
 
-	const getInterviewRounds = (job) => {
-		// Check if job has interviewRoundOrder (new format)
+	const getInterviewRounds = (job, application) => {
+		// PRIORITY 1: Check if application has interviewProcesses from employer review
+		if (application?.interviewProcesses && application.interviewProcesses.length > 0) {
+			console.log('Using interviewProcesses from application:', application.interviewProcesses);
+			return application.interviewProcesses.map(process => ({
+				name: process.name,
+				uniqueKey: process.id || process.type,
+				roundType: process.type
+			}));
+		}
+		
+		// PRIORITY 2: Check if job has interviewRoundOrder (new format)
 		if (job?.interviewRoundOrder && job.interviewRoundOrder.length > 0) {
 			const rounds = [];
 			
@@ -248,7 +258,7 @@ function CanStatusPage() {
 			if (rounds.length > 0) return rounds;
 		}
 		
-		// Fallback to old format
+		// PRIORITY 3: Fallback to old format
 		if (job?.interviewRoundTypes) {
 			const rounds = [];
 			const roundTypes = job.interviewRoundTypes;
@@ -517,7 +527,7 @@ function CanStatusPage() {
 												</tr>
 											) : (
 												applications.map((app, index) => {
-													const interviewRounds = getInterviewRounds(app.jobId);
+													const interviewRounds = getInterviewRounds(app.jobId, app);
 													const isShortlisted = app.status === 'shortlisted';
 													const shouldHighlightRow = highlightShortlisted && isShortlisted;
 													return (
@@ -589,7 +599,7 @@ function CanStatusPage() {
 																						}
 																					}
 																				}
-																			};
+																			}
 																			const formatDate = (dateStr) => {
 																				if (!dateStr) return null;
 																				try {
@@ -641,15 +651,6 @@ function CanStatusPage() {
 																								Dates TBD
 																							</div>
 																						)}
-																						{/* Assessment Timer */}
-																						{roundName === 'Assessment' && app.assessmentTimerInfo && (
-																							<AssessmentTimer 
-																								timerInfo={app.assessmentTimerInfo}
-																								onTimerEnd={() => fetchApplications()}
-																							/>
-																						)}
-
-
 																					</div>
 																				</div>
 																			);
@@ -777,34 +778,34 @@ function CanStatusPage() {
 										<i className="fa fa-tasks me-2" style={{color: '#ff6b35'}}></i>
 										Interview Rounds
 									</h6>
-									{getInterviewRounds(selectedApplication.jobId).map((round, roundIndex) => {
+									{getInterviewRounds(selectedApplication.jobId, selectedApplication).map((round, roundIndex) => {
 										const roundName = typeof round === 'string' ? round : round.name;
 										const roundStatus = getRoundStatus(selectedApplication, roundIndex, roundName);
 										const uniqueKey = typeof round === 'string' ? round.toLowerCase() : round.uniqueKey;
+										const roundType = (typeof round === 'object' ? round.roundType : round.toLowerCase()).replace(/[^a-z]/gi, '');
 										
-										// Debug: Log the data structure
-										console.log('Round:', roundName, 'UniqueKey:', uniqueKey);
-										console.log('Job interviewRoundDetails:', selectedApplication.jobId?.interviewRoundDetails);
-										
-										// Try to find round details - check all possible keys
+										// Find round details from job interviewRoundDetails
 										let roundDetails = null;
 										if (selectedApplication.jobId?.interviewRoundDetails) {
 											const allDetails = selectedApplication.jobId.interviewRoundDetails;
-											
-											// Try direct key match first
+											// Try direct key match
 											roundDetails = allDetails[uniqueKey];
-											
-											// If not found, search through all keys
+											// Search all keys for match
 											if (!roundDetails) {
-												const roundType = (typeof round === 'object' ? round.roundType : round.toLowerCase()).replace(/[^a-z]/gi, '');
 												for (const [key, details] of Object.entries(allDetails)) {
-													const cleanKey = key.replace(/[^a-z]/gi, '').toLowerCase();
-													if (cleanKey.includes(roundType.toLowerCase()) && details) {
+													if (key.replace(/[^a-z]/gi, '').toLowerCase().includes(roundType.toLowerCase()) && details) {
 														roundDetails = details;
-														console.log('Found details for', roundName, 'in key:', key, details);
 														break;
 													}
 												}
+											}
+										}
+										// Merge with processRemarks if available
+										if (selectedApplication.interviewProcesses?.[roundIndex]) {
+											const processId = selectedApplication.interviewProcesses[roundIndex].id;
+											const remarks = selectedApplication.processRemarks?.[processId];
+											if (remarks) {
+												roundDetails = { ...roundDetails, employerRemarks: remarks };
 											}
 										}
 										
@@ -851,16 +852,6 @@ function CanStatusPage() {
 																		</div>
 																	)}
 																</div>
-															</div>
-														)}
-
-														{/* Assessment Timer */}
-														{selectedApplication.assessmentTimerInfo && (
-															<div className="mb-3">
-																<AssessmentTimer 
-																	timerInfo={selectedApplication.assessmentTimerInfo}
-																	onTimerEnd={() => fetchApplications()}
-																/>
 															</div>
 														)}
 
@@ -919,12 +910,18 @@ function CanStatusPage() {
 												{/* Round Details - Always show if we have any details */}
 												{roundName !== 'Assessment' && (
 													<div className="mt-2">
-														{roundDetails ? (
+														{roundDetails && (
 															<>
 																{roundDetails.description && (
 																	<div className="mb-3 p-2" style={{backgroundColor: '#f8f9fa', borderRadius: '6px', border: '1px solid #e9ecef'}}>
 																		<small className="text-muted d-block mb-1"><i className="fa fa-info-circle me-1" style={{color: '#ff6b35'}}></i><strong>Interview Process Description:</strong></small>
 																		<div style={{fontSize: '14px', lineHeight: '1.5', color: '#495057'}}>{roundDetails.description}</div>
+																	</div>
+																)}
+																{roundDetails.employerRemarks && (
+																	<div className="mb-3 p-2" style={{backgroundColor: '#fff3e0', borderRadius: '6px', border: '1px solid #ffe0b3'}}>
+																		<small className="text-muted d-block mb-1"><i className="fa fa-comment me-1" style={{color: '#ff6b35'}}></i><strong>Employer Remarks:</strong></small>
+																		<div style={{fontSize: '14px', lineHeight: '1.5', color: '#495057'}}>{roundDetails.employerRemarks}</div>
 																	</div>
 																)}
 																{(roundDetails.fromDate || roundDetails.toDate) && (
@@ -938,15 +935,6 @@ function CanStatusPage() {
 																		</div>
 																	</div>
 																)}
-																{/* Assessment Timer in Modal */}
-																{roundName === 'Assessment' && selectedApplication.assessmentTimerInfo && (
-																	<div className="mb-3">
-																		<AssessmentTimer 
-																			timerInfo={selectedApplication.assessmentTimerInfo}
-																			onTimerEnd={() => fetchApplications()}
-																		/>
-																	</div>
-																)}}
 																{!roundDetails.fromDate && !roundDetails.toDate && roundDetails.date && (
 																	<div className="mb-2">
 																		<small className="text-muted"><i className="fa fa-calendar me-1"></i>Date:</small>
@@ -966,7 +954,8 @@ function CanStatusPage() {
 																	</div>
 																)}
 															</>
-														) : (
+														)}
+														{!roundDetails && (
 															<div className="mb-2 p-2" style={{backgroundColor: '#fff3cd', borderRadius: '6px', border: '1px solid #ffeaa7'}}>
 																<small className="text-muted"><i className="fa fa-info-circle me-1"></i>Interview details will be updated by the employer soon.</small>
 															</div>

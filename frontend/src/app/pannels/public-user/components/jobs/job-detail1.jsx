@@ -147,6 +147,17 @@ function JobDetail1Page() {
         try {
             const token = localStorage.getItem('candidateToken');
             
+            const profileResponse = await fetch('http://localhost:5000/api/candidate/profile', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const profileData = await profileResponse.json();
+            
+            if (!profileData.success || !profileData.profile?.resume) {
+                showWarning('Please upload your resume before applying for jobs.');
+                navigate('/candidate/my-resume');
+                return;
+            }
+            
             const statsResponse = await fetch('http://localhost:5000/api/candidate/dashboard/stats', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -163,17 +174,6 @@ function JobDetail1Page() {
                 if (!confirmApply) {
                     return;
                 }
-            }
-            
-            const profileResponse = await fetch('http://localhost:5000/api/candidate/profile', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const profileData = await profileResponse.json();
-            
-            if (!profileData.success || !profileData.profile?.resume) {
-                showWarning('Please upload your resume first before applying for jobs. Go to My Resume section to upload.');
-                navigate('/candidate/my-resume');
-                return;
             }
             
             const response = await fetch('http://localhost:5000/api/candidate/applications', {

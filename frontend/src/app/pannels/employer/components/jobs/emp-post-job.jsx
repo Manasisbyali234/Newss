@@ -484,23 +484,13 @@ export default function EmpPostJob({ onNext }) {
 
 
 
-	/* Skills logic */
-	const addSkill = () => {
-		const v = formData.skillInput.trim();
-		if (!v) return;
-		if (formData.requiredSkills.includes(v)) {
-			update({ skillInput: "" });
-			return;
-		}
-		update({
-			requiredSkills: [...formData.requiredSkills, v],
-			skillInput: "",
-		});
-	};
+	/* Skills logic - now handled by dropdown */
 	const removeSkill = (skill) =>
 		update({
 			requiredSkills: formData.requiredSkills.filter((s) => s !== skill),
 		});
+
+	const addSkill = () => {};
 
 	/* Toggle nested checkbox groups */
 	const toggleNested = (group, key) => {
@@ -1441,36 +1431,48 @@ export default function EmpPostJob({ onNext }) {
 							<i className="fa fa-cogs" style={{marginRight: '8px', color: '#ff6b35'}}></i>
 							Required Skills
 							<span style={{fontSize: 12, color: '#6b7280', fontWeight: 'normal', marginLeft: 8}}>
-								({formData.requiredSkills.length} skills added)
+								({formData.requiredSkills.length} skills selected)
 							</span>
 						</label>
-						<div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-							<input
-								style={{ ...input, marginBottom: 0, flex: 1 }}
-								placeholder="Type a skill and press Enter or click + (e.g., React, Java, Python)"
-								value={formData.skillInput}
-								onChange={(e) => update({ skillInput: e.target.value })}
-								onKeyDown={(e) => {
-									if (e.key === "Enter") {
-										e.preventDefault();
-										addSkill();
-									}
-								}}
-							/>
-							<button
-								type="button"
-								onClick={addSkill}
-								style={plusBtn}
-								aria-label="Add skill"
-								title="Add skill"
-								onMouseEnter={(e) => e.currentTarget.style.background = '#e55a2b'}
-								onMouseLeave={(e) => e.currentTarget.style.background = '#ff6b35'}
-							>
-								+
-							</button>
-						</div>
-
-						{/* chips */}
+						<select
+							multiple
+							style={{...input, minHeight: '120px', padding: '8px'}}
+							value={formData.requiredSkills}
+							onChange={(e) => {
+								const selected = Array.from(e.target.selectedOptions, option => option.value);
+								update({ requiredSkills: selected });
+							}}
+						>
+							<option value="">-- Select Skills --</option>
+							<option value="React">React</option>
+							<option value="Vue.js">Vue.js</option>
+							<option value="Angular">Angular</option>
+							<option value="Node.js">Node.js</option>
+							<option value="Python">Python</option>
+							<option value="Java">Java</option>
+							<option value="C++">C++</option>
+							<option value="C#">C#</option>
+							<option value="PHP">PHP</option>
+							<option value="Ruby">Ruby</option>
+							<option value="Go">Go</option>
+							<option value="Rust">Rust</option>
+							<option value="SQL">SQL</option>
+							<option value="MongoDB">MongoDB</option>
+							<option value="AWS">AWS</option>
+							<option value="Docker">Docker</option>
+							<option value="Kubernetes">Kubernetes</option>
+							<option value="Git">Git</option>
+							<option value="REST API">REST API</option>
+							<option value="GraphQL">GraphQL</option>
+							<option value="Machine Learning">Machine Learning</option>
+							<option value="Data Science">Data Science</option>
+							<option value="DevOps">DevOps</option>
+							<option value="Agile">Agile</option>
+							<option value="Scrum">Scrum</option>
+						</select>
+						<small style={{color: '#6b7280', fontSize: 12, marginTop: 8, display: 'block'}}>
+							Hold Ctrl (Cmd on Mac) to select multiple skills
+						</small>
 						{formData.requiredSkills.length > 0 && (
 							<div
 								style={{

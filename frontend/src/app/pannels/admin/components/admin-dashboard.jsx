@@ -57,7 +57,7 @@ function AdminDashboardPage() {
                             <div className="panel-body wt-panel-body gradi-1">
                                 <div className="wt-card-wrap">
                                     <div className="wt-card-icon">
-                                        <i className="fa fa-user-check" style={{color: '#fd7e14'}} />
+                                        <i className="fa fa-users" style={{color: '#fd7e14'}} />
                                     </div>
 
                                     <div className="wt-card-right wt-total-active-listing counter">
@@ -65,7 +65,7 @@ function AdminDashboardPage() {
                                     </div>
 
                                     <div className="wt-card-bottom">
-                                        <h4 className="m-b0">Completed Profiles</h4>
+                                        <h4 className="m-b0">Total Candidates</h4>
                                     </div>
                                 </div>
                             </div>
@@ -125,7 +125,7 @@ function AdminDashboardPage() {
                                     </div>
 
                                     <div className="wt-card-bottom">
-                                        <h4 className="m-b0">List of Colleges's</h4>
+                                        <h4 className="m-b0">Total Placements</h4>
                                     </div>
                                 </div>
                             </div>

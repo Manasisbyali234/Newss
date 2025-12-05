@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { api } from "../../../../../utils/api";
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
 function SectionCanKeySkills({ profile }) {
@@ -7,35 +7,52 @@ function SectionCanKeySkills({ profile }) {
     const [customSkill, setCustomSkill] = useState('');
     const [loading, setLoading] = useState(false);
     const [showCustomInput, setShowCustomInput] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [showDropdown, setShowDropdown] = useState(false);
 
     const predefinedSkills = [
-        'JavaScript', 'Python', 'Java', 'C++', 'C#', 'PHP', 'Ruby', 'Go', 'Swift', 'Kotlin', 'TypeScript', 'Rust', 'Scala',
-        'HTML', 'CSS', 'React', 'Angular', 'Vue.js', 'Node.js', 'Express.js', 'Bootstrap', 'jQuery', 'Next.js', 'Nuxt.js', 'Tailwind CSS', 'Material UI', 'Redux', 'Svelte',
-        'MySQL', 'PostgreSQL', 'MongoDB', 'SQLite', 'Oracle', 'Redis', 'Firebase', 'Cassandra', 'DynamoDB',
-        'AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Jenkins', 'Git', 'Terraform', 'Ansible', 'CI/CD', 'GitLab', 'GitHub Actions',
-        'Django', 'Flask', 'Spring Boot', 'Laravel', 'Ruby on Rails', 'ASP.NET', 'FastAPI',
-        'React Native', 'Flutter', 'Ionic', 'Xamarin', 'Android', 'iOS',
-        'GraphQL', 'REST API', 'Microservices', 'WebSockets', 'gRPC',
-        'Selenium', 'Cypress', 'Jest', 'Mocha', 'Pytest', 'JUnit', 'Postman',
-        'Linux', 'Unix', 'Windows Server', 'Shell Scripting', 'PowerShell',
-        'Agile', 'Scrum', 'Kanban', 'Jira', 'Confluence', 'Trello',
-        'Figma', 'Adobe XD', 'Sketch', 'Photoshop', 'Illustrator',
-        'Salesforce', 'SAP', 'ServiceNow', 'Workday',
-        'Power BI', 'Tableau', 'Excel', 'Google Analytics', 'Looker',
-        'Hadoop', 'Spark', 'Kafka', 'Airflow', 'ETL',
-        'TensorFlow', 'PyTorch', 'Keras', 'Scikit-learn', 'Pandas', 'NumPy',
-        'Blockchain', 'Ethereum', 'Solidity', 'Web3',
-        'Penetration Testing', 'Ethical Hacking', 'OWASP', 'Security Auditing',
-        'Project Management', 'Team Leadership', 'Communication', 'Problem Solving', 'Critical Thinking',
-        'Data Analysis', 'Business Analysis', 'Financial Analysis', 'Marketing', 'Sales', 'Accounting',
-        'Digital Marketing', 'Content Writing', 'SEO', 'Social Media Marketing', 'Email Marketing', 'PPC',
-        'Software Testing', 'Quality Assurance', 'System Administration', 'Network Administration',
-        'Cybersecurity', 'Data Science', 'Machine Learning', 'Artificial Intelligence', 'Deep Learning', 'NLP', 'Computer Vision'
+        'JavaScript', 'Python', 'Java', 'C++', 'C#', 'PHP', 'Ruby', 'Go', 'Swift', 'Kotlin', 'TypeScript', 'Rust', 'Scala', 'Perl', 'R', 'MATLAB', 'Groovy', 'Clojure', 'Elixir', 'Haskell',
+        'HTML', 'CSS', 'React', 'Angular', 'Vue.js', 'Node.js', 'Express.js', 'Bootstrap', 'jQuery', 'Next.js', 'Nuxt.js', 'Tailwind CSS', 'Material UI', 'Redux', 'Svelte', 'Ember.js', 'Backbone.js', 'Preact', 'Lit', 'Astro',
+        'MySQL', 'PostgreSQL', 'MongoDB', 'SQLite', 'Oracle', 'Redis', 'Firebase', 'Cassandra', 'DynamoDB', 'MariaDB', 'CouchDB', 'Elasticsearch', 'Neo4j', 'InfluxDB', 'Memcached',
+        'AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Jenkins', 'Git', 'Terraform', 'Ansible', 'CI/CD', 'GitLab', 'GitHub Actions', 'CircleCI', 'Travis CI', 'Heroku', 'DigitalOcean',
+        'Django', 'Flask', 'Spring Boot', 'Laravel', 'Ruby on Rails', 'ASP.NET', 'FastAPI', 'Pyramid', 'Tornado', 'Bottle', 'Falcon', 'Gin', 'Echo', 'Fiber',
+        'React Native', 'Flutter', 'Ionic', 'Xamarin', 'Android', 'iOS', 'SwiftUI', 'Jetpack Compose', 'NativeScript', 'Cordova',
+        'GraphQL', 'REST API', 'Microservices', 'WebSockets', 'gRPC', 'SOAP', 'Protocol Buffers', 'Message Queues', 'RabbitMQ', 'Apache Kafka',
+        'Selenium', 'Cypress', 'Jest', 'Mocha', 'Pytest', 'JUnit', 'Postman', 'TestNG', 'Cucumber', 'Appium', 'Playwright', 'Puppeteer',
+        'Linux', 'Unix', 'Windows Server', 'Shell Scripting', 'PowerShell', 'Bash', 'Zsh', 'Fish', 'macOS',
+        'Agile', 'Scrum', 'Kanban', 'Jira', 'Confluence', 'Trello', 'Asana', 'Monday.com', 'Notion', 'Azure DevOps',
+        'Figma', 'Adobe XD', 'Sketch', 'Photoshop', 'Illustrator', 'InDesign', 'Affinity Designer', 'Protopie', 'Framer',
+        'Salesforce', 'SAP', 'ServiceNow', 'Workday', 'Oracle ERP', 'NetSuite', 'Dynamics 365',
+        'Power BI', 'Tableau', 'Excel', 'Google Analytics', 'Looker', 'Qlik', 'Sisense', 'Metabase', 'Superset',
+        'Hadoop', 'Spark', 'Kafka', 'Airflow', 'ETL', 'Talend', 'Informatica', 'Apache Beam', 'Flink',
+        'TensorFlow', 'PyTorch', 'Keras', 'Scikit-learn', 'Pandas', 'NumPy', 'OpenCV', 'NLTK', 'Spacy', 'XGBoost', 'LightGBM',
+        'Blockchain', 'Ethereum', 'Solidity', 'Web3', 'Bitcoin', 'Hyperledger', 'Truffle', 'Hardhat', 'Foundry',
+        'Penetration Testing', 'Ethical Hacking', 'OWASP', 'Security Auditing', 'Burp Suite', 'Metasploit', 'Wireshark', 'Nmap',
+        'Project Management', 'Team Leadership', 'Communication', 'Problem Solving', 'Critical Thinking', 'Mentoring', 'Coaching',
+        'Data Analysis', 'Business Analysis', 'Financial Analysis', 'Marketing', 'Sales', 'Accounting', 'Audit', 'Compliance',
+        'Digital Marketing', 'Content Writing', 'SEO', 'Social Media Marketing', 'Email Marketing', 'PPC', 'SEM', 'Copywriting',
+        'Software Testing', 'Quality Assurance', 'System Administration', 'Network Administration', 'Database Administration', 'Cloud Administration',
+        'Cybersecurity', 'Data Science', 'Machine Learning', 'Artificial Intelligence', 'Deep Learning', 'NLP', 'Computer Vision', 'Reinforcement Learning',
+        'API Development', 'Web Development', 'Mobile Development', 'Desktop Development', 'Game Development', 'IoT Development',
+        'Version Control', 'Code Review', 'Debugging', 'Performance Optimization', 'Refactoring', 'Design Patterns', 'SOLID Principles',
+        'Accessibility', 'Responsive Design', 'Progressive Web Apps', 'Server-Side Rendering', 'Static Site Generation', 'Jamstack'
     ];
+
+    const dropdownRef = useRef(null);
 
     useEffect(() => {
         setSkills(profile?.skills || []);
     }, [profile]);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setShowDropdown(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     const addSkill = async (skillToAdd) => {
         if (!skillToAdd || skills.includes(skillToAdd)) return;
@@ -100,25 +117,73 @@ function SectionCanKeySkills({ profile }) {
                 <div className="panel panel-default">
                     <div className="panel-body wt-panel-body p-a20 m-b30">
                         <div className="row">
-                            <div className="col-12 col-md-8 mb-2">
+                            <div className="col-12 col-md-6 mb-2">
                                 <label><i className="fa fa-cogs me-1"></i> Select a skill from list</label>
-                                <select 
-                                    className="form-control"
-                                    value={selectedSkill}
-                                    onChange={(e) => setSelectedSkill(e.target.value)}
-                                    disabled={loading}
-                                >
-                                    <option value="">Select a skill from list</option>
-                                    {predefinedSkills.filter(skill => !skills.includes(skill)).map(skill => (
-                                        <option key={skill} value={skill}>{skill}</option>
-                                    ))}
-                                </select>
+                                <div style={{position: 'relative'}} ref={dropdownRef}>
+                                    <input 
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="Search or select a skill..."
+                                        value={searchTerm || selectedSkill}
+                                        onChange={(e) => {
+                                            setSearchTerm(e.target.value);
+                                            setShowDropdown(true);
+                                        }}
+                                        onFocus={() => setShowDropdown(true)}
+                                        onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+                                        disabled={loading}
+                                    />
+                                    {showDropdown && (
+                                        <div style={{
+                                            position: 'absolute',
+                                            top: '100%',
+                                            left: 0,
+                                            right: 0,
+                                            background: 'white',
+                                            border: '1px solid #ddd',
+                                            borderTop: 'none',
+                                            maxHeight: '200px',
+                                            overflowY: 'auto',
+                                            zIndex: 1000,
+                                            borderRadius: '0 0 4px 4px'
+                                        }}>
+                                            {predefinedSkills
+                                                .filter(skill => !skills.includes(skill) && skill.toLowerCase().includes(searchTerm.toLowerCase()))
+                                                .map(skill => (
+                                                    <div
+                                                        key={skill}
+                                                        onMouseDown={() => {
+                                                            setSelectedSkill(skill);
+                                                            setSearchTerm('');
+                                                            setShowDropdown(false);
+                                                        }}
+                                                        style={{
+                                                            padding: '10px 12px',
+                                                            cursor: 'pointer',
+                                                            borderBottom: '1px solid #f0f0f0',
+                                                            transition: 'background 0.2s'
+                                                        }}
+                                                        onMouseEnter={(e) => e.target.style.background = '#f5f5f5'}
+                                                        onMouseLeave={(e) => e.target.style.background = 'white'}
+                                                    >
+                                                        {skill}
+                                                    </div>
+                                                ))}
+                                            {predefinedSkills.filter(skill => !skills.includes(skill) && skill.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 && searchTerm && (
+                                                <div style={{padding: '10px 12px', color: '#999', textAlign: 'center'}}>No skills found</div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                            <div className="col-12 col-md-4 d-flex align-items-end">
+                            <div className="col-12 col-md-3 d-flex align-items-end">
                                 <button 
                                     type="button"
                                     className="btn btn-outline-primary w-100"
-                                    onClick={handleAddFromDropdown}
+                                    onClick={() => {
+                                        handleAddFromDropdown();
+                                        setShowDropdown(false);
+                                    }}
                                     disabled={!selectedSkill || loading}
                                     style={{backgroundColor: 'transparent'}}
                                 >
@@ -126,23 +191,36 @@ function SectionCanKeySkills({ profile }) {
                                     Add Skill
                                 </button>
                             </div>
+                            <div className="col-12 col-md-3 d-flex align-items-end">
+                                <button 
+                                    type="button" 
+                                    onClick={() => setShowCustomInput(!showCustomInput)}
+                                    className="btn btn-outline-primary w-100" 
+                                    disabled={loading}
+                                    style={{backgroundColor: 'transparent'}}
+                                >
+                                    <i className="fa fa-keyboard me-1"></i>
+                                    Add Custom Skill
+                                </button>
+                            </div>
                         </div>
                         
                         {showCustomInput && (
                             <div className="row mt-3">
-                                <div className="col-12 col-md-8 mb-2">
+                                <div className="col-12 col-md-6 mb-2">
                                     <label><i className="fa fa-keyboard me-1"></i> Enter custom skill</label>
-                                    <input 
+                                                    <input 
                                         className="form-control"
                                         type="text"
                                         placeholder="Enter your custom skill"
                                         value={customSkill}
                                         onChange={(e) => setCustomSkill(e.target.value)}
                                         onKeyPress={(e) => e.key === 'Enter' && handleAddCustom()}
+                                        onFocus={() => setShowDropdown(false)}
                                         autoFocus
                                     />
                                 </div>
-                                <div className="col-12 col-md-4 d-flex gap-2">
+                                <div className="col-12 col-md-3 d-flex gap-2">
                                     <button 
                                         className="btn btn-outline-primary flex-fill"
                                         onClick={handleAddCustom}
@@ -152,6 +230,8 @@ function SectionCanKeySkills({ profile }) {
                                         <i className="fa fa-check me-1"></i>
                                         Add
                                     </button>
+                                </div>
+                                <div className="col-12 col-md-3 d-flex gap-2">
                                     <button 
                                         className="btn btn-secondary flex-fill"
                                         onClick={() => {setShowCustomInput(false); setCustomSkill('');}}
@@ -162,19 +242,6 @@ function SectionCanKeySkills({ profile }) {
                                 </div>
                             </div>
                         )}
-
-                        <div className="text-left mt-4">
-                            <button 
-                                type="button" 
-                                onClick={() => setShowCustomInput(true)}
-                                className="btn btn-outline-primary" 
-                                disabled={loading || showCustomInput}
-                                style={{backgroundColor: 'transparent'}}
-                            >
-                                <i className="fa fa-keyboard me-1"></i>
-                                Add Custom Skill
-                            </button>
-                        </div>
 
                         {skills.length > 0 ? (
                             <div className="mt-4">

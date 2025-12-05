@@ -151,6 +151,13 @@
     margin-right: 0.5rem !important;
   }
 
+  /* Keep header badges horizontal */
+  .emp-candidate-review-page .d-flex.justify-content-between .d-flex.gap-2 {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 0.5rem !important;
+  }
+
   /* Profile image */
   .emp-candidate-review-page .rounded-circle {
     width: 70px !important;
@@ -170,6 +177,38 @@
   .emp-candidate-review-page .row.g-3 .col-md-4 {
     flex: 0 0 100% !important;
     max-width: 100% !important;
+  }
+
+  /* Interview Processes Section - Mobile */
+  .emp-candidate-review-page .border.rounded-3 {
+    padding: 16px !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Form control and textarea */
+  .emp-candidate-review-page textarea.form-control {
+    font-size: 16px !important;
+    min-height: 80px !important;
+    padding: 10px 12px !important;
+    border-radius: 8px !important;
+  }
+
+  /* Ensure FAIcon spacing in process info */
+  .emp-candidate-review-page .fa-tag,
+  .emp-candidate-review-page .fa-clipboard-check,
+  .emp-candidate-review-page .fa-comment-o {
+    margin-right: 6px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Badge styling on mobile */
+  .emp-candidate-review-page .badge {
+    font-size: 0.75rem !important;
+    padding: 4px 8px !important;
   }
 }
 

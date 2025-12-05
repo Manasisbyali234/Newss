@@ -13,6 +13,11 @@ function YesNoPopup(props) {
         if(props.type === popupType.LOGOUT) {
             logout();
             authLogout();
+            const modal = document.getElementById(props.id);
+            if (modal) {
+                const bsModal = window.bootstrap.Modal.getInstance(modal);
+                if (bsModal) bsModal.hide();
+            }
             navigateToAfterLogin();
         }
     }
@@ -34,9 +39,9 @@ function YesNoPopup(props) {
                             <h4 className="modal-title">{props.msg}</h4>
                         </div>
 
-                        <div className="modal-footer">
-                            <button type="button" className="site-button outline-primary" data-bs-dismiss="modal" onClick={yesHandler}>Yes</button>
-                            <button type="button" className="site-button" data-bs-dismiss="modal">No</button>
+                        <div className="modal-footer" style={{display: 'flex', gap: '12px', justifyContent: 'center'}}>
+                            <button type="button" className="site-button outline-primary" onClick={yesHandler} style={{flex: 1, minWidth: '120px'}}>Yes</button>
+                            <button type="button" className="site-button" data-bs-dismiss="modal" style={{flex: 1, minWidth: '120px'}}>No</button>
                         </div>
                     </div>
                 </div>

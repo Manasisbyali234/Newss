@@ -618,54 +618,46 @@ function PlacementDetails() {
                     </div>
                 </div>
 
-                <div className="row">
-                    <div className="col-lg-3 col-md-6 mb-3">
-                        <div className="info-card" style={{minHeight: '100px'}}>
-                            <div>
-                                <label className="text-muted mb-1">
-                                    <i className="fa fa-phone mr-2" style={{color: '#fd7e14'}}></i>Phone Number
-                                </label>
-                                <p className="mb-0 font-weight-bold">{placement.phone || 'Not provided'}</p>
-                            </div>
+                <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px'}}>
+                    <div className="info-card" style={{minHeight: '100px', background: 'transparent'}}>
+                        <div>
+                            <label className="text-muted mb-1">
+                                <i className="fa fa-phone mr-2" style={{color: '#fd7e14'}}></i>Phone Number
+                            </label>
+                            <p className="mb-0 font-weight-bold">{placement.phone || 'Not provided'}</p>
                         </div>
                     </div>
-                    <div className="col-lg-3 col-md-6 mb-3">
-                        <div className="info-card" style={{minHeight: '100px'}}>
-                            <div>
-                                <label className="text-muted mb-1">
-                                    <i className="fa fa-calendar mr-2" style={{color: '#fd7e14'}}></i>Registration Date
-                                </label>
-                                <p className="mb-0 font-weight-bold">{new Date(placement.createdAt).toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'short',
-                                    day: 'numeric'
-                                })}</p>
-                            </div>
+                    <div className="info-card" style={{minHeight: '100px', background: 'transparent'}}>
+                        <div>
+                            <label className="text-muted mb-1">
+                                <i className="fa fa-calendar mr-2" style={{color: '#fd7e14'}}></i>Registration Date
+                            </label>
+                            <p className="mb-0 font-weight-bold">{new Date(placement.createdAt).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric'
+                            })}</p>
                         </div>
                     </div>
-                    <div className="col-lg-3 col-md-6 mb-3">
-                        <div className="info-card" style={{minHeight: '100px'}}>
-                            <div>
-                                <label className="text-muted mb-1">
-                                    <i className={`fa ${placement.status === 'approved' ? 'fa-check-circle' : 'fa-clock-o'} mr-2`} style={{color: '#fd7e14'}}></i>Status
-                                </label>
-                                <p className="mb-0 font-weight-bold" style={{
-                                    color: placement.status === 'approved' ? '#28a745' :
-                                           placement.status === 'rejected' ? '#dc3545' : '#ffc107'
-                                }}>
-                                    {placement.status || 'Pending'}
-                                </p>
-                            </div>
+                    <div className="info-card" style={{minHeight: '100px', background: 'transparent'}}>
+                        <div>
+                            <label className="text-muted mb-1">
+                                <i className={`fa ${placement.status === 'approved' ? 'fa-check-circle' : 'fa-clock-o'} mr-2`} style={{color: '#fd7e14'}}></i>Status
+                            </label>
+                            <p className="mb-0 font-weight-bold" style={{
+                                color: placement.status === 'approved' ? '#28a745' :
+                                       placement.status === 'rejected' ? '#dc3545' : '#ffc107'
+                            }}>
+                                {placement.status || 'Pending'}
+                            </p>
                         </div>
                     </div>
-                    <div className="col-lg-3 col-md-6 mb-3">
-                        <div className="info-card" style={{minHeight: '100px'}}>
-                            <div>
-                                <label className="text-muted mb-1">
-                                    <i className="fa fa-files-o mr-2" style={{color: '#fd7e14'}}></i>Files Uploaded
-                                </label>
-                                <p className="mb-0 font-weight-bold">{placement.fileHistory?.length || 0}</p>
-                            </div>
+                    <div className="info-card" style={{minHeight: '100px', background: 'transparent'}}>
+                        <div>
+                            <label className="text-muted mb-1">
+                                <i className="fa fa-files-o mr-2" style={{color: '#fd7e14'}}></i>Files Uploaded
+                            </label>
+                            <p className="mb-0 font-weight-bold">{placement.fileHistory?.length || 0}</p>
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,5 @@
 import { ArrowLeft, Award, Briefcase, Calendar, Check, Download, FileText, GraduationCap, Mail, MapPin, Phone, Save, User, UserCircle2, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { loadScript } from "../../../../globals/constants";
 import InterviewProcessManager from "./InterviewProcessManager";
@@ -17,11 +17,32 @@ function EmpCandidateReviewPage () {
 	const [interviewRounds, setInterviewRounds] = useState([]);
 	const [remarks, setRemarks] = useState('');
 	const [isSelected, setIsSelected] = useState(false);
+	const [interviewProcesses, setInterviewProcesses] = useState([]);
+	const [processRemarks, setProcessRemarks] = useState({});
+	const autoSaveTimeoutRef = useRef(null);
 
 	useEffect(() => {
 		loadScript("js/custom.js");
 		fetchApplicationDetails();
 	}, [applicationId]);
+
+	useEffect(() => {
+		if (interviewProcesses.length === 0) return;
+		
+		if (autoSaveTimeoutRef.current) {
+			clearTimeout(autoSaveTimeoutRef.current);
+		}
+		
+		autoSaveTimeoutRef.current = setTimeout(() => {
+			saveInterviewProcesses();
+		}, 1000);
+		
+		return () => {
+			if (autoSaveTimeoutRef.current) {
+				clearTimeout(autoSaveTimeoutRef.current);
+			}
+		};
+	}, [interviewProcesses, processRemarks, applicationId]);
 
 	const fetchApplicationDetails = async () => {
 		try {
@@ -101,6 +122,60 @@ function EmpCandidateReviewPage () {
 				
 				setInterviewRounds(allRounds);
 
+				// Load interview processes
+				let processes = [];
+				
+				console.log('=== INTERVIEW PROCESSES DEBUG ===');
+				console.log('interviewProcesses:', data.application.interviewProcesses);
+				console.log('interviewProcess.stages:', data.application.interviewProcess?.stages);
+				
+				// First check saved interviewProcesses (from review form)
+				if (data.application.interviewProcesses && data.application.interviewProcesses.length > 0) {
+					console.log('Using interviewProcesses, count:', data.application.interviewProcesses.length);
+					processes = data.application.interviewProcesses.filter(p => {
+						const valid = p && p.name && p.type && p.name !== 'undefined' && !p.type.match(/_(\d{13})$/);
+						console.log('Process:', p, 'Valid:', valid);
+						return valid;
+					});
+					console.log('Filtered processes:', processes);
+				}
+				// Fallback to interview process stages (from InterviewProcessManager)
+				else if (data.application.interviewProcess?.stages && data.application.interviewProcess.stages.length > 0) {
+					console.log('Using interviewProcess.stages, count:', data.application.interviewProcess.stages.length);
+					processes = data.application.interviewProcess.stages
+						.filter(stage => stage && stage.stageName && stage.stageType)
+						.map(stage => ({
+							id: stage._id || `${stage.stageType}-${stage.stageOrder}`,
+							name: stage.stageName,
+							type: stage.stageType,
+							status: stage.status,
+							isCompleted: stage.status === 'completed' || stage.status === 'passed',
+							result: stage.assessmentResult,
+							remarks: stage.interviewerNotes || '',
+							feedback: stage.feedback || ''
+						}));
+				}
+				console.log('Final processes to display:', processes);
+				console.log('=== END DEBUG ===');
+				
+				setInterviewProcesses(processes);
+				console.log('Set interviewProcesses state to:', processes);
+				
+				// Initialize process remarks - load from saved data or use process remarks
+				const initialRemarks = {};
+				if (data.application.processRemarks && Object.keys(data.application.processRemarks).length > 0) {
+					// Load saved remarks from the Map field
+					Object.entries(data.application.processRemarks).forEach(([key, value]) => {
+						initialRemarks[key] = value;
+					});
+				} else {
+					// Fall back to process remarks if available
+					processes.forEach(p => {
+						initialRemarks[p.id] = p.remarks || '';
+					});
+				}
+				setProcessRemarks(initialRemarks);
+
 			}
 		} catch (error) {
 			
@@ -133,6 +208,17 @@ function EmpCandidateReviewPage () {
 	const saveReview = async () => {
 		try {
 			const token = localStorage.getItem('employerToken');
+			
+			// Clean and format interview processes
+			const cleanedProcesses = interviewProcesses.map(p => ({
+				id: String(p.id),
+				name: String(p.name),
+				type: String(p.type),
+				status: String(p.status),
+				isCompleted: Boolean(p.isCompleted),
+				result: p.result || null
+			}));
+			
 			const response = await fetch(`http://localhost:5000/api/employer/applications/${applicationId}/review`, {
 				method: 'PUT',
 				headers: {
@@ -142,7 +228,9 @@ function EmpCandidateReviewPage () {
 				body: JSON.stringify({
 					interviewRounds,
 					remarks,
-					isSelected
+					isSelected,
+					interviewProcesses: cleanedProcesses,
+					processRemarks: processRemarks
 				})
 			});
 			
@@ -163,6 +251,43 @@ function EmpCandidateReviewPage () {
 			
 			console.error('Error saving review:', error);
 		showError('Network error while saving review. Please try again.');
+		}
+	};
+
+	const saveInterviewProcesses = async () => {
+		try {
+			const token = localStorage.getItem('employerToken');
+			
+			// Clean and format interview processes
+			const cleanedProcesses = interviewProcesses.map(p => ({
+				id: String(p.id),
+				name: String(p.name),
+				type: String(p.type),
+				status: String(p.status),
+				isCompleted: Boolean(p.isCompleted),
+				result: p.result || null
+			}));
+			
+			const response = await fetch(`http://localhost:5000/api/employer/applications/${applicationId}/review`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`
+				},
+				body: JSON.stringify({
+					interviewProcesses: cleanedProcesses,
+					processRemarks: processRemarks
+				})
+			});
+			
+			if (!response.ok) {
+				const errorData = await response.json();
+				console.error('Failed to save interview processes:', errorData);
+				showError(errorData.message || 'Failed to save interview processes');
+			}
+		} catch (error) {
+			console.error('Error saving interview processes:', error);
+			showError('Network error while saving interview processes. Please try again.');
 		}
 	};
 
@@ -188,7 +313,27 @@ function EmpCandidateReviewPage () {
 		}
 	};
 
+	const allProcessesCompleted = () => {
+		if (interviewProcesses.length === 0) return true;
+		return interviewProcesses.every(p => p.isCompleted);
+	};
+
+	const updateProcessCompletion = (processId, isCompleted) => {
+		setInterviewProcesses(prev => 
+			prev.map(p => p.id === processId ? { ...p, isCompleted } : p)
+		);
+	};
+
+	const updateProcessRemark = (processId, remark) => {
+		setProcessRemarks(prev => ({ ...prev, [processId]: remark }));
+	};
+
 	const shortlistCandidate = async () => {
+		if (interviewProcesses.length > 0 && !allProcessesCompleted()) {
+			showWarning('Please complete all assigned interview processes before proceeding with actions.');
+			return;
+		}
+		
 		try {
 			const token = localStorage.getItem('employerToken');
 			const response = await fetch(`http://localhost:5000/api/employer/applications/${applicationId}/status`, {
@@ -245,6 +390,11 @@ function EmpCandidateReviewPage () {
 	};
 
 	const hireCandidate = async () => {
+		if (interviewProcesses.length > 0 && !allProcessesCompleted()) {
+			showWarning('Please complete all assigned interview processes before proceeding with actions.');
+			return;
+		}
+		
 		try {
 			const token = localStorage.getItem('employerToken');
 			const response = await fetch(`http://localhost:5000/api/employer/applications/${applicationId}/status`, {
@@ -270,6 +420,11 @@ function EmpCandidateReviewPage () {
 	};
 
 	const rejectCandidate = async () => {
+		if (interviewProcesses.length > 0 && !allProcessesCompleted()) {
+			showWarning('Please complete all assigned interview processes before proceeding with actions.');
+			return;
+		}
+		
 		try {
 			const token = localStorage.getItem('employerToken');
 			const response = await fetch(`http://localhost:5000/api/employer/applications/${applicationId}/status`, {
@@ -520,12 +675,19 @@ function EmpCandidateReviewPage () {
 
 					{/* Review & Actions */}
 					<div className="card border-0 shadow-sm" style={{borderRadius: '15px'}}>
-						<div className="card-header border-0" style={{background: '#f8f9fa', borderRadius: '15px 15px 0 0'}}>
-							<h5 className="mb-0 fw-bold" style={{color: '#000'}}>Review & Actions</h5>
+						<div className="card-header border-0" style={{background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)', borderRadius: '15px 15px 0 0'}}>
+							<h5 className="mb-0 fw-bold" style={{color: '#2c3e50', fontSize: '1.1rem'}}>
+								<i className="fa fa-tasks me-2" style={{color: '#ff6600'}}></i>
+								Review & Actions
+							</h5>
 						</div>
 						<div className="card-body p-4">
+							
 							<div className="mb-4">
-								<label className="form-label fw-semibold" style={{color: '#2c3e50'}}>Overall Remarks</label>
+								<label className="form-label fw-semibold" style={{color: '#2c3e50', marginBottom: '8px'}}>
+									<i className="fa fa-pencil me-2" style={{color: '#ff6600'}}></i>
+									Overall Remarks
+								</label>
 								<textarea
 									className="form-control border-2 rounded-3"
 									rows="4"
@@ -534,25 +696,171 @@ function EmpCandidateReviewPage () {
 									onChange={(e) => setRemarks(e.target.value)}
 									style={{borderColor: '#ff6600', fontSize: '0.95rem'}}
 								/>
+								<small className="text-muted d-block mt-1">Max 1000 characters</small>
 							</div>
 
-
-
 							<div style={{display: 'flex', flexDirection: 'column', gap: '12px', width: '100%'}}>
-								<button className="action-btn-consistent" style={{backgroundColor: 'transparent', color: '#ff8a00', border: '1.5px solid #ff8a00', borderRadius: '20px', fontSize: '15px', fontWeight: '500', padding: '12px 20px', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: 'background-color 0.3s ease', whiteSpace: 'nowrap', boxSizing: 'border-box'}} onClick={hireCandidate} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fff3e5'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-									Offer Letter Shared
+								{/* Save Remark Button - Always Enabled */}
+								<button 
+									className="action-btn-consistent" 
+									style={{
+										backgroundColor: 'transparent', 
+										color: '#ff8a00', 
+										border: '1.5px solid #ff8a00', 
+										borderRadius: '20px', 
+										fontSize: '15px', 
+										fontWeight: '500', 
+										padding: '12px 20px', 
+										alignItems: 'center', 
+										justifyContent: 'center', 
+										gap: '10px', 
+										transition: 'background-color 0.3s ease', 
+										whiteSpace: 'nowrap', 
+										boxSizing: 'border-box'
+									}} 
+									onClick={saveReview} 
+									onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fff3e5'} 
+									onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+									title="Save remarks for this candidate"
+								>
+									<Save size={16} style={{flexShrink: 0}} />Save Remark
 								</button>
-								<button className={`action-btn-consistent ${application?.status === 'not_attended' ? 'btn-not-attended' : ''}`} style={{backgroundColor: 'transparent', color: '#ff8a00', border: '1.5px solid #ff8a00', borderRadius: '20px', fontSize: '15px', fontWeight: '500', padding: '12px 20px', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: 'background-color 0.3s ease', whiteSpace: 'nowrap', boxSizing: 'border-box'}} onClick={() => updateApplicationStatus('not_attended')}>
-									Candidate Not Attended
-								</button>
-								<button className="action-btn-consistent" style={{backgroundColor: 'transparent', color: '#ff8a00', border: '1.5px solid #ff8a00', borderRadius: '20px', fontSize: '15px', fontWeight: '500', padding: '12px 20px', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: 'background-color 0.3s ease', whiteSpace: 'nowrap', boxSizing: 'border-box'}} onClick={saveReview} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fff3e5'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-									<Save size={16} style={{flexShrink: 0}} />Save Review
-								</button>
-								<button className={`action-btn-consistent ${application?.status === 'shortlisted' ? 'btn-shortlisted' : ''}`} style={{backgroundColor: 'transparent', color: '#ff8a00', border: '1.5px solid #ff8a00', borderRadius: '20px', fontSize: '15px', fontWeight: '500', padding: '12px 20px', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: 'background-color 0.3s ease', whiteSpace: 'nowrap', boxSizing: 'border-box'}} onClick={shortlistCandidate}>
+
+								{/* Shortlist Candidate Button - Disabled if processes incomplete */}
+								<button 
+									className={`action-btn-consistent ${application?.status === 'shortlisted' ? 'btn-shortlisted' : ''}`} 
+									style={{
+										backgroundColor: interviewProcesses.length > 0 && !allProcessesCompleted() ? '#e9ecef' : 'transparent',
+										color: interviewProcesses.length > 0 && !allProcessesCompleted() ? '#999' : '#ff8a00',
+										border: interviewProcesses.length > 0 && !allProcessesCompleted() ? '1.5px solid #ccc' : '1.5px solid #ff8a00',
+										borderRadius: '20px', 
+										fontSize: '15px', 
+										fontWeight: '500', 
+										padding: '12px 20px', 
+										alignItems: 'center', 
+										justifyContent: 'center', 
+										gap: '10px', 
+										transition: 'all 0.3s ease', 
+										whiteSpace: 'nowrap', 
+										boxSizing: 'border-box',
+										cursor: interviewProcesses.length > 0 && !allProcessesCompleted() ? 'not-allowed' : 'pointer',
+										opacity: interviewProcesses.length > 0 && !allProcessesCompleted() ? 0.6 : 1
+									}} 
+									onClick={shortlistCandidate}
+									disabled={interviewProcesses.length > 0 && !allProcessesCompleted()}
+									onMouseEnter={(e) => {
+										if (!(interviewProcesses.length > 0 && !allProcessesCompleted())) {
+											e.currentTarget.style.backgroundColor = '#fff3e5';
+										}
+									}}
+									onMouseLeave={(e) => {
+										if (!(interviewProcesses.length > 0 && !allProcessesCompleted())) {
+											e.currentTarget.style.backgroundColor = 'transparent';
+										}
+									}}
+									title={interviewProcesses.length > 0 && !allProcessesCompleted() ? 'Complete all interview processes first' : 'Mark candidate as shortlisted'}
+								>
 									<Check size={16} style={{flexShrink: 0}} />Shortlist Candidate
 								</button>
-								<button className={`action-btn-consistent ${application?.status === 'rejected' ? 'btn-rejected' : ''}`} style={{backgroundColor: 'transparent', color: '#ff8a00', border: '1.5px solid #ff8a00', borderRadius: '20px', fontSize: '15px', fontWeight: '500', padding: '12px 20px', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: 'background-color 0.3s ease', whiteSpace: 'nowrap', boxSizing: 'border-box'}} onClick={rejectCandidate}>
+
+								{/* Offer Letter Button - Disabled if processes incomplete */}
+								<button 
+									className="action-btn-consistent" 
+									style={{
+										backgroundColor: interviewProcesses.length > 0 && !allProcessesCompleted() ? '#e9ecef' : 'transparent',
+										color: interviewProcesses.length > 0 && !allProcessesCompleted() ? '#999' : '#ff8a00',
+										border: interviewProcesses.length > 0 && !allProcessesCompleted() ? '1.5px solid #ccc' : '1.5px solid #ff8a00',
+										borderRadius: '20px', 
+										fontSize: '15px', 
+										fontWeight: '500', 
+										padding: '12px 20px', 
+										alignItems: 'center', 
+										justifyContent: 'center', 
+										gap: '10px', 
+										transition: 'all 0.3s ease', 
+										whiteSpace: 'nowrap', 
+										boxSizing: 'border-box',
+										cursor: interviewProcesses.length > 0 && !allProcessesCompleted() ? 'not-allowed' : 'pointer',
+										opacity: interviewProcesses.length > 0 && !allProcessesCompleted() ? 0.6 : 1
+									}} 
+									onClick={hireCandidate}
+									disabled={interviewProcesses.length > 0 && !allProcessesCompleted()}
+									onMouseEnter={(e) => {
+										if (!(interviewProcesses.length > 0 && !allProcessesCompleted())) {
+											e.currentTarget.style.backgroundColor = '#fff3e5';
+										}
+									}}
+									onMouseLeave={(e) => {
+										if (!(interviewProcesses.length > 0 && !allProcessesCompleted())) {
+											e.currentTarget.style.backgroundColor = 'transparent';
+										}
+									}}
+									title={interviewProcesses.length > 0 && !allProcessesCompleted() ? 'Complete all interview processes first' : 'Share offer letter with candidate'}
+								>
+									Offer Letter Shared
+								</button>
+
+								{/* Reject Button - Disabled if processes incomplete */}
+								<button 
+									className={`action-btn-consistent ${application?.status === 'rejected' ? 'btn-rejected' : ''}`} 
+									style={{
+										backgroundColor: interviewProcesses.length > 0 && !allProcessesCompleted() ? '#e9ecef' : 'transparent',
+										color: interviewProcesses.length > 0 && !allProcessesCompleted() ? '#999' : '#ff8a00',
+										border: interviewProcesses.length > 0 && !allProcessesCompleted() ? '1.5px solid #ccc' : '1.5px solid #ff8a00',
+										borderRadius: '20px', 
+										fontSize: '15px', 
+										fontWeight: '500', 
+										padding: '12px 20px', 
+										alignItems: 'center', 
+										justifyContent: 'center', 
+										gap: '10px', 
+										transition: 'all 0.3s ease', 
+										whiteSpace: 'nowrap', 
+										boxSizing: 'border-box',
+										cursor: interviewProcesses.length > 0 && !allProcessesCompleted() ? 'not-allowed' : 'pointer',
+										opacity: interviewProcesses.length > 0 && !allProcessesCompleted() ? 0.6 : 1
+									}} 
+									onClick={rejectCandidate}
+									disabled={interviewProcesses.length > 0 && !allProcessesCompleted()}
+									onMouseEnter={(e) => {
+										if (!(interviewProcesses.length > 0 && !allProcessesCompleted())) {
+											e.currentTarget.style.backgroundColor = '#fff3e5';
+										}
+									}}
+									onMouseLeave={(e) => {
+										if (!(interviewProcesses.length > 0 && !allProcessesCompleted())) {
+											e.currentTarget.style.backgroundColor = 'transparent';
+										}
+									}}
+									title={interviewProcesses.length > 0 && !allProcessesCompleted() ? 'Complete all interview processes first' : 'Reject this candidate'}
+								>
 									<X size={16} style={{flexShrink: 0}} />Reject Candidate
+								</button>
+
+								{/* Candidate Not Attended - Always Enabled */}
+								<button 
+									className={`action-btn-consistent ${application?.status === 'not_attended' ? 'btn-not-attended' : ''}`} 
+									style={{
+										backgroundColor: 'transparent', 
+										color: '#ff8a00', 
+										border: '1.5px solid #ff8a00', 
+										borderRadius: '20px', 
+										fontSize: '15px', 
+										fontWeight: '500', 
+										padding: '12px 20px', 
+										alignItems: 'center', 
+										justifyContent: 'center', 
+										gap: '10px', 
+										transition: 'background-color 0.3s ease', 
+										whiteSpace: 'nowrap', 
+										boxSizing: 'border-box'
+									}} 
+									onClick={() => updateApplicationStatus('not_attended')}
+									onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fff3e5'} 
+									onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+									title="Mark candidate as not attended"
+								>
+									Candidate Not Attended
 								</button>
 							</div>
 						</div>
@@ -560,7 +868,7 @@ function EmpCandidateReviewPage () {
 				</div>
 
 				{/* Left Column - Candidate Profile */}
-				<div className="col-lg-8">
+				<div className="col-lg-8" style={{display: 'flex', flexDirection: 'column'}}>
 					{/* Personal Information Card */}
 					<div className="card border-0 shadow-sm mb-4" style={{borderRadius: '15px'}}>
 						<div className="card-header border-0" style={{background: '#f8f9fa', borderRadius: '15px 15px 0 0'}}>
@@ -724,6 +1032,217 @@ function EmpCandidateReviewPage () {
 											</div>
 										</div>
 									))}
+								</div>
+							</div>
+						</div>
+					)}
+
+					{/* Assigned Interview Process Section - Show when processes exist */}
+					{interviewProcesses && interviewProcesses.length > 0 ? (
+						<div className="card border-0 shadow-sm mb-4" style={{borderRadius: '15px'}}>
+							<div className="card-header border-0" style={{background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)', borderRadius: '15px 15px 0 0'}}>
+								<div className="d-flex align-items-center justify-content-between" style={{gap: '12px', flexWrap: 'wrap'}}>
+									<h5 className="mb-0 fw-bold" style={{color: '#2c3e50', fontSize: '1.1rem'}}>
+										<i className="fa fa-list-check me-2" style={{color: '#ff6600'}}></i>
+										Assigned Interview Processes
+									</h5>
+									<div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+										<span className={`badge px-3 py-2 ${allProcessesCompleted() ? 'bg-success' : 'bg-warning'}`} style={{fontSize: '0.85rem'}}>
+											{interviewProcesses.filter(p => p.isCompleted).length}/{interviewProcesses.length} Completed
+										</span>
+										<button 
+											onClick={saveReview}
+											className="btn btn-sm"
+											style={{
+												backgroundColor: '#ff6600',
+												color: 'white',
+												borderRadius: '20px',
+												padding: '6px 16px',
+												fontSize: '0.85rem',
+												fontWeight: '500',
+												border: 'none',
+												cursor: 'pointer',
+												display: 'flex',
+												alignItems: 'center',
+												gap: '6px',
+												transition: 'all 0.3s ease'
+											}}
+											onMouseEnter={(e) => {
+												e.currentTarget.style.backgroundColor = '#e55a00';
+												e.currentTarget.style.transform = 'scale(1.05)';
+											}}
+											onMouseLeave={(e) => {
+												e.currentTarget.style.backgroundColor = '#ff6600';
+												e.currentTarget.style.transform = 'scale(1)';
+											}}
+										>
+											<Save size={16} style={{flexShrink: 0}} />
+											Save Remarks
+										</button>
+									</div>
+								</div>
+							</div>
+							<div className="card-body p-4">
+								{console.log('Rendering section, processes count:', interviewProcesses.length)}
+								<div style={{display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', width: '100%'}}>
+									{interviewProcesses.map((process) => (
+										<div key={process.id} style={{display: 'flex', flexDirection: 'column'}}>
+											<div className="border rounded-3 h-100" style={{
+												backgroundColor: process.isCompleted ? '#f0f8f0' : '#fafafa',
+												borderColor: process.isCompleted ? '#28a745' : '#dee2e6',
+												borderWidth: '2px',
+												transition: 'all 0.3s ease',
+												display: 'flex',
+												flexDirection: 'column',
+												padding: '12px'
+											}}>
+												{/* Header with Checkbox and Title */}
+												<div style={{display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '10px'}}>
+													<div style={{flexShrink: 0, paddingTop: '2px'}}>
+														<div className="form-check">
+															<input
+																className="form-check-input"
+																type="checkbox"
+																id={`process-${process.id}`}
+																checked={process.isCompleted}
+																onChange={(e) => updateProcessCompletion(process.id, e.target.checked)}
+																style={{width: '22px', height: '22px', cursor: 'pointer', accentColor: '#ff6600'}}
+															/>
+														</div>
+													</div>
+													<div style={{flex: 1, minWidth: 0}}>
+														<div style={{display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '4px'}}>
+															<h6 className="mb-0 fw-bold" style={{color: '#2c3e50', fontSize: '0.9rem', wordBreak: 'break-word'}}>
+																{process.name}
+															</h6>
+														</div>
+														<div style={{display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center'}}>
+															{!process.isCompleted && (
+																<span className={`badge ${
+																	process.status === 'in_progress' ? 'bg-warning' :
+																	process.status === 'passed' ? 'bg-success' :
+																	process.status === 'failed' ? 'bg-danger' :
+																	'bg-secondary'
+																}`} style={{fontSize: '0.75rem', padding: '4px 8px', whiteSpace: 'nowrap'}}>
+																	{process.status.charAt(0).toUpperCase() + process.status.slice(1)}
+																</span>
+															)}
+															{process.isCompleted && (
+																<span className="badge bg-success" style={{fontSize: '0.75rem', padding: '4px 8px', whiteSpace: 'nowrap'}}>
+																	<i className="fa fa-check-circle me-1"></i>Complete
+																</span>
+															)}
+														</div>
+													</div>
+												</div>
+
+												{/* Divider */}
+												<div style={{height: '1px', backgroundColor: '#e9ecef', margin: '8px 0'}}></div>
+
+												{/* Process Details */}
+												<div style={{flex: 1, display: 'flex', flexDirection: 'column', gap: '8px'}}>
+													{/* Type and Additional Info */}
+													<div style={{display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', fontSize: '0.8rem'}}>
+														<span style={{color: '#6c757d', display: 'flex', alignItems: 'center', gap: '6px'}}>
+															<i className="fa fa-tag" style={{color: '#ff6600', fontSize: '0.9rem'}}></i>
+															<strong>Type:</strong> {process.type.charAt(0).toUpperCase() + process.type.slice(1)}
+														</span>
+														{process.type === 'assessment' && (
+															<span style={{color: '#6c757d', display: 'flex', alignItems: 'center', gap: '6px'}}>
+																<i className="fa fa-clipboard-check" style={{color: '#ff6600', fontSize: '0.9rem'}}></i>
+																Assessment
+															</span>
+														)}
+													</div>
+
+													{/* Assessment Result Display */}
+													{process.type === 'assessment' && process.result && (
+														<div className="rounded" style={{padding: '8px', backgroundColor: 'rgba(255, 102, 0, 0.05)', border: '1px solid rgba(255, 102, 0, 0.2)'}}>
+															<small className="text-muted d-block" style={{fontWeight: '600', fontSize: '0.75rem', marginBottom: '4px'}}>Assessment Result:</small>
+															<span className={`badge ${
+																process.result.toLowerCase() === 'pass' ? 'bg-success' :
+																process.result.toLowerCase() === 'fail' ? 'bg-danger' :
+																'bg-info'
+															}`} style={{fontSize: '0.85rem', padding: '6px 10px'}}>
+																<i className={`fa ${
+																	process.result.toLowerCase() === 'pass' ? 'fa-check-circle' :
+																	process.result.toLowerCase() === 'fail' ? 'fa-times-circle' :
+																	'fa-info-circle'
+																} me-1`}></i>
+																{process.result.toUpperCase()}
+															</span>
+														</div>
+													)}
+
+													{/* Remarks Input */}
+													<div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
+														<label className="form-label fw-semibold" style={{fontSize: '0.75rem', color: '#2c3e50', marginBottom: '0'}}>
+															<i className="fa fa-comment-o me-2" style={{color: '#ff6600'}}></i>
+															Remarks
+														</label>
+														<textarea
+															className="form-control"
+															rows="2"
+															placeholder="Enter remarks..."
+															value={processRemarks[process.id] || ''}
+															onChange={(e) => updateProcessRemark(process.id, e.target.value)}
+															style={{
+																borderColor: process.isCompleted ? '#28a745' : '#ff6600',
+																fontSize: '0.75rem',
+																borderWidth: '1.5px',
+																resize: 'vertical',
+																minHeight: '50px',
+																padding: '6px 8px'
+															}}
+														/>
+														<small className="text-muted" style={{fontSize: '0.65rem'}}>Max 500 chars</small>
+													</div>
+												</div>
+											</div>
+										</div>
+									))}
+								</div>
+								
+								{/* Summary Section */}
+								<div className="mt-4 p-3 rounded-3" style={{backgroundColor: '#f8f9fa', border: '1px dashed #dee2e6'}}>
+									<div className="d-flex justify-content-between align-items-center">
+										<div>
+											<h6 className="mb-1 fw-bold" style={{color: '#2c3e50'}}>Process Summary</h6>
+											<p className="mb-0 text-muted" style={{fontSize: '0.9rem'}}>
+												<strong>{interviewProcesses.filter(p => p.isCompleted).length}</strong> of <strong>{interviewProcesses.length}</strong> processes completed
+											</p>
+										</div>
+										<div className="text-end">
+											{allProcessesCompleted() ? (
+												<span className="badge bg-success" style={{fontSize: '0.75rem', padding: '4px 8px', whiteSpace: 'nowrap'}}>
+													<i className="fa fa-check-circle me-1"></i>All Processes Complete
+												</span>
+											) : (
+												<span className="badge" style={{fontSize: '0.75rem', padding: '4px 8px', whiteSpace: 'nowrap', backgroundColor: 'rgba(255, 102, 0, 0.15)', color: '#ff6600', border: '1px solid rgba(255, 102, 0, 0.3)'}}>
+													<i className="fa fa-hourglass-half me-1"></i>Pending
+												</span>
+											)}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					) : (
+						<div className="card border-0 shadow-sm mb-4" style={{borderRadius: '15px'}}>
+							<div className="card-header border-0" style={{background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)', borderRadius: '15px 15px 0 0'}}>
+								<h5 className="mb-0 fw-bold" style={{color: '#2c3e50', fontSize: '1.1rem'}}>
+									<i className="fa fa-list-check me-2" style={{color: '#ff6600'}}></i>
+									Assigned Interview Processes
+								</h5>
+							</div>
+							<div className="card-body p-4">
+								<div className="text-center py-5">
+									<i className="fa fa-info-circle fa-3x text-muted mb-3"></i>
+									<h6 className="text-muted">No Interview Processes Configured</h6>
+									<p className="text-muted mb-0">
+										The job posting for this position does not have any interview processes configured. 
+										Please configure interview rounds/assessment in the job posting settings.
+									</p>
 								</div>
 							</div>
 						</div>

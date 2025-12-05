@@ -53,6 +53,17 @@ const applicationSchema = new mongoose.Schema({
   isSelectedForProcess: { type: Boolean, default: false },
   reviewedAt: { type: Date },
   
+  // Interview processes and remarks
+  interviewProcesses: [{
+    id: { type: String },
+    name: { type: String },
+    type: { type: String },
+    status: { type: String },
+    isCompleted: { type: Boolean, default: false },
+    result: { type: String, default: null }
+  }],
+  processRemarks: { type: Map, of: String },
+  
   // Interview invite fields
   interviewInvite: {
     sentAt: { type: Date },

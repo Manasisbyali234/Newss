@@ -4,7 +4,6 @@ import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../
 function SectionCanProfileSummary({ profile }) {
     const [summary, setSummary] = useState('');
     const [loading, setLoading] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
 
     useEffect(() => {
         setSummary(profile?.profileSummary || '');
@@ -44,7 +43,6 @@ function SectionCanProfileSummary({ profile }) {
             const data = await response.json();
 
             if (response.ok && data.success) {
-                setIsEditing(false);
                 showSuccess('Profile summary updated successfully!');
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
             } else {
@@ -76,72 +74,39 @@ function SectionCanProfileSummary({ profile }) {
     };
     return (
         <>
-            <div className="panel-heading wt-panel-heading p-a20 d-flex justify-content-between align-items-center">
+            <div className="panel-heading wt-panel-heading p-a20">
                 <h4 className="panel-tittle m-a0">
                     Profile Summary
                 </h4>
-                <button 
-                    type="button"
-                    className="btn btn-outline-primary btn-sm"
-                    onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setIsEditing(!isEditing);
-                    }}
-                >
-                    {isEditing ? "Cancel" : "Edit"}
-                </button>
             </div>
             <div className="panel-body wt-panel-body p-a20">
-                {isEditing ? (
-                    <div className="edit-form">
-                        <div className="alert alert-info mb-3">
-                            <i className="fa fa-info-circle me-2"></i>
-                            Mention highlights of your career, education, and professional interests.
-                        </div>
-                        <textarea 
-                            className="form-control mb-3" 
-                            placeholder="e.g., Passionate software developer with 2+ years of experience in full-stack development. Skilled in React, Node.js, and database management."
-                            value={summary}
-                            onChange={(e) => setSummary(e.target.value)}
-                            rows={5}
-                            maxLength={1000}
-                        />
-                        <div className="d-flex justify-content-between align-items-center">
-                            <small className="text-muted">{summary.length}/1000 characters</small>
-                            <div>
-                                <button 
-                                    type="button"
-                                    className="btn btn-secondary btn-sm me-2"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        setIsEditing(false);
-                                    }}
-                                    disabled={loading}
-                                >
-                                    Cancel
-                                </button>
-                                <button 
-                                    type="button"
-                                    className="btn btn-secondary btn-sm"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        handleSave();
-                                    }}
-                                    disabled={loading}
-                                >
-                                    {loading ? 'Saving...' : 'Save'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="twm-panel-inner">
-                        <p>{summary || 'Add your profile summary to highlight your career and education'}</p>
-                    </div>
-                )}
+                <div className="alert alert-info mb-3">
+                    <i className="fa fa-info-circle me-2"></i>
+                    Mention highlights of your career, education, and professional interests.
+                </div>
+                <textarea 
+                    className="form-control mb-3" 
+                    placeholder="e.g., Passionate software developer with 2+ years of experience in full-stack development. Skilled in React, Node.js, and database management."
+                    value={summary}
+                    onChange={(e) => setSummary(e.target.value)}
+                    rows={5}
+                    maxLength={1000}
+                />
+                <div className="d-flex justify-content-between align-items-center">
+                    <small className="text-muted">{summary.length}/1000 characters</small>
+                    <button 
+                        type="button"
+                        className="btn btn-secondary btn-sm"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleSave();
+                        }}
+                        disabled={loading}
+                    >
+                        {loading ? 'Saving...' : 'Save'}
+                    </button>
+                </div>
             </div>
         </>
     )
