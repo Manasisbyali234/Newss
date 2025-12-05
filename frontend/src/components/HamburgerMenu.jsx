@@ -12,11 +12,12 @@ const HamburgerMenu = ({ isOpen, onToggle, onClose }) => {
         {isOpen ? '✕' : '☰'}
       </button>
 
-      {isOpen && <div className="hamburger-overlay" onClick={onClose}></div>}
+      {isOpen && <div className="hamburger-overlay show" onClick={onClose}></div>}
 
       <nav className={`hamburger-menu ${isOpen ? 'open' : ''}`}>
         <div className="hamburger-header">
           <img src="/assets/images/logo-dark.png" alt="Logo" className="hamburger-logo" />
+          <button className="close-btn" onClick={onClose}>✕</button>
         </div>
 
         <div className="hamburger-content">
@@ -49,28 +50,28 @@ const HamburgerMenu = ({ isOpen, onToggle, onClose }) => {
               </NavLink>
             </li>
           </ul>
-
-          {!isAuthenticated() && (
-            <div className="auth-section">
-              <button 
-                className="auth-btn sign-up" 
-                data-bs-toggle="modal" 
-                data-bs-target="#sign_up_popup" 
-                onClick={onClose}
-              >
-                Sign Up
-              </button>
-              <button 
-                className="auth-btn sign-in" 
-                data-bs-toggle="modal" 
-                data-bs-target="#sign_up_popup2" 
-                onClick={onClose}
-              >
-                Sign In
-              </button>
-            </div>
-          )}
         </div>
+
+        {!isAuthenticated() && (
+          <div className="auth-section">
+            <button 
+              className="auth-btn sign-up" 
+              data-bs-toggle="modal" 
+              data-bs-target="#sign_up_popup" 
+              onClick={onClose}
+            >
+              Sign Up
+            </button>
+            <button 
+              className="auth-btn sign-in" 
+              data-bs-toggle="modal" 
+              data-bs-target="#sign_up_popup2" 
+              onClick={onClose}
+            >
+              Sign In
+            </button>
+          </div>
+        )}
       </nav>
     </>
   );
