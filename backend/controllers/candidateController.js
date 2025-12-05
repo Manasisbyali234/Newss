@@ -1061,6 +1061,68 @@ exports.getDashboardStats = async (req, res) => {
   }
 };
 
+// Helper function to get assessment timer information
+function getAssessmentTimerInfo(job) {
+  if (!job?.assessmentId || !job?.assessmentStartDate || !job?.assessmentEndDate) {
+    return null;
+  }
+
+  const now = new Date();
+  const startDate = new Date(job.assessmentStartDate);
+  const endDate = new Date(job.assessmentEndDate);
+  
+  // Parse start and end times if available
+  let startTime = null;
+  let endTime = null;
+  
+  if (job.assessmentStartTime) {
+    const [hours, minutes] = job.assessmentStartTime.split(':');
+    startTime = { hours: parseInt(hours), minutes: parseInt(minutes) };
+  }
+  
+  if (job.assessmentEndTime) {
+    const [hours, minutes] = job.assessmentEndTime.split(':');
+    endTime = { hours: parseInt(hours), minutes: parseInt(minutes) };
+  }
+  
+  // Create full datetime objects for start and end
+  let assessmentStart = new Date(startDate);
+  let assessmentEnd = new Date(endDate);
+  
+  if (startTime) {
+    assessmentStart.setHours(startTime.hours, startTime.minutes, 0, 0);
+  }
+  
+  if (endTime) {
+    assessmentEnd.setHours(endTime.hours, endTime.minutes, 0, 0);
+  }
+  
+  const isBeforeStart = now < assessmentStart;
+  const isAfterEnd = now > assessmentEnd;
+  const isActive = !isBeforeStart && !isAfterEnd;
+  
+  let timeRemaining = null;
+  let timeUntilStart = null;
+  
+  if (isBeforeStart) {
+    timeUntilStart = Math.max(0, assessmentStart.getTime() - now.getTime());
+  } else if (isActive) {
+    timeRemaining = Math.max(0, assessmentEnd.getTime() - now.getTime());
+  }
+  
+  return {
+    startDate: assessmentStart,
+    endDate: assessmentEnd,
+    startTime: job.assessmentStartTime,
+    endTime: job.assessmentEndTime,
+    isBeforeStart,
+    isAfterEnd,
+    isActive,
+    timeRemaining,
+    timeUntilStart
+  };
+}
+
 exports.getCandidateApplicationsWithInterviews = async (req, res) => {
   try {
     // Set cache-control headers to prevent browser caching
@@ -1073,25 +1135,24 @@ exports.getCandidateApplicationsWithInterviews = async (req, res) => {
     const applications = await Application.find({ candidateId: req.user._id })
       .populate({
         path: 'jobId',
-        select: 'title location jobType status interviewRoundsCount interviewRoundTypes interviewRoundDetails assessmentId assessmentStartDate assessmentEndDate',
+        select: 'title location jobType status interviewRoundsCount interviewRoundTypes interviewRoundDetails assessmentId assessmentStartDate assessmentEndDate assessmentStartTime assessmentEndTime',
         options: { lean: false }
       })
       .populate('employerId', 'companyName')
       .sort({ createdAt: -1 })
       .lean(); // Use lean for better performance
 
-    // Add assessment status fields to each application
+    // Add assessment status fields and timer info to each application
     const applicationsWithAssessmentStatus = applications.map(app => {
-      console.log('Processing app for job:', app.jobId?._id, {
-        assessmentStartDate: app.jobId?.assessmentStartDate,
-        assessmentEndDate: app.jobId?.assessmentEndDate
-      });
+      const assessmentTimerInfo = getAssessmentTimerInfo(app.jobId);
+      
       return {
         ...app,
         assessmentStatus: app.assessmentStatus || 'not_required',
         assessmentScore: app.assessmentScore || null,
         assessmentPercentage: app.assessmentPercentage || null,
-        assessmentResult: app.assessmentResult || null
+        assessmentResult: app.assessmentResult || null,
+        assessmentTimerInfo
       };
     });
 

@@ -120,11 +120,9 @@ const TermsModal = ({ isOpen, onClose, onAccept, role = 'candidate' }) => {
                             id="terms-accept"
                             checked={accepted}
                             onChange={(e) => setAccepted(e.target.checked)}
-                            disabled={!hasScrolled}
                         />
                         <label htmlFor="terms-accept">
                             I have read and accept the terms and conditions
-                            {!hasScrolled && <span className="scroll-hint"> (Please scroll to the bottom)</span>}
                         </label>
                     </div>
                     
@@ -135,7 +133,7 @@ const TermsModal = ({ isOpen, onClose, onAccept, role = 'candidate' }) => {
                         <button 
                             className="terms-btn terms-btn-accept" 
                             onClick={handleAccept}
-                            disabled={!accepted || !hasScrolled}
+                            disabled={!accepted}
                         >
                             Accept & Continue
                         </button>

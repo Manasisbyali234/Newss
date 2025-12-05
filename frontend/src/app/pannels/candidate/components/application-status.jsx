@@ -81,6 +81,79 @@ function CanStatusPage() {
 		};
 	};
 
+	// Timer component for assessment countdown
+	const AssessmentTimer = ({ timerInfo, onTimerEnd }) => {
+		const [timeLeft, setTimeLeft] = useState(null);
+		const [isActive, setIsActive] = useState(false);
+
+		useEffect(() => {
+			if (!timerInfo) return;
+
+			const updateTimer = () => {
+				const now = new Date().getTime();
+				
+				if (timerInfo.isBeforeStart && timerInfo.timeUntilStart) {
+					const remaining = Math.max(0, timerInfo.timeUntilStart - (now - new Date(timerInfo.startDate).getTime()) + timerInfo.timeUntilStart);
+					setTimeLeft(remaining);
+					setIsActive(false);
+				} else if (timerInfo.isActive && timerInfo.timeRemaining) {
+					const remaining = Math.max(0, timerInfo.timeRemaining - (now - new Date(timerInfo.endDate).getTime()) + timerInfo.timeRemaining);
+					setTimeLeft(remaining);
+					setIsActive(true);
+					if (remaining <= 0 && onTimerEnd) {
+						onTimerEnd();
+					}
+				} else {
+					setTimeLeft(null);
+					setIsActive(false);
+				}
+			};
+
+			updateTimer();
+			const interval = setInterval(updateTimer, 1000);
+
+			return () => clearInterval(interval);
+		}, [timerInfo, onTimerEnd]);
+
+		if (!timeLeft) return null;
+
+		const formatTime = (milliseconds) => {
+			const totalSeconds = Math.floor(milliseconds / 1000);
+			const days = Math.floor(totalSeconds / (24 * 3600));
+			const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+			const minutes = Math.floor((totalSeconds % 3600) / 60);
+			const seconds = totalSeconds % 60;
+
+			if (days > 0) {
+				return `${days}d ${hours}h ${minutes}m`;
+			} else if (hours > 0) {
+				return `${hours}h ${minutes}m ${seconds}s`;
+			} else {
+				return `${minutes}m ${seconds}s`;
+			}
+		};
+
+		return (
+			<div style={{
+				padding: '8px 12px',
+				background: isActive ? '#fef3c7' : '#dbeafe',
+				border: `1px solid ${isActive ? '#f59e0b' : '#3b82f6'}`,
+				borderRadius: '6px',
+				marginTop: '4px',
+				display: 'flex',
+				alignItems: 'center',
+				gap: '6px',
+				fontSize: '12px',
+				fontWeight: '600'
+			}}>
+				<i className={`fa ${isActive ? 'fa-hourglass-half' : 'fa-clock'}`} style={{color: isActive ? '#f59e0b' : '#3b82f6'}}></i>
+				<span style={{color: isActive ? '#92400e' : '#1e40af'}}>
+					{isActive ? 'Time Remaining: ' : 'Starts in: '}{formatTime(timeLeft)}
+				</span>
+			</div>
+		);
+	};
+
 	useEffect(() => {
 		loadScript("js/custom.js");
 		fetchApplications();
@@ -568,6 +641,13 @@ function CanStatusPage() {
 																								Dates TBD
 																							</div>
 																						)}
+																						{/* Assessment Timer */}
+																						{roundName === 'Assessment' && app.assessmentTimerInfo && (
+																							<AssessmentTimer 
+																								timerInfo={app.assessmentTimerInfo}
+																								onTimerEnd={() => fetchApplications()}
+																							/>
+																						)}
 
 
 																					</div>
@@ -765,7 +845,22 @@ function CanStatusPage() {
 																	{selectedApplication.jobId?.assessmentEndDate && (
 																		<span><strong>To:</strong> {new Date(selectedApplication.jobId.assessmentEndDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}</span>
 																	)}
+																	{(selectedApplication.jobId?.assessmentStartTime || selectedApplication.jobId?.assessmentEndTime) && (
+																		<div className="mt-1">
+																			<strong>Time:</strong> {selectedApplication.jobId?.assessmentStartTime || '--:--'} - {selectedApplication.jobId?.assessmentEndTime || '--:--'}
+																		</div>
+																	)}
 																</div>
+															</div>
+														)}
+
+														{/* Assessment Timer */}
+														{selectedApplication.assessmentTimerInfo && (
+															<div className="mb-3">
+																<AssessmentTimer 
+																	timerInfo={selectedApplication.assessmentTimerInfo}
+																	onTimerEnd={() => fetchApplications()}
+																/>
 															</div>
 														)}
 
@@ -843,6 +938,15 @@ function CanStatusPage() {
 																		</div>
 																	</div>
 																)}
+																{/* Assessment Timer in Modal */}
+																{roundName === 'Assessment' && selectedApplication.assessmentTimerInfo && (
+																	<div className="mb-3">
+																		<AssessmentTimer 
+																			timerInfo={selectedApplication.assessmentTimerInfo}
+																			onTimerEnd={() => fetchApplications()}
+																		/>
+																	</div>
+																)}}
 																{!roundDetails.fromDate && !roundDetails.toDate && roundDetails.date && (
 																	<div className="mb-2">
 																		<small className="text-muted"><i className="fa fa-calendar me-1"></i>Date:</small>

@@ -117,10 +117,7 @@
     cursor: pointer;
 }
 
-.terms-checkbox-wrapper input[type="checkbox"]:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-}
+
 
 .terms-checkbox-wrapper label {
     font-size: 14px;

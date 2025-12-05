@@ -586,6 +586,29 @@ function SectionCandicateBasicInfo() {
                             />
                             {errors.email && <div className="invalid-feedback">{errors.email}</div>}
                         </div>
+                        <div className="col-md-4 mb-3">
+                            <label className="form-label">
+                                <i className="fa fa-map-pin me-2" style={{color: '#ff6b35'}}></i>
+                                Pincode *
+                                {fetchingLocation && <i className="fa fa-spinner fa-spin ms-2" style={{color: '#ff6b35'}}></i>}
+                            </label>
+                            <input
+                                className={`form-control ${errors.pincode ? 'is-invalid' : ''}`}
+                                type="text"
+                                name="pincode"
+                                value={formData.pincode}
+                                onChange={handleInputChange}
+                                onBlur={handleBlur}
+                                placeholder="Enter 6-digit pincode"
+                                maxLength="6"
+                                disabled={fetchingLocation}
+                                required
+                            />
+                            {errors.pincode && <div className="invalid-feedback">{errors.pincode}</div>}
+                            <small className="text-muted">
+                                {fetchingLocation ? 'Fetching location...' : 'Enter 6-digit pincode (location will auto-fill)'}
+                            </small>
+                        </div>
                         <div className="col-md-4 mb-3" ref={locationDropdownRef}>
                             <label className="form-label"><i className="fa fa-map-marker me-2" style={{color: '#ff6b35'}}></i>Location *</label>
                             <div style={{position: 'relative'}}>
@@ -646,29 +669,6 @@ function SectionCandicateBasicInfo() {
                                 )}
                             </div>
                             {errors.location && <div className="invalid-feedback">{errors.location}</div>}
-                        </div>
-                        <div className="col-md-4 mb-3">
-                            <label className="form-label">
-                                <i className="fa fa-map-pin me-2" style={{color: '#ff6b35'}}></i>
-                                Pincode *
-                                {fetchingLocation && <i className="fa fa-spinner fa-spin ms-2" style={{color: '#ff6b35'}}></i>}
-                            </label>
-                            <input
-                                className={`form-control ${errors.pincode ? 'is-invalid' : ''}`}
-                                type="text"
-                                name="pincode"
-                                value={formData.pincode}
-                                onChange={handleInputChange}
-                                onBlur={handleBlur}
-                                placeholder="Enter 6-digit pincode"
-                                maxLength="6"
-                                disabled={fetchingLocation}
-                                required
-                            />
-                            {errors.pincode && <div className="invalid-feedback">{errors.pincode}</div>}
-                            <small className="text-muted">
-                                {fetchingLocation ? 'Fetching location...' : 'Enter 6-digit pincode (location will auto-fill)'}
-                            </small>
                         </div>
                         <div className="col-md-4 mb-3">
                             <label className="form-label"><i className="fa fa-map me-2" style={{color: '#ff6b35'}}></i>State Code</label>
