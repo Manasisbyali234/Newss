@@ -42,12 +42,13 @@ export default function SubAdminLogin() {
                     // Sub-admin login
                     localStorage.setItem("subAdminData", JSON.stringify(data.subAdmin));
                     localStorage.removeItem("adminData");
-                    navigate("/admin/dashboard");
+                    // Redirect to admin dashboard where sub-admin profile will be displayed
+                    window.location.href = "/admin/dashboard";
                 } else if (data.admin && data.admin.role === 'sub-admin') {
                     // Handle case where sub-admin is returned as admin
                     localStorage.setItem("subAdminData", JSON.stringify(data.admin));
                     localStorage.removeItem("adminData");
-                    navigate("/admin/dashboard");
+                    window.location.href = "/admin/dashboard";
                 } else {
                     setError("Access denied. This login is for sub-admins only.");
                 }

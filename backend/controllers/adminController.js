@@ -3311,6 +3311,23 @@ exports.approveAllStudentsInPlacement = async (req, res) => {
   }
 };
 
+// Get Sub Admin Profile
+exports.getSubAdminProfile = async (req, res) => {
+  try {
+    const subAdmin = await SubAdmin.findById(req.user.id)
+      .select('-password')
+      .populate('createdBy', 'name email');
+    
+    if (!subAdmin) {
+      return res.status(404).json({ success: false, message: 'Sub Admin not found' });
+    }
+
+    res.json({ success: true, subAdmin });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // OTP-based Password Reset for Admin/SubAdmin
 exports.sendOTP = async (req, res) => {
   try {

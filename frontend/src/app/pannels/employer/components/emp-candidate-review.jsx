@@ -816,42 +816,44 @@ function EmpCandidateReviewPage () {
 									Offer Letter Shared
 								</button>
 
-								{/* Reject Button - Disabled if processes incomplete */}
-								<button 
-									className={`action-btn-consistent ${application?.status === 'rejected' ? 'btn-rejected' : ''}`} 
-									style={{
-										backgroundColor: interviewProcesses.length > 0 && !allProcessesCompleted() ? '#e9ecef' : 'transparent',
-										color: interviewProcesses.length > 0 && !allProcessesCompleted() ? '#999' : '#ff8a00',
-										border: interviewProcesses.length > 0 && !allProcessesCompleted() ? '1.5px solid #ccc' : '1.5px solid #ff8a00',
-										borderRadius: '20px', 
-										fontSize: '15px', 
-										fontWeight: '500', 
-										padding: '12px 20px', 
-										alignItems: 'center', 
-										justifyContent: 'center', 
-										gap: '10px', 
-										transition: 'all 0.3s ease', 
-										whiteSpace: 'nowrap', 
-										boxSizing: 'border-box',
-										cursor: interviewProcesses.length > 0 && !allProcessesCompleted() ? 'not-allowed' : 'pointer',
-										opacity: interviewProcesses.length > 0 && !allProcessesCompleted() ? 0.6 : 1
-									}} 
-									onClick={rejectCandidate}
-									disabled={interviewProcesses.length > 0 && !allProcessesCompleted()}
-									onMouseEnter={(e) => {
-										if (!(interviewProcesses.length > 0 && !allProcessesCompleted())) {
-											e.currentTarget.style.backgroundColor = '#fff3e5';
-										}
-									}}
-									onMouseLeave={(e) => {
-										if (!(interviewProcesses.length > 0 && !allProcessesCompleted())) {
-											e.currentTarget.style.backgroundColor = 'transparent';
-										}
-									}}
-									title={interviewProcesses.length > 0 && !allProcessesCompleted() ? 'Complete all interview processes first' : 'Reject this candidate'}
-								>
-									<X size={16} style={{flexShrink: 0}} />Reject Candidate
-								</button>
+								{/* Reject Button - Hidden if shortlisted, Disabled if processes incomplete */}
+								{application?.status !== 'shortlisted' && (
+									<button 
+										className={`action-btn-consistent ${application?.status === 'rejected' ? 'btn-rejected' : ''}`} 
+										style={{
+											backgroundColor: interviewProcesses.length > 0 && !allProcessesCompleted() ? '#e9ecef' : 'transparent',
+											color: interviewProcesses.length > 0 && !allProcessesCompleted() ? '#999' : '#ff8a00',
+											border: interviewProcesses.length > 0 && !allProcessesCompleted() ? '1.5px solid #ccc' : '1.5px solid #ff8a00',
+											borderRadius: '20px', 
+											fontSize: '15px', 
+											fontWeight: '500', 
+											padding: '12px 20px', 
+											alignItems: 'center', 
+											justifyContent: 'center', 
+											gap: '10px', 
+											transition: 'all 0.3s ease', 
+											whiteSpace: 'nowrap', 
+											boxSizing: 'border-box',
+											cursor: interviewProcesses.length > 0 && !allProcessesCompleted() ? 'not-allowed' : 'pointer',
+											opacity: interviewProcesses.length > 0 && !allProcessesCompleted() ? 0.6 : 1
+										}} 
+										onClick={rejectCandidate}
+										disabled={interviewProcesses.length > 0 && !allProcessesCompleted()}
+										onMouseEnter={(e) => {
+											if (!(interviewProcesses.length > 0 && !allProcessesCompleted())) {
+												e.currentTarget.style.backgroundColor = '#fff3e5';
+											}
+										}}
+										onMouseLeave={(e) => {
+											if (!(interviewProcesses.length > 0 && !allProcessesCompleted())) {
+												e.currentTarget.style.backgroundColor = 'transparent';
+											}
+										}}
+										title={interviewProcesses.length > 0 && !allProcessesCompleted() ? 'Complete all interview processes first' : 'Reject this candidate'}
+									>
+										<X size={16} style={{flexShrink: 0}} />Reject Candidate
+									</button>
+								)}
 
 								{/* Candidate Not Attended - Always Enabled */}
 								<button 
