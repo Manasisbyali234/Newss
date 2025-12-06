@@ -231,7 +231,7 @@ const CountryCodeSelector = ({ value, onChange, className = "" }) => {
   const selectedCountry = countryCodes.find(c => c.code === value) || countryCodes[40];
 
   return (
-    <div ref={dropdownRef} style={{ position: 'relative', width: '70px', height: '57px', flexShrink: 0 }} className="country-code-selector">
+    <div ref={dropdownRef} style={{ position: 'relative', width: '70px', height: '50px', flexShrink: 0 }} className="country-code-selector">
       <style>{`
         .country-code-selector-btn {
           background-color: transparent !important;
@@ -255,7 +255,7 @@ const CountryCodeSelector = ({ value, onChange, className = "" }) => {
         className={`country-code-selector-btn ${className}`}
         style={{
           width: '100%',
-          height: '57px',
+          height: '50px',
           padding: '12px 8px',
           fontSize: '14px',
           fontWeight: '500',

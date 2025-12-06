@@ -1163,7 +1163,7 @@ function EmpCompanyProfilePage() {
                                             value={formData.phone}
                                             onChange={(e) => handleInputChange('phone', e.target.value)}
                                             placeholder="9087654321"
-                                            style={{ paddingLeft: '130px', height: '57px' }}
+                                            style={{ paddingLeft: '130px', height: '50px' }}
                                         />
                                     </div>
                                     <ErrorDisplay errors={errors} fieldName="phone" />
@@ -1472,7 +1472,7 @@ function EmpCompanyProfilePage() {
                                             value={formData.officialMobile}
                                             onChange={(e) => handleInputChange('officialMobile', e.target.value)}
                                             placeholder="9876543210"
-                                            style={{ paddingLeft: '130px', height: '57px' }}
+                                            style={{ paddingLeft: '130px', height: '50px' }}
                                         />
                                     </div>
                                     <ErrorDisplay errors={errors} fieldName="officialMobile" />
@@ -1840,7 +1840,7 @@ function EmpCompanyProfilePage() {
                                             value={formData.contactMobile}
                                             onChange={(e) => handleInputChange('contactMobile', e.target.value)}
                                             placeholder="9876543210"
-                                            style={{ paddingLeft: '130px', height: '57px' }}
+                                            style={{ paddingLeft: '130px', height: '50px' }}
                                         />
                                     </div>
                                     <ErrorDisplay errors={errors} fieldName="contactMobile" />
@@ -1890,7 +1890,7 @@ function EmpCompanyProfilePage() {
                                             value={formData.alternateContact}
                                             onChange={(e) => handleInputChange('alternateContact', e.target.value)}
                                             placeholder="9876543210"
-                                            style={{ paddingLeft: '130px', height: '57px' }}
+                                            style={{ paddingLeft: '130px', height: '50px' }}
                                         />
                                     </div>
                                     <ErrorDisplay errors={errors} fieldName="alternateContact" />

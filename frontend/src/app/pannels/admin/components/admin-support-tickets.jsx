@@ -181,7 +181,7 @@ function AdminSupportTickets() {
                 return;
             }
             
-            const apiResponse = await fetch(`http://localhost:5000/api/admin/support-tickets/${selectedTicket._id}/status`, {
+            const apiResponse = await fetch(`http://localhost:5000/api/admin/support-tickets/${selectedTicket._id}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,

@@ -1221,6 +1221,45 @@ exports.updateApplicationStatus = async (req, res) => {
           candidateId: application.candidateId._id,
           createdBy: req.user._id
         });
+        
+        if (status === 'shortlisted' && application.candidateId?.email) {
+          console.log('=== SENDING SHORTLIST EMAIL ===');
+          console.log('Candidate email:', application.candidateId.email);
+          console.log('Job title:', jobTitle);
+          try {
+            const nodemailer = require('nodemailer');
+            const transporter = nodemailer.createTransport({
+              service: 'gmail',
+              auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+              tls: { rejectUnauthorized: false }
+            });
+            const emailResult = await transporter.sendMail({
+              from: process.env.EMAIL_USER,
+              to: application.candidateId.email,
+              subject: `🎉 Congratulations! You've been shortlisted for ${jobTitle}`,
+              html: `
+                <div style="font-family: 'Poppins', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa;">
+                  <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <h1 style="color: #28a745; text-align: center; margin-bottom: 30px;">🎉 Congratulations!</h1>
+                    <p style="color: #666; font-size: 16px; line-height: 1.6;">Dear ${candidateName},</p>
+                    <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0f9ff 100%); padding: 25px; border-radius: 10px; margin: 25px 0; border-left: 5px solid #28a745;">
+                      <p style="color: #155724; margin: 0; font-size: 18px; line-height: 1.6; font-weight: 600;">✅ You have been shortlisted for the position of <strong>${jobTitle}</strong>!</p>
+                    </div>
+                    ${trimmedNotes ? `<div style="background-color: #fff3cd; padding: 20px; border-radius: 8px; margin: 25px 0;"><p style="color: #856404; margin: 0; font-size: 14px;"><strong>Employer Note:</strong> ${trimmedNotes}</p></div>` : ''}
+                    <p style="color: #666; font-size: 16px; line-height: 1.6;">Please check your dashboard for next steps and interview details.</p>
+                    <div style="text-align: center; margin: 35px 0;">
+                      <a href="${process.env.FRONTEND_URL}/candidate/status" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 16px 40px; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 18px; display: inline-block;">View Application Status</a>
+                    </div>
+                    <p style="color: #999; font-size: 14px; text-align: center; margin-top: 30px;">Best regards,<br>The TaleGlobal Team</p>
+                  </div>
+                </div>
+              `
+            });
+            console.log('✓ Shortlist email sent successfully:', emailResult.messageId);
+          } catch (emailError) {
+            console.error('✗ Shortlist email failed:', emailError.message);
+          }
+        }
       }
 
       let employerMessage = `${candidateName}'s application for ${jobTitle} is now ${statusLabel}.`;
@@ -1239,6 +1278,7 @@ exports.updateApplicationStatus = async (req, res) => {
       console.error('Application status notification failed:', notificationError);
     }
 
+    console.log('Application status updated to:', status, 'for application:', req.params.applicationId);
     res.json({ success: true, application });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
