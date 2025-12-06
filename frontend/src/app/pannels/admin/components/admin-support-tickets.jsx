@@ -3,6 +3,8 @@ import { Container, Row, Col, Card, Badge, Button, Modal, Form, Alert, Spinner }
 import './admin-support-tickets.css';
 import './admin-emp-manage-styles.css';
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 function AdminSupportTickets() {
     const [tickets, setTickets] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -51,7 +53,7 @@ function AdminSupportTickets() {
             
             const queryParams = new URLSearchParams(filters).toString();
             
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/support-tickets?${queryParams}`, {
+            const response = await fetch(`${API_URL}/api/admin/support-tickets?${queryParams}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -107,7 +109,7 @@ function AdminSupportTickets() {
         if (!ticket.isRead) {
             try {
                 const token = localStorage.getItem('adminToken');
-                await fetch(`${process.env.REACT_APP_API_URL}/api/admin/support-tickets/${ticket._id}`, {
+                await fetch(`${API_URL}/api/admin/support-tickets/${ticket._id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -129,7 +131,7 @@ function AdminSupportTickets() {
             return;
         }
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/support-tickets/${ticketId}/attachments/${attachmentIndex}`, {
+            const response = await fetch(`${API_URL}/api/admin/support-tickets/${ticketId}/attachments/${attachmentIndex}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -181,7 +183,7 @@ function AdminSupportTickets() {
                 return;
             }
             
-            const apiResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/support-tickets/${selectedTicket._id}`, {
+            const apiResponse = await fetch(`${API_URL}/api/admin/support-tickets/${selectedTicket._id}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -220,7 +222,7 @@ function AdminSupportTickets() {
                 return;
             }
             
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/support-tickets/${ticketId}`, {
+            const response = await fetch(`${API_URL}/api/admin/support-tickets/${ticketId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,
