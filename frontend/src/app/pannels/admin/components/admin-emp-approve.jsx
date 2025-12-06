@@ -104,6 +104,7 @@ function AdminEmployersApproved() {
                                         <th>Email</th>
                                         <th>Phone</th>
                                         <th>Approved Date</th>
+                                        <th>Approved By</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -111,7 +112,7 @@ function AdminEmployersApproved() {
                                 <tbody>
                                     {filteredEmployers.length === 0 ? (
                                         <tr>
-                                            <td colSpan="6" className="text-center" style={{padding: '40px', fontSize: '1rem', color: '#6c757d'}}>
+                                            <td colSpan="7" className="text-center" style={{padding: '40px', fontSize: '1rem', color: '#6c757d'}}>
                                                 <i className="fa fa-check-circle" style={{fontSize: '2rem', marginBottom: '10px', display: 'block', color: '#dee2e6'}}></i>
                                                 No approved employers found
                                             </td>
@@ -139,6 +140,18 @@ function AdminEmployersApproved() {
                                                 <td style={{textAlign: 'center', fontFamily: 'monospace', fontSize: '0.85rem'}}>{employer.email}</td>
                                                 <td style={{textAlign: 'center', fontFamily: 'monospace', fontSize: '0.85rem'}}>{employer.phone || 'N/A'}</td>
                                                 <td style={{textAlign: 'center', fontSize: '0.85rem'}}>{formatDate(employer.updatedAt || employer.createdAt)}</td>
+                                                <td style={{textAlign: 'center'}}>
+                                                    <span style={{
+                                                        background: employer.approvedByModel === 'Admin' ? '#e3f2fd' : '#fff3e0',
+                                                        color: employer.approvedByModel === 'Admin' ? '#1976d2' : '#f57c00',
+                                                        padding: '4px 10px',
+                                                        borderRadius: '12px',
+                                                        fontSize: '0.75rem',
+                                                        fontWeight: '600'
+                                                    }}>
+                                                        {employer.approvedBy?.name || employer.approvedByModel || 'N/A'}
+                                                    </span>
+                                                </td>
                                                 <td style={{textAlign: 'center'}}>
                                                     <button
                                                         className="action-btn btn-view"

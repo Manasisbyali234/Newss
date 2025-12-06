@@ -85,7 +85,7 @@ const Header1 = memo(function Header1({ _config }) {
                             <div className="nav-animation header-nav navbar-collapse d-flex justify-content-center">
                                 <ul className="nav navbar-nav">
                                     <li><NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''}>Home</NavLink></li>
-                                    <li><NavLink to="/job-grid" className={({ isActive }) => isActive ? 'active' : ''}>Company</NavLink></li>
+                                    <li><NavLink to="/job-grid" className={({ isActive }) => isActive ? 'active' : ''}>Companies</NavLink></li>
                                     <li><NavLink to="/emp-grid" className={({ isActive }) => isActive ? 'active' : ''}>Employers</NavLink></li>
                                 </ul>
                             </div>

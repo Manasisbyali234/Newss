@@ -16,6 +16,14 @@ function AdminSidebarSection({ sidebarActive, isMobile }) {
         loadScript("js/custom.js");
         loadScript("js/admin-sidebar.js");
         
+        // Add arrows after scripts load
+        setTimeout(() => {
+            if (!document.getElementById('arrowId') && window.jQuery) {
+                window.jQuery(".sub-menu").parent('li').addClass('has-child');
+                window.jQuery("<div id='arrowId' class='fa fa-angle-right submenu-toogle'></div>").insertAfter(".has-child > a");
+            }
+        }, 100);
+        
         // Check if user is sub-admin and get permissions
         const adminData = localStorage.getItem('adminData');
         const subAdminData = localStorage.getItem('subAdminData');

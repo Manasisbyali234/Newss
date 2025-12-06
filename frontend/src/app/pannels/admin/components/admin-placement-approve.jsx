@@ -97,6 +97,7 @@ function AdminPlacementOfficersApproved() {
                                     <th>Phone</th>
                                     <th>Join Date</th>
                                     <th>Status</th>
+                                    <th>Approved By</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -104,7 +105,7 @@ function AdminPlacementOfficersApproved() {
                             <tbody>
                                 {filteredPlacements.length === 0 ? (
                                     <tr>
-                                        <td colSpan="7" className="text-center" style={{padding: '40px', fontSize: '1rem', color: '#6c757d'}}>
+                                        <td colSpan="8" className="text-center" style={{padding: '40px', fontSize: '1rem', color: '#6c757d'}}>
                                             <i className="fa fa-check-circle" style={{fontSize: '2rem', marginBottom: '10px', display: 'block', color: '#dee2e6'}}></i>
                                             No approved placement officers found
                                         </td>
@@ -123,6 +124,18 @@ function AdminPlacementOfficersApproved() {
                                             <td style={{textAlign: 'center', fontSize: '0.85rem'}}>{formatDate(placement.createdAt)}</td>
                                             <td style={{textAlign: 'center'}}>
                                                 <span className="status-badge status-approved">Approved</span>
+                                            </td>
+                                            <td style={{textAlign: 'center'}}>
+                                                <span style={{
+                                                    background: placement.approvedByModel === 'Admin' ? '#e3f2fd' : '#fff3e0',
+                                                    color: placement.approvedByModel === 'Admin' ? '#1976d2' : '#f57c00',
+                                                    padding: '4px 10px',
+                                                    borderRadius: '12px',
+                                                    fontSize: '0.75rem',
+                                                    fontWeight: '600'
+                                                }}>
+                                                    {placement.approvedBy?.name || placement.approvedByModel || 'N/A'}
+                                                </span>
                                             </td>
                                             <td style={{textAlign: 'center'}}>
                                                 <button
