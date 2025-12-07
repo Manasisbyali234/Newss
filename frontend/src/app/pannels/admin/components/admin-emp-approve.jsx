@@ -141,16 +141,24 @@ function AdminEmployersApproved() {
                                                 <td style={{textAlign: 'center', fontFamily: 'monospace', fontSize: '0.85rem'}}>{employer.phone || 'N/A'}</td>
                                                 <td style={{textAlign: 'center', fontSize: '0.85rem'}}>{formatDate(employer.updatedAt || employer.createdAt)}</td>
                                                 <td style={{textAlign: 'center'}}>
-                                                    <span style={{
-                                                        background: employer.approvedByModel === 'Admin' ? '#e3f2fd' : '#fff3e0',
-                                                        color: employer.approvedByModel === 'Admin' ? '#1976d2' : '#f57c00',
-                                                        padding: '4px 10px',
-                                                        borderRadius: '12px',
-                                                        fontSize: '0.75rem',
-                                                        fontWeight: '600'
-                                                    }}>
-                                                        {employer.approvedBy?.name || employer.approvedByModel || 'N/A'}
-                                                    </span>
+                                                    {(() => {
+                                                        const approverName = employer.approvedBy?.name || employer.approvedBy?.username || null;
+                                                        const approverType = employer.approvedByModel || 'Admin';
+                                                        const displayText = approverName || approverType;
+                                                        
+                                                        return (
+                                                            <span style={{
+                                                                background: approverType === 'Admin' ? '#e3f2fd' : '#fff3e0',
+                                                                color: approverType === 'Admin' ? '#1976d2' : '#f57c00',
+                                                                padding: '4px 10px',
+                                                                borderRadius: '12px',
+                                                                fontSize: '0.75rem',
+                                                                fontWeight: '600'
+                                                            }}>
+                                                                {displayText}
+                                                            </span>
+                                                        );
+                                                    })()}
                                                 </td>
                                                 <td style={{textAlign: 'center'}}>
                                                     <button
