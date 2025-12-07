@@ -20,6 +20,7 @@
     justify-content: center;
     line-height: 1;
     box-shadow: none !important;
+    transform: none !important;
 }
 
 .twm-sidebar-ele-filter .form-check-input[type="checkbox"]:checked {
