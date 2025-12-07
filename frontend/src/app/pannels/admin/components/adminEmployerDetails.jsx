@@ -448,6 +448,32 @@ function EmployerDetails() {
                         </div>
                     </div>
                 </div>
+                
+                {/* Company ID Card Picture */}
+                {profile.companyIdCardPicture && (
+                    <div className="row mt-3">
+                        <div className="col-lg-12">
+                            <div className="profile-field" data-aos="fade-up" data-aos-delay="400">
+                                <h6><i className="fa fa-id-card"></i>Company ID Card Picture</h6>
+                                <div>
+                                    <button 
+                                        className="btn btn-outline-primary btn-sm"
+                                        onClick={() => {
+                                            const imageUrl = profile.companyIdCardPicture.startsWith('data:') ? profile.companyIdCardPicture : `data:image/jpeg;base64,${profile.companyIdCardPicture}`;
+                                            setCurrentImage(imageUrl);
+                                            setShowImageModal(true);
+                                        }}
+                                        style={{ backgroundColor: 'transparent', borderColor: '#ff6b35', color: '#ff6b35' }}
+                                    >
+                                        <i className="fa fa-eye"></i>
+                                        View ID Card
+                                    </button>
+                                    <p className="text-success mt-1">✓ Company ID Card uploaded</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div className="documents-section" data-aos="fade-up" data-aos-delay="300">

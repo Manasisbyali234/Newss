@@ -11,6 +11,8 @@ const employerSchema = new mongoose.Schema({
   isVerified: { type: Boolean, default: false },
   status: { type: String, enum: ['active', 'inactive', 'pending'], default: 'active' },
   isApproved: { type: Boolean, default: false },
+  approvedBy: { type: mongoose.Schema.Types.ObjectId, refPath: 'approvedByModel' },
+  approvedByModel: { type: String, enum: ['Admin', 'SubAdmin'] },
   profileSubmittedForReview: { type: Boolean, default: false },
   profileSubmittedAt: { type: Date },
   resetPasswordToken: { type: String },

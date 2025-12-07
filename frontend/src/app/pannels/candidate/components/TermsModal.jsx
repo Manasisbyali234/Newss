@@ -77,6 +77,28 @@ const TermsModal = ({ isOpen, onAccept, onDecline, assessment }) => {
                             <div className="alert alert-warning mt-4">
                                 <strong>Warning:</strong> By proceeding with this assessment, you agree to abide by all the rules stated above. Any violation will result in immediate termination of your assessment.
                             </div>
+
+                            <div className="mb-3">
+                                <h6>Legal Compliance and Jurisdiction</h6>
+                                <p>All users of TaleGlobal including employers, candidates, consultancies, and placement officers agree to comply with all applicable laws, regulations, and guidelines in force in India, including but not limited to: Information Technology Act, 2000 and the Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021; Digital Personal Data Protection Act, 2023; Indian Contract Act, 1872; Right to Privacy as enshrined under Article 21 of the Constitution of India; Applicable Employment, Labour, and Anti-Discrimination Laws of India; UGC and AICTE Guidelines governing campus placements and institutional data management.</p>
+                                <p>TaleGlobal operates solely as a digital intermediary within the meaning of Section 2(1)(w) of the Information Technology Act, 2000 and shall not be deemed to create any employment, partnership, or agency relationship with any user.</p>
+                                <p>Any dispute, claim, or controversy arising out of or in connection with these Terms, the Privacy Policy, or use of the platform shall be governed exclusively by the laws of India. The parties agree that the courts at Bengaluru, Karnataka, shall have exclusive jurisdiction to adjudicate all such disputes.</p>
+                            </div>
+
+                            <div className="mb-3">
+                                <h6>Privacy Policy</h6>
+                                <p>TaleGlobal is committed to protecting the privacy, security, and lawful use of personal information entrusted to it by all individuals using its website and services. By creating an account, accessing, or using the TaleGlobal platform, you expressly acknowledge that you have read, understood, and agree to be bound by this Privacy Policy and consent to the collection and use of your personal data as set out herein in accordance with the Digital Personal Data Protection Act, 2023, the Information Technology Act, 2000, and other applicable laws of India.</p>
+                            </div>
+
+                            <div className="mb-3">
+                                <h6>Disclaimer and Limitation of Liability</h6>
+                                <p>TaleGlobal functions solely as a digital recruitment intermediary and does not guarantee employment, selection, job placement, or any hiring outcome. TaleGlobal shall not be held liable for any hiring decisions, rejections, delayed offers, job cancellations, or any consequential, indirect, emotional, reputational, or financial loss arising out of or in connection with the use of the platform. TaleGlobal provides all services on an "as is" and "as available" basis, without any express or implied warranties.</p>
+                            </div>
+
+                            <div className="mb-3">
+                                <h6>Legal Validity and Governing Law</h6>
+                                <p>This Disclaimer and all related Terms and Conditions shall be governed by and construed in accordance with the laws of India. Users agree that any dispute, claim, or controversy arising from or relating to the use of the TaleGlobal platform, these Terms, or this Disclaimer shall be subject to the exclusive jurisdiction of the competent courts at Bengaluru, Karnataka, India. The invalidity or unenforceability of any provision of this Disclaimer shall not affect the validity of the remaining provisions, which shall remain in full force and effect.</p>
+                            </div>
                         </div>
                     </div>
 

@@ -193,151 +193,107 @@ function AdminCandidateReviewPage() {
                 {/* Personal Information Tab */}
                 {activeTab === 'personal' && (
                     <div className="tab-panel personal-info">
-                        <div className="personal-info-container">
-                            {/* Basic Information Section */}
-                            <div className="info-section">
-                                <div className="section-title">
-                                    <div className="title-icon">
-                                        <i className="fas fa-user-circle"></i>
-                                    </div>
-                                    <h3>Basic Information</h3>
-                                </div>
-                                <div className="info-rows">
-                                    <div className="info-row">
-                                        <div className="info-field">
-                                            <div className="field-icon">
-                                                <i className="fas fa-user"></i>
-                                            </div>
-                                            <div className="field-content">
-                                                <label>Full Name</label>
-                                                <span>{candidate.name || 'Not provided'}</span>
-                                            </div>
+                        <div className="info-section">
+                            <div className="info-rows">
+                                <div className="info-row">
+                                    <div className="info-field">
+                                        <div className="field-icon">
+                                            <i className="fas fa-user"></i>
                                         </div>
-                                        <div className="info-field">
-                                            <div className="field-icon">
-                                                <i className="fas fa-envelope"></i>
-                                            </div>
-                                            <div className="field-content">
-                                                <label>Email Address</label>
-                                                <span>{candidate.email || 'Not provided'}</span>
-                                            </div>
+                                        <div className="field-content">
+                                            <label>Full Name</label>
+                                            <span>{candidate.name || 'Not provided'}</span>
                                         </div>
                                     </div>
-                                    <div className="info-row">
-                                        <div className="info-field">
-                                            <div className="field-icon">
-                                                <i className="fas fa-phone"></i>
-                                            </div>
-                                            <div className="field-content">
-                                                <label>Mobile Number</label>
-                                                <span>{candidate.phone || 'Not provided'}</span>
-                                            </div>
+                                    <div className="info-field">
+                                        <div className="field-icon">
+                                            <i className="fas fa-envelope"></i>
                                         </div>
-                                        <div className="info-field">
-                                            <div className="field-icon">
-                                                <i className="fas fa-calendar-alt"></i>
-                                            </div>
-                                            <div className="field-content">
-                                                <label>Date of Birth</label>
-                                                <span>{candidate.dateOfBirth ? formatDate(candidate.dateOfBirth) : 'Not provided'}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="info-row">
-                                        <div className="info-field">
-                                            <div className="field-icon">
-                                                <i className="fas fa-venus-mars"></i>
-                                            </div>
-                                            <div className="field-content">
-                                                <label>Gender</label>
-                                                <span>{candidate.gender || 'Not provided'}</span>
-                                            </div>
-                                        </div>
-                                        <div className="info-field">
-                                            <div className="field-icon">
-                                                <i className="fas fa-clock"></i>
-                                            </div>
-                                            <div className="field-content">
-                                                <label>Registration Date</label>
-                                                <span>{formatDate(candidate.createdAt)}</span>
-                                            </div>
+                                        <div className="field-content">
+                                            <label>Email Address</label>
+                                            <span>{candidate.email || 'Not provided'}</span>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            {/* Family Information Section */}
-                            <div className="info-section">
-                                <div className="section-title">
-                                    <div className="title-icon">
-                                        <i className="fas fa-users"></i>
-                                    </div>
-                                    <h3>Family Information</h3>
-                                </div>
-                                <div className="info-rows">
-                                    <div className="info-row">
-                                        <div className="info-field">
-                                            <div className="field-icon">
-                                                <i className="fas fa-male"></i>
-                                            </div>
-                                            <div className="field-content">
-                                                <label>Father's/Husband's Name</label>
-                                                <span>{candidate.fatherName || 'Not provided'}</span>
-                                            </div>
+                                <div className="info-row">
+                                    <div className="info-field">
+                                        <div className="field-icon">
+                                            <i className="fas fa-phone"></i>
                                         </div>
-                                        <div className="info-field">
-                                            <div className="field-icon">
-                                                <i className="fas fa-female"></i>
-                                            </div>
-                                            <div className="field-content">
-                                                <label>Mother's Name</label>
-                                                <span>{candidate.motherName || 'Not provided'}</span>
-                                            </div>
+                                        <div className="field-content">
+                                            <label>Mobile Number</label>
+                                            <span>{candidate.phone || 'Not provided'}</span>
+                                        </div>
+                                    </div>
+                                    <div className="info-field">
+                                        <div className="field-icon">
+                                            <i className="fas fa-calendar-alt"></i>
+                                        </div>
+                                        <div className="field-content">
+                                            <label>Date of Birth</label>
+                                            <span>{candidate.dateOfBirth ? formatDate(candidate.dateOfBirth) : 'Not provided'}</span>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            {/* Address Information Section */}
-                            <div className="info-section">
-                                <div className="section-title">
-                                    <div className="title-icon">
-                                        <i className="fas fa-map-marker-alt"></i>
+                                <div className="info-row">
+                                    <div className="info-field">
+                                        <div className="field-icon">
+                                            <i className="fas fa-venus-mars"></i>
+                                        </div>
+                                        <div className="field-content">
+                                            <label>Gender</label>
+                                            <span>{candidate.gender || 'Not provided'}</span>
+                                        </div>
                                     </div>
-                                    <h3>Address Information</h3>
+                                    <div className="info-field">
+                                        <div className="field-icon">
+                                            <i className="fas fa-clock"></i>
+                                        </div>
+                                        <div className="field-content">
+                                            <label>Registration Date</label>
+                                            <span>{formatDate(candidate.createdAt)}</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="info-rows">
-                                    <div className="info-row single-field">
-                                        <div className="info-field full-width">
-                                            <div className="field-icon">
-                                                <i className="fas fa-home"></i>
-                                            </div>
-                                            <div className="field-content">
-                                                <label>Residential Address</label>
-                                                <span>{candidate.residentialAddress || 'Not provided'}</span>
-                                            </div>
+                                <div className="info-row">
+                                    <div className="info-field">
+                                        <div className="field-icon">
+                                            <i className="fas fa-male"></i>
+                                        </div>
+                                        <div className="field-content">
+                                            <label>Father's/Husband's Name</label>
+                                            <span>{candidate.fatherName || 'Not provided'}</span>
                                         </div>
                                     </div>
-                                    <div className="info-row single-field">
-                                        <div className="info-field full-width">
-                                            <div className="field-icon">
-                                                <i className="fas fa-building"></i>
-                                            </div>
-                                            <div className="field-content">
-                                                <label>Permanent Address</label>
-                                                <span>{candidate.permanentAddress || 'Not provided'}</span>
-                                            </div>
+                                    <div className="info-field">
+                                        <div className="field-icon">
+                                            <i className="fas fa-female"></i>
+                                        </div>
+                                        <div className="field-content">
+                                            <label>Mother's Name</label>
+                                            <span>{candidate.motherName || 'Not provided'}</span>
                                         </div>
                                     </div>
-                                    <div className="info-row single-field">
-                                        <div className="info-field full-width">
-                                            <div className="field-icon">
-                                                <i className="fas fa-mail-bulk"></i>
-                                            </div>
-                                            <div className="field-content">
-                                                <label>Correspondence Address</label>
-                                                <span>{candidate.correspondenceAddress || 'Not provided'}</span>
-                                            </div>
+                                </div>
+                                <div className="info-row single-field">
+                                    <div className="info-field full-width">
+                                        <div className="field-icon">
+                                            <i className="fas fa-home"></i>
+                                        </div>
+                                        <div className="field-content">
+                                            <label>Residential Address</label>
+                                            <span>{candidate.residentialAddress || 'Not provided'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="info-row single-field">
+                                    <div className="info-field full-width">
+                                        <div className="field-icon">
+                                            <i className="fas fa-building"></i>
+                                        </div>
+                                        <div className="field-content">
+                                            <label>Permanent Address</label>
+                                            <span>{candidate.permanentAddress || 'Not provided'}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -349,94 +305,116 @@ function AdminCandidateReviewPage() {
                 {/* Education Tab */}
                 {activeTab === 'education' && (
                     <div className="tab-panel education-info">
-                        <div className="education-timeline">
-                            {candidate.education && candidate.education.map((edu, index) => {
-                                const levels = ['10th Standard', '12th Standard', 'Degree'];
-                                return (
-                                    <div key={index} className="education-item">
-                                        <div className="education-icon">
-                                            <i className="fas fa-graduation-cap"></i>
-                                        </div>
-                                        <div className="education-content">
-                                            <div className="education-header">
-                                                <h4>{levels[index] || 'Education'}</h4>
-                                                <span className="year">{edu.passYear || 'N/A'}</span>
+                        {!candidate.education || candidate.education.length === 0 ? (
+                            <div className="no-applications">
+                                <div className="no-data-content">
+                                    <i className="fas fa-graduation-cap"></i>
+                                    <h5>No Job Applications Found</h5>
+                                    <p>This candidate hasn't applied to any jobs yet</p>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="education-timeline">
+                                {candidate.education.map((edu, index) => {
+                                    const levels = ['10th Standard', '12th Standard', 'Degree'];
+                                    return (
+                                        <div key={index} className="education-item">
+                                            <div className="education-icon">
+                                                <i className="fas fa-graduation-cap"></i>
                                             </div>
-                                            <div className="education-details">
-                                                {edu.degreeName && (
+                                            <div className="education-content">
+                                                <div className="education-header">
+                                                    <h4>{levels[index] || 'Education'}</h4>
+                                                    <span className="year">{edu.passYear || 'N/A'}</span>
+                                                </div>
+                                                <div className="education-details">
+                                                    {edu.degreeName && (
+                                                        <div className="detail-item">
+                                                            <label>Degree:</label>
+                                                            <span>{edu.degreeName}</span>
+                                                        </div>
+                                                    )}
                                                     <div className="detail-item">
-                                                        <label>Degree:</label>
-                                                        <span>{edu.degreeName}</span>
+                                                        <label>Institution:</label>
+                                                        <span>{edu.collegeName || 'Not provided'}</span>
                                                     </div>
-                                                )}
-                                                <div className="detail-item">
-                                                    <label>Institution:</label>
-                                                    <span>{edu.collegeName || 'Not provided'}</span>
-                                                </div>
-                                                <div className="detail-item">
-                                                    <label>Score:</label>
-                                                    <span>
-                                                        {edu.scoreValue || edu.percentage || 'Not provided'}
-                                                        {edu.scoreType === 'percentage' ? '%' : ''}
-                                                        {edu.scoreType && edu.scoreType !== 'percentage' ? ` ${edu.scoreType.toUpperCase()}` : ''}
-                                                    </span>
-                                                </div>
-                                                {edu.marksheet && (
-                                                    <div className="document-actions">
-                                                        <button
-                                                            className="action-btn view"
-                                                            onClick={() => viewDocument(edu.marksheet)}
-                                                        >
-                                                            <i className="fas fa-eye"></i>
-                                                            View Marksheet
-                                                        </button>
-                                                        <button
-                                                            className="action-btn download"
-                                                            onClick={() => downloadDocument(edu.marksheet, `marksheet_${levels[index].replace(' ', '_').toLowerCase()}.pdf`)}
-                                                        >
-                                                            <i className="fas fa-download"></i>
-                                                            Download
-                                                        </button>
+                                                    <div className="detail-item">
+                                                        <label>Score:</label>
+                                                        <span>
+                                                            {edu.scoreValue || edu.percentage || 'Not provided'}
+                                                            {edu.scoreType === 'percentage' ? '%' : ''}
+                                                            {edu.scoreType && edu.scoreType !== 'percentage' ? ` ${edu.scoreType.toUpperCase()}` : ''}
+                                                        </span>
                                                     </div>
-                                                )}
+                                                    {edu.marksheet && (
+                                                        <div className="document-actions">
+                                                            <button
+                                                                className="action-btn view"
+                                                                onClick={() => viewDocument(edu.marksheet)}
+                                                            >
+                                                                <i className="fas fa-eye"></i>
+                                                                View Marksheet
+                                                            </button>
+                                                            <button
+                                                                className="action-btn download"
+                                                                onClick={() => downloadDocument(edu.marksheet, `marksheet_${levels[index].replace(' ', '_').toLowerCase()}.pdf`)}
+                                                            >
+                                                                <i className="fas fa-download"></i>
+                                                                Download
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
                 )}
 
                 {/* Skills & Summary Tab */}
                 {activeTab === 'skills' && (
                     <div className="tab-panel skills-info">
-                        {candidate.skills && candidate.skills.length > 0 && (
-                            <div className="skills-section">
-                                <div className="section-header">
+                        {(!candidate.skills || candidate.skills.length === 0) && !candidate.profileSummary ? (
+                            <div className="no-applications">
+                                <div className="no-data-content">
                                     <i className="fas fa-cogs"></i>
-                                    <h4>Technical Skills</h4>
+                                    <h5>No Job Applications Found</h5>
+                                    <p>This candidate hasn't applied to any jobs yet</p>
                                 </div>
-                                <div className="skills-grid">
-                                    {candidate.skills.map((skill, index) => (
-                                        <div key={index} className="skill-tag">
-                                            <span>{skill}</span>
+                            </div>
+                        ) : (
+                            <>
+                                {candidate.skills && candidate.skills.length > 0 && (
+                                    <div className="skills-section">
+                                        <div className="section-header">
+                                            <i className="fas fa-cogs"></i>
+                                            <h4>Technical Skills</h4>
                                         </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+                                        <div className="skills-grid">
+                                            {candidate.skills.map((skill, index) => (
+                                                <div key={index} className="skill-tag">
+                                                    <span>{skill}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
 
-                        {candidate.profileSummary && (
-                            <div className="summary-section">
-                                <div className="section-header">
-                                    <i className="fas fa-user-edit"></i>
-                                    <h4>Profile Summary</h4>
-                                </div>
-                                <div className="summary-content">
-                                    <p>{candidate.profileSummary}</p>
-                                </div>
-                            </div>
+                                {candidate.profileSummary && (
+                                    <div className="summary-section">
+                                        <div className="section-header">
+                                            <i className="fas fa-user-edit"></i>
+                                            <h4>Profile Summary</h4>
+                                        </div>
+                                        <div className="summary-content">
+                                            <p>{candidate.profileSummary}</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </>
                         )}
                     </div>
                 )}
@@ -444,60 +422,70 @@ function AdminCandidateReviewPage() {
                 {/* Documents Tab */}
                 {activeTab === 'documents' && (
                     <div className="tab-panel documents-info">
-                        <div className="documents-grid">
-                            {candidate.resume && (
-                                <div className="document-card">
-                                    <div className="document-icon">
-                                        <i className="fas fa-file-pdf"></i>
-                                    </div>
-                                    <div className="document-info">
-                                        <h5>Resume</h5>
-                                        <p>Candidate's complete resume</p>
-                                    </div>
-                                    <div className="document-actions">
-                                        <button
-                                            className="action-btn primary"
-                                            onClick={() => downloadDocument(candidate.resume, 'resume.pdf')}
-                                        >
-                                            <i className="fas fa-download"></i>
-                                            Download
-                                        </button>
-                                    </div>
+                        {!candidate.resume && (!candidate.education || !candidate.education.some(edu => edu.marksheet)) ? (
+                            <div className="no-applications">
+                                <div className="no-data-content">
+                                    <i className="fas fa-file-alt"></i>
+                                    <h5>No Job Applications Found</h5>
+                                    <p>This candidate hasn't applied to any jobs yet</p>
                                 </div>
-                            )}
-
-                            {candidate.education && candidate.education.map((edu, index) => {
-                                if (!edu.marksheet) return null;
-                                const levels = ['10th Standard', '12th Standard', 'Degree'];
-                                return (
-                                    <div key={index} className="document-card">
+                            </div>
+                        ) : (
+                            <div className="documents-grid">
+                                {candidate.resume && (
+                                    <div className="document-card">
                                         <div className="document-icon">
-                                            <i className="fas fa-certificate"></i>
+                                            <i className="fas fa-file-pdf"></i>
                                         </div>
                                         <div className="document-info">
-                                            <h5>{levels[index]} Marksheet</h5>
-                                            <p>Academic certificate and marks</p>
+                                            <h5>Resume</h5>
+                                            <p>Candidate's complete resume</p>
                                         </div>
                                         <div className="document-actions">
                                             <button
-                                                className="action-btn view"
-                                                onClick={() => viewDocument(edu.marksheet)}
-                                            >
-                                                <i className="fas fa-eye"></i>
-                                                View
-                                            </button>
-                                            <button
-                                                className="action-btn download"
-                                                onClick={() => downloadDocument(edu.marksheet, `marksheet_${levels[index].replace(' ', '_').toLowerCase()}.pdf`)}
+                                                className="action-btn primary"
+                                                onClick={() => downloadDocument(candidate.resume, 'resume.pdf')}
                                             >
                                                 <i className="fas fa-download"></i>
                                                 Download
                                             </button>
                                         </div>
                                     </div>
-                                );
-                            })}
-                        </div>
+                                )}
+
+                                {candidate.education && candidate.education.map((edu, index) => {
+                                    if (!edu.marksheet) return null;
+                                    const levels = ['10th Standard', '12th Standard', 'Degree'];
+                                    return (
+                                        <div key={index} className="document-card">
+                                            <div className="document-icon">
+                                                <i className="fas fa-certificate"></i>
+                                            </div>
+                                            <div className="document-info">
+                                                <h5>{levels[index]} Marksheet</h5>
+                                                <p>Academic certificate and marks</p>
+                                            </div>
+                                            <div className="document-actions">
+                                                <button
+                                                    className="action-btn view"
+                                                    onClick={() => viewDocument(edu.marksheet)}
+                                                >
+                                                    <i className="fas fa-eye"></i>
+                                                    View
+                                                </button>
+                                                <button
+                                                    className="action-btn download"
+                                                    onClick={() => downloadDocument(edu.marksheet, `marksheet_${levels[index].replace(' ', '_').toLowerCase()}.pdf`)}
+                                                >
+                                                    <i className="fas fa-download"></i>
+                                                    Download
+                                                </button>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
                 )}
 

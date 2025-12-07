@@ -20,6 +20,9 @@ const placementSchema = new mongoose.Schema({
   credits: { type: Number, default: 0 },
   isVerified: { type: Boolean, default: false },
   status: { type: String, enum: ['active', 'inactive', 'pending'], default: 'pending' },
+  isApproved: { type: Boolean, default: false },
+  approvedBy: { type: mongoose.Schema.Types.ObjectId, refPath: 'approvedByModel' },
+  approvedByModel: { type: String, enum: ['Admin', 'SubAdmin'] },
 
   isProcessed: { type: Boolean, default: false },
   processedAt: { type: Date },

@@ -3,9 +3,11 @@
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    width: 16px;
-    height: 16px;
-    border: 2px solid #ddd;
+    width: 18px !important;
+    height: 18px !important;
+    min-width: 18px;
+    min-height: 18px;
+    border: 2px solid #ddd !important;
     border-radius: 50%;
     background-color: transparent;
     position: relative;
@@ -13,6 +15,11 @@
     transition: all 0.2s ease;
     margin-right: 8px;
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    box-shadow: none !important;
 }
 
 .twm-sidebar-ele-filter .form-check-input[type="checkbox"]:checked {

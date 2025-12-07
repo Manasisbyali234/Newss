@@ -4,6 +4,20 @@ import SearchBar from "../../../../components/SearchBar";
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
 const API_BASE_URL = 'http://localhost:5000/api';
 
+const passwordInputStyle = `
+  input[type="password"]::-ms-reveal,
+  input[type="password"]::-ms-clear {
+    display: none;
+  }
+  input[type="password"]::-webkit-credentials-auto-fill-button,
+  input[type="password"]::-webkit-contacts-auto-fill-button {
+    visibility: hidden;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+  }
+`;
+
 function AdminSubAdmin() {
     const [showAddForm, setShowAddForm] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
@@ -329,6 +343,8 @@ function AdminSubAdmin() {
 
 
     return (
+        <>
+        <style>{passwordInputStyle}</style>
         <div className="dashboard-content">
             <div className="wt-admin-right-page-header">
                 <h2>Sub Admin Management</h2>
@@ -614,31 +630,31 @@ function AdminSubAdmin() {
                                             </div>
                                         </div>
 
-                                        <div className="col-md-6" style={{ position: 'relative' }}>
-                                            <input
-                                                className={`form-control rounded-3 ${validationErrors.password ? 'is-invalid' : ''}`}
-                                                name="password"
-                                                type={showPassword ? "text" : "password"}
-                                                placeholder={showAddForm ? "Password *" : "Password (Leave blank to keep current)"}
-                                                value={formData.password}
-                                                onChange={handleInputChange}
-                                                style={{ paddingRight: '45px' }}
-                                            />
-                                            <span
-                                                onClick={() => setShowPassword(!showPassword)}
-                                                style={{
-                                                    position: 'absolute',
-                                                    right: '15px',
-                                                    top: '50%',
-                                                    transform: 'translateY(-50%)',
-                                                    cursor: 'pointer',
-                                                    fontSize: '16px',
-                                                    color: '#666',
-                                                    zIndex: 10
-                                                }}
-                                            >
-                                                {showPassword ? '👁️' : '👁️🗨️'}
-                                            </span>
+                                        <div className="col-md-6">
+                                            <div className="position-relative">
+                                                <input
+                                                    className={`form-control rounded-3 ${validationErrors.password ? 'is-invalid' : ''}`}
+                                                    name="password"
+                                                    type={showPassword ? "text" : "password"}
+                                                    placeholder={showAddForm ? "Password *" : "Password (Leave blank to keep current)"}
+                                                    value={formData.password}
+                                                    onChange={handleInputChange}
+                                                    style={{ paddingRight: '40px', WebkitTextSecurity: showPassword ? 'none' : 'disc' }}
+                                                    autoComplete="new-password"
+                                                />
+                                                <i 
+                                                    className={`fa ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}
+                                                    onClick={() => setShowPassword(!showPassword)}
+                                                    style={{
+                                                        position: 'absolute',
+                                                        right: '12px',
+                                                        top: '12px',
+                                                        cursor: 'pointer',
+                                                        color: '#6c757d',
+                                                        zIndex: 10
+                                                    }}
+                                                ></i>
+                                            </div>
                                             {validationErrors.password && (
                                                 <div className="invalid-feedback d-block">
                                                     <i className="fa fa-exclamation-circle me-1"></i>
@@ -647,31 +663,31 @@ function AdminSubAdmin() {
                                             )}
                                         </div>
 
-                                        <div className="col-md-6" style={{ position: 'relative' }}>
-                                            <input
-                                                className={`form-control rounded-3 ${validationErrors.confirmPassword ? 'is-invalid' : ''}`}
-                                                name="confirmPassword"
-                                                type={showConfirmPassword ? "text" : "password"}
-                                                placeholder={showAddForm ? "Confirm Password *" : "Confirm Password"}
-                                                value={formData.confirmPassword}
-                                                onChange={handleInputChange}
-                                                style={{ paddingRight: '45px' }}
-                                            />
-                                            <span
-                                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                                style={{
-                                                    position: 'absolute',
-                                                    right: '15px',
-                                                    top: '50%',
-                                                    transform: 'translateY(-50%)',
-                                                    cursor: 'pointer',
-                                                    fontSize: '16px',
-                                                    color: '#666',
-                                                    zIndex: 10
-                                                }}
-                                            >
-                                                {showConfirmPassword ? '👁️' : '👁️🗨️'}
-                                            </span>
+                                        <div className="col-md-6">
+                                            <div className="position-relative">
+                                                <input
+                                                    className={`form-control rounded-3 ${validationErrors.confirmPassword ? 'is-invalid' : ''}`}
+                                                    name="confirmPassword"
+                                                    type={showConfirmPassword ? "text" : "password"}
+                                                    placeholder={showAddForm ? "Confirm Password *" : "Confirm Password"}
+                                                    value={formData.confirmPassword}
+                                                    onChange={handleInputChange}
+                                                    style={{ paddingRight: '40px', WebkitTextSecurity: showConfirmPassword ? 'none' : 'disc' }}
+                                                    autoComplete="new-password"
+                                                />
+                                                <i 
+                                                    className={`fa ${showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'}`}
+                                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                    style={{
+                                                        position: 'absolute',
+                                                        right: '12px',
+                                                        top: '12px',
+                                                        cursor: 'pointer',
+                                                        color: '#6c757d',
+                                                        zIndex: 10
+                                                    }}
+                                                ></i>
+                                            </div>
                                             {validationErrors.confirmPassword && (
                                                 <div className="invalid-feedback d-block">
                                                     <i className="fa fa-exclamation-circle me-1"></i>
@@ -717,6 +733,7 @@ function AdminSubAdmin() {
                 </div>
             </div>
         </div>
+        </>
     );
 }
 

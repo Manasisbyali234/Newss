@@ -7,6 +7,9 @@ router.post('/login', adminController.loginAdmin);
 router.post('/send-otp', adminController.sendOTP);
 router.post('/verify-otp-reset', adminController.verifyOTPAndResetPassword);
 
+// Sub Admin Profile Route (must be before auth middleware)
+router.get('/sub-admin/profile', auth(['sub-admin']), adminController.getSubAdminProfile);
+
 router.use(auth(['admin', 'sub-admin']));
 
 router.get('/dashboard/stats', adminController.getDashboardStats);
@@ -83,10 +86,11 @@ router.delete('/contacts/:contactId', adminController.deleteContactForm);
 router.get('/settings', adminController.getSettings);
 router.put('/settings', adminController.updateSettings);
 
-router.get('/sub-admins', adminController.getAllSubAdmins);
-router.post('/sub-admins', adminController.createSubAdmin);
-router.put('/sub-admins/:id', adminController.updateSubAdmin);
-router.delete('/sub-admins/:id', adminController.deleteSubAdmin);
+// Sub Admin Management (Admin only)
+router.get('/sub-admins', auth(['admin']), adminController.getAllSubAdmins);
+router.post('/sub-admins', auth(['admin']), adminController.createSubAdmin);
+router.put('/sub-admins/:id', auth(['admin']), adminController.updateSubAdmin);
+router.delete('/sub-admins/:id', auth(['admin']), adminController.deleteSubAdmin);
 
 router.post('/placement/generate-token', adminController.generatePlacementLoginToken);
 

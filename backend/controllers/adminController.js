@@ -310,6 +310,7 @@ exports.getAllEmployers = async (req, res) => {
 
     const employers = await Employer.find(query)
       .select('-password')
+      .populate('approvedBy', 'name email role')
       .sort({ createdAt: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit);
@@ -414,7 +415,13 @@ exports.updateEmployerStatus = async (req, res) => {
     }
 
     // Update approval flag
-    if (isApproved !== undefined) updateData.isApproved = !!isApproved;
+    if (isApproved !== undefined) {
+      updateData.isApproved = !!isApproved;
+      if (isApproved) {
+        updateData.approvedBy = req.user.id;
+        updateData.approvedByModel = req.user.role === 'admin' ? 'Admin' : 'SubAdmin';
+      }
+    }
 
     // If approving and no explicit status provided, ensure account is active
     if (updateData.isApproved === true && updateData.status === undefined) {
@@ -906,6 +913,7 @@ exports.getAllPlacements = async (req, res) => {
 
     const placements = await Placement.find(query)
       .select('-password')
+      .populate('approvedBy', 'name email role')
       .sort({ createdAt: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit);
@@ -930,7 +938,13 @@ exports.updatePlacementStatus = async (req, res) => {
       }
     }
 
-    if (isApproved !== undefined) updateData.isApproved = !!isApproved;
+    if (isApproved !== undefined) {
+      updateData.isApproved = !!isApproved;
+      if (isApproved) {
+        updateData.approvedBy = req.user.id;
+        updateData.approvedByModel = req.user.role === 'admin' ? 'Admin' : 'SubAdmin';
+      }
+    }
     if (updateData.isApproved === true && updateData.status === undefined) {
       updateData.status = 'active';
     }
@@ -3307,6 +3321,23 @@ exports.approveAllStudentsInPlacement = async (req, res) => {
     
   } catch (error) {
     console.error('Error in bulk approval:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Get Sub Admin Profile
+exports.getSubAdminProfile = async (req, res) => {
+  try {
+    const subAdmin = await SubAdmin.findById(req.user.id)
+      .select('-password')
+      .populate('createdBy', 'name email');
+    
+    if (!subAdmin) {
+      return res.status(404).json({ success: false, message: 'Sub Admin not found' });
+    }
+
+    res.json({ success: true, subAdmin });
+  } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };

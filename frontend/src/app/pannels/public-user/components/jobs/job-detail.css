@@ -275,14 +275,13 @@
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    padding: 12px 0;
+    padding: 12px 8px;
     border-bottom: 1px solid #f8f9fa;
-    transition: all 0.3s ease;
+    transition: background 0.3s ease;
 }
 
 .description-list-2 li:hover {
     background: #f8f9fa;
-    padding-left: 8px;
     border-radius: 8px;
 }
 
