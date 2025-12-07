@@ -10,6 +10,13 @@
     box-shadow: 0 4px 20px rgba(0,0,0,0.12);
 }
 
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
 .info-card {
     display: flex;
     align-items: center;
@@ -222,9 +229,37 @@
     margin-right: 0;
 }
 
+@media (max-width: 1200px) {
+    .info-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
 @media (max-width: 768px) {
+    .info-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .info-card {
         margin-bottom: 1rem;
+    }
+    
+    /* Placement Officer Details - Logo and ID Card in 2 columns, text fields below */
+    .modern-card .d-flex.align-items-start.gap-4 {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+    }
+    
+    .modern-card .d-flex.align-items-start.gap-4 > .text-center {
+        flex: 0 0 calc(50% - 0.25rem) !important;
+        max-width: calc(50% - 0.25rem) !important;
+    }
+    
+    .modern-card .d-flex.align-items-start.gap-4 > div[style*="flex"] {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        margin-top: 1rem !important;
     }
     
     .modern-card {
@@ -240,6 +275,58 @@
         width: 100%;
     }
     
+    /* File Upload History - Mobile optimization */
+    .timeline-item {
+        margin-bottom: 1rem !important;
+    }
+    
+    .timeline-item > div {
+        padding: 12px !important;
+    }
+    
+    .timeline-item .d-flex.align-items-start {
+        flex-direction: column !important;
+    }
+    
+    .timeline-item .d-flex.align-items-start > div[style*="width: 48px"] {
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .timeline-item .ml-4 {
+        margin-left: 0 !important;
+    }
+    
+    .timeline-item .d-flex.justify-content-between {
+        flex-direction: column !important;
+    }
+    
+    .timeline-item .d-flex.flex-wrap.gap-2 {
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        margin-top: 0.75rem !important;
+        gap: 0.5rem !important;
+    }
+    
+    .timeline-item .d-flex.flex-wrap.gap-2 > button {
+        flex: 1 1 calc(50% - 0.25rem) !important;
+        min-width: 0 !important;
+        font-size: 0.75rem !important;
+        padding: 8px 10px !important;
+        white-space: nowrap !important;
+    }
+    
+    .timeline-item h6 {
+        font-size: 0.95rem !important;
+    }
+    
+    .timeline-item .d-flex.flex-wrap.align-items-center.gap-3 {
+        gap: 0.5rem !important;
+    }
+    
+    .timeline-item .d-flex.flex-wrap.align-items-center.gap-2 {
+        gap: 0.25rem !important;
+    }
+    
     .d-flex.gap-1 {
         flex-direction: column;
     }
@@ -252,6 +339,26 @@
     
     .modal-xl {
         max-width: 95%;
+    }
+}
+
+@media (max-width: 480px) {
+    .info-grid {
+        gap: 12px;
+    }
+    
+    /* Smaller buttons and text on very small screens */
+    .timeline-item .btn-sm {
+        font-size: 0.7rem !important;
+        padding: 4px 8px !important;
+    }
+    
+    .timeline-item h6 {
+        font-size: 0.9rem !important;
+    }
+    
+    .timeline-item p, .timeline-item span {
+        font-size: 0.8rem !important;
     }
 }
 

@@ -434,7 +434,7 @@ function PlacementDetails() {
     }
 
     return (
-        <div className="container-fluid p-4" style={{background: '#f8f9fa', minHeight: '100vh'}}>
+        <div className="placement-details-page container-fluid p-4" style={{background: '#f8f9fa', minHeight: '100vh'}}>
             {/* Header */}
             <div className="modern-card mb-4 p-4">
                 <div className="d-flex justify-content-between align-items-center">
@@ -618,7 +618,7 @@ function PlacementDetails() {
                     </div>
                 </div>
 
-                <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px'}}>
+                <div className="info-grid">
                     <div className="info-card" style={{minHeight: '100px', background: 'transparent'}}>
                         <div>
                             <label className="text-muted mb-1">

@@ -210,6 +210,31 @@
     font-size: 0.75rem !important;
     padding: 4px 8px !important;
   }
+
+  /* Assigned Interview Processes Header - Mobile Fix */
+  .emp-candidate-review-page .card-header .d-flex.align-items-center.justify-content-between {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+
+  .emp-candidate-review-page .card-header .d-flex.align-items-center.justify-content-between h5 {
+    width: 100% !important;
+    margin-bottom: 0 !important;
+  }
+
+  .emp-candidate-review-page .card-header .d-flex.align-items-center.justify-content-between > div:last-child {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .emp-candidate-review-page .card-header .d-flex.align-items-center.justify-content-between button {
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-content: center !important;
+  }
 }
 
 /* Mobile reordering - show candidate profile first */

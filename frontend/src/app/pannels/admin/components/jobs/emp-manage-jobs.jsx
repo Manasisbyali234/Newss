@@ -155,7 +155,7 @@ function EmpManageJobsPage() {
                                 <tbody>
                                     {jobs.map((job) => (
                                         <tr key={job._id} className="job-row">
-                                            <td>
+                                            <td data-label="Job Details">
                                                 <div className="job-info">
                                                     <div className="job-avatar">
                                                         <i className="fa fa-briefcase"></i>
@@ -180,25 +180,25 @@ function EmpManageJobsPage() {
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>
+                                            <td data-label="Category">
                                                 <span className="category-tag">
                                                     {job.category || 'General'}
                                                 </span>
                                             </td>
-                                            <td>{getStatusBadge(job.status)}</td>
-                                            <td>
+                                            <td data-label="Status">{getStatusBadge(job.status)}</td>
+                                            <td data-label="Vacancies">
                                                 <div className="vacancies-count">
                                                     <span className="count">{job.vacancies || job.numberOfPositions || job.positions || 1}</span>
                                                     <span className="label">Vacancies</span>
                                                 </div>
                                             </td>
-                                            <td>
+                                            <td data-label="Applications">
                                                 <div className="applications-count">
                                                     <span className="count">{job.applicationCount || 0}</span>
                                                     <span className="label">Applications</span>
                                                 </div>
                                             </td>
-                                            <td>
+                                            <td data-label="Dates">
                                                 <div className="date-info">
                                                     <div className="created-date">
                                                         <small>Created:</small>
@@ -210,7 +210,7 @@ function EmpManageJobsPage() {
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>
+                                            <td data-label="Actions">
                                                 <div className="action-buttons">
                                                     <button 
                                                         className="btn-action btn-view"

@@ -19,16 +19,14 @@ function EmpJobReviewPage() {
     const fetchJobDetails = async () => {
         try {
             const token = localStorage.getItem('employerToken');
-            const response = await fetch(`http://localhost:5000/api/employer/jobs`, {
+            const response = await fetch(`http://localhost:5000/api/employer/jobs/${id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
             const data = await response.json();
-            if (data.success) {
-                const job = data.jobs.find(j => j._id === id);
-                
-                setJobDetails(job);
+            if (response.ok && data.success) {
+                setJobDetails(data.job || data.data || data);
             }
         } catch (error) {
             
