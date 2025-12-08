@@ -177,19 +177,18 @@ function EmpCandidateReviewPage () {
 				setInterviewProcesses(processes);
 				console.log('Set interviewProcesses state to:', processes);
 				
-				// Initialize process remarks - load from saved data or use process remarks
+				// Initialize process remarks - load from saved data
 				const initialRemarks = {};
-				if (data.application.processRemarks && Object.keys(data.application.processRemarks).length > 0) {
-					// Load saved remarks from the Map field
-					Object.entries(data.application.processRemarks).forEach(([key, value]) => {
-						initialRemarks[key] = value;
-					});
-				} else {
-					// Fall back to process remarks if available
-					processes.forEach(p => {
-						initialRemarks[p.id] = p.remarks || '';
-					});
+				if (data.application.processRemarks) {
+					// Handle both object and Map formats
+					const remarksData = data.application.processRemarks;
+					if (typeof remarksData === 'object') {
+						Object.keys(remarksData).forEach(key => {
+							initialRemarks[key] = remarksData[key] || '';
+						});
+					}
 				}
+				console.log('Loaded processRemarks:', initialRemarks);
 				setProcessRemarks(initialRemarks);
 
 			}
@@ -742,7 +741,8 @@ function EmpCandidateReviewPage () {
 									<Save size={16} style={{flexShrink: 0}} />Save Remark
 								</button>
 
-								{/* Shortlist Candidate Button - Disabled if processes incomplete */}
+								{/* Shortlist Candidate Button - Disabled if processes incomplete or hired */}
+								{application?.status !== 'hired' && application?.status !== 'offer_shared' && (
 								<button 
 									className={`action-btn-consistent ${application?.status === 'shortlisted' ? 'btn-shortlisted' : ''}`} 
 									style={{
@@ -778,6 +778,7 @@ function EmpCandidateReviewPage () {
 								>
 									<Check size={16} style={{flexShrink: 0}} />Shortlist Candidate
 								</button>
+								)}
 
 								{/* Offer Letter Button - Disabled if processes incomplete */}
 								<button 
@@ -816,8 +817,8 @@ function EmpCandidateReviewPage () {
 									Offer Letter Shared
 								</button>
 
-								{/* Reject Button - Hidden if shortlisted, Disabled if processes incomplete */}
-								{application?.status !== 'shortlisted' && (
+								{/* Reject Button - Hidden if shortlisted/hired, Disabled if processes incomplete */}
+								{application?.status !== 'shortlisted' && application?.status !== 'hired' && application?.status !== 'offer_shared' && (
 									<button 
 										className={`action-btn-consistent ${application?.status === 'rejected' ? 'btn-rejected' : ''}`} 
 										style={{
