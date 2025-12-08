@@ -1080,42 +1080,40 @@ function Home16Page() {
 
                                             return (
                                                 <li key={recruiter._id} style={{marginBottom: '15px'}}>
-                                                    <div className="twm-recruiters5-box">
-                                                        <div className="twm-rec-top">
-                                                            <div className="twm-rec-media">
-                                                                {recruiter.logo ? (
-                                                                    <img
-                                                                        src={recruiter.logo}
-                                                                        alt={recruiter.companyName}
-                                                                        style={{
-                                                                            width: "60px",
-                                                                            height: "60px",
-                                                                            objectFit: "cover",
-                                                                            borderRadius: "8px"
-                                                                        }}
-                                                                    />
-                                                                ) : (
-                                                                    generateCompanyLogo(recruiter.companyName)
-                                                                )}
+                                                    <NavLink to={`${publicUser.employers.DETAIL}/${recruiter._id}`} style={{textDecoration: 'none', color: 'inherit', display: 'block'}}>
+                                                        <div className="twm-recruiters5-box">
+                                                            <div className="twm-rec-top">
+                                                                <div className="twm-rec-media">
+                                                                    {recruiter.logo ? (
+                                                                        <img
+                                                                            src={recruiter.logo}
+                                                                            alt={recruiter.companyName}
+                                                                            style={{
+                                                                                width: "60px",
+                                                                                height: "60px",
+                                                                                objectFit: "cover",
+                                                                                borderRadius: "8px"
+                                                                            }}
+                                                                        />
+                                                                    ) : (
+                                                                        generateCompanyLogo(recruiter.companyName)
+                                                                    )}
+                                                                </div>
+                                                                <div className="twm-rec-jobs">
+                                                                    {recruiter.jobCount} {recruiter.jobCount === 1 ? 'Job' : 'Jobs'}
+                                                                </div>
                                                             </div>
-                                                            <div className="twm-rec-jobs">
-                                                                {recruiter.jobCount} {recruiter.jobCount === 1 ? 'Job' : 'Jobs'}
-                                                            </div>
-                                                        </div>
-                                                        <div className="twm-rec-content">
-                                                            <h4 className="twm-title">
-                                                                <NavLink
-                                                                    to={`/job-grid?employerId=${recruiter._id}`}
-                                                                >
+                                                            <div className="twm-rec-content">
+                                                                <h4 className="twm-title">
                                                                     {recruiter.companyName}
-                                                                </NavLink>
-                                                            </h4>
-                                                            <div className="twm-job-address" style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxHeight: '20px'}}>
-                                                                <i className="feather-map-pin" />
-                                                                {recruiter.location || "Multiple Locations"}
+                                                                </h4>
+                                                                <div className="twm-job-address" style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxHeight: '20px'}}>
+                                                                    <i className="feather-map-pin" />
+                                                                    {recruiter.location || "Multiple Locations"}
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    </NavLink>
                                                 </li>
                                             );
                                         })
