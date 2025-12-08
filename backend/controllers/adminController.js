@@ -2803,77 +2803,44 @@ exports.getSupportTickets = async (req, res) => {
     if (priority) query.priority = priority;
 
     const tickets = await Support.find(query)
-      .populate('userId', 'name email companyName')
-      .populate('respondedBy', 'name email')
       .sort({ createdAt: -1 })
       .limit(limit * 1)
-      .skip((page - 1) * limit);
-
-    // Enhance tickets with actual user data if userId exists
-    const enhancedTickets = await Promise.all(tickets.map(async (ticket) => {
-      const ticketObj = ticket.toObject();
-      
-      // If userId exists and is populated, use the actual user data
-      if (ticket.userId && ticket.userId.email) {
-        ticketObj.actualUserEmail = ticket.userId.email;
-        ticketObj.actualUserName = ticket.userId.name || ticket.userId.companyName;
-      } else if (ticket.userType !== 'guest') {
-        // Try to find user by email if userId is missing
-        try {
-          let user = null;
-          if (ticket.userType === 'employer') {
-            user = await require('../models/Employer').findOne({ email: ticket.email }).select('name email companyName');
-          } else if (ticket.userType === 'candidate') {
-            user = await require('../models/Candidate').findOne({ email: ticket.email }).select('name email');
-          }
-          
-          if (user) {
-            ticketObj.actualUserEmail = user.email;
-            ticketObj.actualUserName = user.name || user.companyName;
-          }
-        } catch (lookupError) {
-          console.error('Error looking up user:', lookupError);
-        }
-      }
-      
-      return ticketObj;
-    }));
+      .skip((page - 1) * limit)
+      .lean();
 
     const totalTickets = await Support.countDocuments(query);
     const unreadCount = await Support.countDocuments({ ...query, isRead: false });
 
     res.json({ 
       success: true, 
-      tickets: enhancedTickets,
+      tickets: tickets,
       totalTickets,
       unreadCount,
       currentPage: parseInt(page),
       totalPages: Math.ceil(totalTickets / parseInt(limit))
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error('Error in getSupportTickets:', error);
+    return res.status(500).json({ success: false, message: error.message || 'Failed to fetch support tickets' });
   }
 };
 
 exports.getSupportTicketById = async (req, res) => {
   try {
-    const ticket = await Support.findById(req.params.id)
-      .populate('userId', 'name email companyName')
-      .populate('respondedBy', 'name email');
+    const ticket = await Support.findByIdAndUpdate(
+      req.params.id,
+      { isRead: true },
+      { new: true }
+    ).lean();
     
     if (!ticket) {
       return res.status(404).json({ success: false, message: 'Support ticket not found' });
     }
 
-    // Mark as read
-    if (!ticket.isRead) {
-      ticket.isRead = true;
-      await ticket.save();
-    }
-
     res.json({ success: true, ticket });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error('Error in getSupportTicketById:', error);
+    return res.status(500).json({ success: false, message: error.message || 'Failed to fetch ticket' });
   }
 };
 
@@ -3022,7 +2989,7 @@ exports.downloadSupportAttachment = async (req, res) => {
   try {
     const { ticketId, attachmentIndex } = req.params;
     
-    const ticket = await Support.findById(ticketId);
+    const ticket = await Support.findById(ticketId).lean();
     if (!ticket) {
       return res.status(404).json({ success: false, message: 'Support ticket not found' });
     }
@@ -3040,7 +3007,8 @@ exports.downloadSupportAttachment = async (req, res) => {
     res.setHeader('Content-Type', mimeType);
     res.send(buffer);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error('Error in downloadSupportAttachment:', error);
+    return res.status(500).json({ success: false, message: error.message || 'Failed to download attachment' });
   }
 };
 
