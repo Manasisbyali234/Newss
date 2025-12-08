@@ -1143,7 +1143,7 @@ function Home16Page() {
                     {/* title="" START*/}
                     <div className="section-head center wt-small-separator-outer mb-3" style={{paddingLeft: '20px'}}>
                         <div className="wt-small-separator site-text-primary">
-                            <div>for candidates</div>
+                            <div>For Candidates</div>
                         </div>
 
                         <h2 className="wt-title">How It Works for Candidates</h2>
@@ -1231,9 +1231,9 @@ function Home16Page() {
                     {/* title START */}
                     <div className="section-head center wt-small-separator-outer mb-3" style={{paddingLeft: '20px'}}>
                         <div className="wt-small-separator">
-                            <div>For Employers</div>
+                            <div style={{fontWeight: 'normal'}}>For Employers</div>
                         </div>
-                        <h2 className="wt-title">How It Works for Employers</h2>
+                        <h2 className="wt-title" style={{fontWeight: 'normal'}}>How It Works for Employers</h2>
                     </div>
                     {/* title END */}
 
