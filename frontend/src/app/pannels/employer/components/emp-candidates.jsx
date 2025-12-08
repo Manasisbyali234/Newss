@@ -222,7 +222,7 @@ function EmpCandidatesPage() {
                 onChange={(e) => setStatusFilter(e.target.value)}
                 style={{ width: "200px" }}
               >
-                <option value="">All Status</option>
+                <option value="">All Status (Show All)</option>
                 <option value="pending">Pending</option>
                 <option value="shortlisted">Shortlisted</option>
                 <option value="interviewed">Interviewed</option>
@@ -238,6 +238,7 @@ function EmpCandidatesPage() {
                 <option value="">All Gender</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
+                <option value="prefer not to say">Prefer not to say</option>
               </select>
             </div>
           </div>

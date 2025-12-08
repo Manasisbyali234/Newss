@@ -819,7 +819,7 @@ function Home16Page() {
                                 <div style={{flex: 1}}></div>
                                 <div className="section-head center wt-small-separator-outer" style={{margin: 0}}>
                                     <div className="wt-small-separator site-text-primary">
-                                        <div>Top Companies</div>
+                                        <div>Top Jobs</div>
                                     </div>
                                     <h2 className="wt-title">Discover your next career move</h2>
                                 </div>

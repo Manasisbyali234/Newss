@@ -430,19 +430,7 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
           </div>
         )}
 
-        {stages.length === 0 ? (
-          <div className="text-center py-4">
-            <p className="text-muted mb-3">No interview stages configured yet. Click "Add Interview Stage" to create interview rounds.</p>
-            <button
-              className="btn"
-              style={{ backgroundColor: '#ff6600', color: 'white', border: 'none' }}
-              onClick={addStage}
-            >
-              <Plus size={16} className="me-2" />
-              Add Interview Stage
-            </button>
-          </div>
-        ) : (
+        {stages.length > 0 && (
           <div className="row g-4">
             {stages.map((stage, index) => (
               <div key={index} className="col-12">
