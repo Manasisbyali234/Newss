@@ -50,8 +50,9 @@ function AdminSupportTickets() {
             }
             
             const queryParams = new URLSearchParams(filters).toString();
+            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
             
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/support-tickets?${queryParams}`, {
+            const response = await fetch(`${apiUrl}/api/admin/support-tickets?${queryParams}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -62,7 +63,14 @@ function AdminSupportTickets() {
             
             if (!contentType || !contentType.includes('application/json')) {
                 console.error('Server returned non-JSON response:', contentType);
-                showError('Server error. Please try again later.');
+                console.error('API URL:', apiUrl);
+                console.error('Response status:', response.status);
+                
+                if (response.status === 404) {
+                    showError('API endpoint not found. Please check if the backend server is running.');
+                } else {
+                    showError('Backend server is not responding correctly. Please ensure the server is running and the API URL is correct.');
+                }
                 return;
             }
             
@@ -89,7 +97,14 @@ function AdminSupportTickets() {
             }
         } catch (error) {
             console.error('Error fetching support tickets:', error);
-            showError('Network error. Please check your connection and try again.');
+            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+            console.error('API URL being used:', apiUrl);
+            
+            if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+                showError(`Cannot connect to backend server at ${apiUrl}. Please ensure the server is running.`);
+            } else {
+                showError('Network error. Please check your connection and try again.');
+            }
         } finally {
             setLoading(false);
         }

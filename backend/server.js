@@ -115,7 +115,12 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 app.use(cors({
-  origin: [process.env.FRONTEND_URL, 'http://localhost:3000'],
+  origin: [
+    process.env.FRONTEND_URL, 
+    'http://localhost:3000',
+    'https://taleglobal.cloud',
+    'https://www.taleglobal.cloud'
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cache-Control', 'pragma']
