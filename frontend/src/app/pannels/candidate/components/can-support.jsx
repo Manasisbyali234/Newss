@@ -180,6 +180,8 @@ function CanSupport() {
                 body: submitData
             });
             
+            const contentType = response.headers.get('content-type');
+            
             if (response.ok) {
                 setIsSubmitted(true);
                 setFormData(prev => ({
@@ -194,25 +196,33 @@ function CanSupport() {
                 const fileInput = document.querySelector('input[type="file"]');
                 if (fileInput) fileInput.value = '';
             } else {
-                const data = await response.json();
-                console.error('Support ticket submission failed:', data);
-                
-                // Handle validation errors
-                if (data.errors && Array.isArray(data.errors)) {
-                    const validationErrors = {};
-                    data.errors.forEach(error => {
-                        if (error.path) {
-                            validationErrors[error.path] = error.msg;
-                        }
-                    });
-                    setErrors({ ...validationErrors, submit: data.message || 'Validation failed' });
+                // Check if response is JSON
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    console.error('Support ticket submission failed:', data);
+                    
+                    // Handle validation errors
+                    if (data.errors && Array.isArray(data.errors)) {
+                        const validationErrors = {};
+                        data.errors.forEach(error => {
+                            if (error.path) {
+                                validationErrors[error.path] = error.msg;
+                            }
+                        });
+                        setErrors({ ...validationErrors, submit: data.message || 'Validation failed' });
+                    } else {
+                        setErrors({ submit: data.message || 'Failed to submit support ticket' });
+                    }
                 } else {
-                    setErrors({ submit: data.message || 'Failed to submit support ticket' });
+                    // Server returned HTML or other non-JSON response
+                    const text = await response.text();
+                    console.error('Non-JSON response:', text.substring(0, 200));
+                    setErrors({ submit: 'Failed to upload resume: File size too large. Each file must be under 5MB. Please compress your files before uploading.' });
                 }
             }
         } catch (error) {
-            
-            setErrors({ submit: 'Backend server not running. Please start the backend server on port 5000.' });
+            console.error('Upload error:', error);
+            setErrors({ submit: 'Failed to upload resume: ' + (error.message || 'Network error. Please check your connection and try again.') });
         } finally {
             setIsSubmitting(false);
         }

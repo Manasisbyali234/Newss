@@ -69,9 +69,9 @@ function SectionEmployerSidebar({ onFilterChange }) {
                     }
                 });
 
-                setIndustries(Array.from(industrySet).sort());
-                setLocations(Array.from(locationSet).sort());
-                setCompanyTypes(Array.from(companyTypeSet).sort());
+                setIndustries(Array.from(industrySet).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })));
+                setLocations(Array.from(locationSet).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })));
+                setCompanyTypes(Array.from(companyTypeSet).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })));
                 setEstablishedYears(Array.from(establishedYearSet).sort((a, b) => b - a));
             }
         } catch (error) {

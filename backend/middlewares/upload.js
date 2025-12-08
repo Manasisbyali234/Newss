@@ -1,14 +1,38 @@
 const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Disk storage for question images
+const diskStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'question-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
 
 // Store files in memory for Base64 conversion
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
   if (file.fieldname === 'resume') {
-    if (file.mimetype === 'application/pdf' || file.mimetype.includes('document')) {
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
+    if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Only PDF and DOC files allowed for resume'), false);
+      cb(new Error('Only PDF, DOC, and DOCX files are allowed for resume'), false);
     }
   } else if (file.fieldname === 'document') {
     if (file.mimetype === 'application/pdf' || file.mimetype.startsWith('image/')) {
@@ -58,7 +82,7 @@ const upload = multer({
   storage,
   fileFilter,
   limits: { 
-    fileSize: 50 * 1024 * 1024, // 50MB limit for general uploads
+    fileSize: 20 * 1024 * 1024, // 20MB limit (to handle 5MB files with Base64 overhead)
     files: 1 // Only allow 1 file at a time
   }
 });
@@ -132,8 +156,9 @@ const uploadSupport = multer({
     }
   },
   limits: { 
-    fileSize: 15 * 1024 * 1024, // 15MB limit per file for support attachments
-    files: 3 // Allow up to 3 files
+    fileSize: 5 * 1024 * 1024, // 5MB limit per file for support attachments
+    files: 3, // Allow up to 3 files
+    fieldSize: 15 * 1024 * 1024 // 15MB total field size
   }
 });
 
@@ -239,4 +264,55 @@ const validateExcelContent = (buffer, mimetype) => {
   }
 };
 
-module.exports = { upload, uploadMarksheet, uploadSupport, uploadGallery, fileToBase64, validateFileContent, validateExcelContent };
+// Upload configuration for question images (disk storage)
+const uploadQuestionImage = multer({
+  storage: diskStorage,
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only JPG, PNG, GIF, and WEBP images are allowed'), false);
+    }
+  },
+  limits: { 
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  }
+});
+
+// Upload configuration for assessment answer files (disk storage)
+const answerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'answer-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const uploadAnswerFile = multer({
+  storage: answerStorage,
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/gif',
+      'image/webp'
+    ];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only PDF, DOC, DOCX, and image files are allowed'), false);
+    }
+  },
+  limits: { 
+    fileSize: 10 * 1024 * 1024 // 10MB limit
+  }
+});
+
+module.exports = { upload, uploadMarksheet, uploadSupport, uploadGallery, uploadQuestionImage, uploadAnswerFile, fileToBase64, validateFileContent, validateExcelContent };

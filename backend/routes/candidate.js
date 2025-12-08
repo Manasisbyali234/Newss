@@ -3,7 +3,7 @@ const { body } = require('express-validator');
 const router = express.Router();
 const candidateController = require('../controllers/candidateController');
 const { auth } = require('../middlewares/auth');
-const { upload, uploadMarksheet } = require('../middlewares/upload');
+const { upload, uploadMarksheet, uploadAnswerFile } = require('../middlewares/upload');
 const handleValidationErrors = require('../middlewares/validation');
 const { mobileValidationRules } = require('../middlewares/phoneValidation');
 
@@ -303,7 +303,7 @@ router.get('/assessments/available', assessmentController.getAvailableAssessment
 router.get('/assessments/:id', assessmentController.getAssessmentForCandidate);
 router.post('/assessments/start', assessmentDebugMiddleware, assessmentController.startAssessment);
 router.post('/assessments/answer', assessmentDebugMiddleware, assessmentController.submitAnswer);
-router.post('/assessments/upload-answer', upload.single('answerFile'), assessmentController.uploadFileAnswer);
+router.post('/assessments/upload-answer', uploadAnswerFile.single('answerFile'), assessmentController.uploadFileAnswer);
 router.post('/assessments/submit', assessmentDebugMiddleware, assessmentController.submitAssessment);
 router.get('/assessments/result/application/:applicationId', assessmentController.getAssessmentResultByApplication);
 router.get('/assessments/result/:attemptId', assessmentController.getAssessmentResult);

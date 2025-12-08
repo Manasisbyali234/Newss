@@ -5,7 +5,7 @@ const router = express.Router();
 const employerController = require('../controllers/employerController');
 const employerPasswordController = require('../controllers/employerPasswordController');
 const { auth } = require('../middlewares/auth');
-const { upload, uploadGallery } = require('../middlewares/upload');
+const { upload, uploadGallery, uploadQuestionImage } = require('../middlewares/upload');
 const handleValidationErrors = require('../middlewares/validation');
 const { mobileValidationRules } = require('../middlewares/phoneValidation');
 
@@ -183,16 +183,8 @@ router.get('/interview-responses/:applicationId', employerController.getIntervie
 
 // Assessment Routes
 const assessmentController = require('../controllers/assessmentController');
-router.post('/assessments', [
-  body('title').notEmpty().trim().withMessage('Assessment title is required'),
-  body('type').isIn(['Technical', 'Soft Skill', 'General']).withMessage('Invalid assessment type'),
-  body('timer').isInt({ min: 1 }).withMessage('Timer must be at least 1 minute'),
-  body('questions').isArray({ min: 1 }).withMessage('At least one question is required'),
-  body('questions.*.question').notEmpty().trim().withMessage('Question text is required'),
-  body('questions.*.options').isArray({ min: 2 }).withMessage('At least 2 options are required'),
-  body('questions.*.correctAnswer').isInt({ min: 0 }).withMessage('Correct answer must be specified'),
-  body('questions.*.marks').isInt({ min: 1 }).withMessage('Marks must be at least 1')
-], handleValidationErrors, assessmentController.createAssessment);
+router.post('/assessments/upload-question-image', uploadQuestionImage.single('image'), assessmentController.uploadQuestionImage);
+router.post('/assessments', assessmentController.createAssessment);
 router.get('/assessments', assessmentController.getAssessments);
 router.get('/assessments/:id', assessmentController.getAssessmentDetails);
 router.put('/assessments/:id', assessmentController.updateAssessment);

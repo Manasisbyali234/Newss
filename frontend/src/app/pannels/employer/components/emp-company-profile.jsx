@@ -436,15 +436,16 @@ function EmpCompanyProfilePage() {
         const file = e.target.files[0];
         if (!file) return;
 
-        // Validate logo: <=1MB, jpg/png, min 136x136
+        // Validate logo: <=5MB, jpg/png, min 136x136
         const result = await validateImageFile(file, {
-            maxSizeMB: 1,
+            maxSizeMB: 5,
             minWidth: 136,
             minHeight: 136,
             allowedTypes: ['image/jpeg', 'image/png']
         });
         if (!result.ok) {
             showError(`Logo upload failed: ${result.message}`);
+            e.target.value = ''; // Clear the file input
             return;
         }
 
@@ -486,15 +487,16 @@ function EmpCompanyProfilePage() {
         const file = e.target.files[0];
         if (!file) return;
 
-        // Validate cover: <=2MB, jpg/png, no minimum size restriction
+        // Validate cover: <=5MB, jpg/png, no minimum size restriction
         const result = await validateImageFile(file, {
-            maxSizeMB: 2,
+            maxSizeMB: 5,
             minWidth: 1,
             minHeight: 1,
             allowedTypes: ['image/jpeg', 'image/png']
         });
         if (!result.ok) {
             showError(`Cover image upload failed: ${result.message}`);
+            e.target.value = ''; // Clear the file input
             return;
         }
 
@@ -1076,7 +1078,7 @@ function EmpCompanyProfilePage() {
                                     </div>
                                 )}
                                 <p className="text-muted mt-2">
-                                    <b>Company Logo:</b> Max file size is 1MB, Minimum dimension: 136 x 136. Suitable files are .jpg & .png
+                                    <b>Company Logo:</b> Max file size is 5MB, Minimum dimension: 136 x 136. Suitable files are .jpg & .png
                                 </p>
                             </div>
                         </div>
@@ -1105,7 +1107,7 @@ function EmpCompanyProfilePage() {
                                     </div>
                                 )}
                                 <p className="text-muted mt-2">
-                                    <b>Background Banner Image:</b> Max file size is 2MB. Any image size is supported. Suitable files are .jpg & .png
+                                    <b>Background Banner Image:</b> Max file size is 5MB. Any image size is supported. Suitable files are .jpg & .png
                                 </p>
                             </div>
                         </div>
@@ -1724,7 +1726,7 @@ function EmpCompanyProfilePage() {
                                                                     )}
                                                                     <small className="text-muted">
                                                                         <i className="fas fa-calendar me-1"></i>
-                                                                        {new Date(doc.uploadedAt).toLocaleDateString()}
+                                                                        {new Date(doc.uploadedAt).toLocaleDateString('en-GB')}
                                                                     </small>
                                                                 </div>
                                                                 <button 

@@ -58,7 +58,7 @@ export default function AssessmentDashboard() {
 				}
 			}
 		} catch (error) {
-			console.error('Error saving assessment:', error);
+			console.error('Error saving assessment:', error.response?.data || error.message);
 			
 			// Show specific error message from server
 			let errorMessage = assessmentData.id ? 'Failed to update assessment' : 'Failed to create assessment';

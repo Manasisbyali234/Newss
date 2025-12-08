@@ -1442,24 +1442,28 @@ export default function EmpPostJob({ onNext }) {
 								({formData.requiredSkills.length} skills selected)
 							</span>
 						</label>
-						<div style={{position: 'relative'}}>
-							<input
-								style={{...input, paddingRight: '40px'}}
-								type="text"
-								placeholder="Search and select skills..."
-								value={formData.skillInput}
-								onChange={(e) => update({ skillInput: e.target.value })}
-								onFocus={() => update({ skillInput: formData.skillInput || '' })}
-							/>
-							<i className="fa fa-search" style={{
-								position: 'absolute',
-								right: '12px',
-								top: '50%',
-								transform: 'translateY(-50%)',
-								color: '#9ca3af',
-								pointerEvents: 'none',
-								fontSize: '14px'
-							}}></i>
+						<div style={{display: 'flex', gap: 8, alignItems: 'flex-start'}}>
+							<div style={{position: 'relative', flex: 1}}>
+								<input
+									style={input}
+									type="text"
+									placeholder="Type to search or add custom skill..."
+									value={formData.skillInput}
+									onChange={(e) => update({ skillInput: e.target.value })}
+									onFocus={() => update({ skillInput: formData.skillInput || '' })}
+									onKeyPress={(e) => {
+										if (e.key === 'Enter' && formData.skillInput.trim()) {
+											e.preventDefault();
+											const newSkill = formData.skillInput.trim();
+											if (!formData.requiredSkills.includes(newSkill)) {
+												update({ 
+													requiredSkills: [...formData.requiredSkills, newSkill],
+													skillInput: ''
+												});
+											}
+										}
+									}}
+								/>
 							{formData.skillInput && (() => {
 								const allSkills = [
 									"React", "Vue.js", "Angular", "Node.js", "Python", "Java", "C++", "C#", "PHP", "Ruby",
@@ -1534,10 +1538,48 @@ export default function EmpPostJob({ onNext }) {
 									</div>
 								) : null;
 							})()}
+							</div>
+							<button
+								style={{
+									background: '#ff6b35',
+									color: '#fff',
+									border: 'none',
+									padding: '12px 16px',
+									borderRadius: 8,
+									cursor: formData.skillInput.trim() ? 'pointer' : 'not-allowed',
+									fontSize: '14px',
+									fontWeight: 600,
+									opacity: formData.skillInput.trim() ? 1 : 0.5,
+									transition: 'all 0.2s',
+									whiteSpace: 'nowrap'
+								}}
+								onClick={() => {
+									if (formData.skillInput.trim()) {
+										const newSkill = formData.skillInput.trim();
+										if (!formData.requiredSkills.includes(newSkill)) {
+											update({ 
+												requiredSkills: [...formData.requiredSkills, newSkill],
+												skillInput: ''
+											});
+										}
+									}
+								}}
+								onMouseEnter={(e) => {
+									if (formData.skillInput.trim()) {
+										e.currentTarget.style.background = '#e55a2b';
+									}
+								}}
+								onMouseLeave={(e) => {
+									e.currentTarget.style.background = '#ff6b35';
+								}}
+							>
+								<i className="fa fa-plus" style={{marginRight: 4}}></i>
+								Add
+							</button>
 						</div>
 						<small style={{color: '#6b7280', fontSize: 12, marginTop: 4, display: 'block'}}>
 							<i className="fa fa-info-circle" style={{marginRight: 4}}></i>
-							Type to search from 90+ skills or click suggestions below
+							Type to search from 90+ skills, select from dropdown, or press Enter/click Add button to add custom skills
 						</small>
 						{formData.requiredSkills.length > 0 && (
 							<div
@@ -2583,7 +2625,11 @@ export default function EmpPostJob({ onNext }) {
 							min={new Date().toISOString().split('T')[0]}
 							value={formData.offerLetterDate}
 							onChange={(e) => update({ offerLetterDate: e.target.value })}
+							placeholder="DD/MM/YYYY"
 						/>
+						<small style={{color: '#6b7280', fontSize: 12, marginTop: 4, display: 'block'}}>
+							Format: DD/MM/YYYY
+						</small>
 						<HolidayIndicator date={formData.offerLetterDate} />
 					</div>
 
@@ -2598,7 +2644,11 @@ export default function EmpPostJob({ onNext }) {
 							min={new Date().toISOString().split('T')[0]}
 							value={formData.lastDateOfApplication}
 							onChange={(e) => update({ lastDateOfApplication: e.target.value })}
+							placeholder="DD/MM/YYYY"
 						/>
+						<small style={{color: '#6b7280', fontSize: 12, marginTop: 4, display: 'block'}}>
+							Format: DD/MM/YYYY
+						</small>
 						<HolidayIndicator date={formData.lastDateOfApplication} />
 					</div>
 

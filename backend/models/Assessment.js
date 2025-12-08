@@ -13,11 +13,12 @@ const AssessmentSchema = new mongoose.Schema({
   totalQuestions: { type: Number, required: true },
   questions: [{
     question: { type: String, required: true },
-    type: { type: String, enum: ['mcq', 'subjective', 'upload'], default: 'mcq' },
+    type: { type: String, enum: ['mcq', 'subjective', 'upload', 'image'], default: 'mcq' },
     options: [{ type: String }],
     correctAnswer: { type: Number },
     marks: { type: Number, default: 1 },
-    explanation: { type: String }
+    explanation: { type: String },
+    imageUrl: { type: String }
   }],
   status: { type: String, enum: ['draft', 'published', 'archived'], default: 'published' },
   passingPercentage: { type: Number, default: 60 },

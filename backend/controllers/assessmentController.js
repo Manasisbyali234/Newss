@@ -21,7 +21,8 @@ exports.createAssessment = async (req, res) => {
     for (let i = 0; i < questions.length; i++) {
       const question = questions[i];
       
-      if (!question.question || question.question.trim().length === 0) {
+      const questionText = question.question ? question.question.replace(/<[^>]*>/g, '').trim() : '';
+      if (!questionText) {
         return res.status(400).json({ 
           success: false, 
           message: `Question ${i + 1} text is required` 
@@ -29,7 +30,8 @@ exports.createAssessment = async (req, res) => {
       }
       
       // Only validate options and correctAnswer for MCQ questions
-      if (question.type === 'mcq' || !question.type) {
+      const questionType = question.type || 'mcq';
+      if (questionType === 'mcq') {
         if (!question.options || question.options.length < 2) {
           return res.status(400).json({ 
             success: false, 
@@ -86,10 +88,11 @@ exports.createAssessment = async (req, res) => {
       questions: questions.map(q => ({
         question: q.question.trim(),
         type: q.type || 'mcq',
-        options: (q.type === 'subjective' || q.type === 'upload') ? [] : q.options.map(opt => opt.trim()),
-        correctAnswer: (q.type === 'subjective' || q.type === 'upload') ? null : q.correctAnswer,
+        options: (q.type === 'subjective' || q.type === 'upload' || q.type === 'image') ? [] : q.options.map(opt => opt.trim()),
+        correctAnswer: (q.type === 'subjective' || q.type === 'upload' || q.type === 'image') ? null : q.correctAnswer,
         marks: q.marks || 1,
-        explanation: q.explanation ? q.explanation.trim() : ''
+        explanation: q.explanation ? q.explanation.trim() : '',
+        imageUrl: q.imageUrl || ''
       })),
       status: 'published'
     });
@@ -149,14 +152,16 @@ exports.updateAssessment = async (req, res) => {
     for (let i = 0; i < questions.length; i++) {
       const question = questions[i];
       
-      if (!question.question || question.question.trim().length === 0) {
+      const questionText = question.question ? question.question.replace(/<[^>]*>/g, '').trim() : '';
+      if (!questionText) {
         return res.status(400).json({ 
           success: false, 
           message: `Question ${i + 1} text is required` 
         });
       }
       
-      if (question.type === 'mcq') {
+      const questionType = question.type || 'mcq';
+      if (questionType === 'mcq') {
         if (!question.options || question.options.length < 2) {
           return res.status(400).json({ 
             success: false, 
@@ -174,7 +179,7 @@ exports.updateAssessment = async (req, res) => {
           }
         }
         
-        if (question.correctAnswer === undefined || question.correctAnswer < 0 || question.correctAnswer >= question.options.length) {
+        if (question.correctAnswer === undefined || question.correctAnswer === null || question.correctAnswer < 0 || question.correctAnswer >= question.options.length) {
           return res.status(400).json({ 
             success: false, 
             message: `Question ${i + 1} must have a valid correct answer selected` 
@@ -201,10 +206,11 @@ exports.updateAssessment = async (req, res) => {
       questions: questions.map(q => ({
         question: q.question.trim(),
         type: q.type || 'mcq',
-        options: (q.type === 'subjective' || q.type === 'upload') ? [] : q.options.map(opt => opt.trim()),
-        correctAnswer: (q.type === 'subjective' || q.type === 'upload') ? null : q.correctAnswer,
+        options: (q.type === 'subjective' || q.type === 'upload' || q.type === 'image') ? [] : q.options.map(opt => opt.trim()),
+        correctAnswer: (q.type === 'subjective' || q.type === 'upload' || q.type === 'image') ? null : q.correctAnswer,
         marks: q.marks || 1,
-        explanation: q.explanation ? q.explanation.trim() : ''
+        explanation: q.explanation ? q.explanation.trim() : '',
+        imageUrl: q.imageUrl || ''
       })),
       updatedAt: Date.now()
     };
@@ -482,16 +488,6 @@ exports.uploadFileAnswer = async (req, res) => {
       return res.status(400).json({ success: false, message: 'No file uploaded' });
     }
     
-    // Validate file type and size
-    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png'];
-    if (!allowedTypes.includes(req.file.mimetype)) {
-      return res.status(400).json({ success: false, message: 'Invalid file type. Only PDF, DOC, DOCX, JPG, PNG are allowed' });
-    }
-    
-    if (req.file.size > 10 * 1024 * 1024) { // 10MB limit
-      return res.status(400).json({ success: false, message: 'File size too large. Maximum 10MB allowed' });
-    }
-    
     const attempt = await AssessmentAttempt.findOne({
       _id: attemptId,
       candidateId: req.user._id
@@ -505,18 +501,17 @@ exports.uploadFileAnswer = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Assessment not in progress' });
     }
     
-    // Validate question exists and is upload type
     const assessment = await Assessment.findById(attempt.assessmentId);
     if (!assessment || !assessment.questions[questionIndex]) {
       return res.status(400).json({ success: false, message: 'Invalid question index' });
     }
     
     const question = assessment.questions[questionIndex];
-    if (question.type !== 'upload') {
+    
+    if (question.type !== 'upload' && question.type !== 'image') {
       return res.status(400).json({ success: false, message: 'Question is not an upload type' });
     }
     
-    // Update or add answer with file info
     const existingAnswerIndex = attempt.answers.findIndex(a => a.questionIndex === parseInt(questionIndex));
     const answerData = {
       questionIndex: parseInt(questionIndex),
@@ -527,6 +522,7 @@ exports.uploadFileAnswer = async (req, res) => {
         originalName: req.file.originalname,
         mimetype: req.file.mimetype,
         size: req.file.size,
+        path: `/uploads/${req.file.filename}`,
         uploadedAt: new Date()
       },
       timeSpent: timeSpent || 0,
@@ -539,11 +535,13 @@ exports.uploadFileAnswer = async (req, res) => {
       attempt.answers.push(answerData);
     }
     
-    attempt.currentQuestion = parseInt(questionIndex) + 1;
+    attempt.currentQuestion = Math.max(attempt.currentQuestion || 0, parseInt(questionIndex) + 1);
+    attempt.markModified('answers');
     await attempt.save();
     
-    res.json({ success: true, attempt, uploadedFile: answerData.uploadedFile });
+    res.json({ success: true, uploadedFile: answerData.uploadedFile });
   } catch (error) {
+    console.error('Upload file answer error:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -615,7 +613,7 @@ exports.submitAssessment = async (req, res) => {
           score += (question.marks || 1);
           correctAnswers++;
         }
-      } else if (question.type === 'upload') {
+      } else if (question.type === 'upload' || question.type === 'image') {
         // For upload questions, give marks if file is uploaded
         if (answer.uploadedFile) {
           score += (question.marks || 1);
@@ -866,6 +864,20 @@ exports.getAssessmentResultByApplication = async (req, res) => {
         }
       }
     });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Upload Question Image
+exports.uploadQuestionImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No image uploaded' });
+    }
+    
+    const imageUrl = `/uploads/${req.file.filename}`;
+    res.json({ success: true, imageUrl });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

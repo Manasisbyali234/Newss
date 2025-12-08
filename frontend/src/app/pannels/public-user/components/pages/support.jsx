@@ -47,18 +47,18 @@ function SupportPage() {
         if (!formData.subject.trim()) newErrors.subject = 'Subject is required';
         if (!formData.message.trim()) newErrors.message = 'Message is required';
         
-        // Validate file size (max 15MB per file)
+        // Validate file size (max 20MB per file)
         for (let file of files) {
-            if (file.size > 15 * 1024 * 1024) {
-                newErrors.files = 'Each file must be less than 15MB';
+            if (file.size > 20 * 1024 * 1024) {
+                newErrors.files = 'Each file must be less than 20MB';
                 break;
             }
         }
         
         // Check total file size
         const totalSize = files.reduce((sum, file) => sum + file.size, 0);
-        if (totalSize > 45 * 1024 * 1024) {
-            newErrors.files = 'Total file size exceeds 45MB';
+        if (totalSize > 60 * 1024 * 1024) {
+            newErrors.files = 'Total file size exceeds 60MB';
         }
         
         setErrors(newErrors);
@@ -83,18 +83,18 @@ function SupportPage() {
         }
         
         // Check individual file sizes
-        const maxSize = 15 * 1024 * 1024; // 15MB
+        const maxSize = 20 * 1024 * 1024; // 20MB
         const oversizedFiles = selectedFiles.filter(file => file.size > maxSize);
         if (oversizedFiles.length > 0) {
-            setErrors(prev => ({ ...prev, files: `File(s) too large: ${oversizedFiles.map(f => f.name).join(', ')}. Max 15MB per file.` }));
+            setErrors(prev => ({ ...prev, files: `File(s) too large: ${oversizedFiles.map(f => f.name).join(', ')}. Max 20MB per file.` }));
             return;
         }
         
         // Check total size
         const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
-        const maxTotalSize = 45 * 1024 * 1024; // 45MB
+        const maxTotalSize = 60 * 1024 * 1024; // 60MB
         if (totalSize > maxTotalSize) {
-            setErrors(prev => ({ ...prev, files: 'Total file size exceeds 45MB. Please select smaller files.' }));
+            setErrors(prev => ({ ...prev, files: 'Total file size exceeds 60MB. Please select smaller files.' }));
             return;
         }
         
@@ -140,11 +140,30 @@ function SupportPage() {
                 const fileInput = document.querySelector('input[type="file"]');
                 if (fileInput) fileInput.value = '';
             } else {
-                const data = await response.json();
-                setErrors({ submit: data.message || 'Failed to submit support ticket' });
+                // Try to parse JSON response, handle HTML error pages
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    setErrors({ submit: data.message || 'Failed to submit support ticket' });
+                } else {
+                    // Server returned HTML error page
+                    const text = await response.text();
+                    if (response.status === 413) {
+                        setErrors({ submit: 'File size too large. Please reduce file sizes and try again.' });
+                    } else if (response.status === 408) {
+                        setErrors({ submit: 'Upload timeout. Please try uploading smaller files or check your internet connection.' });
+                    } else {
+                        setErrors({ submit: 'Server error. Please try again or contact support if the issue persists.' });
+                    }
+                }
             }
         } catch (error) {
-            setErrors({ submit: 'Network error. Please try again.' });
+            console.error('Support ticket submission error:', error);
+            if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                setErrors({ submit: 'Network error. Please check your internet connection and try again.' });
+            } else {
+                setErrors({ submit: 'An unexpected error occurred. Please try again or contact support.' });
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -349,7 +368,7 @@ function SupportPage() {
                                                         onChange={handleFileChange}
                                                     />
                                                     <small className="form-text text-muted">
-                                                        Optional: Attach up to 3 files (max 15MB each). Supported: PDF, DOC, DOCX, XLS, XLSX, CSV, TXT, JPG, PNG, GIF, WEBP
+                                                        Optional: Attach up to 3 files (max 20MB each, 60MB total). Supported: PDF, DOC, DOCX, XLS, XLSX, CSV, TXT, JPG, PNG, GIF, WEBP
                                                     </small>
                                                     {errors.files && <div className="invalid-feedback">{errors.files}</div>}
                                                     {files.length > 0 && (

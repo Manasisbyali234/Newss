@@ -74,15 +74,28 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
   const handleFileUpload = async (file) => {
     if (!file) return;
     
-    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png'];
-    if (!allowedTypes.includes(file.type)) {
-      alert('Invalid file type. Only PDF, DOC, DOCX, JPG, PNG are allowed');
-      return;
-    }
+    const question = assessment.questions[currentQuestion];
     
-    if (file.size > 10 * 1024 * 1024) {
-      alert('File size too large. Maximum 10MB allowed');
-      return;
+    if (question.type === 'image') {
+      const allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedImageTypes.includes(file.type)) {
+        alert('Invalid file type. Only JPG, JPEG, PNG, GIF, WEBP are allowed');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size too large. Maximum 5MB allowed');
+        return;
+      }
+    } else {
+      const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png'];
+      if (!allowedTypes.includes(file.type)) {
+        alert('Invalid file type. Only PDF, DOC, DOCX, JPG, PNG are allowed');
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        alert('File size too large. Maximum 10MB allowed');
+        return;
+      }
     }
     
     setUploading(true);
@@ -126,7 +139,7 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
       return;
     }
     
-    if (question.type === 'upload' && !uploadedFile) {
+    if ((question.type === 'upload' || question.type === 'image') && !uploadedFile) {
       alert('Please upload a file before proceeding to the next question.');
       return;
     }
@@ -383,6 +396,40 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
                   <div className="alert alert-success">
                     <i className="fa fa-check-circle me-2"></i>
                     File uploaded successfully: {uploadedFile.originalName}
+                    <br />
+                    <small>Size: {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB</small>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          
+          {question.type === 'image' && (
+            <div className="mb-3">
+              <div className="border rounded p-4 text-center">
+                {!uploadedFile ? (
+                  <>
+                    <input
+                      type="file"
+                      className="form-control mb-3"
+                      accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                      onChange={(e) => handleFileUpload(e.target.files[0])}
+                      disabled={uploading}
+                    />
+                    <small className="text-muted d-block">
+                      🖼️ Accepted image types: JPG, JPEG, PNG, GIF, WEBP (Max: 5MB)
+                    </small>
+                    {uploading && (
+                      <div className="mt-2">
+                        <div className="spinner-border spinner-border-sm me-2" role="status"></div>
+                        Uploading...
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="alert alert-success">
+                    <i className="fa fa-check-circle me-2"></i>
+                    Image uploaded successfully: {uploadedFile.originalName}
                     <br />
                     <small>Size: {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB</small>
                   </div>

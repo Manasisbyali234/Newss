@@ -62,6 +62,7 @@ function SectionCanPersonalDetail({ profile }) {
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
     const [sameAsResidential, setSameAsResidential] = useState(false);
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
     useEffect(() => {
         if (profile) {
@@ -227,6 +228,7 @@ function SectionCanPersonalDetail({ profile }) {
 
     const handleInputChange = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }));
+        setHasUnsavedChanges(true);
         
         // If pincode changes, fetch location
         if (field === 'pincode') {
@@ -237,16 +239,11 @@ function SectionCanPersonalDetail({ profile }) {
         if (field === 'residentialAddress' && sameAsResidential) {
             setFormData(prev => ({ ...prev, permanentAddress: value }));
         }
-        
-        // Auto-save after a short delay
-        clearTimeout(window.autoSaveTimeout);
-        window.autoSaveTimeout = setTimeout(() => {
-            autoSave();
-        }, 1000);
     };
 
     const handleSameAsResidentialChange = (checked) => {
         setSameAsResidential(checked);
+        setHasUnsavedChanges(true);
         if (checked) {
             setFormData(prev => ({ ...prev, permanentAddress: prev.residentialAddress }));
         } else {
@@ -254,25 +251,7 @@ function SectionCanPersonalDetail({ profile }) {
         }
     };
 
-    const autoSave = async () => {
-        try {
-            const updateData = {
-                dateOfBirth: formData.dateOfBirth,
-                gender: formData.gender,
-                location: formData.location,
-                stateCode: formData.stateCode,
-                pincode: formData.pincode,
-                fatherName: formData.fatherName,
-                motherName: formData.motherName,
-                residentialAddress: formData.residentialAddress,
-                permanentAddress: formData.permanentAddress,
-                correspondenceAddress: formData.correspondenceAddress
-            };
-            await api.updateCandidateProfile(updateData);
-        } catch (error) {
-            
-        }
-    };
+
 
     const handleSubmit = async () => {
         if (!validateAllRequiredFields()) {
@@ -299,6 +278,7 @@ function SectionCanPersonalDetail({ profile }) {
             const response = await api.updateCandidateProfile(updateData);
             if (response.success) {
                 showSuccess('Personal details updated successfully!');
+                setHasUnsavedChanges(false);
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
             } else {
                 showError('Failed to update personal details. Please try again.');
@@ -618,13 +598,30 @@ function SectionCanPersonalDetail({ profile }) {
                         </div>
 
                         <div className="text-left mt-4">
-                            <button type="button" onClick={handleSubmit} className="btn btn-outline-primary" disabled={loading} style={{backgroundColor: 'transparent'}}>
+                            {hasUnsavedChanges && (
+                                <div className="alert alert-warning mb-3" style={{padding: '10px 15px', fontSize: '14px'}}>
+                                    <i className="fa fa-exclamation-triangle me-2"></i>
+                                    You have unsaved changes. Please click "Save Changes" button to save your information.
+                                </div>
+                            )}
+                            <button 
+                                type="button" 
+                                onClick={handleSubmit} 
+                                className="btn btn-outline-primary" 
+                                disabled={loading}
+                                style={{
+                                    backgroundColor: hasUnsavedChanges ? '#ff6b35' : 'transparent',
+                                    color: hasUnsavedChanges ? 'white' : '#007bff',
+                                    borderColor: hasUnsavedChanges ? '#ff6b35' : '#007bff',
+                                    fontWeight: hasUnsavedChanges ? '600' : 'normal'
+                                }}
+                            >
                                 <i className="fa fa-save me-1"></i>
                                 {loading ? 'Saving...' : 'Save Changes'}
                             </button>
                             {Object.keys(errors).length > 0 && (
                                 <div className="text-danger mt-2">
-                                    <small>Please fix the validation errors above</small>
+                                    <small><i className="fa fa-times-circle me-1"></i>Please fix the validation errors above before saving</small>
                                 </div>
                             )}
                         </div>

@@ -25,10 +25,11 @@ function SectionCanAttachment({ profile }) {
 
         const file = e.target.files[0];
         if (file) {
-            // Check file size (15MB limit to match backend)
-            const maxSize = 15 * 1024 * 1024; // 15MB
+            // Check file size (10MB limit - accounting for Base64 encoding overhead)
+            // Base64 encoding increases size by ~33%, so 10MB becomes ~13.3MB after encoding
+            const maxSize = 10 * 1024 * 1024; // 10MB
             if (file.size > maxSize) {
-                showError('File size must be less than 15MB. Please choose a smaller file.');
+                showError('File size must be less than 10MB. Please choose a smaller file.');
                 e.target.value = ''; // Clear the input
                 setSelectedFile(null); // Ensure no file is selected
                 return;
@@ -53,9 +54,9 @@ function SectionCanAttachment({ profile }) {
         }
 
         // Double-check file size before upload
-        const maxSize = 15 * 1024 * 1024; // 15MB
+        const maxSize = 10 * 1024 * 1024; // 10MB
         if (selectedFile.size > maxSize) {
-            showError('File size must be less than 15MB. Please choose a smaller file.');
+            showError('File size must be less than 10MB. Please choose a smaller file.');
             setSelectedFile(null);
             const fileInput = document.querySelector('input[type="file"]');
             if (fileInput) fileInput.value = '';
@@ -82,9 +83,20 @@ function SectionCanAttachment({ profile }) {
         } catch (error) {
             console.error('Resume upload error:', error);
             let errorMessage = 'Failed to upload resume';
-            if (error.message) {
+            
+            // Check if error response is HTML (server error page)
+            if (error.response?.data && typeof error.response.data === 'string' && error.response.data.includes('<html')) {
+                errorMessage = 'File size exceeds server limit. Please upload a file smaller than 10MB.';
+            } else if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            } else if (error.response?.status === 413) {
+                errorMessage = 'File size exceeds the limit. Please upload a file smaller than 10MB.';
+            } else if (error.response?.status === 408) {
+                errorMessage = 'Upload timeout. Please try a smaller file or check your internet connection.';
+            } else if (error.message) {
                 errorMessage += `: ${error.message}`;
             }
+            
             showError(errorMessage);
         } finally {
             setUploading(false);
@@ -292,7 +304,7 @@ function SectionCanAttachment({ profile }) {
                         <div className="text-muted small">
                             <p className="mb-1">
                                 <i className="fa fa-info-circle me-1"></i>
-                                Upload Resume File size max 15 MB (PDF, DOC, DOCX only)
+                                Upload Resume File size max 10 MB (PDF, DOC, DOCX only)
                             </p>
                             {resumeFile && (
                                 <p className="mb-0 text-warning">

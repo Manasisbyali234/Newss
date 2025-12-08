@@ -19,6 +19,7 @@ const AssessmentAttemptSchema = new mongoose.Schema({
       originalName: { type: String },
       mimetype: { type: String },
       size: { type: Number },
+      path: { type: String },
       uploadedAt: { type: Date }
     },
     timeSpent: { type: Number },

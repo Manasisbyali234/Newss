@@ -134,8 +134,8 @@ app.use(limiter);
 app.use('/api/employer/profile/gallery', (req, res, next) => next());
 
 // Body Parser Middleware with increased limits for file uploads
-app.use(express.json({ limit: '100mb', parameterLimit: 50000 }));
-app.use(express.urlencoded({ extended: true, limit: '100mb', parameterLimit: 50000 }));
+app.use(express.json({ limit: '20mb', parameterLimit: 50000 }));
+app.use(express.urlencoded({ extended: true, limit: '20mb', parameterLimit: 50000 }));
 
 // Set timeout for requests
 app.use((req, res, next) => {
@@ -147,24 +147,35 @@ app.use((req, res, next) => {
   next();
 });
 
-// Handle errors
+// Handle body parser and upload errors
 app.use((error, req, res, next) => {
+  // Handle entity too large errors
   if (error.type === 'entity.too.large') {
     return res.status(413).json({ 
       success: false, 
-      message: 'Request too large. Please upload smaller files or fewer files at once.' 
+      message: 'File size exceeds the limit. Please upload a file smaller than 10MB.' 
     });
   }
+  // Handle JSON parsing errors
+  if (error instanceof SyntaxError && error.status === 400 && 'body' in error) {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Invalid request format. Please try again.' 
+    });
+  }
+  // Handle connection errors
   if (error.code === 'ECONNRESET' || error.code === 'ETIMEDOUT') {
     return res.status(408).json({ 
       success: false, 
-      message: 'Upload timeout. Please try uploading smaller files or check your internet connection.' 
+      message: 'Upload timeout. Please try uploading a smaller file or check your internet connection.' 
     });
   }
   next(error);
 });
 
-// Note: Static file serving removed - all files now stored as Base64 in database
+// Serve static files from uploads directory
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Handle preflight requests
 app.options('*', cors());

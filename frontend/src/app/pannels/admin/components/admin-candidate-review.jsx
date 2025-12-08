@@ -377,7 +377,7 @@ function AdminCandidateReviewPage() {
                 {/* Skills & Summary Tab */}
                 {activeTab === 'skills' && (
                     <div className="tab-panel skills-info">
-                        {(!candidate.skills || candidate.skills.length === 0) && !candidate.profileSummary ? (
+                        {(!candidate.skills || candidate.skills.length === 0) && !candidate.profileSummary && !candidate.resumeHeadline ? (
                             <div className="no-applications">
                                 <div className="no-data-content">
                                     <i className="fas fa-cogs"></i>
@@ -387,6 +387,18 @@ function AdminCandidateReviewPage() {
                             </div>
                         ) : (
                             <>
+                                {candidate.resumeHeadline && (
+                                    <div className="summary-section">
+                                        <div className="section-header">
+                                            <i className="fas fa-newspaper"></i>
+                                            <h4>Resume Headline</h4>
+                                        </div>
+                                        <div className="summary-content">
+                                            <p>{candidate.resumeHeadline}</p>
+                                        </div>
+                                    </div>
+                                )}
+
                                 {candidate.skills && candidate.skills.length > 0 && (
                                     <div className="skills-section">
                                         <div className="section-header">
@@ -443,7 +455,14 @@ function AdminCandidateReviewPage() {
                                         </div>
                                         <div className="document-actions">
                                             <button
-                                                className="action-btn primary"
+                                                className="action-btn view"
+                                                onClick={() => viewDocument(candidate.resume)}
+                                            >
+                                                <i className="fas fa-eye"></i>
+                                                View
+                                            </button>
+                                            <button
+                                                className="action-btn download"
                                                 onClick={() => downloadDocument(candidate.resume, 'resume.pdf')}
                                             >
                                                 <i className="fas fa-download"></i>

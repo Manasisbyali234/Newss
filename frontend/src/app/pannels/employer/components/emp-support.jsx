@@ -115,18 +115,18 @@ function EmpSupport() {
         }
         
         // Check individual file sizes
-        const maxSize = 15 * 1024 * 1024; // 15MB
+        const maxSize = 10 * 1024 * 1024; // 10MB per file
         const oversizedFiles = selectedFiles.filter(file => file.size > maxSize);
         if (oversizedFiles.length > 0) {
-            setErrors(prev => ({ ...prev, files: `File(s) too large: ${oversizedFiles.map(f => f.name).join(', ')}. Max 15MB per file.` }));
+            setErrors(prev => ({ ...prev, files: `File(s) too large: ${oversizedFiles.map(f => f.name).join(', ')}. Max 10MB per file.` }));
             return;
         }
         
         // Check total size
         const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
-        const maxTotalSize = 45 * 1024 * 1024; // 45MB
+        const maxTotalSize = 25 * 1024 * 1024; // 25MB total
         if (totalSize > maxTotalSize) {
-            setErrors(prev => ({ ...prev, files: 'Total file size exceeds 45MB. Please select smaller files.' }));
+            setErrors(prev => ({ ...prev, files: 'Total file size exceeds 25MB. Please select smaller files.' }));
             return;
         }
         
@@ -200,15 +200,31 @@ function EmpSupport() {
                 const fileInput = document.querySelector('input[type="file"]');
                 if (fileInput) fileInput.value = '';
             } else {
-                const data = await response.json();
-                console.log('Backend error response:', data);
-                
-                // Handle validation errors
-                if (data.errors && Array.isArray(data.errors)) {
-                    const errorMessages = data.errors.map(err => err.msg).join(', ');
-                    setErrors({ submit: `Validation Error: ${errorMessages}` });
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    console.log('Backend error response:', data);
+                    
+                    // Handle validation errors
+                    if (data.errors && Array.isArray(data.errors)) {
+                        const errorMessages = data.errors.map(err => err.msg).join(', ');
+                        setErrors({ submit: `Validation Error: ${errorMessages}` });
+                    } else {
+                        setErrors({ submit: data.message || 'Failed to submit support ticket' });
+                    }
                 } else {
-                    setErrors({ submit: data.message || 'Failed to submit support ticket' });
+                    // Handle non-JSON responses (HTML error pages)
+                    const text = await response.text();
+                    console.log('Non-JSON error response:', text.substring(0, 200));
+                    
+                    if (response.status === 413) {
+                        setErrors({ submit: 'File size too large. Please reduce file sizes to under 10MB each and 25MB total.' });
+                    } else if (response.status === 408) {
+                        setErrors({ submit: 'Upload timeout. Please try uploading smaller files or check your internet connection.' });
+                    } else {
+                        setErrors({ submit: `Server error (${response.status}). Please try again with smaller files or contact support.` });
+                    }
                 }
             }
         } catch (error) {
@@ -364,7 +380,7 @@ function EmpSupport() {
                                                 onChange={handleFileChange}
                                             />
                                             <small className="form-text text-muted">
-                                                Upload up to 3 files (max 15MB each). Supported: PDF, DOC, DOCX, XLS, XLSX, CSV, TXT, JPG, PNG, GIF, WEBP
+                                                Upload up to 3 files (max 10MB each, 25MB total). Supported: PDF, DOC, DOCX, XLS, XLSX, CSV, TXT, JPG, PNG, GIF, WEBP
                                             </small>
                                             {errors.files && <div className="invalid-feedback">{errors.files}</div>}
                                             {files.length > 0 && (

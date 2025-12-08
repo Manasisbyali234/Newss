@@ -322,7 +322,13 @@ function EmployerDetails() {
                         </div>
                         <div className="profile-field" data-aos="fade-right" data-aos-delay="300">
                             <h6><i className="fa fa-globe"></i>Website</h6>
-                            <p>{profile.website || 'N/A'}</p>
+                            <p>
+                                {profile.website ? (
+                                    <a href={profile.website.startsWith('http') ? profile.website : `https://${profile.website}`} target="_blank" rel="noopener noreferrer" style={{color: '#ff6b35', textDecoration: 'none'}}>
+                                        {profile.website}
+                                    </a>
+                                ) : 'N/A'}
+                            </p>
                         </div>
                     </div>
                     
@@ -373,7 +379,15 @@ function EmployerDetails() {
                             <h6><i className="fa fa-map-pin"></i>Pincode</h6>
                             <p>{profile.pincode || 'N/A'}</p>
                         </div>
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="312">
+                            <h6><i className="fa fa-city"></i>City</h6>
+                            <p>{profile.city || 'N/A'}</p>
+                        </div>
                         <div className="profile-field" data-aos="fade-right" data-aos-delay="325">
+                            <h6><i className="fa fa-map"></i>State</h6>
+                            <p>{profile.state || 'N/A'}</p>
+                        </div>
+                        <div className="profile-field" data-aos="fade-right" data-aos-delay="337">
                             <h6><i className="fa fa-envelope-open"></i>Official Email</h6>
                             <p>{profile.officialEmail || 'N/A'}</p>
                         </div>
@@ -406,7 +420,40 @@ function EmployerDetails() {
                         </div>
                     </div>
                 </div>
+
+                <div className="description-section" data-aos="fade-up" data-aos-delay="375">
+                    <h6><i className="fa fa-briefcase"></i>Why Join Us</h6>
+                    <div className="description-text" dangerouslySetInnerHTML={{ __html: profile.whyJoinUs || 'No information provided' }} />
+                </div>
             </div>
+
+            {/* Google Maps Section */}
+            {profile.googleMapsEmbed && (() => {
+                const srcMatch = profile.googleMapsEmbed.match(/src=["']([^"']+)["']/);
+                if (srcMatch) {
+                    return (
+                        <div className="profile-info-card" data-aos="fade-up" data-aos-delay="225">
+                            <h4 className="profile-section-title">
+                                <i className="fa fa-map-marked-alt"></i>
+                                Company Location
+                            </h4>
+                            <div className="map-container">
+                                <iframe
+                                    src={srcMatch[1]}
+                                    width="100%"
+                                    height="400"
+                                    style={{border: '1px solid #ddd', borderRadius: '8px'}}
+                                    allowFullScreen=""
+                                    loading="lazy"
+                                    referrerPolicy="no-referrer-when-downgrade"
+                                    title="Company Location"
+                                ></iframe>
+                            </div>
+                        </div>
+                    );
+                }
+                return null;
+            })()}
 
             {/* Primary Contact Person Section */}
             <div className="profile-info-card" data-aos="fade-up" data-aos-delay="250">
@@ -418,7 +465,7 @@ function EmployerDetails() {
                 <div className="row">
                     <div className="col-lg-6">
                         <div className="profile-field" data-aos="fade-right" data-aos-delay="300">
-                            <h6><i className="fa fa-user"></i>Contact Full Name</h6>
+                            <h6><i className="fa fa-user"></i>Contact First Name</h6>
                             <p>{profile.contactFullName || 'N/A'}</p>
                         </div>
                         <div className="profile-field" data-aos="fade-right" data-aos-delay="325">

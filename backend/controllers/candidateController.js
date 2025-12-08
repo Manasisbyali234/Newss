@@ -262,10 +262,14 @@ exports.uploadResume = async (req, res) => {
       return res.status(400).json({ success: false, message: 'No file uploaded' });
     }
 
-    // Additional file validation
-    const maxSize = 15 * 1024 * 1024; // 15MB
+    // Additional file validation - 10MB limit to account for Base64 encoding overhead
+    // Base64 encoding increases size by ~33%, so 10MB becomes ~13.3MB after encoding
+    const maxSize = 10 * 1024 * 1024; // 10MB
     if (req.file.size > maxSize) {
-      return res.status(400).json({ success: false, message: 'File size must be less than 15MB' });
+      return res.status(400).json({ 
+        success: false, 
+        message: 'File size must be less than 10MB. Please compress your file or choose a smaller one.' 
+      });
     }
 
     const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
@@ -305,9 +309,21 @@ exports.uploadResume = async (req, res) => {
   } catch (error) {
     console.error('Resume upload error:', error);
     if (error.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({ success: false, message: 'File size must be less than 15MB' });
+      return res.status(400).json({ 
+        success: false, 
+        message: 'File size exceeds the limit. Please upload a file smaller than 10MB.' 
+      });
     }
-    res.status(500).json({ success: false, message: error.message });
+    if (error.message && error.message.includes('too large')) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'File size is too large. Please upload a file smaller than 10MB.' 
+      });
+    }
+    res.status(500).json({ 
+      success: false, 
+      message: error.message || 'Failed to upload resume. Please try again.' 
+    });
   }
 };
 

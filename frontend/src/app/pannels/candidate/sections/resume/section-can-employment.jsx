@@ -392,7 +392,7 @@ function SectionCanEmployment({ profile }) {
                                     {emp.organization}
                                 </p>
                                 <p style={{color: '#7f8c8d', marginBottom: '12px', fontSize: '13px', margin: 0}}>
-                                    {emp.startDate ? new Date(emp.startDate).toLocaleDateString('en-US', {month: 'short', year: 'numeric'}) : 'Start Date'} - {emp.isCurrent ? 'Present' : (emp.endDate ? new Date(emp.endDate).toLocaleDateString('en-US', {month: 'short', year: 'numeric'}) : 'End Date')}
+                                    {emp.startDate ? new Date(emp.startDate).toLocaleDateString('en-GB') : 'Start Date'} - {emp.isCurrent ? 'Present' : (emp.endDate ? new Date(emp.endDate).toLocaleDateString('en-GB') : 'End Date')}
                                 </p>
                                 {emp.description && (
                                     <p style={{color: '#555', fontSize: '14px', lineHeight: '1.6', margin: 0}}>
