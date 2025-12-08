@@ -58,35 +58,34 @@ function AdminSupportTickets() {
                 }
             });
 
-            if (response.ok) {
-                const data = await response.json();
+            const contentType = response.headers.get('content-type');
+            
+            if (!contentType || !contentType.includes('application/json')) {
+                console.error('Server returned non-JSON response:', contentType);
+                showError('Server error. Please try again later.');
+                return;
+            }
+            
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
+                setTickets(data.tickets || []);
                 
-                if (data.success) {
-                    setTickets(data.tickets || []);
-                    
-                    const newStats = {
-                        total: data.totalTickets || 0,
-                        unread: data.unreadCount || 0,
-                        new: data.tickets?.filter(t => t.status === 'new').length || 0,
-                        inProgress: data.tickets?.filter(t => t.status === 'in-progress').length || 0,
-                        resolved: data.tickets?.filter(t => t.status === 'resolved').length || 0
-                    };
-                    setStats(newStats);
-                } else {
-                    console.error('API returned error:', data.message);
-                    showError(data.message || 'Failed to fetch support tickets');
-                }
+                const newStats = {
+                    total: data.totalTickets || 0,
+                    unread: data.unreadCount || 0,
+                    new: data.tickets?.filter(t => t.status === 'new').length || 0,
+                    inProgress: data.tickets?.filter(t => t.status === 'in-progress').length || 0,
+                    resolved: data.tickets?.filter(t => t.status === 'resolved').length || 0
+                };
+                setStats(newStats);
+            } else if (response.status === 401) {
+                showError('Session expired. Please login again.');
+                localStorage.removeItem('adminToken');
+                window.location.href = '/admin-login';
             } else {
-                const errorData = await response.json().catch(() => ({}));
-                console.error('HTTP error:', response.status, errorData);
-                
-                if (response.status === 401) {
-                    showError('Session expired. Please login again.');
-                    localStorage.removeItem('adminToken');
-                    window.location.href = '/admin-login';
-                } else {
-                    showError(errorData.message || 'Failed to fetch support tickets');
-                }
+                console.error('API error:', data.message || response.status);
+                showError(data.message || 'Failed to fetch support tickets');
             }
         } catch (error) {
             console.error('Error fetching support tickets:', error);
