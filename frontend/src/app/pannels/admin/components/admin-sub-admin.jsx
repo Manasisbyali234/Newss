@@ -200,7 +200,11 @@ function AdminSubAdmin() {
             
             const data = await response.json();
             if (data.success) {
-                showSuccess(showEditForm ? 'Sub Admin updated successfully' : 'Sub Admin created successfully');
+                if (showEditForm) {
+                    showSuccess('Sub Admin updated successfully. They will see changes after refreshing their page.');
+                } else {
+                    showSuccess('Sub Admin created successfully');
+                }
                 resetForm();
                 fetchSubAdmins();
             } else {
@@ -319,6 +323,13 @@ function AdminSubAdmin() {
         
         setAuthChecked(true);
         fetchSubAdmins();
+        
+        // Set up periodic refresh to check for updates
+        const refreshInterval = setInterval(() => {
+            fetchSubAdmins();
+        }, 30000); // Refresh every 30 seconds
+        
+        return () => clearInterval(refreshInterval);
     }, []);
 
     const handleSearch = (term) => {
