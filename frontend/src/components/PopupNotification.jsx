@@ -27,7 +27,7 @@ const PopupNotification = ({ message, onClose, type = 'info' }) => {
             {type === 'warning' && '⚠'}
             {type === 'info' && 'ℹ'}
           </div>
-          <p className="popup-message">{message}</p>
+          <div className="popup-message">{message}</div>
           <button className="popup-button" onClick={onClose}>
             OK
           </button>

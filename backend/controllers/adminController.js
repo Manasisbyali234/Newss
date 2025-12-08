@@ -2115,7 +2115,7 @@ exports.updateFileCredits = async (req, res) => {
 // Assign credits to all files in a placement
 exports.assignBulkFileCredits = async (req, res) => {
   try {
-    const { placementId } = req.params;
+    const { id: placementId } = req.params;
     const { credits } = req.body;
     const creditsNum = Math.min(10000, Math.max(0, parseInt(credits) || 0));
     
@@ -2126,11 +2126,11 @@ exports.assignBulkFileCredits = async (req, res) => {
 
     let updatedFiles = 0;
     
-    // Update all non-rejected files in fileHistory with the new credits
+    // Update only processed files in fileHistory with the new credits
     if (placement.fileHistory && placement.fileHistory.length > 0) {
       for (let file of placement.fileHistory) {
-        // Skip rejected files
-        if (file.status === 'rejected') {
+        // Only update processed files
+        if (file.status !== 'processed') {
           continue;
         }
         file.credits = creditsNum;

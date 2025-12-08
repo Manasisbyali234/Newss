@@ -26,9 +26,11 @@
   border-radius: 12px;
   padding: 30px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  max-width: 400px;
+  max-width: 500px;
   width: 90%;
   animation: slideIn 0.3s ease-out;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 @keyframes slideIn {
@@ -80,9 +82,11 @@
 
 .popup-message {
   color: #333;
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.6;
   margin: 0 0 25px 0;
+  text-align: left;
+  white-space: pre-line;
 }
 
 .popup-button {

@@ -341,10 +341,10 @@ function PlacementDetails() {
             
             const data = await response.json();
             if (data.success) {
-                const rejectedCount = placement?.fileHistory?.filter(f => f.status === 'rejected').length || 0;
+                const nonProcessedCount = placement?.fileHistory?.filter(f => f.status !== 'processed').length || 0;
                 let message = `Bulk credits updated successfully! ${data.message}`;
-                if (rejectedCount > 0) {
-                    message += ` Note: ${rejectedCount} rejected file(s) excluded.`;
+                if (nonProcessedCount > 0) {
+                    message += ` Note: ${nonProcessedCount} non-processed file(s) excluded.`;
                 }
                 showSuccess(message);
                 setShowBulkCreditsModal(false);
@@ -352,7 +352,7 @@ function PlacementDetails() {
                 // Refresh student data if currently viewing a file
                 if (currentViewingFileId) {
                     const currentFile = placement?.fileHistory?.find(f => f._id === currentViewingFileId);
-                    if (currentFile && currentFile.status !== 'rejected') {
+                    if (currentFile && currentFile.status === 'processed') {
                         setTimeout(() => {
                             handleViewFileData(currentViewingFileId, currentFile.fileName);
                         }, 500);
@@ -1074,15 +1074,15 @@ function PlacementDetails() {
                                 </div>
                             )}
 
-                            {placement.fileHistory && placement.fileHistory.filter(f => f.status !== 'rejected').length > 1 && (
+                            {placement.fileHistory && placement.fileHistory.filter(f => f.status === 'processed').length > 1 && (
                                 <button
                                     className="btn btn-warning"
                                     onClick={() => setShowBulkCreditsModal(true)}
                                     style={{borderRadius: '8px'}}
-                                    title="Assign credits to all non-rejected files at once"
+                                    title="Assign credits to all processed files at once"
                                 >
                                     <i className="fa fa-credit-card mr-1"></i>
-                                    Bulk Credits ({placement.fileHistory.filter(f => f.status !== 'rejected').length} files)
+                                    Bulk Credits ({placement.fileHistory.filter(f => f.status === 'processed').length} files)
                                 </button>
                             )}
                             {placement.fileHistory && placement.fileHistory.length > 0 && (
@@ -1374,7 +1374,7 @@ function PlacementDetails() {
                             <div className="modal-body">
                                 <div className="alert alert-info">
                                     <i className="fa fa-info-circle mr-2"></i>
-                                    This will update credits for all {placement?.fileHistory?.filter(f => f.status !== 'rejected').length || 0} non-rejected files and their associated students.
+                                    This will update credits for all {placement?.fileHistory?.filter(f => f.status === 'processed').length || 0} processed files and their associated students.
                                 </div>
                                 <div className="form-group">
                                     <label>Credits to Assign:</label>
@@ -1392,7 +1392,7 @@ function PlacementDetails() {
                                 <div className="mt-3">
                                     <strong>Files that will be updated:</strong>
                                     <ul className="list-unstyled mt-2" style={{maxHeight: '150px', overflowY: 'auto'}}>
-                                        {placement?.fileHistory?.filter(f => f.status !== 'rejected').map((file, index) => (
+                                        {placement?.fileHistory?.filter(f => f.status === 'processed').map((file, index) => (
                                             <li key={file._id || index} className="mb-1">
                                                 <i className="fa fa-file-excel-o mr-2 text-success"></i>
                                                 {file.fileName} 
@@ -1400,10 +1400,10 @@ function PlacementDetails() {
                                             </li>
                                         ))}
                                     </ul>
-                                    {placement?.fileHistory?.filter(f => f.status === 'rejected').length > 0 && (
+                                    {placement?.fileHistory?.filter(f => f.status !== 'processed').length > 0 && (
                                         <div className="alert alert-warning mt-2">
                                             <i className="fa fa-exclamation-triangle mr-2"></i>
-                                            {placement?.fileHistory?.filter(f => f.status === 'rejected').length} rejected file(s) will be excluded from bulk credit assignment.
+                                            Only processed files will be updated. {placement?.fileHistory?.filter(f => f.status !== 'processed').length} file(s) excluded (pending/rejected).
                                         </div>
                                     )}
                                 </div>

@@ -328,9 +328,12 @@ function PlacementDashboard() {
                     // Show popup for logo requirement
                     setShowLogoRequiredModal(true);
                 } else if (data.message && data.message.includes('Duplicate emails found')) {
-                    showError(data.message); // Show for 5 seconds for duplicate emails
+                    showError(data.message);
                 } else if (data.message && (data.message.includes('empty') || data.message.includes('no data'))) {
-                    showPopup(`Upload failed: ${data.message}. Please ensure your file contains actual student data, not just headers.`, 'error');
+                    showError(`Upload failed: ${data.message}. Please ensure your file contains actual student data, not just headers.`);
+                } else if (data.message && data.message.includes('Missing Required Fields')) {
+                    // Show the error message with proper formatting (CSS handles line breaks)
+                    showPopup(data.message, 'error', 15000); // Show for 15 seconds
                 } else {
                     showError(data.message || 'Upload failed');
                 }
