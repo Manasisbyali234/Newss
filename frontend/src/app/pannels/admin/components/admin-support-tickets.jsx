@@ -50,47 +50,61 @@ function AdminSupportTickets() {
             }
             
             const queryParams = new URLSearchParams(filters).toString();
+            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
             
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/support-tickets?${queryParams}`, {
+            const response = await fetch(`${apiUrl}/api/admin/support-tickets?${queryParams}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
 
-            if (response.ok) {
-                const data = await response.json();
+            const contentType = response.headers.get('content-type');
+            
+            if (!contentType || !contentType.includes('application/json')) {
+                console.error('Server returned non-JSON response:', contentType);
+                console.error('API URL:', apiUrl);
+                console.error('Response status:', response.status);
                 
-                if (data.success) {
-                    setTickets(data.tickets || []);
-                    
-                    const newStats = {
-                        total: data.totalTickets || 0,
-                        unread: data.unreadCount || 0,
-                        new: data.tickets?.filter(t => t.status === 'new').length || 0,
-                        inProgress: data.tickets?.filter(t => t.status === 'in-progress').length || 0,
-                        resolved: data.tickets?.filter(t => t.status === 'resolved').length || 0
-                    };
-                    setStats(newStats);
+                if (response.status === 404) {
+                    showError('API endpoint not found. Please check if the backend server is running.');
                 } else {
-                    console.error('API returned error:', data.message);
-                    showError(data.message || 'Failed to fetch support tickets');
+                    showError('Backend server is not responding correctly. Please ensure the server is running and the API URL is correct.');
                 }
+                return;
+            }
+            
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
+                setTickets(data.tickets || []);
+                
+                const newStats = {
+                    total: data.totalTickets || 0,
+                    unread: data.unreadCount || 0,
+                    new: data.tickets?.filter(t => t.status === 'new').length || 0,
+                    inProgress: data.tickets?.filter(t => t.status === 'in-progress').length || 0,
+                    resolved: data.tickets?.filter(t => t.status === 'resolved').length || 0
+                };
+                setStats(newStats);
+            } else if (response.status === 401) {
+                showError('Session expired. Please login again.');
+                localStorage.removeItem('adminToken');
+                window.location.href = '/admin-login';
             } else {
-                const errorData = await response.json().catch(() => ({}));
-                console.error('HTTP error:', response.status, errorData);
-                
-                if (response.status === 401) {
-                    showError('Session expired. Please login again.');
-                    localStorage.removeItem('adminToken');
-                    window.location.href = '/admin-login';
-                } else {
-                    showError(errorData.message || 'Failed to fetch support tickets');
-                }
+                console.error('API error:', data.message || response.status);
+                showError(data.message || 'Failed to fetch support tickets');
             }
         } catch (error) {
             console.error('Error fetching support tickets:', error);
-            showError('Network error. Please check your connection and try again.');
+            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+            console.error('API URL being used:', apiUrl);
+            
+            if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+                showError(`Cannot connect to backend server at ${apiUrl}. Please ensure the server is running.`);
+            } else {
+                showError('Network error. Please check your connection and try again.');
+            }
         } finally {
             setLoading(false);
         }
