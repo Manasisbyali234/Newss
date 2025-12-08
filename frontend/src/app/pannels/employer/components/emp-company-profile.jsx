@@ -102,7 +102,9 @@ function EmpCompanyProfilePage() {
         contactLastName: { required: true, minLength: 2 },
         contactDesignation: { required: true, minLength: 2 },
         contactOfficialEmail: { required: true, email: true },
-        contactMobile: { required: true, phone: true }
+        contactMobile: { required: true, phone: true },
+        companyIdCardPicture: { required: true },
+        employerCode: { required: true, minLength: 3, maxLength: 20 }
     });
 
     useEffect(() => {
@@ -1849,9 +1851,9 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-lg-4 col-md-6">
                                 <div className="form-group">
-                                    <label><IdCard size={16} className="me-2" /> Company ID Card Picture</label>
+                                    <label className="required-field"><IdCard size={16} className="me-2" /> Company ID Card Picture</label>
                                     <input
-                                        className="form-control"
+                                        className={`form-control ${errors.companyIdCardPicture ? 'is-invalid' : ''}`}
                                         type="file"
                                         accept="image/*"
                                         onChange={(e) => handleDocumentUpload(e, 'companyIdCardPicture')}
@@ -1870,6 +1872,7 @@ function EmpCompanyProfilePage() {
                                             <p className="text-success mt-1">✓ Company ID Card uploaded</p>
                                         </div>
                                     )}
+                                    <ErrorDisplay errors={errors} fieldName="companyIdCardPicture" />
                                     <p className="text-muted mt-1">Upload any company identification document (Max 5MB)</p>
                                 </div>
                             </div>
@@ -1899,14 +1902,15 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-lg-4 col-md-6">
                                 <div className="form-group">
-                                    <label><Hash size={16} className="me-2" /> Employer Code</label>
+                                    <label className="required-field"><Hash size={16} className="me-2" /> Employer Code</label>
                                     <input
-                                        className="form-control"
+                                        className={`form-control ${errors.employerCode ? 'is-invalid' : ''}`}
                                         type="text"
                                         value={formData.employerCode}
                                         onChange={(e) => handleInputChange('employerCode', e.target.value)}
                                         placeholder="Enter employer code"
                                     />
+                                    <ErrorDisplay errors={errors} fieldName="employerCode" />
                                 </div>
                             </div>
                         </div>

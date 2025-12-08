@@ -1,26 +1,38 @@
-/* Admin Search Bar Styles */
+/* Admin Search Bar Styles - Enhanced */
 .employer-search .search-input-wrapper,
 .candidates-search .search-input-wrapper,
 .placement-search .search-input-wrapper {
-    max-width: 350px;
+    max-width: 450px;
+    position: relative;
 }
 
 .employer-search .search-input,
 .candidates-search .search-input,
 .placement-search .search-input {
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 10px 35px 10px 35px;
-    font-size: 13px;
-    background-color: #f8f9fa;
+    border: 2px solid #FDC360;
+    border-radius: 8px;
+    padding: 12px 40px 12px 40px;
+    font-size: 14px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(253, 195, 96, 0.2);
+    transition: all 0.3s ease;
+    font-weight: 500;
 }
 
 .employer-search .search-input:focus,
 .candidates-search .search-input:focus,
 .placement-search .search-input:focus {
-    border-color: #007bff;
+    border-color: #ff6b35;
     background-color: #fff;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.25);
+    outline: none;
+}
+
+.employer-search .search-input::placeholder,
+.candidates-search .search-input::placeholder,
+.placement-search .search-input::placeholder {
+    color: #999;
+    font-weight: 400;
 }
 
 /* Responsive adjustments for admin panels */

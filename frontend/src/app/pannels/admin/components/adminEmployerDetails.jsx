@@ -93,11 +93,17 @@ function EmployerDetails() {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
+            console.log('Employer Jobs Response:', data);
             if (data.success) {
-                setJobCount(data.jobCount);
+                console.log('Job Count:', data.jobCount);
+                setJobCount(data.jobCount || 0);
+            } else {
+                console.error('Failed to fetch jobs:', data.message);
+                setJobCount(0);
             }
         } catch (error) {
-            
+            console.error('Error fetching employer jobs:', error);
+            setJobCount(0);
         } finally {
             setJobsLoading(false);
         }
@@ -768,7 +774,7 @@ function EmployerDetails() {
                                 {jobsLoading ? (
                                     <div className="loading-spinner-small"></div>
                                 ) : (
-                                    <span className="count-value">{jobCount}</span>
+                                    <span className="count-value">{jobCount || 0}</span>
                                 )}
                             </div>
                             <div className="job-count-label">

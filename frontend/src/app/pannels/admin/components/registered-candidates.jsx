@@ -158,11 +158,16 @@ function RegisteredCandidatesPage() {
                             <i className="fa fa-list-alt"></i>
                             All Registered Candidates ({filteredCandidates.length})
                         </h4>
-                        <SearchBar 
-                            onSearch={handleSearch}
-                            placeholder="Search candidates by name, email, phone, location, or skills..."
-                            className="candidates-search"
-                        />
+                        <div className="search-section">
+                            <label className="search-label">
+                                <i className="fa fa-filter"></i> Search by Name or Email
+                            </label>
+                            <SearchBar 
+                                onSearch={handleSearch}
+                                placeholder="Search candidates by name, email, phone, location, or skills..."
+                                className="candidates-search"
+                            />
+                        </div>
                     </div>
                 </div>
                 <div className="card-body">

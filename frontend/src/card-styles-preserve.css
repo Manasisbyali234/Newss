@@ -343,7 +343,7 @@
 }
 
 .new-job-card .company-logo {
-    width: 48px !important;
+    width: 75px !important;
     height: 48px !important;
     border-radius: 8px !important;
     overflow: hidden !important;
@@ -357,7 +357,7 @@
 .new-job-card .company-logo img {
     width: 100% !important;
     height: 100% !important;
-    object-fit: contain !important;
+    object-fit: cover !important;
 }
 
 .new-job-card .logo-placeholder {

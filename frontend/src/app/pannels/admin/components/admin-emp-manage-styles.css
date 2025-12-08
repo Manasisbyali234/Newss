@@ -137,6 +137,27 @@
     margin: 0;
 }
 
+.search-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.search-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #232323;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+}
+
+.search-label i {
+    color: #ff6b35;
+    font-size: 0.85rem;
+}
+
 .emp-table-responsive {
     padding: 0;
 }

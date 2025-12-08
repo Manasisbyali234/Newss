@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import JobZImage from "../../../common/jobz-img";
 import CountUp from "react-countup";
 import AdminDashboardActivityChart from "../common/admin-graph";
 import "./admin-dashboard-styles.css";
 
 function AdminDashboardPage() {
+    const navigate = useNavigate();
     const [stats, setStats] = useState({
         completedProfileCandidates: 0,
         totalEmployers: 0,
@@ -172,7 +174,7 @@ function AdminDashboardPage() {
                 <div className="twm-dash-b-blocks mb-5">
                 <div className="row">
                     <div className="col-xl-3 col-lg-6 col-md-12 mb-4">
-                        <div className="panel panel-default dashboard-stats-card">
+                        <div className="panel panel-default dashboard-stats-card" onClick={() => navigate('/admin/registered-candidates')} style={{cursor: 'pointer'}}>
                             <div className="panel-body wt-panel-body gradi-1">
                                 <div className="wt-card-wrap">
                                     <div className="wt-card-icon">
@@ -192,7 +194,7 @@ function AdminDashboardPage() {
                     </div>
 
                     <div className="col-xl-3 col-lg-6 col-md-12 mb-4">
-                        <div className="panel panel-default dashboard-stats-card">
+                        <div className="panel panel-default dashboard-stats-card" onClick={() => navigate('/admin/admin-emp-approved')} style={{cursor: 'pointer'}}>
                             <div className="panel-body wt-panel-body gradi-2">
                                 <div className="wt-card-wrap">
                                     <div className="wt-card-icon">
@@ -212,7 +214,7 @@ function AdminDashboardPage() {
                     </div>
 
                     <div className="col-xl-3 col-lg-6 col-md-12 mb-4">
-                        <div className="panel panel-default dashboard-stats-card">
+                        <div className="panel panel-default dashboard-stats-card" onClick={() => navigate('/admin/admin-emp-approved')} style={{cursor: 'pointer'}}>
                             <div className="panel-body wt-panel-body gradi-3">
                                 <div className="wt-card-wrap">
                                     <div className="wt-card-icon">
@@ -232,7 +234,7 @@ function AdminDashboardPage() {
                     </div>
                     
                     <div className="col-xl-3 col-lg-6 col-md-12 mb-4">
-                        <div className="panel panel-default dashboard-stats-card">
+                        <div className="panel panel-default dashboard-stats-card" onClick={() => navigate('/admin/admin-placement-approved')} style={{cursor: 'pointer'}}>
                             <div className="panel-body wt-panel-body gradi-4">
                                 <div className="wt-card-wrap">
                                     <div className="wt-card-icon">

@@ -889,7 +889,7 @@ exports.getCandidateDetails = async (req, res) => {
 
 exports.getEmployerJobs = async (req, res) => {
   try {
-    const { employerId } = req.params;
+    const employerId = req.params.id || req.params.employerId;
     
     const jobs = await Job.find({ employerId })
       .select('title status createdAt')

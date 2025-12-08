@@ -23,16 +23,16 @@ export const banner = {
         },
         employer: {
             grid: {
-                title: "Top Employers Hiring Now",
-                crumb: "Employers"
+                title: "Top Companies Hiring Now",
+                crumb: "Companies"
             },
             list: {
-                title: "Top Employers Hiring Now",
-                crumb: "Employers"
+                title: "Top Companies Hiring Now",
+                crumb: "Companies"
             },
             detail1: {
-                title: "Employer Detail",
-                crumb: "Employer Detail"
+                title: "Companies",
+                crumb: "Companies"
             }
         },
         candidate: {

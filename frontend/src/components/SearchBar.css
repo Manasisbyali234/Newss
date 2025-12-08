@@ -26,11 +26,17 @@
 
 .search-icon {
     position: absolute;
-    left: 12px;
+    left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    color: #6c757d;
-    font-size: 14px;
+    color: #ff6b35;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus ~ .search-icon,
+.search-input-wrapper:hover .search-icon {
+    color: #e8690b;
 }
 
 
