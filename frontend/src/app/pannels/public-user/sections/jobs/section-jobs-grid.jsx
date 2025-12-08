@@ -196,8 +196,8 @@ const SectionJobsGrid = memo(({ filters, onTotalChange }) => {
 
         const ctcDisplay = useMemo(() => {
             if (job.ctc?.min && job.ctc?.max) {
-                const minLPA = Math.floor(job.ctc.min / 100000);
-                const maxLPA = Math.floor(job.ctc.max / 100000);
+                const minLPA = (job.ctc.min / 100000).toFixed(1);
+                const maxLPA = (job.ctc.max / 100000).toFixed(1);
                 return job.ctc.min === job.ctc.max ? `₹${minLPA}LPA` : `₹${minLPA} - ${maxLPA} LPA`;
             }
             return 'Not specified';
@@ -254,8 +254,8 @@ const SectionJobsGrid = memo(({ filters, onTotalChange }) => {
                             {job.ctc && typeof job.ctc === "object" && job.ctc.min > 0 && job.ctc.max > 0 ? (
                                 <span className="ctc-text" style={{fontSize: '14px', fontWeight: '500', color: '#1976d2'}}>
                                     Annual CTC: {job.ctc.min === job.ctc.max
-                                        ? `₹${Math.floor(job.ctc.min / 100000)}LPA`
-                                        : `₹${Math.floor(job.ctc.min / 100000)} - ${Math.floor(job.ctc.max / 100000)} LPA`}
+                                        ? `₹${(job.ctc.min / 100000).toFixed(1)}LPA`
+                                        : `₹${(job.ctc.min / 100000).toFixed(1)} - ${(job.ctc.max / 100000).toFixed(1)} LPA`}
                                 </span>
                             ) : (
                                 <span className="ctc-text" style={{fontSize: '14px', color: '#666'}}>CTC: Not specified</span>

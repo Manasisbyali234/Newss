@@ -414,9 +414,9 @@ exports.getEmployers = async (req, res) => {
     
     const keywordFilter = keyword?.trim();
     const locationFilter = location?.trim();
-    const industryFilter = industry?.trim();
-    const teamSizeFilter = teamSize?.trim();
-    const companyTypeFilter = companyType?.trim();
+    const industryFilter = Array.isArray(industry) ? industry : (industry ? [industry] : []);
+    const teamSizeFilter = Array.isArray(teamSize) ? teamSize : (teamSize ? [teamSize] : []);
+    const companyTypeFilter = Array.isArray(companyType) ? companyType : (companyType ? [companyType] : []);
     const establishedSinceFilter = establishedSince?.trim();
     const createRegex = (value) => new RegExp(value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
     
@@ -529,50 +529,26 @@ exports.getEmployers = async (req, res) => {
       });
     }
 
-    if (industryFilter) {
-      if (Array.isArray(industryFilter) && industryFilter.length > 0) {
-        matchConditions.push({
-          $or: [
-            { 'profile.industrySector': { $in: industryFilter } },
-            { 'profile.industry': { $in: industryFilter } }
-          ]
-        });
-      } else if (typeof industryFilter === 'string' && industryFilter !== '') {
-        const industryRegex = createRegex(industryFilter);
-        matchConditions.push({
-          $or: [
-            { 'profile.industrySector': industryRegex },
-            { 'profile.industry': industryRegex }
-          ]
-        });
-      }
+    if (industryFilter.length > 0) {
+      matchConditions.push({
+        $or: [
+          { 'profile.industrySector': { $in: industryFilter.map(f => new RegExp(`^${f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i')) } },
+          { 'profile.industry': { $in: industryFilter.map(f => new RegExp(`^${f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i')) } }
+        ]
+      });
     }
 
-    if (teamSizeFilter) {
-      if (Array.isArray(teamSizeFilter) && teamSizeFilter.length > 0) {
-        matchConditions.push({
-          $or: [
-            { 'profile.teamSize': { $in: teamSizeFilter } },
-            { 'profile.companySize': { $in: teamSizeFilter } }
-          ]
-        });
-      } else if (typeof teamSizeFilter === 'string' && teamSizeFilter !== '') {
-        const teamSizeRegex = createRegex(teamSizeFilter);
-        matchConditions.push({
-          $or: [
-            { 'profile.teamSize': teamSizeRegex },
-            { 'profile.companySize': teamSizeRegex }
-          ]
-        });
-      }
+    if (teamSizeFilter.length > 0) {
+      matchConditions.push({
+        $or: [
+          { 'profile.teamSize': { $in: teamSizeFilter } },
+          { 'profile.companySize': { $in: teamSizeFilter } }
+        ]
+      });
     }
 
-    if (companyTypeFilter) {
-      if (Array.isArray(companyTypeFilter) && companyTypeFilter.length > 0) {
-        matchConditions.push({ 'profile.companyType': { $in: companyTypeFilter } });
-      } else if (typeof companyTypeFilter === 'string' && companyTypeFilter !== '') {
-        matchConditions.push({ 'profile.companyType': createRegex(companyTypeFilter) });
-      }
+    if (companyTypeFilter.length > 0) {
+      matchConditions.push({ 'profile.companyType': { $in: companyTypeFilter } });
     }
 
     if (establishedSinceFilter) {

@@ -5,6 +5,8 @@ import { api } from "../../../../utils/api";
 import TermsModal from "../components/TermsModal";
 import ViolationModal from "../components/ViolationModal";
 import AssessmentTerminated from "../components/AssessmentTerminated";
+import { usePopupNotification } from "../../../../hooks/usePopupNotification";
+import PopupNotification from "../../../../components/PopupNotification";
 
 const ASSESSMENT_SESSION_KEY = 'candidateCurrentAssessment';
 const ASSESSMENT_ATTEMPT_KEY = 'candidateCurrentAssessmentAttempt';
@@ -13,6 +15,7 @@ const StartAssessment = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const navigationState = location.state || {};
+    const { popup, showSuccess, hidePopup } = usePopupNotification();
 
     const getSessionInfo = () => {
         const params = new URLSearchParams(location.search);
@@ -360,12 +363,20 @@ const StartAssessment = () => {
 				setAssessmentState('completed');
 				removeSecurityListeners();
 				clearStoredAssessment();
-				navigate("/candidate/assessment-result", {
-					state: {
-						result: submitResponse.result,
-						assessment: assessment
-					},
-				});
+				
+				// Show success message
+				showSuccess('Assessment submitted successfully! Redirecting to results...');
+				
+				// Redirect after 2 seconds
+				setTimeout(() => {
+					navigate("/candidate/assessment-result", {
+						state: {
+							result: submitResponse.result,
+							assessment: assessment
+						},
+					});
+				}, 2000);
+				
 				return true;
 			}
 			setError(submitResponse.message || "Failed to submit assessment");
@@ -464,6 +475,12 @@ const StartAssessment = () => {
 
 	return (
 		<>
+			<PopupNotification
+				show={popup.show}
+				message={popup.message}
+				type={popup.type}
+				onClose={hidePopup}
+			/>
 			<TermsModal
 				isOpen={showTermsModal}
 				onAccept={handleTermsAccept}

@@ -92,13 +92,13 @@ const EmployersGridPage = memo(() => {
                 
                 if (filters.keyword) params.append('keyword', filters.keyword);
                 if (filters.location) params.append('location', filters.location);
-                if (filters.industry && filters.industry.length > 0) {
+                if (Array.isArray(filters.industry) && filters.industry.length > 0) {
                     filters.industry.forEach(ind => params.append('industry', ind));
                 }
-                if (filters.teamSize && filters.teamSize.length > 0) {
+                if (Array.isArray(filters.teamSize) && filters.teamSize.length > 0) {
                     filters.teamSize.forEach(size => params.append('teamSize', size));
                 }
-                if (filters.companyType && filters.companyType.length > 0) {
+                if (Array.isArray(filters.companyType) && filters.companyType.length > 0) {
                     filters.companyType.forEach(type => params.append('companyType', type));
                 }
                 if (filters.establishedSince) params.append('establishedSince', filters.establishedSince);

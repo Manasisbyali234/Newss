@@ -1975,12 +1975,6 @@ exports.sendInterviewInvite = async (req, res) => {
         ${meetingLink ? `<p><strong>Meeting Link:</strong> <a href="${meetingLink}">${meetingLink}</a></p>` : ''}
         ${instructions ? `<p><strong>Instructions:</strong> ${instructions}</p>` : ''}
         <p>Please log in to your dashboard to confirm your availability or suggest alternative time slots.</p>
-        <p style="margin-top: 20px;">
-          <a href="http://localhost:3000/candidate/status" 
-             style="background-color: #ff6600; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
-            Respond to Invitation
-          </a>
-        </p>
         <p>Best regards,<br>${req.user.companyName}</p>
       `
     };

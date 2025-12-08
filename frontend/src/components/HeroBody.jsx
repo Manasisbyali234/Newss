@@ -170,6 +170,13 @@ const HeroBody = ({ onSearch }) => {
     }
   };
 
+  const scrollToRecruiters = () => {
+    const recruitersSection = document.querySelector('.twm-recruiters5-wrap');
+    if (recruitersSection) {
+      recruitersSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
   return (
     <div className="hero-body" style={{
       backgroundImage: "url('/assets/images/photo_2025-10-09_11-01-43.png')",
@@ -461,7 +468,7 @@ const HeroBody = ({ onSearch }) => {
             )}
           </div>
           
-          <button className="search-btn" onClick={handleSearch}>
+          <button className="search-btn" onClick={scrollToRecruiters}>
             Find Job
           </button>
         </div>

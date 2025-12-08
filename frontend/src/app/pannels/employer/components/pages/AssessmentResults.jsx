@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../emp-dashboard.css';
 
 export default function AssessmentResults() {
   const { assessmentId } = useParams();
+  const navigate = useNavigate();
   const [results, setResults] = useState([]);
   const [assessment, setAssessment] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -211,7 +212,7 @@ export default function AssessmentResults() {
                             cursor: 'pointer',
                             transition: 'all 0.2s ease'
                           }}
-                          onClick={() => window.open(`/employer/emp-candidate-review/${result.applicationId || result._id}`, '_blank')}
+                          onClick={() => navigate(`/employer/emp-candidate-review/${result.applicationId || result._id}`)}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.background = '#ea580c';
                             e.currentTarget.style.transform = 'translateY(-1px)';

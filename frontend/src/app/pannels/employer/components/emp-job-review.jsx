@@ -185,7 +185,7 @@ function EmpJobReviewPage() {
                             <div className="col-lg-8 col-12">
                                 <div className="mt-2">
                                     <h5 className="mb-1">Job Description</h5>
-                                    <p className="mb-0 text-muted">{jobDetails.description}</p>
+                                    <div className="mb-0 text-muted" dangerouslySetInnerHTML={{ __html: jobDetails.description }} />
                                 </div>
                             </div>
                         </div>

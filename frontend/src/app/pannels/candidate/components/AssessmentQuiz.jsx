@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { usePopupNotification } from '../../../../hooks/usePopupNotification';
+import PopupNotification from '../../../../components/PopupNotification';
 
 export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -10,6 +12,7 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
   const [timeRemaining, setTimeRemaining] = useState(assessment.timer * 60);
   const [violations, setViolations] = useState([]);
   const [startTime] = useState(Date.now());
+  const { popup, showSuccess, hidePopup } = usePopupNotification();
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -250,7 +253,10 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
 
       if (response.data.success) {
         console.log('Assessment submitted successfully:', response.data);
-        onComplete(response.data.result);
+        showSuccess('Assessment submitted successfully! Redirecting...');
+        setTimeout(() => {
+          onComplete(response.data.result);
+        }, 2000);
       } else {
         console.error('Assessment submission failed:', response.data.message);
         alert(`Failed to submit assessment: ${response.data.message || 'Unknown error'}`);
@@ -284,7 +290,14 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
   const question = assessment.questions[currentQuestion];
 
   return (
-    <div className="mt-4">
+    <>
+      <PopupNotification
+        show={popup.show}
+        message={popup.message}
+        type={popup.type}
+        onClose={hidePopup}
+      />
+      <div className="mt-4">
       <div className="card">
         <div className="card-header d-flex justify-content-between align-items-center">
           <div>
@@ -466,5 +479,6 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
         </div>
       </div>
     </div>
+    </>
   );
 }
