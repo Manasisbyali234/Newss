@@ -1080,7 +1080,7 @@ function Home16Page() {
 
                                             return (
                                                 <li key={recruiter._id} style={{marginBottom: '15px'}}>
-                                                    <NavLink to={`/employer-detail/${recruiter._id}`} style={{textDecoration: 'none', color: 'inherit', display: 'block'}}>
+                                                    <NavLink to={`/emp-detail/${recruiter._id}`} style={{textDecoration: 'none', color: 'inherit', display: 'block'}}>
                                                         <div className="twm-recruiters5-box">
                                                             <div className="twm-rec-top">
                                                                 <div className="twm-rec-media">
