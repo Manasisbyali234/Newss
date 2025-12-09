@@ -510,7 +510,7 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 								/>
 								{q.imageUrl && (
 									<div className="mt-2">
-										<img src={`http://localhost:5000${q.imageUrl}`} alt="Question" style={{maxWidth: '200px', maxHeight: '150px'}} />
+										<img src={q.imageUrl} alt="Question" style={{maxWidth: '200px', maxHeight: '150px'}} />
 										<button
 											type="button"
 											className="btn btn-sm ms-2"

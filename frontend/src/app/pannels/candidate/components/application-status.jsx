@@ -901,15 +901,21 @@ function CanStatusPage() {
 
 														{/* Assessment Action Buttons */}
 														<div className="mt-3 pt-2 border-top d-flex gap-2 flex-wrap">
-															{selectedApplication.assessmentStatus === 'expired' ? (
-																<button 
-																	className="btn btn-sm btn-danger"
-																	disabled
-																	style={{borderRadius: '6px'}}
-																>
-																	<i className="fa fa-times me-1"></i>
-																	Assessment Expired
-																</button>
+															{selectedApplication.assessmentStatus === 'expired' || getAssessmentWindowInfo(selectedApplication.jobId).isAfterEnd ? (
+																<div>
+																	<button 
+																		className="btn btn-sm btn-danger"
+																		disabled
+																		style={{borderRadius: '6px'}}
+																	>
+																		<i className="fa fa-times me-1"></i>
+																		Assessment Expired
+																	</button>
+																	<div className="alert alert-danger mt-2 mb-0" style={{fontSize: '13px', padding: '8px 12px'}}>
+																		<i className="fa fa-exclamation-circle me-1"></i>
+																		The assessment window has ended. You can no longer take this assessment.
+																	</div>
+																</div>
 															) : (selectedApplication.assessmentStatus === 'completed' || selectedApplication.assessmentStatus === 'pass' || selectedApplication.assessmentResult === 'pass' || selectedApplication.assessmentResult === 'fail') ? (
 																<button 
 																	className="btn btn-sm btn-success"

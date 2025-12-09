@@ -19,6 +19,7 @@ function ForgotPassword() {
   const [canResend, setCanResend] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+
   const startResendCooldown = () => {
     setCanResend(false);
     setResendCooldown(60);
@@ -241,22 +242,18 @@ function ForgotPassword() {
                 required
                 style={{ paddingRight: '40px' }}
               />
-              <button
-                type="button"
+              <i
+                className={`fa ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}
                 onClick={() => setShowPassword(!showPassword)}
                 style={{
                   position: 'absolute',
-                  right: '10px',
+                  right: '12px',
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  border: 'none',
-                  background: 'none',
                   cursor: 'pointer',
                   color: '#6c757d'
                 }}
-              >
-                <i className={`fa ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
-              </button>
+              ></i>
             </div>
             {newPassword && (
               <div style={{ marginTop: '10px', padding: '15px', background: '#f8f9fa', borderRadius: '8px', border: '1px solid #dee2e6' }}>

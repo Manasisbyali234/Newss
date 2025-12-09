@@ -60,7 +60,7 @@
 .support-header__stat-label {
   font-size: 0.75rem;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
+  text-transform: capitalize;
   color: #64748b;
 }
 
@@ -94,7 +94,7 @@
 
 .stats-card__label {
   font-size: 0.75rem;
-  text-transform: uppercase;
+  text-transform: capitalize;
   letter-spacing: 0.08em;
   color: #64748b;
 }
@@ -245,7 +245,7 @@
   color: #475569;
   font-size: 0.8rem;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
+  text-transform: capitalize;
 }
 
 .tickets-table tbody tr {
@@ -291,7 +291,7 @@
   font-weight: 600;
   font-size: 0.7rem;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
+  text-transform: capitalize;
 }
 
 .user-info {
@@ -377,7 +377,7 @@
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
+  text-transform: capitalize;
   border: 1px solid #e2e8f0;
   background: #f8fafc !important;
   color: #0f172a !important;
@@ -497,9 +497,13 @@
   border: 1px solid #dbeafe;
   border-radius: 12px;
   padding: 0.9rem 1rem;
+  height: 150px;
   min-height: 150px;
+  max-height: 150px;
   background: #ffffff;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  resize: none;
+  overflow-y: auto;
 }
 
 .response-textarea:focus {
@@ -623,6 +627,18 @@
   .view-btn, .delete-btn {
     width: 100%;
   }
+  .response-textarea {
+    height: 130px;
+    min-height: 130px;
+    max-height: 130px;
+  }
+  .modal-footer {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .modal-footer .btn {
+    width: 100%;
+  }
 }
 
 @media (max-width: 576px) {
@@ -649,5 +665,17 @@
   }
   .tickets-header__subtitle {
     font-size: 0.75rem;
+  }
+  .response-textarea {
+    height: 120px;
+    min-height: 120px;
+    max-height: 120px;
+    font-size: 0.9rem;
+  }
+  .modal-body {
+    padding: 1rem;
+  }
+  .detail-label {
+    font-size: 0.9rem;
   }
 }

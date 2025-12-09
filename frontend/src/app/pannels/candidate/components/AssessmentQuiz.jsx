@@ -137,14 +137,18 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
       return;
     }
     
-    if (question.type === 'subjective' && !textAnswer.trim() && !uploadedFile) {
-      alert('Please provide a written answer or upload a file before proceeding.');
-      return;
+    if (question.type === 'subjective') {
+      if (!textAnswer.trim() && !uploadedFile) {
+        alert('Please provide a written answer or upload a file before proceeding.');
+        return;
+      }
     }
     
-    if ((question.type === 'upload' || question.type === 'image') && !uploadedFile) {
-      alert('Please upload a file before proceeding to the next question.');
-      return;
+    if (question.type === 'upload' || question.type === 'image') {
+      if (!uploadedFile) {
+        alert('Please upload a file before proceeding to the next question.');
+        return;
+      }
     }
 
     try {
@@ -312,7 +316,12 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
           </div>
         </div>
         <div className="card-body">
-          <h6 className="mb-4">Q{currentQuestion + 1}. {question.question}</h6>
+          <h6 className="mb-4">Q{currentQuestion + 1}. <span dangerouslySetInnerHTML={{ __html: question.question }} /></h6>
+          {question.imageUrl && (
+            <div className="mb-3">
+              <img src={question.imageUrl} alt="Question" style={{maxWidth: '100%', maxHeight: '400px', borderRadius: '8px'}} />
+            </div>
+          )}
           
           {question.type === 'mcq' && (
             <div className="options">

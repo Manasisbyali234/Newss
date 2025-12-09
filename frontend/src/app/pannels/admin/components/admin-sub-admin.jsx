@@ -644,15 +644,32 @@ function AdminSubAdmin() {
                                         <div className="col-md-6">
                                             <div className="position-relative">
                                                 <input
-                                                    className={`form-control rounded-3 ${validationErrors.password ? 'is-invalid' : ''}`}
+                                                    className="form-control rounded-3"
                                                     name="password"
                                                     type={showPassword ? "text" : "password"}
                                                     placeholder={showAddForm ? "Password *" : "Password (Leave blank to keep current)"}
                                                     value={formData.password}
                                                     onChange={handleInputChange}
-                                                    style={{ paddingRight: '40px', WebkitTextSecurity: showPassword ? 'none' : 'disc' }}
+                                                    style={{ 
+                                                        paddingRight: validationErrors.password ? '70px' : '40px',
+                                                        WebkitTextSecurity: showPassword ? 'none' : 'disc',
+                                                        border: validationErrors.password ? '1px solid #dc3545' : '1px solid #ced4da'
+                                                    }}
                                                     autoComplete="new-password"
                                                 />
+                                                {validationErrors.password && (
+                                                    <i 
+                                                        className="fa fa-exclamation-circle"
+                                                        style={{
+                                                            position: 'absolute',
+                                                            right: '40px',
+                                                            top: '12px',
+                                                            color: '#dc3545',
+                                                            zIndex: 10,
+                                                            pointerEvents: 'none'
+                                                        }}
+                                                    ></i>
+                                                )}
                                                 <i 
                                                     className={`fa ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}
                                                     onClick={() => setShowPassword(!showPassword)}
@@ -667,8 +684,7 @@ function AdminSubAdmin() {
                                                 ></i>
                                             </div>
                                             {validationErrors.password && (
-                                                <div className="invalid-feedback d-block">
-                                                    <i className="fa fa-exclamation-circle me-1"></i>
+                                                <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
                                                     {validationErrors.password}
                                                 </div>
                                             )}
@@ -677,15 +693,32 @@ function AdminSubAdmin() {
                                         <div className="col-md-6">
                                             <div className="position-relative">
                                                 <input
-                                                    className={`form-control rounded-3 ${validationErrors.confirmPassword ? 'is-invalid' : ''}`}
+                                                    className="form-control rounded-3"
                                                     name="confirmPassword"
                                                     type={showConfirmPassword ? "text" : "password"}
                                                     placeholder={showAddForm ? "Confirm Password *" : "Confirm Password"}
                                                     value={formData.confirmPassword}
                                                     onChange={handleInputChange}
-                                                    style={{ paddingRight: '40px', WebkitTextSecurity: showConfirmPassword ? 'none' : 'disc' }}
+                                                    style={{ 
+                                                        paddingRight: validationErrors.confirmPassword ? '70px' : '40px',
+                                                        WebkitTextSecurity: showConfirmPassword ? 'none' : 'disc',
+                                                        border: validationErrors.confirmPassword ? '1px solid #dc3545' : '1px solid #ced4da'
+                                                    }}
                                                     autoComplete="new-password"
                                                 />
+                                                {validationErrors.confirmPassword && (
+                                                    <i 
+                                                        className="fa fa-exclamation-circle"
+                                                        style={{
+                                                            position: 'absolute',
+                                                            right: '40px',
+                                                            top: '12px',
+                                                            color: '#dc3545',
+                                                            zIndex: 10,
+                                                            pointerEvents: 'none'
+                                                        }}
+                                                    ></i>
+                                                )}
                                                 <i 
                                                     className={`fa ${showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'}`}
                                                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -700,8 +733,7 @@ function AdminSubAdmin() {
                                                 ></i>
                                             </div>
                                             {validationErrors.confirmPassword && (
-                                                <div className="invalid-feedback d-block">
-                                                    <i className="fa fa-exclamation-circle me-1"></i>
+                                                <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>
                                                     {validationErrors.confirmPassword}
                                                 </div>
                                             )}

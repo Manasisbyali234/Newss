@@ -631,10 +631,6 @@ export default function EmpPostJob({ onNext }) {
 			if (details?.fromDate && details?.toDate && new Date(details.fromDate) > new Date(details.toDate)) {
 				errorMessages.push(`From Date cannot be after To Date for ${roundName}`);
 			}
-			// Check if Schedule button was clicked
-			if (!scheduledRounds[uniqueKey]) {
-				errorMessages.push(`Please click the Schedule button for ${roundName}`);
-			}
 		}
 
 		// Validate Assessment if selected
@@ -658,21 +654,6 @@ export default function EmpPostJob({ onNext }) {
 			}
 			if (assessmentDetails?.fromDate && assessmentDetails?.toDate && new Date(assessmentDetails.fromDate) > new Date(assessmentDetails.toDate)) {
 				errorMessages.push(`Assessment ${index + 1} From Date cannot be after To Date`);
-			}
-			if (assessmentDetails?.startTime && assessmentDetails?.endTime) {
-				// Compare times properly
-				const [startHour, startMin] = assessmentDetails.startTime.split(':').map(Number);
-				const [endHour, endMin] = assessmentDetails.endTime.split(':').map(Number);
-				const startMinutes = startHour * 60 + startMin;
-				const endMinutes = endHour * 60 + endMin;
-				
-				if (startMinutes >= endMinutes) {
-					errorMessages.push(`Assessment ${index + 1} End Time must be after Start Time`);
-				}
-			}
-			// Check if Schedule button was clicked for assessment
-			if (!scheduledRounds[assessmentKey]) {
-				errorMessages.push(`Please click the Schedule button for Assessment ${index + 1}`);
 			}
 		});
 

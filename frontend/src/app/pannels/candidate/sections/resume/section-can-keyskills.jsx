@@ -176,10 +176,10 @@ function SectionCanKeySkills({ profile }) {
                                     )}
                                 </div>
                             </div>
-                            <div className="col-12 col-md-3 d-flex align-items-end">
+                            <div className="col-12 col-md-6 d-flex align-items-end gap-2">
                                 <button 
                                     type="button"
-                                    className="btn btn-outline-primary w-100"
+                                    className="btn btn-outline-primary flex-fill"
                                     onClick={() => {
                                         handleAddFromDropdown();
                                         setShowDropdown(false);
@@ -190,12 +190,10 @@ function SectionCanKeySkills({ profile }) {
                                     <i className="fa fa-plus me-1"></i>
                                     Add Skill
                                 </button>
-                            </div>
-                            <div className="col-12 col-md-3 d-flex align-items-end">
                                 <button 
                                     type="button" 
                                     onClick={() => setShowCustomInput(!showCustomInput)}
-                                    className="btn btn-outline-primary w-100" 
+                                    className="btn btn-outline-primary flex-fill" 
                                     disabled={loading}
                                     style={{backgroundColor: 'transparent'}}
                                 >
@@ -209,7 +207,7 @@ function SectionCanKeySkills({ profile }) {
                             <div className="row mt-3">
                                 <div className="col-12 col-md-6 mb-2">
                                     <label><i className="fa fa-keyboard me-1"></i> Enter custom skill</label>
-                                                    <input 
+                                    <input 
                                         className="form-control"
                                         type="text"
                                         placeholder="Enter your custom skill"
@@ -220,21 +218,22 @@ function SectionCanKeySkills({ profile }) {
                                         autoFocus
                                     />
                                 </div>
-                                <div className="col-12 col-md-3 d-flex gap-2">
+                                <div className="col-12 col-md-6 d-flex align-items-end gap-2">
                                     <button 
+                                        type="button"
                                         className="btn btn-outline-primary flex-fill"
                                         onClick={handleAddCustom}
                                         disabled={!customSkill.trim() || loading}
                                         style={{backgroundColor: 'transparent'}}
                                     >
-                                        <i className="fa fa-check me-1"></i>
+                                        <i className="fa fa-plus me-1"></i>
                                         Add
                                     </button>
-                                </div>
-                                <div className="col-12 col-md-3 d-flex gap-2">
                                     <button 
-                                        className="btn btn-secondary flex-fill"
+                                        type="button"
+                                        className="btn btn-outline-secondary flex-fill"
                                         onClick={() => {setShowCustomInput(false); setCustomSkill('');}}
+                                        style={{backgroundColor: 'transparent'}}
                                     >
                                         <i className="fa fa-times me-1"></i>
                                         Cancel

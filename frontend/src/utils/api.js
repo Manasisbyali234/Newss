@@ -526,7 +526,7 @@ export const api = {
     }).then(handleApiResponse);
   },
 
-  submitAnswer: (attemptId, questionIndex, selectedAnswer, timeSpent) => {
+  submitAnswer: (attemptId, questionIndex, selectedAnswer, textAnswer, timeSpent) => {
     return fetch(`${API_BASE_URL}/candidate/assessments/answer`, {
       method: 'POST',
       headers: getAuthHeaders('candidate'),
@@ -534,6 +534,7 @@ export const api = {
         attemptId,
         questionIndex,
         selectedAnswer,
+        textAnswer,
         timeSpent
       }),
     }).then(handleApiResponse);

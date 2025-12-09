@@ -74,13 +74,33 @@ export default function AssessmentResults() {
           boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)' 
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111827', margin: '0 0 0.5rem 0' }}>
-                {assessment?.title} - Results
-              </h2>
-              <p style={{ color: '#6b7280', margin: 0, fontSize: '1rem' }}>
-                {results.length} participants completed this assessment
-              </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <button
+                onClick={() => navigate('/employer/create-assessment')}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '0.25rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: '50%',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+              >
+                <i className="fa fa-arrow-left" style={{ fontSize: '1.125rem', color: '#ff6b35' }}></i>
+              </button>
+              <div>
+                <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111827', margin: '0 0 0.5rem 0' }}>
+                  {assessment?.title} - Results
+                </h2>
+                <p style={{ color: '#6b7280', margin: 0, fontSize: '1rem' }}>
+                  {results.length} participants completed this assessment
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -134,6 +154,10 @@ export default function AssessmentResults() {
                     <th style={{ padding: '16px 12px', textAlign: 'left', fontWeight: '600', color: '#232323', fontSize: '13px', border: 'none', verticalAlign: 'middle', whiteSpace: 'nowrap' }}>
                       <i className="fa fa-exclamation-triangle me-2"></i>
                       Violations
+                    </th>
+                    <th style={{ padding: '16px 12px', textAlign: 'left', fontWeight: '600', color: '#232323', fontSize: '13px', border: 'none', verticalAlign: 'middle', whiteSpace: 'nowrap' }}>
+                      <i className="fa fa-file-text me-2" style={{color: '#ff6b35'}}></i>
+                      Answers
                     </th>
                     <th style={{ padding: '16px 12px', textAlign: 'center', fontWeight: '600', color: '#232323', fontSize: '13px', border: 'none', verticalAlign: 'middle', whiteSpace: 'nowrap' }}>
                       <i className="fa fa-eye me-2" style={{color: '#ff6b35'}}></i>
@@ -189,15 +213,41 @@ export default function AssessmentResults() {
                       </td>
                       <td style={{ padding: '1rem' }}>
                         <span style={{
-                          background: result.violations?.length > 0 ? '#fef3c7' : '#f3f4f6',
-                          color: result.violations?.length > 0 ? '#92400e' : '#6b7280',
+                          background: (Array.isArray(result.violations) && result.violations.length > 0) ? '#fef3c7' : '#f3f4f6',
+                          color: (Array.isArray(result.violations) && result.violations.length > 0) ? '#92400e' : '#6b7280',
                           padding: '0.25rem 0.75rem',
                           borderRadius: '9999px',
                           fontSize: '0.875rem',
                           fontWeight: '600'
                         }}>
-                          {result.violations?.length || 0}
+                          {Array.isArray(result.violations) ? result.violations.length : 0}
                         </span>
+                      </td>
+                      <td style={{ padding: '1rem' }}>
+                        <button 
+                          style={{
+                            background: '#3b82f6',
+                            color: 'white',
+                            border: 'none',
+                            padding: '0.5rem 1rem',
+                            borderRadius: '0.5rem',
+                            fontSize: '0.875rem',
+                            fontWeight: '500',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onClick={() => navigate(`/employer/view-answers/${result._id}`)}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = '#2563eb';
+                            e.currentTarget.style.transform = 'translateY(-1px)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = '#3b82f6';
+                            e.currentTarget.style.transform = 'translateY(0)';
+                          }}
+                        >
+                          View Answers
+                        </button>
                       </td>
                       <td style={{ padding: '1rem' }}>
                         <button 

@@ -222,7 +222,7 @@ function ForgotPassword() {
                   });
                 }}
                 required
-                style={{ paddingRight: '40px' }}
+                style={{ paddingRight: '40px', height: '38px', padding: '6px 40px 6px 12px' }}
               />
               <button
                 type="button"
@@ -235,7 +235,13 @@ function ForgotPassword() {
                   border: 'none',
                   background: 'none',
                   cursor: 'pointer',
-                  color: '#6c757d'
+                  color: '#6c757d',
+                  padding: '0',
+                  height: '20px',
+                  width: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}
               >
                 <i className={`fa ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>

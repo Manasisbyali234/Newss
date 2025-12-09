@@ -432,18 +432,15 @@ exports.submitAnswer = async (req, res) => {
       if (typeof selectedAnswer !== 'number' || selectedAnswer < 0 || selectedAnswer >= question.options.length) {
         return res.status(400).json({ success: false, message: 'Invalid answer option selected' });
       }
-    } else if (question.type === 'subjective') {
-      if (!textAnswer || !textAnswer.trim()) {
-        return res.status(400).json({ success: false, message: 'Please provide a text answer' });
-      }
     }
+    // For subjective, allow empty answers (user might be typing)
     
     // Update or add answer
     const existingAnswerIndex = attempt.answers.findIndex(a => a.questionIndex === questionIndex);
     const answerData = {
       questionIndex,
       selectedAnswer: question.type === 'mcq' ? parseInt(selectedAnswer) : null,
-      textAnswer: question.type === 'subjective' ? textAnswer?.trim() : null,
+      textAnswer: question.type === 'subjective' && textAnswer ? textAnswer : null,
       timeSpent: timeSpent || 0,
       answeredAt: new Date()
     };
@@ -458,7 +455,12 @@ exports.submitAnswer = async (req, res) => {
     attempt.markModified('answers');
     await attempt.save();
     
-    console.log(`Answer submitted for question ${questionIndex} in attempt ${attemptId}`);
+    console.log(`Answer submitted for question ${questionIndex} in attempt ${attemptId}:`, {
+      questionType: question.type,
+      selectedAnswer: answerData.selectedAnswer,
+      hasTextAnswer: !!answerData.textAnswer,
+      totalAnswers: attempt.answers.length
+    });
     
     res.json({ 
       success: true, 
@@ -641,10 +643,27 @@ exports.submitAssessment = async (req, res) => {
     attempt.endTime = new Date();
     attempt.totalMarks = totalMarks; // Ensure totalMarks is set
     
-    if (violations && violations.length > 0) {
-      attempt.violations = violations;
+    // Merge violations from request with existing violations
+    if (!attempt.violations) {
+      attempt.violations = [];
     }
     
+    if (violations && Array.isArray(violations) && violations.length > 0) {
+      // Add new violations that don't already exist
+      violations.forEach(v => {
+        const exists = attempt.violations.some(existing => 
+          existing.type === v.type && existing.timestamp === v.timestamp
+        );
+        if (!exists) {
+          attempt.violations.push(v);
+        }
+      });
+      console.log(`Total violations for attempt ${attemptId}: ${attempt.violations.length}`);
+    } else {
+      console.log(`No new violations in submission for attempt ${attemptId}, existing: ${attempt.violations.length}`);
+    }
+    
+    attempt.markModified('violations');
     await attempt.save();
     
     // Update application with assessment results
@@ -747,6 +766,10 @@ exports.recordViolation = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Assessment is not in progress' });
     }
     
+    if (!attempt.violations) {
+      attempt.violations = [];
+    }
+    
     attempt.violations.push({
       type,
       timestamp: new Date(),
@@ -756,7 +779,7 @@ exports.recordViolation = async (req, res) => {
     attempt.markModified('violations');
     await attempt.save();
     
-    console.log(`Violation recorded for attempt ${attemptId}: ${type}`);
+    console.log(`Violation recorded for attempt ${attemptId}: ${type}, total: ${attempt.violations.length}`);
     
     res.json({ 
       success: true, 
@@ -787,10 +810,21 @@ exports.getAssessmentResults = async (req, res) => {
     
     const results = await AssessmentAttempt.find({
       assessmentId: req.params.id,
-      status: 'completed'
-    }).populate('candidateId', 'name email phone').sort({ endTime: -1 });
+      status: { $in: ['completed', 'expired'] }
+    }).populate('candidateId', 'name email phone').sort({ endTime: -1 }).lean();
     
-    res.json({ success: true, assessment, results });
+    // Ensure violations array exists for each result
+    const resultsWithViolations = results.map(r => ({
+      ...r,
+      violations: r.violations || []
+    }));
+    
+    console.log('Assessment results with violations:', resultsWithViolations.map(r => ({ 
+      id: r._id, 
+      violations: r.violations.length 
+    })));
+    
+    res.json({ success: true, assessment, results: resultsWithViolations });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -811,8 +845,12 @@ exports.getAttemptDetails = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Unauthorized' });
     }
     
+    console.log('Attempt details - Total answers:', attempt.answers?.length);
+    console.log('Attempt details - Answers:', JSON.stringify(attempt.answers, null, 2));
+    
     res.json({ success: true, attempt });
   } catch (error) {
+    console.error('Get attempt details error:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -876,7 +914,11 @@ exports.uploadQuestionImage = async (req, res) => {
       return res.status(400).json({ success: false, message: 'No image uploaded' });
     }
     
-    const imageUrl = `/uploads/${req.file.filename}`;
+    const fs = require('fs');
+    const imageBuffer = fs.readFileSync(req.file.path);
+    const base64Image = `data:${req.file.mimetype};base64,${imageBuffer.toString('base64')}`;
+    fs.unlinkSync(req.file.path);
+    const imageUrl = base64Image;
     res.json({ success: true, imageUrl });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

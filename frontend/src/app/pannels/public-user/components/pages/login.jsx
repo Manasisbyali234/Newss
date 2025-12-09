@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { loadScript, publicUrlFor } from "../../../../../globals/constants";
 import { handleFacebookLogin, handleGoogleLogin } from "../../../../../utils/socialAuth";
+import './login-fix.css';
+import { removePasswordEyeIcons } from './remove-eye-icons';
 
 
 
@@ -26,7 +28,19 @@ function LoginPage() {
 
     useEffect(() => {
         loadScript("js/custom.js");
-
+        removePasswordEyeIcons();
+        
+        // Remove eye icons when tabs change
+        const observer = new MutationObserver(() => {
+            removePasswordEyeIcons();
+        });
+        
+        const tabContainer = document.getElementById('myTab2Content');
+        if (tabContainer) {
+            observer.observe(tabContainer, { childList: true, subtree: true });
+        }
+        
+        return () => observer.disconnect();
     }, []);
 
 

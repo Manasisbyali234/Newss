@@ -1103,7 +1103,7 @@ function EmpCandidateReviewPage () {
 									{interviewProcesses.map((process) => (
 										<div key={process.id} style={{display: 'flex', flexDirection: 'column'}}>
 											<div className="border rounded-3 h-100" style={{
-												backgroundColor: process.isCompleted ? '#f0f8f0' : '#fafafa',
+												backgroundColor: process.isCompleted ? '#f0f8f0' : 'transparent',
 												borderColor: process.isCompleted ? '#28a745' : '#dee2e6',
 												borderWidth: '2px',
 												transition: 'all 0.3s ease',
@@ -1137,8 +1137,8 @@ function EmpCandidateReviewPage () {
 																	process.status === 'in_progress' ? 'bg-warning' :
 																	process.status === 'passed' ? 'bg-success' :
 																	process.status === 'failed' ? 'bg-danger' :
-																	'bg-secondary'
-																}`} style={{fontSize: '0.75rem', padding: '4px 8px', whiteSpace: 'nowrap'}}>
+																	''
+																}`} style={{fontSize: '0.75rem', padding: '4px 8px', whiteSpace: 'nowrap', backgroundColor: process.status === 'pending' ? 'transparent' : undefined, border: process.status === 'pending' ? '1px solid #ff6600' : undefined, color: process.status === 'pending' ? '#ff6600' : undefined}}>
 																	{process.status.charAt(0).toUpperCase() + process.status.slice(1)}
 																</span>
 															)}

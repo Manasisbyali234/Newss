@@ -391,7 +391,7 @@ function CanSupport() {
                                                 accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.jpg,.jpeg,.png,.gif,.webp"
                                                 onChange={handleFileChange}
                                             />
-                                            <small className="form-text text-muted">
+                                            <small className="form-text d-block mt-2" style={{ color: '#ff6b35' }}>
                                                 <i className="fa fa-info-circle me-1"></i>
                                                 Upload up to 3 files (max 5MB each, 15MB total). Supported formats: PDF, DOC, DOCX, XLS, XLSX, CSV, TXT, JPG, PNG, GIF, WEBP
                                             </small>
@@ -402,25 +402,29 @@ function CanSupport() {
                                                 </div>
                                             )}
                                             {files.length > 0 && (
-                                                <div className="mt-2 p-2 bg-light rounded">
-                                                    <strong className="text-success">
+                                                <div className="mt-3">
+                                                    <strong className="d-block mb-2" style={{ color: '#ff6b35' }}>
                                                         <i className="fa fa-check-circle me-1"></i>
                                                         Selected files ({files.length}/3):
                                                     </strong>
-                                                    <ul className="list-unstyled mt-1 mb-0">
-                                                        {files.map((file, index) => (
-                                                            <li key={index} className="text-muted small d-flex align-items-center">
-                                                                <i className="fa fa-file me-2 text-primary"></i>
-                                                                <span className="flex-grow-1">{file.name}</span>
-                                                                <span className="badge bg-secondary ms-2">
-                                                                    {(file.size / 1024 / 1024).toFixed(1)} MB
-                                                                </span>
-                                                            </li>
-                                                        ))}
+                                                    <ul className="list-unstyled mb-0">
+                                                        {files.map((file, index) => {
+                                                            const fileSizeKB = file.size / 1024;
+                                                            const fileSizeMB = fileSizeKB / 1024;
+                                                            const displaySize = fileSizeMB >= 1 
+                                                                ? fileSizeMB.toFixed(2) + ' MB' 
+                                                                : fileSizeKB.toFixed(2) + ' KB';
+                                                            return (
+                                                                <li key={index} className="d-flex align-items-center mb-2">
+                                                                    <i className="fa fa-file me-2" style={{ color: '#ff6b35' }}></i>
+                                                                    <span className="flex-grow-1" style={{ fontSize: '14px', color: '#ff6b35' }}>{file.name}</span>
+                                                                    <span className="ms-2" style={{ fontSize: '12px', color: '#ff6b35', fontWeight: '600' }}>
+                                                                        {displaySize}
+                                                                    </span>
+                                                                </li>
+                                                            );
+                                                        })}
                                                     </ul>
-                                                    <small className="text-muted">
-                                                        Total size: {(files.reduce((sum, file) => sum + file.size, 0) / 1024 / 1024).toFixed(1)} MB / 15 MB
-                                                    </small>
                                                 </div>
                                             )}
                                         </div>

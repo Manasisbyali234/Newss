@@ -195,7 +195,8 @@ function AdminSupportTickets() {
                 return;
             }
             
-            const apiResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/support-tickets/${selectedTicket._id}`, {
+            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+            const apiResponse = await fetch(`${apiUrl}/api/admin/support-tickets/${selectedTicket._id}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -207,6 +208,7 @@ function AdminSupportTickets() {
             const result = await apiResponse.json();
             
             if (apiResponse.ok && result.success) {
+                showSuccess('Support ticket updated successfully');
                 handleCloseModal();
                 fetchSupportTickets();
             } else {
@@ -264,9 +266,10 @@ function AdminSupportTickets() {
             high: 'badge-soft-high',
             urgent: 'badge-soft-urgent'
         };
+        const formatText = (text) => text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
         return (
             <Badge bg="light" className={`badge-soft ${variants[priority] || ''}`}>
-                {priority ? priority.replace('-', ' ').toUpperCase() : 'N/A'}
+                {priority ? formatText(priority.replace('-', ' ')) : 'N/A'}
             </Badge>
         );
     };
@@ -278,9 +281,10 @@ function AdminSupportTickets() {
             resolved: 'badge-soft-status-resolved',
             closed: 'badge-soft-status-closed'
         };
+        const formatText = (text) => text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
         return (
             <Badge bg="light" className={`badge-soft ${variants[status] || ''}`}>
-                {status ? status.replace('-', ' ').toUpperCase() : 'N/A'}
+                {status ? formatText(status.replace('-', ' ')) : 'N/A'}
             </Badge>
         );
     };
@@ -291,9 +295,14 @@ function AdminSupportTickets() {
             candidate: 'badge-soft-user-candidate',
             guest: 'badge-soft-user-guest'
         };
+        const displayText = {
+            employer: 'Emp',
+            candidate: 'Cand',
+            guest: 'Guest'
+        };
         return (
             <Badge bg="light" className={`badge-soft ${variants[userType] || ''}`}>
-                {userType ? userType.toUpperCase() : 'N/A'}
+                {userType ? displayText[userType] || 'N/A' : 'N/A'}
             </Badge>
         );
     };
@@ -419,8 +428,8 @@ function AdminSupportTickets() {
                                                 <tr>
                                                     <th style={{width: '20%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>Subject</th>
                                                     <th style={{width: '18%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>Requester</th>
-                                                    <th style={{width: '10%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>User type</th>
-                                                    <th style={{width: '12%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>Category</th>
+                                                    <th style={{width: '12%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>User type</th>
+                                                    <th style={{width: '10%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>Category</th>
                                                     <th style={{width: '10%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>Priority</th>
                                                     <th style={{width: '10%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>Status</th>
                                                     <th style={{width: '10%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>Created</th>
@@ -580,20 +589,21 @@ function AdminSupportTickets() {
                                 </Col>
                             </Row>
                             <Row className="mb-3">
-                                <Col>
+                                <Col md={12}>
                                     <Form.Group>
-                                        <Form.Label className="detail-label">Admin response</Form.Label>
+                                        <Form.Label className="detail-label">Admin Response</Form.Label>
                                         <Form.Control
-                                            className="response-textarea"
                                             as="textarea"
-                                            rows={4}
+                                            className="response-textarea"
+                                            placeholder="Type your response here... This will be sent as a notification to the user."
                                             value={response}
                                             onChange={(e) => setResponse(e.target.value)}
-                                            placeholder="Share the latest update or resolution for this request"
                                         />
+                                        <small className="text-muted">Your response will be sent as a notification to the {selectedTicket.userType === 'employer' ? 'employer' : selectedTicket.userType === 'candidate' ? 'candidate' : 'user'}.</small>
                                     </Form.Group>
                                 </Col>
                             </Row>
+
                         </>
                     )}
                 </Modal.Body>

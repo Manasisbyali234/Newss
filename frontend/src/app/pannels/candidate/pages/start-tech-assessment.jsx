@@ -98,6 +98,7 @@ const StartAssessment = () => {
     const contextMenuListener = useRef(null);
     const copyListener = useRef(null);
     const pasteListener = useRef(null);
+    const saveTimeoutRef = useRef(null);
 
     // Violation detection functions
     const logViolation = useCallback(async (violationType, details = '') => {
@@ -113,15 +114,7 @@ const StartAssessment = () => {
             });
 
             if (response.success) {
-                const terminatingViolations = ['tab_switch', 'window_blur', 'right_click', 'copy_attempt'];
-                if (terminatingViolations.includes(violationType)) {
-                    setTerminationReason(violationType);
-                    setTerminationTimestamp(timestamp);
-                    setIsTerminated(true);
-                    setAssessmentState('terminated');
-                    removeSecurityListeners();
-                    clearStoredAssessment();
-                }
+                console.log('Violation logged successfully:', violationType);
             }
         } catch (error) {
             console.error('Failed to log violation:', error);
@@ -130,23 +123,15 @@ const StartAssessment = () => {
 
     const handleVisibilityChange = useCallback(() => {
         if (document.hidden && assessmentState === 'in_progress') {
+            console.log('Tab switch detected!');
             logViolation('tab_switch', 'User switched browser tabs');
-            setCurrentViolation({
-                type: 'tab_switch',
-                timestamp: new Date()
-            });
-            setShowViolationModal(true);
         }
     }, [assessmentState, logViolation]);
 
     const handleWindowBlur = useCallback(() => {
         if (assessmentState === 'in_progress') {
+            console.log('Window blur detected!');
             logViolation('window_blur', 'Browser window lost focus');
-            setCurrentViolation({
-                type: 'window_blur',
-                timestamp: new Date()
-            });
-            setShowViolationModal(true);
         }
     }, [assessmentState, logViolation]);
 
@@ -403,13 +388,40 @@ const StartAssessment = () => {
 		setAnswers(updated);
 
 		try {
-			await api.submitAnswer(attemptId, currentQuestionIndex, option, 0);
+			await api.submitAnswer(attemptId, currentQuestionIndex, option, null, 0);
 		} catch (err) {
 			console.error("Error submitting answer:", err);
 			if (err.message.includes('404') || err.message.includes('not found')) {
 				setError("Assessment session expired. Please restart the assessment.");
 			}
 		}
+	};
+
+	const handleTextAnswerChange = (text) => {
+		if (isSubmitted) return;
+		if (!attemptId) return;
+
+		const updated = [...answers];
+		updated[currentQuestionIndex] = text;
+		setAnswers(updated);
+
+		// Clear existing timeout
+		if (saveTimeoutRef.current) {
+			clearTimeout(saveTimeoutRef.current);
+		}
+
+		// Debounce save - wait 500ms after user stops typing
+		saveTimeoutRef.current = setTimeout(async () => {
+			try {
+				console.log('Saving subjective answer:', { attemptId, questionIndex: currentQuestionIndex, textLength: text?.length });
+				await api.submitAnswer(attemptId, currentQuestionIndex, null, text, 0);
+			} catch (err) {
+				console.error("Error submitting answer:", err);
+				if (err.message.includes('404') || err.message.includes('not found')) {
+					setError("Assessment session expired. Please restart the assessment.");
+				}
+			}
+		}, 500);
 	};
 
 	const handleSubmit = async () => {
@@ -584,39 +596,90 @@ const StartAssessment = () => {
 					>
 						{currentQuestionIndex + 1}. {question.question.replace(/<[^>]*>/g, '')}
 					</div>
-					<div style={{ display: "flex", flexDirection: "column" }}>
-						{question.options.map((option, idx) => (
-							<label
-								key={idx}
+					{question.imageUrl && (
+						<div style={{ marginBottom: "15px", textAlign: "center" }}>
+							<img 
+								src={question.imageUrl} 
+								alt="Question illustration" 
 								style={{
-									border:
-										answers[currentQuestionIndex] === idx
-											? "2px solid #3498db"
-											: "1px solid #ccc",
-									borderRadius: "5px",
-									padding: "10px",
-									marginBottom: "8px",
-									cursor: isSubmitted ? "not-allowed" : "pointer",
-									backgroundColor:
-										answers[currentQuestionIndex] === idx
-											? "#ecf6fd"
-											: "#fff",
-									display: "flex",
-									alignItems: "center",
+									maxWidth: "100%",
+									maxHeight: "400px",
+									borderRadius: "8px",
+									border: "1px solid #e0e0e0",
+									boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
 								}}
-							>
-								<input
-									type="radio"
-									name={`q-${currentQuestionIndex}`}
-									value={idx}
-									checked={answers[currentQuestionIndex] === idx}
-									onChange={() => handleOptionChange(idx)}
-									disabled={isSubmitted}
-									style={{ marginRight: "10px" }}
-								/>
-								{option}
-							</label>
-						))}
+							/>
+						</div>
+					)}
+					<div style={{ display: "flex", flexDirection: "column" }}>
+						{question.type === 'subjective' ? (
+							<textarea
+								style={{
+									width: "100%",
+									minHeight: "200px",
+									padding: "12px",
+									border: "1px solid #ccc",
+									borderRadius: "5px",
+									fontSize: "14px",
+									fontFamily: "Arial, sans-serif",
+									resize: "vertical"
+								}}
+								placeholder="Type your answer here..."
+								value={answers[currentQuestionIndex] || ''}
+								onChange={(e) => handleTextAnswerChange(e.target.value)}
+								disabled={isSubmitted}
+							/>
+						) : question.options && question.options.length > 0 ? (
+							question.options.map((option, idx) => (
+								<label
+									key={idx}
+									style={{
+										border:
+											answers[currentQuestionIndex] === idx
+												? "2px solid #3498db"
+												: "1px solid #ccc",
+										borderRadius: "5px",
+										padding: "10px",
+										marginBottom: "8px",
+										cursor: isSubmitted ? "not-allowed" : "pointer",
+										backgroundColor:
+											answers[currentQuestionIndex] === idx
+												? "#ecf6fd"
+												: "#fff",
+										display: "flex",
+										alignItems: "center",
+									}}
+								>
+									<input
+										type="radio"
+										name={`q-${currentQuestionIndex}`}
+										value={idx}
+										checked={answers[currentQuestionIndex] === idx}
+										onChange={() => handleOptionChange(idx)}
+										disabled={isSubmitted}
+										style={{ marginRight: "10px" }}
+									/>
+									{option}
+								</label>
+							))
+						) : (
+							<textarea
+								style={{
+									width: "100%",
+									minHeight: "200px",
+									padding: "12px",
+									border: "1px solid #ccc",
+									borderRadius: "5px",
+									fontSize: "14px",
+									fontFamily: "Arial, sans-serif",
+									resize: "vertical"
+								}}
+								placeholder="Type your answer here..."
+								value={answers[currentQuestionIndex] || ''}
+								onChange={(e) => handleTextAnswerChange(e.target.value)}
+								disabled={isSubmitted}
+							/>
+						)}
 					</div>
 
 					{/* Navigation */}
