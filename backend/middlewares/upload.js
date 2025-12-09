@@ -250,11 +250,27 @@ const validateExcelContent = (buffer, mimetype) => {
     });
     
     if (missingFields.length > 0) {
-      const errorMsg = missingFields.slice(0, 5).join('; ');
-      const moreMsg = missingFields.length > 5 ? ` and ${missingFields.length - 5} more rows` : '';
+      const totalRows = missingFields.length;
+      const displayRows = missingFields.slice(0, 3);
+      const moreMsg = totalRows > 3 ? ` and ${totalRows - 3} more rows` : '';
+      
       return { 
         valid: false, 
-        message: `Required fields are missing in your Excel file: ${errorMsg}${moreMsg}. Please ensure all rows have Candidate Name, Email, Password, Phone, College Name, and Course filled.`
+        message: `⚠️ Missing Required Fields
+
+Your Excel file has ${totalRows} row(s) with missing required information:
+
+${displayRows.map(row => `• ${row}`).join('\n')}${moreMsg ? '\n• ' + moreMsg : ''}
+
+📋 Required fields for ALL rows:
+• Candidate Name
+• Email
+• Password
+• Phone
+• College Name
+• Course
+
+Please fill in all required fields and upload again.`
       };
     }
     

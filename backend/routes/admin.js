@@ -54,9 +54,12 @@ router.put('/placements/:id/files/:fileId/reject', adminController.rejectIndivid
 router.post('/placements/:id/files/:fileId/process', adminController.approveIndividualFile);
 router.put('/placements/:placementId/files/credits', adminController.assignBulkFileCredits);
 router.put('/placements/:id/files/:fileId/credits', adminController.updateFileCredits);
+router.put('/placements/:id/bulk-credits', adminController.assignBulkFileCredits);
 router.post('/placements/:id/store-excel', adminController.storeExcelDataInMongoDB);
+router.post('/placements/:id/store-excel-data', adminController.storeExcelDataInMongoDB);
 router.get('/placements/:id/excel-data', adminController.getStoredExcelData);
 router.get('/placements/:id/excel-data/:fileId', adminController.getStoredExcelData);
+router.get('/placements/:id/stored-excel-data', adminController.getStoredExcelData);
 router.get('/placements/:id/data', adminController.getPlacementData);
 router.get('/placements/:id/files/:fileId/data', adminController.getFileData);
 router.get('/placements/:id/download-id-card', adminController.downloadPlacementIdCard);

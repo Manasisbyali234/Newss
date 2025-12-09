@@ -1468,7 +1468,8 @@ exports.updateSubAdmin = async (req, res) => {
       email,
       phone,
       employerCode,
-      permissions
+      permissions,
+      updatedAt: new Date() // Force update timestamp
     };
     
     // Only update password if provided
@@ -1486,7 +1487,25 @@ exports.updateSubAdmin = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Sub Admin not found' });
     }
     
-    res.json({ success: true, subAdmin });
+    // Create notification for the sub-admin about profile update
+    try {
+      await createNotification({
+        title: 'Profile Updated',
+        message: 'Your sub-admin profile has been updated by the main admin. Please refresh your page to see the changes.',
+        type: 'profile_updated',
+        role: 'sub-admin',
+        relatedId: subAdmin._id,
+        createdBy: req.user.id
+      });
+    } catch (notifError) {
+      console.error('Failed to create notification:', notifError);
+    }
+    
+    res.json({ 
+      success: true, 
+      subAdmin,
+      message: 'Sub Admin updated successfully. They will need to refresh their page to see changes.'
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -2098,7 +2117,7 @@ exports.updateFileCredits = async (req, res) => {
 // Assign credits to all files in a placement
 exports.assignBulkFileCredits = async (req, res) => {
   try {
-    const { placementId } = req.params;
+    const { id: placementId } = req.params;
     const { credits } = req.body;
     const creditsNum = Math.min(10000, Math.max(0, parseInt(credits) || 0));
     
@@ -2109,11 +2128,11 @@ exports.assignBulkFileCredits = async (req, res) => {
 
     let updatedFiles = 0;
     
-    // Update all non-rejected files in fileHistory with the new credits
+    // Update only processed files in fileHistory with the new credits
     if (placement.fileHistory && placement.fileHistory.length > 0) {
       for (let file of placement.fileHistory) {
-        // Skip rejected files
-        if (file.status === 'rejected') {
+        // Only update processed files
+        if (file.status !== 'processed') {
           continue;
         }
         file.credits = creditsNum;
@@ -3299,12 +3318,20 @@ exports.approveAllStudentsInPlacement = async (req, res) => {
 exports.getSubAdminProfile = async (req, res) => {
   try {
     const subAdmin = await SubAdmin.findById(req.user.id)
-      .select('-password')
-      .populate('createdBy', 'name email');
+      .select('-password -resetPasswordOTP -resetPasswordOTPExpires')
+      .populate('createdBy', 'name email')
+      .lean();
     
     if (!subAdmin) {
       return res.status(404).json({ success: false, message: 'Sub Admin not found' });
     }
+
+    // Set cache headers to prevent stale data
+    res.set({
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    });
 
     res.json({ success: true, subAdmin });
   } catch (error) {

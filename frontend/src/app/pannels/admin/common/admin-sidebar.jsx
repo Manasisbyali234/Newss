@@ -12,6 +12,44 @@ function AdminSidebarSection({ sidebarActive, isMobile }) {
     const [isSubAdmin, setIsSubAdmin] = useState(false);
     const [openMenus, setOpenMenus] = useState({});
 
+    // Function to fetch and update sub-admin profile
+    const fetchSubAdminProfile = async () => {
+        try {
+            const token = localStorage.getItem('adminToken');
+            const subAdminData = localStorage.getItem('subAdminData');
+            
+            if (!token || !subAdminData) return;
+            
+            const response = await fetch('http://localhost:5000/api/admin/sub-admin/profile', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.subAdmin) {
+                    // Update localStorage with fresh data
+                    const currentData = JSON.parse(subAdminData);
+                    const updatedData = {
+                        ...currentData,
+                        ...data.subAdmin,
+                        permissions: data.subAdmin.permissions || currentData.permissions
+                    };
+                    
+                    // Only update if data has changed
+                    if (JSON.stringify(currentData) !== JSON.stringify(updatedData)) {
+                        localStorage.setItem('subAdminData', JSON.stringify(updatedData));
+                        setUserPermissions(updatedData.permissions || []);
+                        console.log('Sub-admin profile updated');
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching sub-admin profile:', error);
+        }
+    };
+
     useEffect(() => {
         loadScript("js/custom.js");
         loadScript("js/admin-sidebar.js");
@@ -32,6 +70,14 @@ function AdminSidebarSection({ sidebarActive, isMobile }) {
             const subAdmin = JSON.parse(subAdminData);
             setUserPermissions(subAdmin.permissions || []);
             setIsSubAdmin(true);
+            
+            // Fetch fresh profile data immediately
+            fetchSubAdminProfile();
+            
+            // Set up periodic refresh every 30 seconds
+            const refreshInterval = setInterval(fetchSubAdminProfile, 30000);
+            
+            return () => clearInterval(refreshInterval);
         } else if (adminData) {
             // Regular admin has all permissions
             setUserPermissions(['employers', 'placement_officers', 'registered_candidates']);

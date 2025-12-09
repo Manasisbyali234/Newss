@@ -535,13 +535,9 @@ function EmpCandidateReviewPage () {
 							</div>
 						</div>
 						<div className="d-flex gap-2">
-							{application?.status === 'not_attended' ? (
-								<span className="badge bg-danger text-capitalize fs-6 px-4 py-2 rounded-pill" style={{fontSize: '0.9rem !important'}}>
-									Not Attended
-								</span>
-							) : (
-								<span className="badge bg-success text-capitalize fs-6 px-4 py-2 rounded-pill" style={{fontSize: '0.9rem !important'}}>
-									Attended
+							{interviewProcesses.length > 0 && (
+								<span className={`badge ${interviewProcesses.some(p => p.isCompleted) ? 'bg-success' : 'bg-warning'} text-capitalize fs-6 px-4 py-2 rounded-pill`} style={{fontSize: '0.9rem !important'}}>
+									{interviewProcesses.some(p => p.isCompleted) ? 'Attended' : 'Pending'}
 								</span>
 							)}
 							<span className={`badge ${getStatusBadge(application?.status)} text-capitalize fs-6 px-4 py-2 rounded-pill`} style={{fontSize: '0.9rem !important'}}>
