@@ -811,7 +811,7 @@ exports.getAssessmentResults = async (req, res) => {
     const results = await AssessmentAttempt.find({
       assessmentId: req.params.id,
       status: { $in: ['completed', 'expired'] }
-    }).populate('candidateId', 'name email phone').sort({ endTime: -1 }).lean();
+    }).populate('candidateId', 'name email phone').sort({ endTime: -1 });
     
     // Ensure violations array exists for each result
     const resultsWithViolations = results.map(r => ({
