@@ -7,24 +7,35 @@ function TutorialsPage() {
     const videos = [
         {
             id: 1,
-            title: "Getting Started with Tale Global",
-            description: "Learn the basics of using Tale Global platform for job search and recruitment.",
-            videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-            thumbnail: publicUrlFor("images/blog/latest/bg1.jpg")
+            module: "Candidate Module",
+            title: "Candidate Signup and Login Tutorial",
+            description: "Learn how to register and login as a candidate on Tale Global platform.",
+            videoUrl: "https://www.youtube.com/embed/53wKp3-8lDM",
+            thumbnail: "https://img.youtube.com/vi/53wKp3-8lDM/maxresdefault.jpg"
         },
         {
             id: 2,
-            title: "How to Create Your Profile",
-            description: "Step-by-step guide to creating an effective profile on Tale Global.",
-            videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-            thumbnail: publicUrlFor("images/blog/latest/bg2.jpg")
+            module: "Employer Module",
+            title: "Employee Signup and Login Tutorial",
+            description: "Step-by-step guide for employee registration and login.",
+            videoUrl: "https://www.youtube.com/embed/6HzUsIREfOM",
+            thumbnail: "https://img.youtube.com/vi/6HzUsIREfOM/maxresdefault.jpg"
         },
         {
             id: 3,
-            title: "Applying for Jobs",
-            description: "Master the job application process and increase your chances of success.",
-            videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-            thumbnail: publicUrlFor("images/blog/latest/bg3.jpg")
+            module: "Employer Module",
+            title: "Consultancy Signup and Login Tutorial",
+            description: "Learn how to register and login as a consultancy on Tale Global.",
+            videoUrl: "https://www.youtube.com/embed/bMJw5NnjLBI",
+            thumbnail: "https://img.youtube.com/vi/bMJw5NnjLBI/maxresdefault.jpg"
+        },
+        {
+            id: 4,
+            module: "Placement Module",
+            title: "Placement Officer Signup and Login Tutorial",
+            description: "Complete guide for placement officer registration and login.",
+            videoUrl: "https://www.youtube.com/embed/R5bk-6wFDr0",
+            thumbnail: "https://img.youtube.com/vi/R5bk-6wFDr0/maxresdefault.jpg"
         }
     ];
 
@@ -71,6 +82,7 @@ function TutorialsPage() {
                         <div className="row">
                             {videos.map((video) => (
                                 <div key={video.id} className="col-lg-4 col-md-6 mb-4">
+                                    <div style={{ fontSize: '12px', fontWeight: '600', color: '#fd7e14', marginBottom: '8px', textTransform: 'uppercase' }}>{video.module}</div>
                                     <div onClick={() => { setSelectedVideo(video); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ backgroundColor: '#fff', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', cursor: 'pointer', transition: 'transform 0.3s, box-shadow 0.3s', border: selectedVideo?.id === video.id ? '2px solid #fd7e14' : '2px solid transparent' }}>
                                         <div style={{ position: 'relative', paddingBottom: '56.25%', backgroundColor: '#000' }}>
                                             <img src={video.thumbnail} alt={video.title} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
