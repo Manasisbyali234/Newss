@@ -283,7 +283,7 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
 
         {/* Email Modal */}
         {showEmailModal && (
-          <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1050 }}>
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content" style={{ borderRadius: '15px' }}>
                 <div className="modal-header" style={{ borderBottom: '2px solid #ff6600' }}>

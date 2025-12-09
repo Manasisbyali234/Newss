@@ -1,4 +1,5 @@
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
+import { formatInterviewTime } from '../../../../utils/timeUtils';
 // Route: /candidate/status
 
 import { useState, useEffect } from "react";
@@ -975,7 +976,7 @@ function CanStatusPage() {
 																			{roundDetails.fromDate && <span><strong>From:</strong> {new Date(roundDetails.fromDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}</span>}
 																			{roundDetails.fromDate && roundDetails.toDate && <span className="mx-2">-</span>}
 																			{roundDetails.toDate && <span><strong>To:</strong> {new Date(roundDetails.toDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}</span>}
-																			{roundDetails.time && <div className="mt-1"><strong>Time (Daily):</strong> {roundDetails.time} - This timing continues until {roundDetails.toDate ? new Date(roundDetails.toDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'}) : 'end date'}</div>}
+																			{roundDetails.time && <div className="mt-1"><strong>Time (Daily):</strong> {formatInterviewTime(roundDetails.time, roundDetails.fromDate)} - This timing continues until {roundDetails.toDate ? new Date(roundDetails.toDate).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'}) : 'end date'}</div>}
 																		</div>
 																	</div>
 																)}

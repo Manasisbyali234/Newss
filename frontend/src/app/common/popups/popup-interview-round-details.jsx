@@ -57,7 +57,11 @@ const PopupInterviewRoundDetails = ({ isOpen, onClose, roundDetails, roundType, 
 
     const formatTime = (timeString) => {
         if (!timeString) return 'Not set';
-        return new Date(`2000-01-01T${timeString}`).toLocaleTimeString('en-US', {
+        // Create a date object with the time in local timezone
+        const [hours, minutes] = timeString.split(':');
+        const date = new Date();
+        date.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+        return date.toLocaleTimeString('en-US', {
             hour: '2-digit',
             minute: '2-digit',
             hour12: true

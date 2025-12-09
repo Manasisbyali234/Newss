@@ -322,7 +322,7 @@ function AdminCreditsPage() {
 										</div>
 									</div>
 								</div>
-								<div className="modal-footer">
+								<div className="modal-footer" style={{gap: '10px'}}>
 									<button type="button" className="btn btn-secondary" onClick={() => setShowAddModal(false)}>Cancel</button>
 									<button type="submit" className="btn btn-primary" disabled={creating}>
 										{creating ? 'Creating...' : 'Create Candidate'}

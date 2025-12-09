@@ -31,11 +31,12 @@ function JobDetail1Page() {
         return { token, candidateId: storedCandidateId, isLoggedIn: !!token };
     }, []);
 
-    const { limitReached, isEnded } = useMemo(() => {
-        if (!job) return { limitReached: false, isEnded: false };
+    const { limitReached, isEnded, isExpired } = useMemo(() => {
+        if (!job) return { limitReached: false, isEnded: false, isExpired: false };
         const limitReached = typeof job.applicationLimit === 'number' && job.applicationLimit > 0 && (job.applicationCount || 0) >= job.applicationLimit;
-        const isEnded = (job.status && job.status !== 'active') || limitReached;
-        return { limitReached, isEnded };
+        const isExpired = job.lastDateOfApplication && new Date(job.lastDateOfApplication) < new Date();
+        const isEnded = (job.status && job.status !== 'active') || limitReached || isExpired;
+        return { limitReached, isEnded, isExpired };
     }, [job]);
 
     const fetchJobDetails = useCallback(async () => {
@@ -70,12 +71,12 @@ function JobDetail1Page() {
     const fetchCandidateCredits = useCallback(async () => {
         try {
             const token = localStorage.getItem('candidateToken');
-            const response = await fetch('http://localhost:5000/api/candidate/credits', {
+            const response = await fetch('http://localhost:5000/api/candidate/dashboard/stats', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
             if (data.success) {
-                setCandidateCredits(data.credits || 0);
+                setCandidateCredits(data.candidate.credits || 0);
             }
         } catch (error) {
             console.error('Error fetching credits:', error);
@@ -163,14 +164,14 @@ function JobDetail1Page() {
             });
             const statsData = await statsResponse.json();
             
-            if (statsData.success && statsData.candidate.registrationMethod === 'placement') {
+            if (statsData.success) {
                 const credits = statsData.candidate.credits || 0;
                 if (credits <= 0) {
-                    showError('You have insufficient credits to apply for jobs. Please contact your placement coordinator to get more credits.');
+                    showError('You are out of your credits. Please contact support to get more credits.');
                     return;
                 }
                 
-                const confirmApply = window.confirm(`You have ${credits} credits remaining. Applying for this job will deduct 1 credit. Do you want to continue?`);
+                const confirmApply = window.confirm(`You have ${credits} credit${credits > 1 ? 's' : ''} remaining. Applying for this job will deduct 1 credit. Do you want to continue?`);
                 if (!confirmApply) {
                     return;
                 }
@@ -188,6 +189,8 @@ function JobDetail1Page() {
             if (data.success) {
                 setHasApplied(true);
                 showSuccess('Application submitted successfully!');
+                // Refresh credits after successful application
+                fetchCandidateCredits();
             } else {
                 showError(data.message || 'Failed to submit application');
             }
@@ -285,9 +288,9 @@ function JobDetail1Page() {
                                                         <button
                                                             className={`btn btn-outline-primary ${(hasApplied || isEnded) ? 'disabled' : ''}`}
                                                             onClick={handleApplyClick}
-                                                            disabled={hasApplied}
+                                                            disabled={hasApplied || isEnded}
                                                         >
-                                                            {hasApplied ? 'Already Applied' : 'Apply Now'}
+                                                            {hasApplied ? 'Already Applied' : isExpired ? 'Application Closed' : isEnded ? 'Job Closed' : 'Apply Now'}
                                                         </button>
                                                     </div>
                                                 </div>

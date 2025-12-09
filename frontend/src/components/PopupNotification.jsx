@@ -27,7 +27,7 @@ const PopupNotification = ({ message, onClose, type = 'info' }) => {
             {type === 'warning' && '⚠'}
             {type === 'info' && 'ℹ'}
           </div>
-          <div className="popup-message">{message}</div>
+          <div className="popup-message" style={{ textAlign: 'center' }}>{message}</div>
           <button className="popup-button" onClick={onClose}>
             OK
           </button>
