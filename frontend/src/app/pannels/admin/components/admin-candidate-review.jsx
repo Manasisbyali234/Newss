@@ -538,7 +538,7 @@ function AdminCandidateReviewPage() {
                                                 </td>
                                                 <td>
                                                     <span className="job-category">
-                                                        {application.jobId?.title || application.jobTitle || 'N/A'}
+                                                        {application.jobTitle || 'N/A'}
                                                     </span>
                                                 </td>
                                                 <td>

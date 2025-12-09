@@ -834,7 +834,9 @@ exports.getCandidateDetails = async (req, res) => {
     // Format applications data for the frontend
     const formattedApplications = applications.map(app => ({
       companyName: app.jobId?.employerId?.companyName || app.employerId?.companyName || 'N/A',
+      jobTitle: app.jobId?.title || 'N/A',
       jobCategory: app.jobId?.category || 'N/A',
+      status: app.status || 'pending',
       shortlistedStatus: app.status === 'shortlisted' || app.status === 'interview_scheduled' || app.status === 'selected',
       currentRound: app.interviewRound || (app.status === 'applied' ? 'Initial' : app.status),
       selected: app.status === 'selected',
