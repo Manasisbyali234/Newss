@@ -9,6 +9,13 @@ function AdminAddCandidate() {
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState({});
+    const [passwordValidation, setPasswordValidation] = useState({
+        length: false,
+        uppercase: false,
+        lowercase: false,
+        number: false,
+        specialChars: false
+    });
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -18,12 +25,27 @@ function AdminAddCandidate() {
         credits: 0
     });
 
+    const validatePassword = (pwd) => {
+        const specialChars = pwd.match(/[@#!%$*?]/g) || [];
+        setPasswordValidation({
+            length: pwd.length >= 6,
+            uppercase: /[A-Z]/.test(pwd),
+            lowercase: /[a-z]/.test(pwd),
+            number: /[0-9]/.test(pwd),
+            specialChars: specialChars.length >= 1
+        });
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
         }));
+        
+        if (name === 'password') {
+            validatePassword(value);
+        }
         
         // Clear error for this field
         if (errors[name]) {
@@ -62,10 +84,16 @@ function AdminAddCandidate() {
         // Password validation
         if (!formData.password) {
             newErrors.password = 'Password is required';
-        } else if (formData.password.length < 6) {
+        } else if (!passwordValidation.length) {
             newErrors.password = 'Password must be at least 6 characters';
-        } else if (formData.password.length > 20) {
-            newErrors.password = 'Password must not exceed 20 characters';
+        } else if (!passwordValidation.uppercase) {
+            newErrors.password = 'Password must contain at least one uppercase letter';
+        } else if (!passwordValidation.lowercase) {
+            newErrors.password = 'Password must contain at least one lowercase letter';
+        } else if (!passwordValidation.number) {
+            newErrors.password = 'Password must contain at least one number';
+        } else if (!passwordValidation.specialChars) {
+            newErrors.password = 'Password must contain at least one special character (@#!%$*?)';
         }
         
         // College Name validation
@@ -184,7 +212,7 @@ function AdminAddCandidate() {
                                         className={`form-control ${errors.password ? 'is-invalid' : ''}`}
                                         value={formData.password}
                                         onChange={handleChange}
-                                        placeholder="Enter password (min 6 characters)"
+                                        placeholder="Enter password"
                                         style={{ paddingRight: '40px' }}
                                     />
                                     <span
@@ -201,6 +229,33 @@ function AdminAddCandidate() {
                                     </span>
                                 </div>
                                 {errors.password && <div className="text-danger mt-1" style={{fontSize: '0.875rem'}}>{errors.password}</div>}
+                                {formData.password && (
+                                    <div style={{ marginTop: '10px', padding: '12px', background: '#f8f9fa', borderRadius: '5px', border: '1px solid #dee2e6' }}>
+                                        <h6 style={{ marginBottom: '8px', fontSize: '13px', fontWeight: '600', color: '#495057' }}>Password Requirements:</h6>
+                                        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                                            <li style={{ padding: '3px 0', fontSize: '12px', color: passwordValidation.length ? '#28a745' : '#dc3545' }}>
+                                                <i className={`fa ${passwordValidation.length ? 'fa-check-circle' : 'fa-times-circle'}`} style={{ marginRight: '6px' }}></i>
+                                                At least 6 characters
+                                            </li>
+                                            <li style={{ padding: '3px 0', fontSize: '12px', color: passwordValidation.uppercase ? '#28a745' : '#dc3545' }}>
+                                                <i className={`fa ${passwordValidation.uppercase ? 'fa-check-circle' : 'fa-times-circle'}`} style={{ marginRight: '6px' }}></i>
+                                                One uppercase letter
+                                            </li>
+                                            <li style={{ padding: '3px 0', fontSize: '12px', color: passwordValidation.lowercase ? '#28a745' : '#dc3545' }}>
+                                                <i className={`fa ${passwordValidation.lowercase ? 'fa-check-circle' : 'fa-times-circle'}`} style={{ marginRight: '6px' }}></i>
+                                                One lowercase letter
+                                            </li>
+                                            <li style={{ padding: '3px 0', fontSize: '12px', color: passwordValidation.number ? '#28a745' : '#dc3545' }}>
+                                                <i className={`fa ${passwordValidation.number ? 'fa-check-circle' : 'fa-times-circle'}`} style={{ marginRight: '6px' }}></i>
+                                                One number
+                                            </li>
+                                            <li style={{ padding: '3px 0', fontSize: '12px', color: passwordValidation.specialChars ? '#28a745' : '#dc3545' }}>
+                                                <i className={`fa ${passwordValidation.specialChars ? 'fa-check-circle' : 'fa-times-circle'}`} style={{ marginRight: '6px' }}></i>
+                                                One special character (@#!%$*?)
+                                            </li>
+                                        </ul>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="col-md-6 mb-3">

@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { publicUser } from "../../../../../../globals/route-names";
 import SectionSideAdvert from "./section-side-advert";
 import JobZImage from "../../../../../common/jobz-img";
+import { formatDate } from "../../../../../../utils/dateFormatter";
 
 function SectionJobsSidebar2 ({ _config, job }) {
     return (
@@ -33,7 +34,7 @@ function SectionJobsSidebar2 ({ _config, job }) {
 									<div className="twm-s-info-inner">
 										<i className="fas fa-calendar-alt" />
 										<span className="twm-title">Date Posted</span>
-										<div className="twm-s-info-discription">{job ? new Date(job.createdAt).toLocaleDateString() : 'Not available'}</div>
+										<div className="twm-s-info-discription">{job ? formatDate(job.createdAt) : 'Not available'}</div>
 									</div>
 								</li>
 
@@ -41,7 +42,7 @@ function SectionJobsSidebar2 ({ _config, job }) {
 									<div className="twm-s-info-inner">
 										<i className="fas fa-calendar-alt" />
 										<span className="twm-title">Application Last Date</span>
-										<div className="twm-s-info-discription" style={{fontWeight: 'bold', color: 'red'}}>{job?.lastDateOfApplication ? new Date(job.lastDateOfApplication).toLocaleDateString() : 'Not specified'}</div>
+										<div className="twm-s-info-discription" style={{fontWeight: 'bold', color: 'red'}}>{job?.lastDateOfApplication ? formatDate(job.lastDateOfApplication) : 'Not specified'}</div>
 									</div>
 								</li>
 

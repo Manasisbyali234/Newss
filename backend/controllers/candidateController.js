@@ -511,21 +511,17 @@ exports.applyForJob = async (req, res) => {
 
     // Get full candidate data to check credits
     const candidate = await Candidate.findById(req.user._id);
-    // Removed console debug line for security;
     
     if (!candidate) {
       return res.status(404).json({ success: false, message: 'Candidate not found' });
     }
 
-    // Check if candidate has credits (only for placement candidates)
-    if (candidate.registrationMethod === 'placement' && candidate.credits <= 0) {
-      // Removed console debug line for security;
-      return res.status(400).json({ success: false, message: 'Insufficient credits to apply for jobs' });
-    }
-    
-    // Signup candidates can apply without credit restrictions
-    if (candidate.registrationMethod === 'signup') {
-      console.log('Signup candidate - unlimited applications allowed');
+    // Check if candidate has credits - applies to ALL candidates
+    if (candidate.credits <= 0) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'You are out of your credits. Please contact support to get more credits.' 
+      });
     }
 
     const profile = await CandidateProfile.findOne({ candidateId: req.user._id });
@@ -538,21 +534,10 @@ exports.applyForJob = async (req, res) => {
       resume: profile?.resume
     });
 
-    // Deduct credit only for placement candidates
-    if (candidate.registrationMethod === 'placement') {
-      // Removed console debug line for security;
-      if (candidate.credits > 0) {
-        const updateResult = await Candidate.findByIdAndUpdate(req.user._id, {
-          $inc: { credits: -1 }
-        });
-        // Removed console debug line for security;
-        // Removed console debug line for security;
-      } else {
-        // Removed console debug line for security
-      }
-    } else {
-      // Removed console debug line for security
-    }
+    // Deduct 1 credit for all candidates
+    await Candidate.findByIdAndUpdate(req.user._id, {
+      $inc: { credits: -1 }
+    });
 
     // Update job application count
     await Job.findByIdAndUpdate(jobId, { $inc: { applicationCount: 1 } });

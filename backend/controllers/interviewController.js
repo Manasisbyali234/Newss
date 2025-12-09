@@ -161,8 +161,17 @@ const scheduleInterviewStage = async (req, res) => {
     }
 
     // Update stage scheduling details
-    if (scheduledDate) stage.scheduledDate = new Date(scheduledDate);
-    if (scheduledTime) stage.scheduledTime = scheduledTime;
+    // Combine date and time into full datetime for proper timezone handling
+    if (scheduledDate && scheduledTime) {
+      const dateTimeString = `${scheduledDate}T${scheduledTime}`;
+      stage.scheduledDate = new Date(dateTimeString);
+      stage.scheduledTime = scheduledTime;
+    } else if (scheduledDate) {
+      stage.scheduledDate = new Date(scheduledDate);
+    } else if (scheduledTime) {
+      stage.scheduledTime = scheduledTime;
+    }
+    
     if (fromDate) stage.fromDate = new Date(fromDate);
     if (toDate) stage.toDate = new Date(toDate);
     if (location) stage.location = location;

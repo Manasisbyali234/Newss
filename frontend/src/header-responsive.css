@@ -35,6 +35,29 @@
   color: #FF7A00 !important;
 }
 
+/* Desktop: Align user badge with navigation */
+.extra-nav.header-2-nav {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.employer-nav-menu {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.dashboard-link {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.dashboard-link .btn {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  height: 40px !important;
+}
+
 @media (min-width: 992px) {
   .hamburger-btn { display: none !important; }
   .header-nav.navbar-collapse { display: flex !important; }
