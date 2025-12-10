@@ -128,6 +128,7 @@ router.post('/jobs/:jobId/schedule-round', [
 // Application Management Routes
 router.get('/applications', employerController.getEmployerApplications);
 router.get('/jobs/:jobId/applications', employerController.getJobApplications);
+router.get('/find-application', employerController.findApplicationByCandidateAndJob);
 router.put('/applications/:applicationId/review', employerController.saveInterviewReview);
 router.get('/applications/:applicationId', employerController.getApplicationDetails);
 router.put('/applications/:applicationId/status', [
@@ -173,7 +174,8 @@ router.put('/applications/:applicationId/interview-process/stages/:stageIndex/sc
 // Interview Email Routes
 router.post('/send-interview-invite/:applicationId', [
   body('interviewDate').notEmpty().withMessage('Interview date is required'),
-  body('interviewTime').notEmpty().withMessage('Interview time is required')
+  body('interviewTime').notEmpty().withMessage('Interview time is required'),
+  body('meetingLink').notEmpty().withMessage('Google Meet link is required')
 ], handleValidationErrors, employerController.sendInterviewInvite);
 router.post('/confirm-interview/:applicationId', [
   body('confirmedDate').notEmpty().withMessage('Confirmed date is required'),

@@ -176,6 +176,7 @@ function CanStatusPage() {
 		loadScript("js/custom.js");
 		fetchApplications();
 		
+		
 		// Check if we should highlight shortlisted applications
 		const shouldHighlight = sessionStorage.getItem('highlightShortlisted');
 		if (shouldHighlight === 'true') {

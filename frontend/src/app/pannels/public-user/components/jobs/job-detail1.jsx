@@ -10,6 +10,7 @@ import "./job-detail.css";
 import "../../../../../job-detail-spacing.css";
 
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
+import CreditConfirmationPopup from '../../../../../components/CreditConfirmationPopup';
 function JobDetail1Page() {
     const { id, param1 } = useParams();
     const jobId = id || param1;
@@ -24,6 +25,8 @@ function JobDetail1Page() {
     const [showTermsModal, setShowTermsModal] = useState(false);
     const [termsAccepted, setTermsAccepted] = useState(false);
     const [pendingJobApplication, setPendingJobApplication] = useState(false);
+    const [showCreditConfirmation, setShowCreditConfirmation] = useState(false);
+    const [pendingApplicationData, setPendingApplicationData] = useState(null);
 
     const authState = useMemo(() => {
         const token = localStorage.getItem('candidateToken');
@@ -166,16 +169,59 @@ function JobDetail1Page() {
             
             if (statsData.success) {
                 const credits = statsData.candidate.credits || 0;
-                if (credits <= 0) {
+                const registrationMethod = statsData.candidate.registrationMethod || 'signup';
+                
+                // Only check credits for placement candidates
+                if (registrationMethod === 'placement' && credits <= 0) {
                     showError('You are out of your credits. Please contact support to get more credits.');
                     return;
                 }
                 
-                const confirmApply = window.confirm(`You have ${credits} credit${credits > 1 ? 's' : ''} remaining. Applying for this job will deduct 1 credit. Do you want to continue?`);
-                if (!confirmApply) {
+                // Only show credit confirmation for placement candidates
+                if (registrationMethod === 'placement') {
+                    setShowCreditConfirmation(true);
+                    setPendingApplicationData({ credits });
                     return;
                 }
             }
+            
+            // Continue with the application process for non-placement candidates
+            continueJobApplication();
+        } catch (error) {
+            console.error('Error applying for job:', error);
+            showError('Failed to submit application');
+        }
+    };
+
+    const handleApplyClick = async () => {
+        if (isEnded) return;
+        if (!isLoggedIn) {
+            showWarning('Please login first to apply for jobs!');
+            return;
+        } else if (hasApplied) {
+            showInfo('You have already applied for this job!');
+        } else {
+            setTermsAccepted(false);
+            setPendingJobApplication(true);
+            setShowTermsModal(true);
+        }
+    };
+
+    const handleCreditConfirm = () => {
+        setShowCreditConfirmation(false);
+        setPendingApplicationData(null);
+        // Continue with the application process
+        continueJobApplication();
+    };
+
+    const handleCreditCancel = () => {
+        setShowCreditConfirmation(false);
+        setPendingApplicationData(null);
+    };
+
+    const continueJobApplication = async () => {
+        try {
+            const token = localStorage.getItem('candidateToken');
             
             const response = await fetch('http://localhost:5000/api/candidate/applications', {
                 method: 'POST',
@@ -197,20 +243,6 @@ function JobDetail1Page() {
         } catch (error) {
             console.error('Error applying for job:', error);
             showError('Failed to submit application');
-        }
-    };
-
-    const handleApplyClick = async () => {
-        if (isEnded) return;
-        if (!isLoggedIn) {
-            showWarning('Please login first to apply for jobs!');
-            return;
-        } else if (hasApplied) {
-            showInfo('You have already applied for this job!');
-        } else {
-            setTermsAccepted(false);
-            setPendingJobApplication(true);
-            setShowTermsModal(true);
         }
     };
 
@@ -446,6 +478,12 @@ function JobDetail1Page() {
                     submitJobApplication();
                 }}
                 role="candidateApplication"
+            />
+            <CreditConfirmationPopup 
+                credits={pendingApplicationData?.credits || 0}
+                onConfirm={handleCreditConfirm}
+                onCancel={handleCreditCancel}
+                isOpen={showCreditConfirmation}
             />
         </>
     );

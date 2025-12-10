@@ -516,8 +516,8 @@ exports.applyForJob = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Candidate not found' });
     }
 
-    // Check if candidate has credits - applies to ALL candidates
-    if (candidate.credits <= 0) {
+    // Check if candidate has credits - only applies to placement candidates
+    if (candidate.registrationMethod === 'placement' && candidate.credits <= 0) {
       return res.status(400).json({ 
         success: false, 
         message: 'You are out of your credits. Please contact support to get more credits.' 
@@ -534,10 +534,12 @@ exports.applyForJob = async (req, res) => {
       resume: profile?.resume
     });
 
-    // Deduct 1 credit for all candidates
-    await Candidate.findByIdAndUpdate(req.user._id, {
-      $inc: { credits: -1 }
-    });
+    // Deduct 1 credit only for placement candidates
+    if (candidate.registrationMethod === 'placement') {
+      await Candidate.findByIdAndUpdate(req.user._id, {
+        $inc: { credits: -1 }
+      });
+    }
 
     // Update job application count
     await Job.findByIdAndUpdate(jobId, { $inc: { applicationCount: 1 } });
@@ -1132,6 +1134,8 @@ exports.getCandidateApplicationsWithInterviews = async (req, res) => {
       'Expires': '0'
     });
 
+    console.log(`Fetching applications for candidate: ${req.user._id}`);
+
     const applications = await Application.find({ candidateId: req.user._id })
       .populate({
         path: 'jobId',
@@ -1142,10 +1146,27 @@ exports.getCandidateApplicationsWithInterviews = async (req, res) => {
       .sort({ createdAt: -1 })
       .lean();
 
+    console.log(`Found ${applications.length} applications`);
+
     const applicationsWithInterviewProcess = await Promise.all(
       applications.map(async (app) => {
         const interviewProcess = await InterviewProcess.findOne({ applicationId: app._id }).lean();
         const assessmentTimerInfo = getAssessmentTimerInfo(app.jobId);
+        
+        // Check if there's an assessment attempt for this application
+        let assessmentAttempt = null;
+        if (app.jobId?.assessmentId) {
+          const AssessmentAttempt = require('../models/AssessmentAttempt');
+          assessmentAttempt = await AssessmentAttempt.findOne({
+            applicationId: app._id,
+            candidateId: req.user._id,
+            assessmentId: app.jobId.assessmentId
+          }).lean();
+          
+          if (assessmentAttempt) {
+            console.log(`Found assessment attempt for app ${app._id}: status=${assessmentAttempt.status}`);
+          }
+        }
         
         return {
           ...app,
@@ -1153,6 +1174,7 @@ exports.getCandidateApplicationsWithInterviews = async (req, res) => {
           assessmentScore: app.assessmentScore || null,
           assessmentPercentage: app.assessmentPercentage || null,
           assessmentResult: app.assessmentResult || null,
+          assessmentAttempt: assessmentAttempt,
           assessmentTimerInfo,
           interviewProcess: interviewProcess
         };
@@ -1161,6 +1183,7 @@ exports.getCandidateApplicationsWithInterviews = async (req, res) => {
 
     res.json({ success: true, applications: applicationsWithInterviewProcess });
   } catch (error) {
+    console.error('Error fetching candidate applications:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };

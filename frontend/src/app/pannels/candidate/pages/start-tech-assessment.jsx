@@ -224,6 +224,8 @@ const StartAssessment = () => {
 		fetchAssessment();
 	}, [assessmentId, jobId, applicationId]);
 
+
+
 	// Add security listeners when assessment starts
 	useEffect(() => {
 		if (assessmentState === 'in_progress') {
@@ -236,6 +238,8 @@ const StartAssessment = () => {
 			removeSecurityListeners();
 		};
 	}, [assessmentState, addSecurityListeners, removeSecurityListeners]);
+
+
 
 	// Timer effect with violation logging for time expiration
 	useEffect(() => {

@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function AssessmentCard({ data, onDelete, onEdit, index }) {
+	const navigate = useNavigate();
 	const formatDate = (dateString) => {
 		const date = new Date(dateString);
 		return date.toLocaleDateString('en-US', {
@@ -47,7 +49,7 @@ export default function AssessmentCard({ data, onDelete, onEdit, index }) {
 					</small>
 				</div>
 				<div className="d-flex gap-2">
-					<button className="btn btn-sm btn-outline-primary" onClick={() => window.location.href = `/employer/assessment-results/${data._id}`}>
+					<button className="btn btn-sm btn-outline-primary" onClick={() => navigate(`/employer/assessment-results/${data._id}`)}>
 						<i className="fa fa-chart-bar"></i> Results
 					</button>
 					<button className="btn btn-sm btn-outline-secondary" onClick={() => onEdit(data)} title="Edit Assessment">

@@ -119,11 +119,13 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
   };
 
   const sendInterviewInvite = async () => {
+    console.log('Sending interview invite with data:', emailData);
+    
     if (!emailData.interviewDate || !emailData.interviewTime) {
       showError('Please provide interview date and time');
       return;
     }
-    if (!emailData.meetingLink) {
+    if (!emailData.meetingLink || !emailData.meetingLink.trim()) {
       showError('Google Meet link is mandatory');
       return;
     }
@@ -141,6 +143,8 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
       });
 
       const data = await response.json();
+      console.log('API Response:', { status: response.status, data });
+      
       if (response.ok) {
         showSuccess('Interview invite sent successfully!');
         setShowEmailModal(false);
@@ -148,11 +152,23 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
         // Refresh to show the sent invitation
         fetchInterviewProcess();
       } else {
-        showError(data.message || 'Failed to send invite');
+        console.error('API Error:', data);
+        if (data.errors && Array.isArray(data.errors)) {
+          const errorMessages = data.errors.map(err => err.msg).join(', ');
+          showError(`Validation failed: ${errorMessages}`);
+        } else {
+          showError(data.message || 'Failed to send invite');
+        }
       }
     } catch (error) {
       console.error('Error sending invite:', error);
-      showError('Error sending invite. Please try again.');
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        showError('Network error. Please check your connection and try again.');
+      } else if (error.message) {
+        showError(`Error: ${error.message}`);
+      } else {
+        showError('Error sending invite. Please try again.');
+      }
     } finally {
       setSendingEmail(false);
     }

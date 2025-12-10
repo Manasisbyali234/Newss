@@ -27,16 +27,33 @@ export default function AssessmentResults() {
   const fetchResults = async () => {
     try {
       const token = localStorage.getItem('employerToken');
+      console.log('Fetching results for assessment ID:', assessmentId);
       const response = await axios.get(`http://localhost:5000/api/employer/assessments/${assessmentId}/results`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
         setAssessment(response.data.assessment);
-        console.log('Results with violations:', response.data.results.map(r => ({ id: r._id, violations: r.violations })));
+        console.log('Assessment results received:', response.data.results.length);
+        console.log('Sample result:', response.data.results[0]);
+        console.log('Detailed violations check:', response.data.results.map(r => ({ 
+          id: r._id, 
+          violations: r.violations,
+          violationsType: typeof r.violations,
+          violationsIsArray: Array.isArray(r.violations),
+          violationsLength: r.violations?.length || 0,
+          candidateName: r.candidateId?.name || 'N/A',
+          candidateEmail: r.candidateId?.email || 'N/A',
+          applicationId: r.applicationId,
+          applicationIdType: typeof r.applicationId,
+          hasApplicationId: !!r.applicationId
+        })));
         setResults(response.data.results);
+      } else {
+        console.error('API returned success: false', response.data);
       }
     } catch (error) {
       console.error('Error fetching results:', error);
+      console.error('Error details:', error.response?.data);
     } finally {
       setLoading(false);
     }
@@ -118,7 +135,11 @@ export default function AssessmentResults() {
         }}>
           {results.length === 0 ? (
             <div style={{ padding: '3rem', textAlign: 'center' }}>
-              <p style={{ color: '#6b7280', fontSize: '1.125rem', margin: 0 }}>No results available yet</p>
+              <div style={{ marginBottom: '1rem' }}>
+                <i className="fa fa-chart-bar" style={{ fontSize: '3rem', color: '#d1d5db', marginBottom: '1rem' }}></i>
+              </div>
+              <h4 style={{ color: '#374151', marginBottom: '0.5rem' }}>No Assessment Results Yet</h4>
+              <p style={{ color: '#6b7280', fontSize: '1rem', margin: 0 }}>No candidates have completed this assessment yet. Results will appear here once candidates submit their assessments.</p>
             </div>
           ) : (
             <div className="table-responsive">
@@ -153,7 +174,7 @@ export default function AssessmentResults() {
                       Completed
                     </th>
                     <th style={{ padding: '16px 12px', textAlign: 'left', fontWeight: '600', color: '#232323', fontSize: '13px', border: 'none', verticalAlign: 'middle', whiteSpace: 'nowrap' }}>
-                      <i className="fa fa-exclamation-triangle me-2"></i>
+                      <i className="fa fa-exclamation-triangle me-2" style={{color: '#ff6b35'}}></i>
                       Violations
                     </th>
                     <th style={{ padding: '16px 12px', textAlign: 'left', fontWeight: '600', color: '#232323', fontSize: '13px', border: 'none', verticalAlign: 'middle', whiteSpace: 'nowrap' }}>
@@ -176,7 +197,7 @@ export default function AssessmentResults() {
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
                       <td style={{ padding: '1rem', color: '#111827', fontWeight: '500' }}>
-                        {result.candidateId?.name || 'N/A'}
+                        {result.candidateId?.name || result.candidateId || 'N/A'}
                       </td>
                       <td style={{ padding: '1rem', color: '#6b7280' }}>
                         {result.candidateId?.email || 'N/A'}
@@ -213,16 +234,34 @@ export default function AssessmentResults() {
                         {new Date(result.endTime).toLocaleDateString()}
                       </td>
                       <td style={{ padding: '1rem' }}>
-                        <span style={{
-                          background: (Array.isArray(result.violations) && result.violations.length > 0) ? '#fef3c7' : '#f3f4f6',
-                          color: (Array.isArray(result.violations) && result.violations.length > 0) ? '#92400e' : '#6b7280',
-                          padding: '0.25rem 0.75rem',
-                          borderRadius: '9999px',
-                          fontSize: '0.875rem',
-                          fontWeight: '600'
-                        }}>
-                          {Array.isArray(result.violations) ? result.violations.length : 0}
-                        </span>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', maxWidth: '150px' }}>
+                          <span style={{
+                            background: (result.violations?.length > 0) ? '#fef3c7' : '#f3f4f6',
+                            color: (result.violations?.length > 0) ? '#92400e' : '#6b7280',
+                            padding: '0.25rem 0.75rem',
+                            borderRadius: '9999px',
+                            fontSize: '0.875rem',
+                            fontWeight: '600',
+                            display: 'inline-block',
+                            width: 'fit-content'
+                          }}>
+                            {result.violations ? result.violations.length : 0}
+                          </span>
+                          {result.violations && result.violations.length > 0 && (
+                            <small style={{ 
+                              color: '#6b7280', 
+                              fontSize: '0.75rem',
+                              lineHeight: '1.2',
+                              wordBreak: 'break-word'
+                            }}>
+                              {result.violations.map(v => {
+                                // Format violation types to be more readable
+                                const formattedType = v.type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                                return formattedType;
+                              }).join(', ')}
+                            </small>
+                          )}
+                        </div>
                       </td>
                       <td style={{ padding: '1rem' }}>
                         <button 
@@ -251,30 +290,69 @@ export default function AssessmentResults() {
                         </button>
                       </td>
                       <td style={{ padding: '1rem' }}>
-                        <button 
-                          style={{
-                            background: '#f97316',
-                            color: 'white',
-                            border: 'none',
-                            padding: '0.5rem 1rem',
-                            borderRadius: '0.5rem',
+                        {result.applicationId || (result.candidateId && result.jobId) ? (
+                          <button 
+                            style={{
+                              background: '#f97316',
+                              color: 'white',
+                              border: 'none',
+                              padding: '0.5rem 1rem',
+                              borderRadius: '0.5rem',
+                              fontSize: '0.875rem',
+                              fontWeight: '500',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onClick={async () => {
+                              let appId = typeof result.applicationId === 'object' ? result.applicationId._id : result.applicationId;
+                              
+                              // If no applicationId, try to find it using candidate and job info
+                              if (!appId && result.candidateId && result.jobId) {
+                                try {
+                                  const token = localStorage.getItem('employerToken');
+                                  const candidateId = typeof result.candidateId === 'object' ? result.candidateId._id : result.candidateId;
+                                  const jobId = typeof result.jobId === 'object' ? result.jobId._id : result.jobId;
+                                  
+                                  const response = await axios.get(`http://localhost:5000/api/employer/find-application?candidateId=${candidateId}&jobId=${jobId}`, {
+                                    headers: { Authorization: `Bearer ${token}` }
+                                  });
+                                  
+                                  if (response.data.success) {
+                                    appId = response.data.applicationId;
+                                  }
+                                } catch (error) {
+                                  console.error('Error finding application:', error);
+                                  alert('Could not find application details. Please try again.');
+                                  return;
+                                }
+                              }
+                              
+                              if (appId) {
+                                navigate(`/employer/emp-candidate-review/${appId}`);
+                              } else {
+                                alert('Application not found. Please contact support.');
+                              }
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background = '#ea580c';
+                              e.currentTarget.style.transform = 'translateY(-1px)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background = '#f97316';
+                              e.currentTarget.style.transform = 'translateY(0)';
+                            }}
+                          >
+                            View Details
+                          </button>
+                        ) : (
+                          <span style={{
+                            color: '#6b7280',
                             fontSize: '0.875rem',
-                            fontWeight: '500',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s ease'
-                          }}
-                          onClick={() => navigate(`/employer/emp-candidate-review/${result.applicationId || result._id}`)}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = '#ea580c';
-                            e.currentTarget.style.transform = 'translateY(-1px)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = '#f97316';
-                            e.currentTarget.style.transform = 'translateY(0)';
-                          }}
-                        >
-                          View Details
-                        </button>
+                            fontStyle: 'italic'
+                          }}>
+                            No application found
+                          </span>
+                        )}
                       </td>
                     </tr>
                   ))}

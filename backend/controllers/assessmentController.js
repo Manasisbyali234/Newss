@@ -307,6 +307,13 @@ exports.startAssessment = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Assessment ID, Job ID, and Application ID are required' });
     }
     
+    console.log(`Starting assessment for candidate ${req.user._id}:`, {
+      assessmentId,
+      jobId,
+      applicationId,
+      candidateId: req.user._id
+    });
+    
     // Check if already attempted
     let attempt = await AssessmentAttempt.findOne({
       assessmentId,
@@ -334,7 +341,22 @@ exports.startAssessment = async (req, res) => {
     });
     
     if (!application) {
-      return res.status(404).json({ success: false, message: 'Application not found' });
+      console.error('Application not found:', {
+        applicationId,
+        candidateId: req.user._id,
+        jobId,
+        assessmentId
+      });
+      return res.status(404).json({ success: false, message: 'Application not found. Please ensure you have applied for this job.' });
+    }
+    
+    // Verify the application is for the correct job
+    if (application.jobId.toString() !== jobId.toString()) {
+      console.error('Job ID mismatch:', {
+        applicationJobId: application.jobId.toString(),
+        providedJobId: jobId.toString()
+      });
+      return res.status(400).json({ success: false, message: 'Job ID mismatch. Please try again.' });
     }
     
     if (!attempt) {
@@ -346,7 +368,15 @@ exports.startAssessment = async (req, res) => {
         applicationId,
         totalMarks,
         answers: [],
-        violations: []
+        violations: [] // Explicitly initialize violations as empty array
+      });
+      
+      console.log('Created new assessment attempt:', {
+        attemptId: attempt._id,
+        candidateId: attempt.candidateId,
+        assessmentId: attempt.assessmentId,
+        applicationId: attempt.applicationId,
+        jobId: attempt.jobId
       });
     }
     
@@ -365,7 +395,7 @@ exports.startAssessment = async (req, res) => {
       assessmentAttemptId: attempt._id
     });
     
-    console.log(`Assessment started for candidate ${req.user._id}, attempt ${attempt._id}`);
+    console.log(`Assessment started successfully for candidate ${req.user._id}, attempt ${attempt._id}`);
     
     res.json({ 
       success: true, 
@@ -811,21 +841,54 @@ exports.getAssessmentResults = async (req, res) => {
     const results = await AssessmentAttempt.find({
       assessmentId: req.params.id,
       status: { $in: ['completed', 'expired'] }
-    }).populate('candidateId', 'name email phone').sort({ endTime: -1 });
+    }).populate('candidateId', 'name email phone')
+      .populate('applicationId')
+      .sort({ endTime: -1 });
     
-    // Ensure violations array exists for each result
-    const resultsWithViolations = results.map(r => ({
-      ...r,
-      violations: r.violations || []
-    }));
+    console.log('Raw assessment results:', results.length);
+    
+    // Ensure violations array exists for each result and convert to plain objects
+    const resultsWithViolations = results.map(r => {
+      const resultObj = r.toObject();
+      
+      // Debug logging for applicationId and violations
+      console.log('Processing result:', {
+        attemptId: resultObj._id,
+        applicationId: resultObj.applicationId?._id || resultObj.applicationId,
+        candidateName: resultObj.candidateId?.name || 'N/A',
+        violationsCount: resultObj.violations ? resultObj.violations.length : 0,
+        hasViolations: !!resultObj.violations
+      });
+      
+      return {
+        ...resultObj,
+        violations: Array.isArray(resultObj.violations) ? resultObj.violations : [],
+        // Ensure candidate data is available
+        candidateId: resultObj.candidateId || {
+          name: 'N/A',
+          email: 'N/A',
+          phone: 'N/A'
+        },
+        // Ensure applicationId is properly formatted
+        applicationId: resultObj.applicationId?._id || resultObj.applicationId || null
+      };
+    });
     
     console.log('Assessment results with violations:', resultsWithViolations.map(r => ({ 
       id: r._id, 
-      violations: r.violations.length 
+      violations: r.violations.length,
+      violationsArray: r.violations,
+      candidateName: r.candidateId?.name || 'N/A',
+      candidateEmail: r.candidateId?.email || 'N/A',
+      applicationId: r.applicationId
     })));
+    
+    console.log('Sending response with', resultsWithViolations.length, 'results');
+    console.log('Sample result structure:', JSON.stringify(resultsWithViolations[0], null, 2));
     
     res.json({ success: true, assessment, results: resultsWithViolations });
   } catch (error) {
+    console.error('Error fetching assessment results:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };

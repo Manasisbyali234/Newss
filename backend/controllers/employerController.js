@@ -1941,6 +1941,15 @@ exports.sendInterviewInvite = async (req, res) => {
     const { applicationId } = req.params;
     const { interviewDate, interviewTime, meetingLink, instructions } = req.body;
     
+    // Additional validation
+    if (!interviewDate || !interviewTime) {
+      return res.status(400).json({ success: false, message: 'Interview date and time are required' });
+    }
+    
+    if (!meetingLink || !meetingLink.trim()) {
+      return res.status(400).json({ success: false, message: 'Google Meet link is mandatory' });
+    }
+    
     const application = await Application.findOne({
       _id: applicationId,
       employerId: req.user._id
@@ -1959,6 +1968,9 @@ exports.sendInterviewInvite = async (req, res) => {
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
+      },
+      tls: {
+        rejectUnauthorized: false
       }
     });
     
@@ -1979,7 +1991,9 @@ exports.sendInterviewInvite = async (req, res) => {
       `
     };
     
-    await transporter.sendMail(mailOptions);
+    console.log('Attempting to send interview invite email to:', application.candidateId.email);
+    const emailResult = await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully:', emailResult.messageId);
     
     // Save interview invite details to application
     await Application.findByIdAndUpdate(applicationId, {
@@ -1996,7 +2010,19 @@ exports.sendInterviewInvite = async (req, res) => {
     res.json({ success: true, message: 'Interview invite sent successfully' });
   } catch (error) {
     console.error('Send interview invite error:', error);
-    res.status(500).json({ success: false, message: error.message });
+    
+    // Provide more specific error messages
+    if (error.code === 'EAUTH') {
+      return res.status(500).json({ success: false, message: 'Email authentication failed. Please check email configuration.' });
+    }
+    if (error.code === 'ECONNECTION') {
+      return res.status(500).json({ success: false, message: 'Failed to connect to email server. Please try again later.' });
+    }
+    if (error.message && error.message.includes('Invalid login')) {
+      return res.status(500).json({ success: false, message: 'Email service authentication failed.' });
+    }
+    
+    res.status(500).json({ success: false, message: error.message || 'Failed to send interview invite. Please try again.' });
   }
 };
 
@@ -2101,6 +2127,32 @@ exports.getInterviewResponse = async (req, res) => {
       candidateResponse: application.candidateResponse 
     });
   } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Find application by candidate and job (fallback for missing applicationId)
+exports.findApplicationByCandidateAndJob = async (req, res) => {
+  try {
+    const { candidateId, jobId } = req.query;
+    
+    if (!candidateId || !jobId) {
+      return res.status(400).json({ success: false, message: 'Candidate ID and Job ID are required' });
+    }
+    
+    const application = await Application.findOne({
+      candidateId,
+      jobId,
+      employerId: req.user._id
+    });
+    
+    if (!application) {
+      return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+    
+    res.json({ success: true, applicationId: application._id });
+  } catch (error) {
+    console.error('Error finding application:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
