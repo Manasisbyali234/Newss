@@ -117,6 +117,21 @@ export const api = {
     }).then((res) => res.json());
   },
 
+  // Work Location Preferences APIs
+  getWorkLocationPreferences: () => {
+    return fetch(`${API_BASE_URL}/candidate/work-location-preferences`, {
+      headers: getAuthHeaders('candidate'),
+    }).then(handleApiResponse);
+  },
+
+  updateWorkLocationPreferences: (data) => {
+    return fetch(`${API_BASE_URL}/candidate/work-location-preferences`, {
+      method: 'PUT',
+      headers: getAuthHeaders('candidate'),
+      body: JSON.stringify(data),
+    }).then(handleApiResponse);
+  },
+
   getCandidateDashboard: () => {
     return fetch(`${API_BASE_URL}/candidate/dashboard`, {
       headers: getAuthHeaders('candidate'),

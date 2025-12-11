@@ -6,32 +6,48 @@ import './admin-search-styles.css';
 import SearchBar from '../../../../components/SearchBar';
 import PlacementNavigationButtons from './PlacementNavigationButtons';
 
-function AdminPlacementOfficersApproved() {
+function AdminExcelUploads() {
     const navigate = useNavigate();
-    const [placements, setPlacements] = useState([]);
-    const [filteredPlacements, setFilteredPlacements] = useState([]);
+    const [excelUploads, setExcelUploads] = useState([]);
+    const [filteredUploads, setFilteredUploads] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
     useEffect(() => {
-        fetchApprovedPlacements();
+        fetchExcelUploads();
     }, []);
 
-    const fetchApprovedPlacements = async () => {
+    const fetchExcelUploads = async () => {
         try {
             setLoading(true);
             const response = await api.getAllPlacements();
             if (response.success) {
-                const approvedPlacements = response.data.filter(placement => 
-                    placement.status === 'active' || placement.isApproved
-                );
-                setPlacements(approvedPlacements);
-                setFilteredPlacements(approvedPlacements);
+                // Get all placements and show only those who uploaded files
+                const placementsWithUploads = [];
+                response.data.forEach(placement => {
+                    const hasUploads = placement.fileHistory && placement.fileHistory.length > 0;
+                    placementsWithUploads.push({
+                        _id: placement._id,
+                        collegeName: placement.collegeName,
+                        name: placement.name,
+                        email: placement.email,
+                        phone: placement.phone || 'N/A',
+                        joinDate: placement.createdAt,
+                        status: hasUploads ? 'Uploaded' : 'Not Uploaded',
+                        approvedBy: placement.approvedBy,
+                        approvedByModel: placement.approvedByModel,
+                        hasUploads: hasUploads,
+                        placementId: placement._id
+                    });
+                });
+                
+                setExcelUploads(placementsWithUploads);
+                setFilteredUploads(placementsWithUploads);
             } else {
-                setError(response.message || 'Failed to fetch placement officers');
+                setError(response.message || 'Failed to fetch Excel uploads');
             }
         } catch (error) {
-            setError('Error fetching placement officers');
+            setError('Error fetching Excel uploads');
         } finally {
             setLoading(false);
         }
@@ -39,20 +55,30 @@ function AdminPlacementOfficersApproved() {
 
     const handleSearch = (searchTerm) => {
         if (!searchTerm.trim()) {
-            setFilteredPlacements(placements);
+            setFilteredUploads(excelUploads);
             return;
         }
         
-        const filtered = placements.filter(placement => 
-            placement.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            placement.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            placement.phone?.includes(searchTerm)
+        const filtered = excelUploads.filter(upload => 
+            upload.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            upload.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            upload.collegeName?.toLowerCase().includes(searchTerm.toLowerCase())
         );
-        setFilteredPlacements(filtered);
+        setFilteredUploads(filtered);
     };
 
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString();
+    };
+
+    const getStatusBadge = (status) => {
+        const statusMap = {
+            'Uploaded': { class: 'status-approved', text: 'Uploaded' },
+            'Not Uploaded': { class: 'status-rejected', text: 'Not Uploaded' }
+        };
+        
+        const statusInfo = statusMap[status] || { class: 'status-pending', text: 'Unknown' };
+        return <span className={`status-badge ${statusInfo.class}`}>{statusInfo.text}</span>;
     };
 
     if (loading) {
@@ -66,8 +92,8 @@ function AdminPlacementOfficersApproved() {
     return (
         <div className="dashboard-content">
             <div className="wt-admin-right-page-header">
-                <h2>Approved Placement Officers</h2>
-                <p>View and manage approved placement officer accounts</p>
+                <h2>Excel Uploads</h2>
+                <p>View and manage all Excel file uploads from placement officers</p>
             </div>
             
             <PlacementNavigationButtons />
@@ -75,14 +101,14 @@ function AdminPlacementOfficersApproved() {
             <div className="panel panel-default site-bg-white">
                 <div className="panel-heading wt-panel-heading p-a20">
                     <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap', gap: '15px', width: '100%'}}>
-                        <h4 className="panel-tittle m-a0" style={{marginRight: 'auto'}}>Approved Placement Officers ({filteredPlacements.length})</h4>
+                        <h4 className="panel-tittle m-a0" style={{marginRight: 'auto'}}>Excel Uploads ({filteredUploads.length})</h4>
                         <div className="search-section" style={{marginLeft: 'auto'}}>
                             <label className="search-label">
-                                <i className="fa fa-filter"></i> Search by Name or Email
+                                <i className="fa fa-filter"></i> Search by Name, Email, or College
                             </label>
                             <SearchBar 
                                 onSearch={handleSearch}
-                                placeholder="Search approved placement officers..."
+                                placeholder="Search Excel uploads..."
                                 className="placement-search"
                             />
                         </div>
@@ -109,32 +135,32 @@ function AdminPlacementOfficersApproved() {
                             </thead>
 
                             <tbody>
-                                {filteredPlacements.length === 0 ? (
+                                {filteredUploads.length === 0 ? (
                                     <tr>
                                         <td colSpan="8" className="text-center" style={{padding: '40px', fontSize: '1rem', color: '#6c757d'}}>
-                                            <i className="fa fa-check-circle" style={{fontSize: '2rem', marginBottom: '10px', display: 'block', color: '#dee2e6'}}></i>
-                                            No approved placement officers found
+                                            <i className="fa fa-file-excel-o" style={{fontSize: '2rem', marginBottom: '10px', display: 'block', color: '#dee2e6'}}></i>
+                                            No placement officers found
                                         </td>
                                     </tr>
                                 ) : (
-                                    filteredPlacements.map((placement) => (
-                                        <tr key={placement._id}>
-                                            <td style={{textAlign: 'center', fontSize: '0.9rem'}}>{placement.collegeName || 'N/A'}</td>
+                                    filteredUploads.map((upload) => (
+                                        <tr key={upload._id}>
+                                            <td style={{textAlign: 'center', fontSize: '0.9rem'}}>{upload.collegeName || 'N/A'}</td>
                                             <td style={{textAlign: 'center'}}>
                                                 <span className="company-name">
-                                                    {placement.name}
+                                                    {upload.name}
                                                 </span>
                                             </td>
-                                            <td style={{textAlign: 'center', fontFamily: 'monospace', fontSize: '0.85rem'}}>{placement.email}</td>
-                                            <td style={{textAlign: 'center', fontFamily: 'monospace', fontSize: '0.85rem'}}>{placement.phone || 'N/A'}</td>
-                                            <td style={{textAlign: 'center', fontSize: '0.85rem'}}>{formatDate(placement.createdAt)}</td>
+                                            <td style={{textAlign: 'center', fontFamily: 'monospace', fontSize: '0.85rem'}}>{upload.email}</td>
+                                            <td style={{textAlign: 'center', fontFamily: 'monospace', fontSize: '0.85rem'}}>{upload.phone}</td>
+                                            <td style={{textAlign: 'center', fontSize: '0.85rem'}}>{formatDate(upload.joinDate)}</td>
                                             <td style={{textAlign: 'center'}}>
-                                                <span className="status-badge status-approved">Approved</span>
+                                                {getStatusBadge(upload.status)}
                                             </td>
                                             <td style={{textAlign: 'center'}}>
                                                 {(() => {
-                                                    const approverName = placement.approvedBy?.name || placement.approvedBy?.username || null;
-                                                    const approverType = placement.approvedByModel || 'Admin';
+                                                    const approverName = upload.approvedBy?.name || upload.approvedBy?.username || null;
+                                                    const approverType = upload.approvedByModel || 'Admin';
                                                     const displayText = approverName || approverType;
                                                     
                                                     return (
@@ -154,8 +180,8 @@ function AdminPlacementOfficersApproved() {
                                             <td style={{textAlign: 'center'}}>
                                                 <button
                                                     className="action-btn btn-view"
-                                                    onClick={() => navigate(`/admin/placement-details/${placement._id}`, {
-                                                        state: { from: '/admin/admin-placement-approved' }
+                                                    onClick={() => navigate(`/admin/placement-details/${upload.placementId}`, {
+                                                        state: { from: '/admin/excel-uploads' }
                                                     })}
                                                 >
                                                     <i className="fa fa-eye"></i>
@@ -174,4 +200,4 @@ function AdminPlacementOfficersApproved() {
     );
 }
 
-export default AdminPlacementOfficersApproved;
+export default AdminExcelUploads;

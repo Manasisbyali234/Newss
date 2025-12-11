@@ -970,12 +970,31 @@ function CanStatusPage() {
 																		<div style={{fontSize: '14px', lineHeight: '1.5', color: '#495057'}}>{roundDetails.description}</div>
 																	</div>
 																)}
-																{roundDetails.employerRemarks && (
-																	<div className="mb-3 p-2" style={{backgroundColor: '#fff3e0', borderRadius: '6px', border: '1px solid #ffe0b3'}}>
-																		<small className="text-muted d-block mb-1"><i className="fa fa-comment me-1" style={{color: '#ff6b35'}}></i><strong>Employer Remarks:</strong></small>
-																		<div style={{fontSize: '14px', lineHeight: '1.5', color: '#495057'}}>{roundDetails.employerRemarks}</div>
-																	</div>
-																)}
+																{(() => {
+																	const process = selectedApplication.interviewProcesses?.find(p => p.type === (typeof round === 'object' ? round.roundType : round.toLowerCase()));
+																	const processRemarks = process?.id ? selectedApplication.processRemarks?.[process.id] : null;
+																	const remarks = roundDetails?.employerRemarks || processRemarks;
+																	const statusColors = {shortlisted: '#6f42c1', under_review: '#fd7e14', interview_scheduled: '#0dcaf0', interview_completed: '#198754', selected: '#198754', rejected: '#dc3545', on_hold: '#6c757d'};
+																	const statusLabels = {shortlisted: 'Shortlisted', under_review: 'Under Review', interview_scheduled: 'Interview Scheduled', interview_completed: 'Interview Completed', selected: 'Selected', rejected: 'Rejected', on_hold: 'On Hold'};
+																	return (
+																		<>
+																			{process?.status && (
+																				<div className="mb-3 p-2" style={{backgroundColor: '#f8f9fa', borderRadius: '6px', border: '1px solid #e9ecef'}}>
+																					<small className="text-muted d-block mb-1"><i className="fa fa-flag me-1" style={{color: '#ff6b35'}}></i><strong>Current Status:</strong></small>
+																					<span className="badge" style={{fontSize: '12px', padding: '4px 8px', backgroundColor: statusColors[process.status] || '#6c757d', color: 'white', border: 'none'}}>
+																						{statusLabels[process.status] || process.status}
+																					</span>
+																				</div>
+																			)}
+																			{remarks && (
+																				<div className="mb-3 p-2" style={{backgroundColor: '#fff3e0', borderRadius: '6px', border: '1px solid #ffe0b3'}}>
+																					<small className="text-muted d-block mb-1"><i className="fa fa-comment me-1" style={{color: '#ff6b35'}}></i><strong>Employer Remarks:</strong></small>
+																					<div style={{fontSize: '14px', lineHeight: '1.5', color: '#495057'}}>{remarks}</div>
+																				</div>
+																			)}
+																		</>
+																	);
+																})()}
 																{(roundDetails.fromDate || roundDetails.toDate) && (
 																	<div className="mb-2">
 																		<small className="text-muted"><i className="fa fa-calendar me-1"></i>Interview Period:</small>

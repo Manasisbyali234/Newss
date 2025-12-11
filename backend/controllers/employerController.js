@@ -1480,7 +1480,7 @@ exports.getApplicationDetails = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Application not found' });
     }
 
-    // Get candidate profile data
+    // Get candidate profile data with job preferences
     const candidateProfile = await CandidateProfile.findOne({ candidateId: application.candidateId._id });
     
     // Get assessment attempt details if job has assessment
@@ -1531,32 +1531,7 @@ exports.getConsultantCompanies = async (req, res) => {
   }
 };
 
-exports.saveInterviewReview = async (req, res) => {
-  try {
-    const { applicationId } = req.params;
-    const { interviewRounds, remarks, isSelected } = req.body;
-    
-    const application = await Application.findOneAndUpdate(
-      { _id: applicationId, employerId: req.user._id },
-      { 
-        interviewRounds,
-        employerRemarks: remarks,
-        isSelectedForProcess: isSelected,
-        reviewedAt: new Date()
-      },
-      { new: true }
-    ).populate('candidateId', 'name email')
-    .populate('jobId', 'title');
-    
-    if (!application) {
-      return res.status(404).json({ success: false, message: 'Application not found' });
-    }
-    
-    res.json({ success: true, message: 'Interview review saved successfully', application });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
+
 
 exports.getProfileCompletion = async (req, res) => {
   try {
@@ -2204,5 +2179,42 @@ exports.saveInterviewReview = async (req, res) => {
   } catch (error) {
     console.error('Error saving interview review:', error);
     res.status(500).json({ success: false, message: error.message, details: error.toString() });
+  }
+};
+
+// Get interview process status and remarks for an application
+exports.getInterviewProcessStatus = async (req, res) => {
+  try {
+    const { applicationId } = req.params;
+    
+    const application = await Application.findOne({
+      _id: applicationId,
+      employerId: req.user._id
+    }).select('interviewProcesses processRemarks employerRemarks reviewedAt');
+    
+    if (!application) {
+      return res.status(404).json({ success: false, message: 'Application not found' });
+    }
+    
+    // Convert processRemarks Map to plain object for JSON response
+    const processRemarksObj = {};
+    if (application.processRemarks) {
+      for (const [key, value] of application.processRemarks.entries()) {
+        processRemarksObj[key] = value;
+      }
+    }
+    
+    res.json({ 
+      success: true, 
+      data: {
+        interviewProcesses: application.interviewProcesses || [],
+        processRemarks: processRemarksObj,
+        employerRemarks: application.employerRemarks || '',
+        reviewedAt: application.reviewedAt
+      }
+    });
+  } catch (error) {
+    console.error('Error getting interview process status:', error);
+    res.status(500).json({ success: false, message: error.message });
   }
 };

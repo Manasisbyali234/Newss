@@ -3,6 +3,7 @@ import SectionCanAccomplishments from "../sections/resume/section-can-accomplish
 import SectionCanAttachment from "../sections/resume/section-can-attachment";
 import SectionCanDesiredProfile from "../sections/resume/section-can-desired-profile";
 import SectionCanEducation from "../sections/resume/section-can-education";
+import SectionCanWorkLocation from "../sections/resume/section-can-work-location";
 import SectionCanEmployment from "../sections/resume/section-can-employment";
 import SectionCanITSkills from "../sections/resume/section-can-itskills";
 import SectionCanKeySkills from "../sections/resume/section-can-keyskills";
@@ -127,6 +128,10 @@ function CanMyResumePage() {
 
 									<div className="panel panel-default mb-4">
 										<SectionCanEducation profile={profile} />
+									</div>
+
+									<div className="panel panel-default mb-4">
+										<SectionCanWorkLocation profile={profile} onUpdate={handleProfileUpdate} />
 									</div>
 
 									<div className="panel panel-default mb-4">

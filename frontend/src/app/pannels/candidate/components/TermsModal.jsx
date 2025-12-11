@@ -40,7 +40,7 @@ const TermsModal = ({ isOpen, onAccept, onDecline, assessment }) => {
                                 <h6 style={{ color: '#2c3e50', fontWeight: '600', marginBottom: '12px', display: 'flex', alignItems: 'center' }}>
                                     <span style={{ marginRight: '8px' }}>🔒</span> Assessment Integrity
                                 </h6>
-                                <ul style={{ paddingLeft: '24px', margin: '0', color: '#495057', lineHeight: '1.8' }}>
+                                <ul style={{ paddingLeft: '24px', margin: '0', color: '#f72d12ff', lineHeight: '1.8' }}>
                                     <li style={{ marginBottom: '8px' }}>You must complete the assessment in one continuous session</li>
                                     <li style={{ marginBottom: '8px' }}>Switching browser tabs will result in immediate termination</li>
                                     <li style={{ marginBottom: '8px' }}>Minimizing the browser window will result in immediate termination</li>

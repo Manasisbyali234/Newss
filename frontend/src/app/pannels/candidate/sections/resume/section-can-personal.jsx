@@ -410,6 +410,24 @@ function SectionCanPersonalDetail({ profile }) {
                             </div>
 
                             <div className="col-12 col-md-6 mb-3">
+                                <label><i className="fa fa-map-pin me-1"></i> Pincode *</label>
+                                <input
+                                    className={`form-control ${errors.pincode ? 'is-invalid' : ''}`}
+                                    type="text"
+                                    placeholder="Enter 6-digit pincode"
+                                    value={formData.pincode}
+                                    onChange={(e) => {
+                                        handleInputChange('pincode', e.target.value);
+                                        validateField('pincode', e.target.value);
+                                    }}
+                                    maxLength="6"
+                                    pattern="[0-9]{6}"
+                                    required
+                                />
+                                {errors.pincode && <div className="text-danger mt-1"><small>{errors.pincode}</small></div>}
+                            </div>
+
+                            <div className="col-12 col-md-6 mb-3">
                                 <label><i className="fa fa-map-marker me-1"></i> Location *</label>
                                 <input
                                     className={`form-control ${errors.location ? 'is-invalid' : ''}`}
@@ -437,24 +455,6 @@ function SectionCanPersonalDetail({ profile }) {
                                         <option key={index} value={state.code}>{state.code} - {state.name}</option>
                                     ))}
                                 </select>
-                            </div>
-
-                            <div className="col-12 col-md-6 mb-3">
-                                <label><i className="fa fa-map-pin me-1"></i> Pincode *</label>
-                                <input
-                                    className={`form-control ${errors.pincode ? 'is-invalid' : ''}`}
-                                    type="text"
-                                    placeholder="Enter 6-digit pincode"
-                                    value={formData.pincode}
-                                    onChange={(e) => {
-                                        handleInputChange('pincode', e.target.value);
-                                        validateField('pincode', e.target.value);
-                                    }}
-                                    maxLength="6"
-                                    pattern="[0-9]{6}"
-                                    required
-                                />
-                                {errors.pincode && <div className="text-danger mt-1"><small>{errors.pincode}</small></div>}
                             </div>
                             <div className="col-12 col-md-6 mb-3">
                                 <label><i className="fa fa-calendar me-1"></i> Date of Birth *</label>

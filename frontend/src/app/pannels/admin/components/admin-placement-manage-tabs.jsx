@@ -95,32 +95,21 @@ function AdminPlacementOfficersTabs() {
 
             <div className="panel panel-default site-bg-white">
                 <div className="panel-heading wt-panel-heading p-a20">
-                    <div className="placement-tabs" style={{display: 'flex', gap: '10px', marginBottom: '20px', borderBottom: '2px solid #e0e0e0'}}>
-                        <button 
-                            className={`tab-btn ${activeTab === 'pending' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('pending')}
-                            style={{padding: '10px 20px', border: 'none', background: activeTab === 'pending' ? '#fd7e14' : 'transparent', color: activeTab === 'pending' ? 'white' : '#666', cursor: 'pointer', borderRadius: '4px 4px 0 0', fontWeight: '600'}}
-                        >
-                            Pending Approvals
-                        </button>
-                        <button 
-                            className={`tab-btn ${activeTab === 'approved' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('approved')}
-                            style={{padding: '10px 20px', border: 'none', background: activeTab === 'approved' ? '#fd7e14' : 'transparent', color: activeTab === 'approved' ? 'white' : '#666', cursor: 'pointer', borderRadius: '4px 4px 0 0', fontWeight: '600'}}
-                        >
-                            Approved Officers
-                        </button>
-                        <button 
-                            className={`tab-btn ${activeTab === 'uploads' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('uploads')}
-                            style={{padding: '10px 20px', border: 'none', background: activeTab === 'uploads' ? '#fd7e14' : 'transparent', color: activeTab === 'uploads' ? 'white' : '#666', cursor: 'pointer', borderRadius: '4px 4px 0 0', fontWeight: '600'}}
-                        >
-                            Excel Uploads
-                        </button>
-                    </div>
-                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                        <h4 className="panel-tittle m-a0">{activeTab === 'pending' ? 'Pending' : activeTab === 'approved' ? 'Approved' : 'Excel Uploads'} ({filteredPlacements.length})</h4>
-                        <SearchBar onSearch={handleSearch} placeholder="Search..." />
+
+
+
+                    <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap', gap: '15px', width: '100%'}}>
+                        <h4 className="panel-tittle m-a0" style={{marginRight: 'auto'}}>Placement Officers ({filteredPlacements.length})</h4>
+                        <div className="search-section" style={{marginLeft: 'auto'}}>
+                            <label className="search-label">
+                                <i className="fa fa-filter"></i> Search by Name or Email
+                            </label>
+                            <SearchBar 
+                                onSearch={handleSearch}
+                                placeholder="Search placement officers..."
+                                className="placement-search"
+                            />
+                        </div>
                     </div>
                 </div>
 

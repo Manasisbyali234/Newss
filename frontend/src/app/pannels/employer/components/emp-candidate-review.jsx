@@ -644,12 +644,7 @@ function EmpCandidateReviewPage () {
 													</div>
 												</div>
 											)}
-											{application.assessmentAttempt.startTime && application.assessmentAttempt.endTime && (
-												<div className="col-md-6">
-													<small className="text-muted d-block">Time Taken:</small>
-													<div className="fw-semibold">{Math.round((new Date(application.assessmentAttempt.endTime) - new Date(application.assessmentAttempt.startTime)) / (1000 * 60))} minutes</div>
-												</div>
-											)}
+
 											{application.assessmentAttempt.violations && application.assessmentAttempt.violations.length > 0 && (
 												<div className="col-md-6">
 													<small className="text-muted d-block">Violations:</small>
@@ -1191,12 +1186,64 @@ function EmpCandidateReviewPage () {
 														</div>
 													)}
 
+													{/* Status Dropdown */}
+													<div style={{display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '8px'}}>
+														<label className="form-label fw-semibold" style={{fontSize: '0.75rem', color: '#2c3e50', marginBottom: '0'}}>
+															<i className="fa fa-list me-2" style={{color: '#ff6600'}}></i>
+															Status
+														</label>
+														<select
+															className="form-select"
+															value={process.status || 'pending'}
+															onChange={(e) => {
+																const newStatus = e.target.value;
+																setInterviewProcesses(prev => 
+																	prev.map(p => p.id === process.id ? { ...p, status: newStatus } : p)
+																);
+															}}
+															style={{
+																borderColor: process.isCompleted ? '#28a745' : '#ff6600',
+																fontSize: '0.75rem',
+																borderWidth: '1.5px',
+																padding: '6px 8px'
+															}}
+														>
+															<option value="shortlisted">Shortlisted</option>
+															<option value="under_review">Under Review</option>
+															<option value="interview_scheduled">Interview Scheduled</option>
+															<option value="interview_completed">Interview Completed</option>
+															<option value="selected">Selected</option>
+															<option value="rejected">Rejected</option>
+															<option value="on_hold">On Hold</option>
+														</select>
+													</div>
+
 													{/* Remarks Input */}
 													<div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
-														<label className="form-label fw-semibold" style={{fontSize: '0.75rem', color: '#2c3e50', marginBottom: '0'}}>
-															<i className="fa fa-comment-o me-2" style={{color: '#ff6600'}}></i>
-															Remarks
-														</label>
+														<div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0'}}>
+															<label className="form-label fw-semibold" style={{fontSize: '0.75rem', color: '#2c3e50', marginBottom: '0'}}>
+																<i className="fa fa-comment-o me-2" style={{color: '#ff6600'}}></i>
+																Remarks
+															</label>
+															{processRemarks[process.id] && (
+																<button
+																	type="button"
+																	className="btn btn-sm"
+																	onClick={() => updateProcessRemark(process.id, '')}
+																	style={{
+																		backgroundColor: 'transparent',
+																		color: '#dc3545',
+																		border: '1px solid #dc3545',
+																		borderRadius: '4px',
+																		padding: '2px 6px',
+																		fontSize: '0.65rem'
+																	}}
+																	title="Remove remarks"
+																>
+																	<i className="fa fa-trash" style={{fontSize: '0.6rem'}}></i>
+																</button>
+															)}
+														</div>
 														<textarea
 															className="form-control"
 															rows="2"
@@ -1265,6 +1312,28 @@ function EmpCandidateReviewPage () {
 						</div>
 					)}
 
+					{/* Desired Work Location */}
+					{candidate.jobPreferences?.preferredLocations?.length > 0 && (
+						<div className="card border-0 shadow-sm mb-4" style={{borderRadius: '15px'}}>
+							<div className="card-header border-0" style={{background: '#f8f9fa', borderRadius: '15px 15px 0 0'}}>
+								<h5 className="mb-0 d-flex align-items-center gap-2 fw-bold" style={{color: '#000'}}>
+									<MapPin size={22} />
+									Desired Work Location
+								</h5>
+							</div>
+							<div className="card-body p-4">
+								<div className="mb-3">
+									<h6 className="fw-bold mb-3" style={{color: '#2c3e50'}}>Preferred Locations</h6>
+									<div className="d-flex flex-wrap gap-2">
+										{candidate.jobPreferences.preferredLocations.map((location, index) => (
+											<span key={index} className="badge px-3 py-2 rounded-pill" style={{backgroundColor: '#ff6600', color: 'white', fontSize: '0.85rem', fontWeight: '500'}}>{location}</span>
+										))}
+									</div>
+								</div>
+							</div>
+						</div>
+					)}
+
 					{/* Skills & Summary */}
 					{(candidate.skills?.length > 0 || candidate.profileSummary) && (
 						<div className="card border-0 shadow-sm mb-4" style={{borderRadius: '15px'}}>
@@ -1291,6 +1360,59 @@ function EmpCandidateReviewPage () {
 										<p className="text-muted" style={{ wordBreak: 'break-word', overflowWrap: 'anywhere', whiteSpace: 'pre-wrap' }}>{candidate.profileSummary}</p>
 									</div>
 								)}
+							</div>
+						</div>
+					)}
+
+					{/* Present Employment */}
+					{candidate.employment?.length > 0 && (
+						<div className="card border-0 shadow-sm mb-4" style={{borderRadius: '15px'}}>
+							<div className="card-header border-0" style={{background: '#f8f9fa', borderRadius: '15px 15px 0 0'}}>
+								<h5 className="mb-0 d-flex align-items-center gap-2 fw-bold" style={{color: '#000'}}>
+									<Briefcase size={22} />
+									Present Employment
+								</h5>
+							</div>
+							<div className="card-body p-4">
+								{candidate.employment.map((emp, index) => (
+									<div key={index} className="border rounded-3 p-3 mb-3" style={{backgroundColor: emp.isCurrent ? '#f0f8f0' : '#f8f9fa'}}>
+										<div className="d-flex justify-content-between align-items-start mb-2">
+											<h6 className="fw-bold mb-1" style={{color: '#2c3e50'}}>{emp.designation}</h6>
+											{emp.isCurrent && <span className="badge bg-success">Current</span>}
+										</div>
+										<p className="mb-2 fw-semibold" style={{color: '#ff6600'}}>{emp.organization}</p>
+										<div className="row g-3">
+											<div className="col-md-6">
+												<small className="text-muted d-block">Duration:</small>
+												<div>{emp.startDate ? new Date(emp.startDate).toLocaleDateString() : 'N/A'} - {emp.isCurrent ? 'Present' : (emp.endDate ? new Date(emp.endDate).toLocaleDateString() : 'N/A')}</div>
+											</div>
+											{emp.workType && (
+												<div className="col-md-6">
+													<small className="text-muted d-block">Work Type:</small>
+													<div>{emp.workType}</div>
+												</div>
+											)}
+											{emp.presentCTC && (
+												<div className="col-md-6">
+													<small className="text-muted d-block">Present CTC:</small>
+													<div>{emp.presentCTC}</div>
+												</div>
+											)}
+											{emp.expectedCTC && (
+												<div className="col-md-6">
+													<small className="text-muted d-block">Expected CTC:</small>
+													<div>{emp.expectedCTC}</div>
+												</div>
+											)}
+										</div>
+										{emp.description && (
+											<div className="mt-3">
+												<small className="text-muted d-block">Description:</small>
+												<p className="mb-0 text-muted" style={{fontSize: '0.9rem'}}>{emp.description}</p>
+											</div>
+										)}
+									</div>
+								))}
 							</div>
 						</div>
 					)}

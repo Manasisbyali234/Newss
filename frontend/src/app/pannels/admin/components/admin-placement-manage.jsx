@@ -4,6 +4,7 @@ import { api } from '../../../../utils/api';
 import './admin-emp-manage-styles.css';
 import './admin-search-styles.css';
 import SearchBar from '../../../../components/SearchBar';
+import PlacementNavigationButtons from './PlacementNavigationButtons';
 
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
 function AdminPlacementOfficersAllRequest() {
@@ -102,6 +103,8 @@ function AdminPlacementOfficersAllRequest() {
                 <h2>Placement Officers Management</h2>
                 <p>Manage and review placement officer applications</p>
             </div>
+            
+            <PlacementNavigationButtons />
 
             <div className="panel panel-default site-bg-white">
                 <div className="panel-heading wt-panel-heading p-a20">

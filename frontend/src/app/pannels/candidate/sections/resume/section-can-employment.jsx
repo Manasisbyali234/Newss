@@ -2,6 +2,7 @@ import { useEffect, useState, memo } from "react";
 import { createPortal } from "react-dom";
 import { api } from "../../../../../utils/api";
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
+import './employment-card-styles.css';
 
 function SectionCanEmployment({ profile }) {
     const modalId = 'EmploymentModal';
@@ -13,7 +14,10 @@ function SectionCanEmployment({ profile }) {
             isCurrent: false,
             startDate: '',
             endDate: '',
-            description: ''
+            description: '',
+            workType: '',
+            presentCTC: '',
+            expectedCTC: ''
         };
     });
     const [totalExperience, setTotalExperience] = useState(() => {
@@ -22,11 +26,37 @@ function SectionCanEmployment({ profile }) {
     const [loading, setLoading] = useState(false);
     const [employment, setEmployment] = useState([]);
     const [errors, setErrors] = useState({});
+    const [editingIndex, setEditingIndex] = useState(null);
 
     const clearForm = () => {
-        const resetFormData = { designation: '', organization: '', isCurrent: false, startDate: '', endDate: '', description: '' };
+        const resetFormData = { designation: '', organization: '', isCurrent: false, startDate: '', endDate: '', description: '', workType: '', presentCTC: '', expectedCTC: '' };
         setFormData(resetFormData);
         localStorage.removeItem('employmentFormData');
+        setErrors({});
+        setEditingIndex(null);
+    };
+
+    const handleEdit = (index) => {
+        const emp = employment[index];
+        // Format dates for input fields (YYYY-MM-DD)
+        const formatDateForInput = (dateStr) => {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toISOString().split('T')[0];
+        };
+        
+        setFormData({
+            designation: emp.designation || '',
+            organization: emp.organization || '',
+            isCurrent: emp.isCurrent || false,
+            startDate: formatDateForInput(emp.startDate),
+            endDate: formatDateForInput(emp.endDate),
+            description: emp.description || '',
+            workType: emp.workType || '',
+            presentCTC: emp.presentCTC || '',
+            expectedCTC: emp.expectedCTC || ''
+        });
+        setEditingIndex(index);
         setErrors({});
     };
 
@@ -125,8 +155,52 @@ function SectionCanEmployment({ profile }) {
             }
         }
 
+        if (!formData.workType) {
+            newErrors.workType = 'Work type is required';
+        }
+
+        if (formData.presentCTC && formData.presentCTC.trim()) {
+            const ctcValue = parseFloat(formData.presentCTC.trim());
+            if (isNaN(ctcValue) || ctcValue < 0) {
+                newErrors.presentCTC = 'Present CTC must be a valid positive number';
+            } else if (ctcValue > 10000) {
+                newErrors.presentCTC = 'Present CTC seems too high. Please check the value.';
+            }
+        }
+
+        if (!formData.expectedCTC || !formData.expectedCTC.trim()) {
+            newErrors.expectedCTC = 'Expected CTC is required';
+        } else {
+            const ctcValue = parseFloat(formData.expectedCTC.trim());
+            if (isNaN(ctcValue) || ctcValue < 0) {
+                newErrors.expectedCTC = 'Expected CTC must be a valid positive number';
+            } else if (ctcValue > 10000) {
+                newErrors.expectedCTC = 'Expected CTC seems too high. Please check the value.';
+            }
+        }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
+    };
+
+    const handleDelete = async (indexToDelete) => {
+        try {
+            const updatedEmployment = employment.filter((_, index) => index !== indexToDelete);
+            const updateData = { employment: updatedEmployment };
+            
+            const response = await api.updateCandidateProfile(updateData);
+            
+            if (response && (response.success || response.candidate)) {
+                setEmployment(updatedEmployment);
+                showSuccess('Employment deleted successfully!');
+                window.dispatchEvent(new CustomEvent('profileUpdated'));
+            } else {
+                const errorMsg = response?.message || response?.error || 'Unknown error occurred';
+                showError(`Failed to delete employment: ${errorMsg}`);
+            }
+        } catch (error) {
+            showError(`Failed to delete employment: ${error.message || 'Please check your connection and try again.'}`);
+        }
     };
 
     const handleSave = async () => {
@@ -159,22 +233,33 @@ function SectionCanEmployment({ profile }) {
                 return;
             }
             
-            if (!totalExperience?.trim() || !formData.designation?.trim() || !formData.organization?.trim() || !formData.startDate) {
-                showPopup('Please fill in all required fields (Total Experience, Designation, Organization, Start Date)', 'warning');
+            // Re-validate before saving
+            if (!validateForm()) {
                 setLoading(false);
                 return;
             }
             
-            const newEmploymentEntry = {
+            const employmentEntry = {
                 designation: formData.designation.trim(),
                 organization: formData.organization.trim(),
                 isCurrent: Boolean(formData.isCurrent),
                 startDate: formData.startDate,
                 endDate: formData.isCurrent ? null : (formData.endDate || null),
-                description: formData.description ? formData.description.trim() : ''
+                description: formData.description ? formData.description.trim() : '',
+                workType: formData.workType,
+                presentCTC: formData.presentCTC ? formData.presentCTC.trim() : '',
+                expectedCTC: formData.expectedCTC ? formData.expectedCTC.trim() : ''
             };
             
-            const newEmployment = [...employment, newEmploymentEntry];
+            let newEmployment;
+            if (editingIndex !== null) {
+                // Update existing employment
+                newEmployment = [...employment];
+                newEmployment[editingIndex] = employmentEntry;
+            } else {
+                // Add new employment
+                newEmployment = [...employment, employmentEntry];
+            }
             const updateData = { employment: newEmployment };
             
             if (totalExperience && totalExperience.trim()) {
@@ -185,12 +270,13 @@ function SectionCanEmployment({ profile }) {
             
             if (response && (response.success || response.candidate)) {
                 setEmployment(newEmployment);
-                const resetFormData = { designation: '', organization: '', isCurrent: false, startDate: '', endDate: '', description: '' };
+                const resetFormData = { designation: '', organization: '', isCurrent: false, startDate: '', endDate: '', description: '', workType: '', presentCTC: '', expectedCTC: '' };
                 setFormData(resetFormData);
                 localStorage.removeItem('employmentFormData');
                 setErrors({});
+                setEditingIndex(null);
                 setTotalExperience(totalExperience || '');
-                showSuccess('Employment added successfully!');
+                showSuccess(editingIndex !== null ? 'Employment updated successfully!' : 'Employment added successfully!');
                 
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
                 
@@ -384,21 +470,172 @@ function SectionCanEmployment({ profile }) {
                     )}
                     {employment.length > 0 ? (
                         employment.map((emp, index) => (
-                            <div key={index} style={{background: '#fff', padding: '16px', borderRadius: '8px', border: '1px solid #e0e0e0', marginBottom: '12px'}}>
-                                <h4 style={{color: '#2c3e50', marginBottom: '8px', fontWeight: '600', margin: 0}}>
-                                    {emp.designation}
-                                </h4>
-                                <p style={{color: '#34495e', marginBottom: '8px', fontSize: '15px', margin: 0}}>
-                                    {emp.organization}
-                                </p>
-                                <p style={{color: '#7f8c8d', marginBottom: '12px', fontSize: '13px', margin: 0}}>
-                                    {emp.startDate ? new Date(emp.startDate).toLocaleDateString('en-GB') : 'Start Date'} - {emp.isCurrent ? 'Present' : (emp.endDate ? new Date(emp.endDate).toLocaleDateString('en-GB') : 'End Date')}
-                                </p>
-                                {emp.description && (
-                                    <p style={{color: '#555', fontSize: '14px', lineHeight: '1.6', margin: 0}}>
-                                        {emp.description}
+                            <div key={index} className="employment-card" style={{
+                                background: '#fff',
+                                padding: '20px',
+                                borderRadius: '12px',
+                                border: '1px solid #e0e0e0',
+                                marginBottom: '16px',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                                transition: 'box-shadow 0.2s ease',
+                                position: 'relative'
+                            }}>
+                                {/* Action Buttons */}
+                                <div style={{
+                                    position: 'absolute',
+                                    top: '15px',
+                                    right: '15px',
+                                    display: 'flex',
+                                    gap: '8px'
+                                }}>
+                                    <button
+                                        onClick={() => {
+                                            handleEdit(index);
+                                            // Open modal
+                                            const modal = document.getElementById(modalId);
+                                            if (modal) {
+                                                if (window.bootstrap?.Modal) {
+                                                    const modalInstance = new window.bootstrap.Modal(modal);
+                                                    modalInstance.show();
+                                                } else if (window.$ && window.$.fn.modal) {
+                                                    window.$(`#${modalId}`).modal('show');
+                                                }
+                                            }
+                                        }}
+                                        style={{
+                                            background: '#007bff',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '50%',
+                                            width: '30px',
+                                            height: '30px',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '12px',
+                                            transition: 'background-color 0.2s ease'
+                                        }}
+                                        onMouseEnter={(e) => e.target.style.backgroundColor = '#0056b3'}
+                                        onMouseLeave={(e) => e.target.style.backgroundColor = '#007bff'}
+                                        title="Edit Employment"
+                                    >
+                                        <i className="fa fa-edit"></i>
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(index)}
+                                        style={{
+                                            background: '#dc3545',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '50%',
+                                            width: '30px',
+                                            height: '30px',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '12px',
+                                            transition: 'background-color 0.2s ease'
+                                        }}
+                                        onMouseEnter={(e) => e.target.style.backgroundColor = '#c82333'}
+                                        onMouseLeave={(e) => e.target.style.backgroundColor = '#dc3545'}
+                                        title="Delete Employment"
+                                    >
+                                        <i className="fa fa-trash"></i>
+                                    </button>
+                                </div>
+
+                                {/* Header Section */}
+                                <div style={{borderBottom: '1px solid #f0f0f0', paddingBottom: '12px', marginBottom: '16px', paddingRight: '80px'}}>
+                                    <h4 style={{color: '#2c3e50', marginBottom: '4px', fontWeight: '600', fontSize: '18px', margin: 0}}>
+                                        <i className="fa fa-briefcase" style={{color: '#FF6A00', marginRight: '8px'}}></i>
+                                        {emp.designation}
+                                    </h4>
+                                    <p style={{color: '#34495e', marginBottom: '0', fontSize: '16px', fontWeight: '500'}}>
+                                        <i className="fa fa-building" style={{color: '#FF6A00', marginRight: '8px'}}></i>
+                                        {emp.organization}
                                     </p>
-                                )}
+                                </div>
+
+                                {/* All Details in One Section */}
+                                <div style={{background: '#f8f9fa', padding: '16px', borderRadius: '8px', border: '1px solid #e9ecef'}}>
+                                    <div style={{display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'flex-start'}}>
+                                        {/* Duration */}
+                                        <div style={{minWidth: '200px'}}>
+                                            <div style={{display: 'flex', alignItems: 'center', marginBottom: '4px'}}>
+                                                <i className="fa fa-calendar" style={{color: '#FF6A00', marginRight: '6px', fontSize: '14px'}}></i>
+                                                <strong style={{fontSize: '13px', color: '#495057'}}>Duration</strong>
+                                            </div>
+                                            <p style={{margin: 0, fontSize: '14px', color: '#6c757d'}}>
+                                                {emp.startDate ? new Date(emp.startDate).toLocaleDateString('en-GB') : 'Start Date'} - {emp.isCurrent ? 'Present' : (emp.endDate ? new Date(emp.endDate).toLocaleDateString('en-GB') : 'End Date')}
+                                            </p>
+                                        </div>
+
+                                        {/* Current Company */}
+                                        <div style={{minWidth: '120px'}}>
+                                            <div style={{display: 'flex', alignItems: 'center', marginBottom: '4px'}}>
+                                                <i className="fa fa-check-circle" style={{color: '#FF6A00', marginRight: '6px', fontSize: '14px'}}></i>
+                                                <strong style={{fontSize: '13px', color: '#495057'}}>Current Company</strong>
+                                            </div>
+                                            <p style={{margin: 0, fontSize: '14px', color: emp.isCurrent ? '#28a745' : '#6c757d', fontWeight: '500'}}>
+                                                {emp.isCurrent ? 'Yes' : 'No'}
+                                            </p>
+                                        </div>
+
+                                        {/* Work Type */}
+                                        {emp.workType && (
+                                            <div style={{minWidth: '100px'}}>
+                                                <div style={{display: 'flex', alignItems: 'center', marginBottom: '4px'}}>
+                                                    <i className="fa fa-laptop" style={{color: '#FF6A00', marginRight: '6px', fontSize: '14px'}}></i>
+                                                    <strong style={{fontSize: '13px', color: '#495057'}}>Work Type</strong>
+                                                </div>
+                                                <p style={{margin: 0, fontSize: '14px', color: '#6c757d'}}>
+                                                    {emp.workType}
+                                                </p>
+                                            </div>
+                                        )}
+
+                                        {/* Present CTC */}
+                                        {emp.presentCTC && (
+                                            <div style={{minWidth: '120px'}}>
+                                                <div style={{display: 'flex', alignItems: 'center', marginBottom: '4px'}}>
+                                                    <i className="fa fa-rupee-sign" style={{color: '#FF6A00', marginRight: '6px', fontSize: '14px'}}></i>
+                                                    <strong style={{fontSize: '13px', color: '#495057'}}>Present CTC (LPA)</strong>
+                                                </div>
+                                                <p style={{margin: 0, fontSize: '14px', color: '#6c757d', fontWeight: '500'}}>
+                                                    ₹{emp.presentCTC}
+                                                </p>
+                                            </div>
+                                        )}
+
+                                        {/* Expected CTC */}
+                                        {emp.expectedCTC && (
+                                            <div style={{minWidth: '120px'}}>
+                                                <div style={{display: 'flex', alignItems: 'center', marginBottom: '4px'}}>
+                                                    <i className="fa fa-chart-line" style={{color: '#FF6A00', marginRight: '6px', fontSize: '14px'}}></i>
+                                                    <strong style={{fontSize: '13px', color: '#495057'}}>Expected CTC (LPA)</strong>
+                                                </div>
+                                                <p style={{margin: 0, fontSize: '14px', color: '#6c757d', fontWeight: '500'}}>
+                                                    ₹{emp.expectedCTC}
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Job Description */}
+                                    {emp.description && (
+                                        <div style={{marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #dee2e6'}}>
+                                            <div style={{display: 'flex', alignItems: 'center', marginBottom: '8px'}}>
+                                                <i className="fa fa-file-text" style={{color: '#FF6A00', marginRight: '6px', fontSize: '14px'}}></i>
+                                                <strong style={{fontSize: '14px', color: '#495057'}}>Job Profile Description</strong>
+                                            </div>
+                                            <p style={{margin: 0, fontSize: '14px', lineHeight: '1.6', color: '#555'}}>
+                                                {emp.description}
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         ))
                     ) : null}
@@ -410,7 +647,7 @@ function SectionCanEmployment({ profile }) {
                     <div className="modal-dialog modal-dialog-centered" style={{maxWidth: '500px'}}>
                         <div className="modal-content">
                             <div style={formStyles.modalHeader}>
-                                <h2 style={formStyles.modalTitle}>Add Employment Details</h2>
+                                <h2 style={formStyles.modalTitle}>{editingIndex !== null ? 'Edit Employment Details' : 'Add Employment Details'}</h2>
                                 <button type="button" style={formStyles.closeButton} data-bs-dismiss="modal" aria-label="Close">×</button>
                             </div>
 
@@ -524,6 +761,61 @@ function SectionCanEmployment({ profile }) {
                                             />
                                         </div>
                                         {errors.endDate && <div style={formStyles.error}>{errors.endDate}</div>}
+                                    </div>
+                                </div>
+
+                                {/* Work Type */}
+                                <div style={formStyles.fieldGroup}>
+                                    <label style={formStyles.label}>Work Type *</label>
+                                    <div style={formStyles.inputWrapper}>
+                                        <i className="fa fa-laptop" style={formStyles.icon}></i>
+                                        <select
+                                            value={formData.workType}
+                                            onChange={(e) => handleInputChange('workType', e.target.value)}
+                                            style={{...formStyles.input, ...formStyles.inputWithIcon, ...(errors.workType && formStyles.inputError)}}
+                                        >
+                                            <option value="">Select Work Type</option>
+                                            <option value="Remote">Remote</option>
+                                            <option value="Onsite">Onsite</option>
+                                            <option value="Hybrid">Hybrid</option>
+                                        </select>
+                                    </div>
+                                    {errors.workType && <div style={formStyles.error}>{errors.workType}</div>}
+                                </div>
+
+                                {/* CTC Fields */}
+                                <div style={formStyles.twoColumnGrid}>
+                                    <div style={formStyles.fieldGroup}>
+                                        <label style={formStyles.label}>Present CTC (LPA)</label>
+                                        <div style={formStyles.inputWrapper}>
+                                            <i className="fa fa-rupee-sign" style={formStyles.icon}></i>
+                                            <input
+                                                type="number"
+                                                placeholder="e.g., 5.5"
+                                                value={formData.presentCTC}
+                                                onChange={(e) => handleInputChange('presentCTC', e.target.value)}
+                                                style={{...formStyles.input, ...formStyles.inputWithIcon, ...(errors.presentCTC && formStyles.inputError)}}
+                                                min="0"
+                                                step="0.1"
+                                            />
+                                        </div>
+                                        {errors.presentCTC && <div style={formStyles.error}>{errors.presentCTC}</div>}
+                                    </div>
+                                    <div style={formStyles.fieldGroup}>
+                                        <label style={formStyles.label}>Expected CTC (LPA) *</label>
+                                        <div style={formStyles.inputWrapper}>
+                                            <i className="fa fa-rupee-sign" style={formStyles.icon}></i>
+                                            <input
+                                                type="number"
+                                                placeholder="e.g., 7.0"
+                                                value={formData.expectedCTC}
+                                                onChange={(e) => handleInputChange('expectedCTC', e.target.value)}
+                                                style={{...formStyles.input, ...formStyles.inputWithIcon, ...(errors.expectedCTC && formStyles.inputError)}}
+                                                min="0"
+                                                step="0.1"
+                                            />
+                                        </div>
+                                        {errors.expectedCTC && <div style={formStyles.error}>{errors.expectedCTC}</div>}
                                     </div>
                                 </div>
 

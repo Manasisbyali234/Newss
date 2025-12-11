@@ -195,6 +195,11 @@ app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api', holidaysRoutes);
 app.use('/api/cache', cacheRoutes);
 
+// Test page for interview status
+app.get('/test-interview-status', (req, res) => {
+  res.sendFile(path.join(__dirname, 'test-interview-status.html'));
+});
+
 // Health Check Route
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'Tale Job Portal API is running' });

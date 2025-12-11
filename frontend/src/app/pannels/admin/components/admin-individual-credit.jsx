@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../../../utils/api';
+import SearchBar from '../../../../components/SearchBar';
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
 function AdminIndividualCredit() {
     const navigate = useNavigate();
@@ -50,6 +51,10 @@ function AdminIndividualCredit() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleSearch = (term) => {
+        setSearchTerm(term);
     };
 
     const filteredCandidates = candidates.filter(c => {
@@ -151,7 +156,19 @@ function AdminIndividualCredit() {
 
             <div className="panel panel-default site-bg-white">
                 <div className="panel-heading wt-panel-heading p-a20">
-                    <h4 className="panel-tittle m-a0">All Candidates ({filteredCandidates.length})</h4>
+                    <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap', gap: '15px', width: '100%'}}>
+                        <h4 className="panel-tittle m-a0" style={{marginRight: 'auto'}}>All Candidates ({filteredCandidates.length})</h4>
+                        <div className="search-section" style={{marginLeft: 'auto'}}>
+                            <label className="search-label">
+                                <i className="fa fa-filter"></i> Search by Name or Email
+                            </label>
+                            <SearchBar 
+                                onSearch={handleSearch}
+                                placeholder="Search candidates..."
+                                className="placement-search"
+                            />
+                        </div>
+                    </div>
                 </div>
                 <div className="panel-body wt-panel-body">
                     <div className="p-a20 table-responsive table-container">

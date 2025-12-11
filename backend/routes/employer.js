@@ -130,6 +130,7 @@ router.get('/applications', employerController.getEmployerApplications);
 router.get('/jobs/:jobId/applications', employerController.getJobApplications);
 router.get('/find-application', employerController.findApplicationByCandidateAndJob);
 router.put('/applications/:applicationId/review', employerController.saveInterviewReview);
+router.get('/applications/:applicationId/interview-status', employerController.getInterviewProcessStatus);
 router.get('/applications/:applicationId', employerController.getApplicationDetails);
 router.put('/applications/:applicationId/status', [
   body('status').isIn(['pending', 'shortlisted', 'interviewed', 'hired', 'rejected', 'not_attended', 'offer_shared']).withMessage('Invalid status')

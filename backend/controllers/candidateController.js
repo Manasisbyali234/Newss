@@ -192,6 +192,11 @@ exports.updateProfile = async (req, res) => {
     console.log('Update data before DB save:', updateData);
     console.log('Pincode in updateData:', updateData.pincode);
     
+    // Handle job preferences updates
+    if (updateData.jobPreferences) {
+      console.log('Updating job preferences:', updateData.jobPreferences);
+    }
+    
     // Handle education array updates with marksheet preservation and field normalization
     if (updateData.education && Array.isArray(updateData.education)) {
       const currentProfile = await CandidateProfile.findOne({ candidateId: req.user._id });
@@ -1533,6 +1538,74 @@ exports.deleteEducation = async (req, res) => {
 
     res.json({ success: true, profile });
   } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Work Location Preferences Controller
+exports.updateWorkLocationPreferences = async (req, res) => {
+  try {
+    const { preferredLocations, remoteWork, willingToRelocate, noticePeriod, jobType } = req.body;
+    
+    // Validation
+    if (!preferredLocations || !Array.isArray(preferredLocations) || preferredLocations.length === 0) {
+      return res.status(400).json({ success: false, message: 'At least one preferred location is required' });
+    }
+
+    const updateData = {
+      jobPreferences: {
+        preferredLocations,
+        remoteWork: Boolean(remoteWork),
+        willingToRelocate: Boolean(willingToRelocate),
+        noticePeriod: noticePeriod || '',
+        jobType: jobType || ''
+      }
+    };
+
+    const profile = await CandidateProfile.findOneAndUpdate(
+      { candidateId: req.user._id },
+      updateData,
+      { new: true, upsert: true }
+    ).populate('candidateId', 'name email phone');
+
+    res.json({ success: true, profile, message: 'Work location preferences saved successfully' });
+  } catch (error) {
+    console.error('Work location preferences update error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Get Work Location Preferences Controller
+exports.getWorkLocationPreferences = async (req, res) => {
+  try {
+    const profile = await CandidateProfile.findOne({ candidateId: req.user._id })
+      .select('jobPreferences expectedSalary')
+      .populate('candidateId', 'name email phone');
+    
+    if (!profile) {
+      return res.json({ 
+        success: true, 
+        workLocationData: {
+          preferredLocations: [],
+          remoteWork: false,
+          willingToRelocate: false,
+          noticePeriod: '',
+          jobType: ''
+        }
+      });
+    }
+
+    const workLocationData = {
+      preferredLocations: profile.jobPreferences?.preferredLocations || [],
+      remoteWork: profile.jobPreferences?.remoteWork || false,
+      willingToRelocate: profile.jobPreferences?.willingToRelocate || false,
+      noticePeriod: profile.jobPreferences?.noticePeriod || '',
+      jobType: profile.jobPreferences?.jobType || ''
+    };
+
+    res.json({ success: true, workLocationData });
+  } catch (error) {
+    console.error('Get work location preferences error:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };

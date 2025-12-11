@@ -2,7 +2,7 @@ const calculateProfileCompletion = (profile) => {
   if (!profile) return { percentage: 0, missingSections: [] };
 
   let completedSections = 0;
-  const totalSections = 6; // Resume Headline, Profile Summary, Key Skills, Personal Details, Education, Resume
+  const totalSections = 7; // Resume Headline, Profile Summary, Key Skills, Personal Details, Education, Work Location, Resume
   const missingSections = [];
 
   // 1. Resume Headline
@@ -52,7 +52,19 @@ const calculateProfileCompletion = (profile) => {
     missingSections.push('Education (need at least 3 complete entries)');
   }
 
-  // 6. Resume Attachment
+  // 6. Work Location Preferences
+  if (profile.jobPreferences && 
+      profile.jobPreferences.preferredLocations && 
+      Array.isArray(profile.jobPreferences.preferredLocations) && 
+      profile.jobPreferences.preferredLocations.length > 0 &&
+      profile.jobPreferences.jobType &&
+      profile.jobPreferences.noticePeriod) {
+    completedSections++;
+  } else {
+    missingSections.push('Work Location Preferences');
+  }
+
+  // 7. Resume Attachment
   if (profile.resume && profile.resume.trim() !== '') {
     completedSections++;
   } else {

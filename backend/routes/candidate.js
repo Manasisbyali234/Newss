@@ -78,12 +78,13 @@ router.put('/profile', upload.single('profilePicture'), (req, res, next) => {
   const isProfileSummaryOnly = req.body.profileSummary && Object.keys(req.body).length === 1;
   const isSkillsOnly = req.body.skills && Object.keys(req.body).length === 1;
   const isEmploymentOnly = req.body.employment && Object.keys(req.body).length <= 2; // employment + totalExperience
+  const isJobPreferencesOnly = req.body.jobPreferences && Object.keys(req.body).length <= 2; // jobPreferences + expectedSalary
   
   // Skip validation for personal details updates (contains multiple fields)
-  const personalDetailsFields = ['dateOfBirth', 'gender', 'location', 'stateCode', 'pincode', 'fatherName', 'motherName', 'residentialAddress', 'permanentAddress', 'correspondenceAddress', 'education', 'employment', 'totalExperience'];
+  const personalDetailsFields = ['dateOfBirth', 'gender', 'location', 'stateCode', 'pincode', 'fatherName', 'motherName', 'residentialAddress', 'permanentAddress', 'correspondenceAddress', 'education', 'employment', 'totalExperience', 'jobPreferences', 'expectedSalary'];
   const hasPersonalDetailsFields = personalDetailsFields.some(field => field in req.body);
   
-  if (isResumeHeadlineOnly || isProfileSummaryOnly || isSkillsOnly || isEmploymentOnly || hasPersonalDetailsFields) {
+  if (isResumeHeadlineOnly || isProfileSummaryOnly || isSkillsOnly || isEmploymentOnly || isJobPreferencesOnly || hasPersonalDetailsFields) {
     return candidateController.updateProfile(req, res);
   }
   
@@ -285,6 +286,31 @@ router.put('/education/marksheet', uploadMarksheet.single('marksheet'), candidat
 router.put('/education/document', upload.single('document'), candidateController.uploadEducationDocument);
 
 router.delete('/education/:educationId', candidateController.deleteEducation);
+
+// Work Location Preferences Routes
+router.get('/work-location-preferences', candidateController.getWorkLocationPreferences);
+router.put('/work-location-preferences', [
+  body('preferredLocations')
+    .isArray({ min: 1 })
+    .withMessage('At least one preferred location is required'),
+  body('remoteWork')
+    .optional()
+    .isBoolean()
+    .withMessage('Remote work preference must be true or false'),
+  body('willingToRelocate')
+    .optional()
+    .isBoolean()
+    .withMessage('Willing to relocate must be true or false'),
+  body('noticePeriod')
+    .optional()
+    .isIn(['immediate', '15-days', '1-month', '2-months', '3-months', 'more-than-3-months', ''])
+    .withMessage('Invalid notice period'),
+  body('jobType')
+    .optional()
+    .isIn(['full-time', 'part-time', 'contract', 'internship', 'freelance', ''])
+    .withMessage('Invalid job type'),
+
+], handleValidationErrors, candidateController.updateWorkLocationPreferences);
 
 // Assessment Routes
 const assessmentController = require('../controllers/assessmentController');
