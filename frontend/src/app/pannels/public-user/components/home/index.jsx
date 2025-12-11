@@ -614,7 +614,7 @@ function Home1Page() {
             {/* EXPLORE NEW LIFE END */}
             {/* TOP RECRUITERS START */}
             <TopRecruitersSection />
-            {/* TOP RECRUITERS END */}
+            {/* TOP RECRUITERS END */
             {/* TOP COMPANIES START */}
             <div className="section-full p-t120 p-b90 site-bg-white">
                 <div className="container">

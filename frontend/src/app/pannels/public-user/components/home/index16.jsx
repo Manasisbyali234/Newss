@@ -314,6 +314,46 @@ function Home16Page() {
                 });
             }
 
+            // Filter by education
+            if (filters.education) {
+                const education = String(filters.education).trim().toLowerCase();
+
+                if (education.length > 50) {
+                    showWarning('Education filter is invalid');
+                    return;
+                }
+
+                filtered = filtered.filter(job => {
+                    try {
+                        // Check if job has education requirements that match
+                        const jobEducation = job.education || job.educationRequirement || job.qualifications || '';
+                        return jobEducation.toLowerCase().includes(education) ||
+                               job.requirements?.toLowerCase().includes(education) ||
+                               job.description?.toLowerCase().includes(education);
+                    } catch (err) {
+                        return false;
+                    }
+                });
+            }
+
+            // Filter by category
+            if (filters.category) {
+                const category = String(filters.category).trim().toLowerCase();
+
+                if (category.length > 100) {
+                    showWarning('Category filter is too long');
+                    return;
+                }
+
+                filtered = filtered.filter(job => {
+                    try {
+                        return job.category?.toLowerCase().includes(category);
+                    } catch (err) {
+                        return false;
+                    }
+                });
+            }
+
             setFilteredJobs(filtered);
             setJobs(filtered.slice(0, 6)); // Show first 6 filtered results
             setShowingCount(6);
@@ -854,7 +894,7 @@ function Home16Page() {
                     </div>
 
                     <div className="section-content">
-                        <div className="twm-jobs-grid-wrap">
+                        <div className="twm-jobs-grid-wrap" data-section="top-jobs">
                             <div style={{padding: '0 15px', background: 'transparent', width: '100%', maxWidth: '1800px', margin: '0 auto'}}>
                                 <Row style={{'--bs-gutter-x': '20px', marginLeft: '0', marginRight: '0'}}>
                                 {jobs.length > 0 ? (

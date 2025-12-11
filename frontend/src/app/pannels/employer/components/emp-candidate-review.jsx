@@ -711,31 +711,33 @@ function EmpCandidateReviewPage () {
 							</div>
 
 							<div style={{display: 'flex', flexDirection: 'column', gap: '12px', width: '100%'}}>
-								{/* Save Remark Button - Always Enabled */}
-								<button 
-									className="action-btn-consistent" 
-									style={{
-										backgroundColor: 'transparent', 
-										color: '#ff8a00', 
-										border: '1.5px solid #ff8a00', 
-										borderRadius: '20px', 
-										fontSize: '15px', 
-										fontWeight: '500', 
-										padding: '12px 20px', 
-										alignItems: 'center', 
-										justifyContent: 'center', 
-										gap: '10px', 
-										transition: 'background-color 0.3s ease', 
-										whiteSpace: 'nowrap', 
-										boxSizing: 'border-box'
-									}} 
-									onClick={saveReview} 
-									onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fff3e5'} 
-									onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-									title="Save remarks for this candidate"
-								>
-									<Save size={16} style={{flexShrink: 0}} />Save Remark
-								</button>
+								{/* Save Remark Button - Only show when remarks are written */}
+								{remarks.trim() && (
+									<button 
+										className="action-btn-consistent" 
+										style={{
+											backgroundColor: 'transparent', 
+											color: '#ff8a00', 
+											border: '1.5px solid #ff8a00', 
+											borderRadius: '20px', 
+											fontSize: '15px', 
+											fontWeight: '500', 
+											padding: '12px 20px', 
+											alignItems: 'center', 
+											justifyContent: 'center', 
+											gap: '10px', 
+											transition: 'background-color 0.3s ease', 
+											whiteSpace: 'nowrap', 
+											boxSizing: 'border-box'
+										}} 
+										onClick={saveReview} 
+										onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fff3e5'} 
+										onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+										title="Save remarks for this candidate"
+									>
+										<Save size={16} style={{flexShrink: 0}} />Save Remark
+									</button>
+								)}
 
 								{/* Shortlist Candidate Button - Disabled if processes incomplete or hired */}
 								{application?.status !== 'hired' && application?.status !== 'offer_shared' && (
