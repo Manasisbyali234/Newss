@@ -809,11 +809,11 @@ html {
     stroke: #ff6b35 !important;
 }
 
-/* Delete buttons - Orange icon only, no background */
-button.btn-outline-danger,
-button.btn-danger,
-.emp-company-profile button.btn-outline-danger,
-.emp-company-profile button.btn-danger,
+/* Delete buttons - Orange icon only, no background (except gallery) */
+button.btn-outline-danger:not(.gallery-item .btn-danger),
+button.btn-danger:not(.gallery-item .btn-danger),
+.emp-company-profile button.btn-outline-danger:not(.gallery-item .btn-danger),
+.emp-company-profile button.btn-danger:not(.gallery-item .btn-danger),
 .document-card button.btn-outline-danger,
 .uploaded-documents button.btn-outline-danger {
     background: transparent !important;
@@ -824,10 +824,10 @@ button.btn-danger,
     padding: 5px !important;
 }
 
-button.btn-outline-danger:hover,
-button.btn-danger:hover,
-.emp-company-profile button.btn-outline-danger:hover,
-.emp-company-profile button.btn-danger:hover {
+button.btn-outline-danger:not(.gallery-item .btn-danger):hover,
+button.btn-danger:not(.gallery-item .btn-danger):hover,
+.emp-company-profile button.btn-outline-danger:not(.gallery-item .btn-danger):hover,
+.emp-company-profile button.btn-danger:not(.gallery-item .btn-danger):hover {
     background: transparent !important;
     background-color: transparent !important;
     border: none !important;
@@ -1072,15 +1072,97 @@ button.btn-danger:hover i.fas {
   filter: brightness(1.1);
 }
 
+/* Gallery delete button - Always visible with proper styling */
 .gallery-item .btn-danger {
-  opacity: 0;
+  opacity: 1 !important;
+  visibility: visible !important;
   transition: all 0.3s ease;
-  background-color: rgba(220, 53, 69, 0.9) !important;
-  border: none !important;
+  background-color: #dc3545 !important;
+  border: 2px solid #ffffff !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  z-index: 10 !important;
 }
 
-.gallery-item:hover .btn-danger {
-  opacity: 1;
+.gallery-item .btn-danger:hover {
+  opacity: 1 !important;
+  visibility: visible !important;
+  background-color: #c82333 !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
   transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+.gallery-item .btn-danger i {
+  color: #ffffff !important;
+  font-size: 14px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Ensure gallery delete buttons are always visible and clickable */
+.gallery-preview .gallery-item .position-absolute.btn-danger {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+  background-color: #dc3545 !important;
+  border: 2px solid #ffffff !important;
+  color: #ffffff !important;
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  top: 5px !important;
+  right: 5px !important;
+  z-index: 999 !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+.gallery-preview .gallery-item .position-absolute.btn-danger:hover {
+  background-color: #c82333 !important;
+  transform: scale(1.1) !important;
+}
+
+.gallery-preview .gallery-item .position-absolute.btn-danger i.fas.fa-times {
+  color: #ffffff !important;
+  font-size: 12px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Additional CSS to ensure gallery delete buttons are always visible */
+.gallery-delete-btn {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+  background-color: #dc3545 !important;
+  border: 2px solid #ffffff !important;
+  color: #ffffff !important;
+  z-index: 1000 !important;
+  pointer-events: auto !important;
+}
+
+.gallery-delete-btn:hover {
+  background-color: #c82333 !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.gallery-delete-btn i {
+  color: #ffffff !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Force visibility for all gallery delete elements */
+.gallery-item .btn-danger,
+.gallery-item .btn-danger i,
+.gallery-item .fa-times {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
 }
 

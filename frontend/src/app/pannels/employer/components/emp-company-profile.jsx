@@ -1996,7 +1996,7 @@ function EmpCompanyProfilePage() {
                                         </h6>
                                         <div className="d-flex flex-wrap gap-3">
                                             {formData.gallery.map((image, index) => (
-                                                <div key={image._id || index} className="gallery-item position-relative" style={{width: '150px', height: '150px'}}>
+                                                <div key={image._id || index} className="gallery-item position-relative" style={{width: '150px', height: '150px', position: 'relative'}}>
                                                     <img 
                                                         src={image.url} 
                                                         alt={`Gallery ${index + 1}`}
@@ -2005,12 +2005,31 @@ function EmpCompanyProfilePage() {
                                                     />
                                                     <button 
                                                         type="button" 
-                                                        className="btn btn-danger btn-sm position-absolute"
-                                                        style={{top: '5px', right: '5px', width: '30px', height: '30px', padding: '0', fontSize: '12px', border: '3px solid #ff6600 !important', borderRadius: '50%', backgroundColor: '#dc3545 !important', boxShadow: '0 2px 4px rgba(0,0,0,0.3)', outline: '2px solid #ff6600', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: '1 !important', visibility: 'visible !important'}}
+                                                        className="btn btn-danger btn-sm position-absolute gallery-delete-btn"
+                                                        style={{
+                                                            top: '5px', 
+                                                            right: '5px', 
+                                                            width: '30px', 
+                                                            height: '30px', 
+                                                            padding: '0', 
+                                                            fontSize: '12px', 
+                                                            border: '2px solid #ffffff', 
+                                                            borderRadius: '50%', 
+                                                            backgroundColor: '#dc3545', 
+                                                            boxShadow: '0 2px 8px rgba(0,0,0,0.3)', 
+                                                            display: 'flex', 
+                                                            alignItems: 'center', 
+                                                            justifyContent: 'center', 
+                                                            opacity: '1', 
+                                                            visibility: 'visible',
+                                                            zIndex: '999',
+                                                            cursor: 'pointer',
+                                                            color: '#ffffff'
+                                                        }}
                                                         onClick={() => handleDeleteGalleryImage(image._id || index)}
                                                         title="Delete image"
                                                     >
-                                                        <i className="fas fa-times"></i>
+                                                        <i className="fas fa-times" style={{color: '#ffffff', fontSize: '12px'}}></i>
                                                     </button>
                                                 </div>
                                             ))}

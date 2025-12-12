@@ -103,8 +103,18 @@ input[type="file"]:hover {
   filter: none !important;
 }
 
+.gallery-item .btn-danger {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
 .gallery-item:hover .btn-danger {
   opacity: 1 !important;
+  visibility: visible !important;
   transform: none !important;
 }
 
