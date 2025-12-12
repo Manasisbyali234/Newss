@@ -627,6 +627,15 @@ export default function EmpPostJob({ onNext }) {
 			}
 		}
 
+		// Validate Interview Rounds Count
+		const specifiedRoundsCount = parseInt(formData.interviewRoundsCount) || 0;
+		const selectedRoundsCount = formData.interviewRoundOrder.length;
+		
+		if (specifiedRoundsCount > 0 && selectedRoundsCount !== specifiedRoundsCount) {
+			errorMessages.push(`You specified ${specifiedRoundsCount} interview rounds but selected ${selectedRoundsCount} rounds. Please select exactly ${specifiedRoundsCount} interview round(s) to match your specified count.`);
+			showError(`Interview rounds mismatch! You specified ${specifiedRoundsCount} rounds but selected ${selectedRoundsCount}. Please adjust your selection.`);
+		}
+
 		// Validate Interview Round Details
 		const selectedRounds = formData.interviewRoundOrder
 			.filter(uniqueKey => formData.interviewRoundTypes[uniqueKey] !== 'assessment');
@@ -698,14 +707,16 @@ export default function EmpPostJob({ onNext }) {
 		
 		// Validate form first
 		if (!validateJobForm()) {
-			const allErrors = [...Object.entries(errors).map(([field, msgs]) => `${field}: ${msgs.join(', ')}`), ...globalErrors];
-			if (allErrors.length > 0) {
-				showError(`Validation Errors:\n${allErrors.join('\n')}`);
-			}
-			const firstErrorField = document.querySelector('.is-invalid');
-			if (firstErrorField) {
-				firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-				firstErrorField.focus();
+			// Find first error field and scroll to it
+			const errorFields = Object.keys(errors);
+			if (errorFields.length > 0) {
+				const firstErrorField = errorFields[0];
+				const fieldElement = document.querySelector(`[name="${firstErrorField}"]`) || 
+									 document.querySelector(`input, select, textarea`);
+				if (fieldElement) {
+					fieldElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+					fieldElement.focus();
+				}
 			}
 			return;
 		}
@@ -1170,7 +1181,12 @@ export default function EmpPostJob({ onNext }) {
 						<small style={{color: '#6b7280', fontSize: 12, marginTop: 4, display: 'block'}}>
 							Type any job title or click the dropdown arrow to select from common options
 						</small>
-						<ErrorDisplay errors={errors} fieldName="jobTitle" />
+						{errors.jobTitle && (
+							<div style={{color: '#dc2626', fontSize: 12, marginTop: 4, display: 'flex', alignItems: 'center', gap: 4}}>
+								<i className="fa fa-exclamation-circle"></i>
+								{errors.jobTitle[0]}
+							</div>
+						)}
 					</div>
 
 					<div>
@@ -1202,7 +1218,12 @@ export default function EmpPostJob({ onNext }) {
 							<option value="Education">Education</option>
 							<option value="Other">Other</option>
 						</select>
-						<ErrorDisplay errors={errors} fieldName="category" />
+						{errors.category && (
+							<div style={{color: '#dc2626', fontSize: 12, marginTop: 4, display: 'flex', alignItems: 'center', gap: 4}}>
+								<i className="fa fa-exclamation-circle"></i>
+								{errors.category[0]}
+							</div>
+						)}
 					</div>
 
 					<div>
@@ -1227,7 +1248,12 @@ export default function EmpPostJob({ onNext }) {
 							<option>Work From Home</option>
 							<option>Contract</option>
 						</select>
-						<ErrorDisplay errors={errors} fieldName="jobType" />
+						{errors.jobType && (
+							<div style={{color: '#dc2626', fontSize: 12, marginTop: 4, display: 'flex', alignItems: 'center', gap: 4}}>
+								<i className="fa fa-exclamation-circle"></i>
+								{errors.jobType[0]}
+							</div>
+						)}
 					</div>
 
 					<div>
@@ -1274,7 +1300,12 @@ export default function EmpPostJob({ onNext }) {
 								</label>
 							))}
 						</div>
-						<ErrorDisplay errors={errors} fieldName="typeOfEmployment" />
+						{errors.typeOfEmployment && (
+							<div style={{color: '#dc2626', fontSize: 12, marginTop: 4, display: 'flex', alignItems: 'center', gap: 4}}>
+								<i className="fa fa-exclamation-circle"></i>
+								{errors.typeOfEmployment[0]}
+							</div>
+						)}
 					</div>
 
 					{/* Row 2 */}
@@ -1296,7 +1327,12 @@ export default function EmpPostJob({ onNext }) {
 							<i className="fa fa-info-circle" style={{marginRight: 4}}></i>
 							Start typing to search locations or select from dropdown. You can also enter custom locations.
 						</small>
-						<ErrorDisplay errors={errors} fieldName="jobLocation" />
+						{errors.jobLocation && (
+							<div style={{color: '#dc2626', fontSize: 12, marginTop: 4, display: 'flex', alignItems: 'center', gap: 4}}>
+								<i className="fa fa-exclamation-circle"></i>
+								{errors.jobLocation[0]}
+							</div>
+						)}
 					</div>
 
 					{/* Compensation Section */}
@@ -1367,7 +1403,12 @@ export default function EmpPostJob({ onNext }) {
 							value={formData.vacancies}
 							onChange={(e) => update({ vacancies: e.target.value })}
 						/>
-						<ErrorDisplay errors={errors} fieldName="vacancies" />
+						{errors.vacancies && (
+							<div style={{color: '#dc2626', fontSize: 12, marginTop: 4, display: 'flex', alignItems: 'center', gap: 4}}>
+								<i className="fa fa-exclamation-circle"></i>
+								{errors.vacancies[0]}
+							</div>
+						)}
 					</div>
 
 					<div>
@@ -1387,7 +1428,12 @@ export default function EmpPostJob({ onNext }) {
 							value={formData.applicationLimit}
 							onChange={(e) => update({ applicationLimit: e.target.value })}
 						/>
-						<ErrorDisplay errors={errors} fieldName="applicationLimit" />
+						{errors.applicationLimit && (
+							<div style={{color: '#dc2626', fontSize: 12, marginTop: 4, display: 'flex', alignItems: 'center', gap: 4}}>
+								<i className="fa fa-exclamation-circle"></i>
+								{errors.applicationLimit[0]}
+							</div>
+						)}
 						<small style={{color: '#6b7280', fontSize: 12, marginTop: 4, display: 'block'}}>
 							Maximum number of applications to accept
 						</small>
@@ -1432,6 +1478,12 @@ export default function EmpPostJob({ onNext }) {
 							<option value="MA">MA</option>
 							<option value="PhD">PhD</option>
 						</select>
+						{errors.education && (
+							<div style={{color: '#dc2626', fontSize: 12, marginTop: 4, display: 'flex', alignItems: 'center', gap: 4}}>
+								<i className="fa fa-exclamation-circle"></i>
+								{errors.education[0]}
+							</div>
+						)}
 					</div>
 
 					<div>
@@ -1785,15 +1837,61 @@ export default function EmpPostJob({ onNext }) {
 						<label style={label}>
 							<i className="fa fa-comments" style={{marginRight: '8px', color: '#ff6b35'}}></i>
 							Number of Interview Rounds *
+							{formData.interviewRoundsCount && formData.interviewRoundOrder.length > 0 && (
+								<span style={{
+									fontSize: 11,
+									color: parseInt(formData.interviewRoundsCount) === formData.interviewRoundOrder.length ? '#10b981' : '#ef4444',
+									fontWeight: 500,
+									marginLeft: 8,
+									background: parseInt(formData.interviewRoundsCount) === formData.interviewRoundOrder.length ? '#d1fae5' : '#fee2e2',
+									padding: '2px 8px',
+									borderRadius: 4,
+								}}>
+									{parseInt(formData.interviewRoundsCount) === formData.interviewRoundOrder.length 
+										? `✓ ${formData.interviewRoundOrder.length} rounds selected` 
+										: `⚠ ${formData.interviewRoundOrder.length}/${formData.interviewRoundsCount} selected`
+									}
+								</span>
+							)}
 						</label>
 						<input
-							style={input}
+							style={{
+								...input,
+								borderColor: formData.interviewRoundsCount && formData.interviewRoundOrder.length > 0 
+									? (parseInt(formData.interviewRoundsCount) === formData.interviewRoundOrder.length ? '#10b981' : '#ef4444')
+									: '#d1d5db'
+							}}
 							type="number"
 							min="1"
 							placeholder="e.g., 3"
 							value={formData.interviewRoundsCount}
-							onChange={(e) => update({ interviewRoundsCount: e.target.value })}
+							onChange={(e) => {
+								const newCount = e.target.value;
+								update({ interviewRoundsCount: newCount });
+								
+								// Show validation message if there's a mismatch
+								if (newCount && formData.interviewRoundOrder.length > 0) {
+									const specifiedCount = parseInt(newCount);
+									const selectedCount = formData.interviewRoundOrder.length;
+									
+									if (specifiedCount !== selectedCount) {
+										showWarning(`You need to select exactly ${specifiedCount} interview rounds. Currently ${selectedCount} rounds are selected.`);
+									}
+								}
+							}}
 						/>
+						{errors.interviewRoundsCount && (
+							<div style={{color: '#dc2626', fontSize: 12, marginTop: 4, display: 'flex', alignItems: 'center', gap: 4}}>
+								<i className="fa fa-exclamation-circle"></i>
+								{errors.interviewRoundsCount[0]}
+							</div>
+						)}
+						{formData.interviewRoundsCount && formData.interviewRoundOrder.length > 0 && parseInt(formData.interviewRoundsCount) !== formData.interviewRoundOrder.length && (
+							<div style={{color: '#ef4444', fontSize: 12, marginTop: 4, display: 'flex', alignItems: 'center', gap: 4}}>
+								<i className="fa fa-exclamation-triangle"></i>
+								Please select exactly {formData.interviewRoundsCount} interview rounds to match your specified count.
+							</div>
+						)}
 					</div>
 
 					{/* Interview Process Section */}
@@ -1811,6 +1909,11 @@ export default function EmpPostJob({ onNext }) {
 							Select Interview Round Type
 							<span style={{fontSize: 12, color: '#6b7280', fontWeight: 'normal', marginLeft: 8}}>
 								(You can select the same type multiple times)
+								{formData.interviewRoundsCount && (
+									<span style={{color: '#ff6b35', fontWeight: 600, marginLeft: 8}}>
+										- Select exactly {formData.interviewRoundsCount} rounds
+									</span>
+								)}
 							</span>
 						</label>
 						<select
@@ -1819,24 +1922,42 @@ export default function EmpPostJob({ onNext }) {
 							onChange={(e) => {
 								const roundType = e.target.value;
 								if (roundType) {
+									// Check if adding this round would exceed the specified count
+									const specifiedCount = parseInt(formData.interviewRoundsCount) || 0;
+									const currentCount = formData.interviewRoundOrder.length;
+									
+									if (specifiedCount > 0 && currentCount >= specifiedCount) {
+										showError(`Cannot add more rounds! You specified ${specifiedCount} interview rounds and have already selected ${currentCount}. Please increase the "Number of Interview Rounds" field if you need more rounds.`);
+										return;
+									}
+									
 									// Generate unique key for multiple instances
 									const uniqueKey = `${roundType}_${Date.now()}`;
 									
 									// Add to interview round order
-									setFormData(s => ({
-										...s,
-										interviewRoundOrder: [...s.interviewRoundOrder, uniqueKey],
-										interviewRoundTypes: {
-											...s.interviewRoundTypes,
-											[uniqueKey]: roundType
-										},
-										interviewRoundDetails: {
-											...s.interviewRoundDetails,
-											[uniqueKey]: roundType === 'assessment' 
-												? { description: '', fromDate: '', toDate: '', startTime: '', endTime: '' }
-												: { description: '', fromDate: '', toDate: '', time: '' }
+									setFormData(s => {
+										const newState = {
+											...s,
+											interviewRoundOrder: [...s.interviewRoundOrder, uniqueKey],
+											interviewRoundTypes: {
+												...s.interviewRoundTypes,
+												[uniqueKey]: roundType
+											},
+											interviewRoundDetails: {
+												...s.interviewRoundDetails,
+												[uniqueKey]: roundType === 'assessment' 
+													? { description: '', fromDate: '', toDate: '', startTime: '', endTime: '' }
+													: { description: '', fromDate: '', toDate: '', time: '' }
+											}
+										};
+										
+										// Check if we've reached the specified count
+										if (specifiedCount > 0 && newState.interviewRoundOrder.length === specifiedCount) {
+											showSuccess(`Perfect! You have selected exactly ${specifiedCount} interview rounds as specified.`);
 										}
-									}));
+										
+										return newState;
+									});
 								}
 							}}
 						>
@@ -1895,16 +2016,28 @@ export default function EmpPostJob({ onNext }) {
 										<span 
 											style={{cursor: 'pointer', color: '#ef4444', fontWeight: 700, fontSize: 18, marginLeft: 4}}
 											onClick={() => {
-												setFormData(s => ({
-													...s,
-													interviewRoundOrder: s.interviewRoundOrder.filter(key => key !== uniqueKey),
-													interviewRoundTypes: Object.fromEntries(
-														Object.entries(s.interviewRoundTypes).filter(([key]) => key !== uniqueKey)
-													),
-													interviewRoundDetails: Object.fromEntries(
-														Object.entries(s.interviewRoundDetails).filter(([key]) => key !== uniqueKey)
-													)
-												}));
+												setFormData(s => {
+													const newState = {
+														...s,
+														interviewRoundOrder: s.interviewRoundOrder.filter(key => key !== uniqueKey),
+														interviewRoundTypes: Object.fromEntries(
+															Object.entries(s.interviewRoundTypes).filter(([key]) => key !== uniqueKey)
+														),
+														interviewRoundDetails: Object.fromEntries(
+															Object.entries(s.interviewRoundDetails).filter(([key]) => key !== uniqueKey)
+														)
+													};
+													
+													// Show validation message after removal
+													const specifiedCount = parseInt(s.interviewRoundsCount) || 0;
+													if (specifiedCount > 0 && newState.interviewRoundOrder.length < specifiedCount) {
+														setTimeout(() => {
+															showWarning(`You need ${specifiedCount - newState.interviewRoundOrder.length} more interview round(s) to match your specified count of ${specifiedCount}.`);
+														}, 100);
+													}
+													
+													return newState;
+												});
 											}}
 											title="Remove this stage"
 										>
@@ -1924,7 +2057,15 @@ export default function EmpPostJob({ onNext }) {
 									border: '1px dashed #d1d5db'
 								}}>
 									<i className="fa fa-info-circle" style={{marginRight: 8}}></i>
-									No interview rounds selected yet. Select from the dropdown above to add stages.
+									No interview rounds selected yet. 
+									{formData.interviewRoundsCount && (
+										<span style={{color: '#ef4444', fontWeight: 600}}>
+											You need to select {formData.interviewRoundsCount} round(s).
+										</span>
+									)}
+									{!formData.interviewRoundsCount && (
+										<span>Select from the dropdown above to add stages.</span>
+									)}
 								</div>
 							)}
 						</div>
@@ -2678,6 +2819,12 @@ export default function EmpPostJob({ onNext }) {
 							onChange={(e) => update({ offerLetterDate: e.target.value })}
 							placeholder="DD/MM/YYYY"
 						/>
+						{errors.offerLetterDate && (
+							<div style={{color: '#dc2626', fontSize: 12, marginTop: 4, display: 'flex', alignItems: 'center', gap: 4}}>
+								<i className="fa fa-exclamation-circle"></i>
+								{errors.offerLetterDate[0]}
+							</div>
+						)}
 						<small style={{color: '#6b7280', fontSize: 12, marginTop: 4, display: 'block'}}>
 							Format: DD/MM/YYYY
 						</small>
@@ -2715,6 +2862,12 @@ export default function EmpPostJob({ onNext }) {
 							placeholder="DD/MM/YYYY"
 							readOnly={false}
 						/>
+						{errors.lastDateOfApplication && (
+							<div style={{color: '#dc2626', fontSize: 12, marginTop: 4, display: 'flex', alignItems: 'center', gap: 4}}>
+								<i className="fa fa-exclamation-circle"></i>
+								{errors.lastDateOfApplication[0]}
+							</div>
+						)}
 						<small style={{color: '#6b7280', fontSize: 12, marginTop: 4, display: 'block'}}>
 							{formData.lastDateOfApplication 
 								? 'Auto-set prior to first interview'

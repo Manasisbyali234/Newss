@@ -34,7 +34,7 @@ function SectionJobsSidebar2 ({ _config, job }) {
 									<div className="twm-s-info-inner">
 										<i className="fas fa-calendar-alt" />
 										<span className="twm-title">Date Posted</span>
-										<div className="twm-s-info-discription">{job ? formatDate(job.createdAt) : 'Not available'}</div>
+										<div className="twm-s-info-discription">{formatDate(new Date())}</div>
 									</div>
 								</li>
 

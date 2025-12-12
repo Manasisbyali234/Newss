@@ -237,6 +237,8 @@ function JobDetail1Page() {
                 showSuccess('Application submitted successfully!');
                 // Refresh credits after successful application
                 fetchCandidateCredits();
+                // Refresh job details to show updated application count
+                fetchJobDetails();
             } else {
                 showError(data.message || 'Failed to submit application');
             }

@@ -755,6 +755,11 @@ exports.applyForJob = async (req, res) => {
 
     // Increment the job's application count and close if limit reached
     await Job.findByIdAndUpdate(jobId, { $inc: { applicationCount: 1 } });
+    
+    // Invalidate job cache to ensure updated application count is shown
+    const { cache } = require('../utils/cache');
+    cache.delete(`job_${jobId}`);
+    
     const updatedJob = await Job.findById(jobId).select('applicationCount applicationLimit status');
     if (
       updatedJob &&

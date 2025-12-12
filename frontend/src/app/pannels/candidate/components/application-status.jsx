@@ -687,6 +687,12 @@ function CanStatusPage() {
 																						<span className={`badge ${roundStatus.class}`} style={{fontSize: '10px', padding: '3px 8px', minWidth: '70px', textAlign: 'center'}}>
 																							{roundStatus?.text || 'Pending'}
 																						</span>
+																						{/* Show pass/fail result for completed assessments */}
+																						{roundName === 'Assessment' && (app.assessmentResult === 'pass' || app.assessmentResult === 'fail') && (
+																							<span className={`badge ${app.assessmentResult === 'pass' ? 'bg-success' : 'bg-danger'}`} style={{fontSize: '9px', padding: '2px 6px', marginTop: '2px'}}>
+																								{app.assessmentResult === 'pass' ? 'PASS' : 'FAIL'}
+																							</span>
+																						)}
 																						{dateDisplay && (
 																							<div style={{fontSize: '9px', color: '#666', textAlign: 'center', padding: '2px 4px', backgroundColor: '#f8f9fa', borderRadius: '3px', marginTop: '2px'}}>
 																								{dateDisplay}

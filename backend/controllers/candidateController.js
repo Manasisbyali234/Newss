@@ -549,6 +549,10 @@ exports.applyForJob = async (req, res) => {
     // Update job application count
     await Job.findByIdAndUpdate(jobId, { $inc: { applicationCount: 1 } });
 
+    // Invalidate job cache to ensure updated application count is shown
+    const { cache } = require('../utils/cache');
+    cache.delete(`job_${jobId}`);
+
     // Create notification for employer about new application
     try {
       const { createNotification } = require('./notificationController');
