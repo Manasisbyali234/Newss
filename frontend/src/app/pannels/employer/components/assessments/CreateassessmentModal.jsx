@@ -12,7 +12,7 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 	const [timeLimit, setTimeLimit] = useState(editData?.timer || 30);
 	const [description, setDescription] = useState(editData?.description || "");
 	const [questions, setQuestions] = useState(
-		editData?.questions || [{ question: "", type: "mcq", options: ["", "", "", ""], correctAnswer: 0, marks: 1, imageUrl: "" }]
+		editData?.questions || [{ question: "", type: "mcq", options: ["", "", "", ""], correctAnswer: null, marks: 1, imageUrl: "" }]
 	);
 	const [isMinimized, setIsMinimized] = useState(false);
 	const [isMaximized, setIsMaximized] = useState(false);
@@ -61,7 +61,7 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 				updated[index].correctAnswer = null;
 			} else {
 				updated[index].options = ["", "", "", ""];
-				updated[index].correctAnswer = 0;
+				updated[index].correctAnswer = null;
 			}
 		}
 		if (field === "imageUrl") updated[index].imageUrl = value;
@@ -81,9 +81,25 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 	};
 
 	const addQuestion = () => {
+		// Validate the last question before adding a new one
+		if (questions.length > 0) {
+			const lastQuestion = questions[questions.length - 1];
+			const questionText = lastQuestion.question.replace(/<[^>]*>/g, '').trim();
+			
+			if (!questionText) {
+				showWarning("Please write a question before adding a new one");
+				return;
+			}
+			
+			if (lastQuestion.type === "mcq" && (lastQuestion.correctAnswer === null || lastQuestion.correctAnswer === undefined)) {
+				showWarning("Please select answer before you create question");
+				return;
+			}
+		}
+		
 		setQuestions([
 			...questions,
-			{ question: "", type: "mcq", options: ["", "", "", ""], correctAnswer: 0, marks: 1, imageUrl: "" },
+			{ question: "", type: "mcq", options: ["", "", "", ""], correctAnswer: null, marks: 1, imageUrl: "" },
 		]);
 	};
 
@@ -169,7 +185,7 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 					}
 					
 					if (question.correctAnswer === null || question.correctAnswer === undefined) {
-						showWarning(`Please select the correct answer for Question ${i + 1}`);
+						showWarning(`Please select answer before you create question`);
 						return;
 					}
 				}

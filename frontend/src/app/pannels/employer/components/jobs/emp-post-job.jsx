@@ -550,13 +550,41 @@ export default function EmpPostJob({ onNext }) {
 				}
 			};
 			
+			// Calculate Last Date of Application when fromDate is updated
+			let calculatedLastDate = s.lastDateOfApplication;
+			if (field === 'fromDate' && value) {
+				// Get all fromDates from interview rounds
+				const allFromDates = [];
+				
+				// Add the current date being updated
+				allFromDates.push(new Date(value));
+				
+				// Add existing fromDates from other rounds
+				s.interviewRoundOrder.forEach(key => {
+					if (key !== roundType && updatedDetails[key]?.fromDate) {
+						allFromDates.push(new Date(updatedDetails[key].fromDate));
+					}
+				});
+				
+				// Find the earliest date and subtract 1 day for application deadline
+				if (allFromDates.length > 0) {
+					const earliestDate = new Date(Math.min(...allFromDates));
+					earliestDate.setDate(earliestDate.getDate() - 1);
+					calculatedLastDate = earliestDate.toISOString().split('T')[0];
+				}
+			}
+			
 			// Log the update for debugging
 			console.log(`Updated ${roundType} ${field}:`, value);
 			console.log('Updated interview round details:', updatedDetails);
+			if (field === 'fromDate' && value) {
+				console.log('Auto-calculated Last Date of Application:', calculatedLastDate);
+			}
 			
 			return {
 				...s,
-				interviewRoundDetails: updatedDetails
+				interviewRoundDetails: updatedDetails,
+				lastDateOfApplication: calculatedLastDate
 			};
 		});
 
@@ -2660,17 +2688,38 @@ export default function EmpPostJob({ onNext }) {
 						<label style={label}>
 							<i className="fa fa-calendar-times" style={{marginRight: '8px', color: '#ff6b35'}}></i>
 							Last Date of Application *
+							{formData.lastDateOfApplication && (
+								<span style={{
+									fontSize: 11, 
+									color: '#10b981', 
+									fontWeight: 500,
+									marginLeft: 8,
+									background: '#d1fae5',
+									padding: '2px 8px',
+									borderRadius: 4,
+								}}>
+									✓ Auto-calculated
+								</span>
+							)}
 						</label>
 						<input
-							style={input}
+							style={{
+								...input,
+								borderColor: formData.lastDateOfApplication ? '#10b981' : '#d1d5db',
+								background: formData.lastDateOfApplication ? '#f0fdf4' : '#fff'
+							}}
 							type="date"
 							min={new Date().toISOString().split('T')[0]}
 							value={formData.lastDateOfApplication}
 							onChange={(e) => update({ lastDateOfApplication: e.target.value })}
 							placeholder="DD/MM/YYYY"
+							readOnly={false}
 						/>
 						<small style={{color: '#6b7280', fontSize: 12, marginTop: 4, display: 'block'}}>
-							Format: DD/MM/YYYY
+							{formData.lastDateOfApplication 
+								? 'Auto-set prior to first interview'
+								: 'Will be auto-calculated when you set interview stage dates'
+							}
 						</small>
 						<HolidayIndicator date={formData.lastDateOfApplication} />
 					</div>

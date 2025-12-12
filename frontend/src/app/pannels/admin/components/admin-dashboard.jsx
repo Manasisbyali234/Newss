@@ -246,7 +246,7 @@ function AdminDashboardPage() {
                                     </div>
 
                                     <div className="wt-card-bottom">
-                                        <h4 className="m-b0">Total Placements</h4>
+                                        <h4 className="m-b0">Number of Colleges</h4>
                                     </div>
                                 </div>
                             </div>
