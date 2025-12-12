@@ -15,6 +15,15 @@ export default function AssessmentCard({ data, onDelete, onEdit, index }) {
 	return (
 		<div className="card h-100 shadow-sm">
 			<div className="card-body">
+				{/* Designation Name - Prominently displayed at top */}
+				{data.designation && (
+					<div className="mb-2">
+						<h6 className="fw-bold mb-1" style={{fontSize: '14px'}}>
+							<span style={{color: '#8B7355'}}>Designation Name:</span> <span className="text-primary">{data.designation}</span>
+						</h6>
+					</div>
+				)}
+				
 				{/* Serial Number and Created Date */}
 				<div className="d-flex justify-content-between align-items-center mb-2">
 					<small className="text-muted fw-bold">#{data.serialNumber || (index + 1)}</small>
@@ -30,11 +39,6 @@ export default function AssessmentCard({ data, onDelete, onEdit, index }) {
 						<span className="btn btn-sm btn-outline-primary" style={{pointerEvents: 'none', cursor: 'default', fontSize: '10px', padding: '1px 6px', lineHeight: '1.2'}}>
 							{data.type}
 						</span>
-						{data.designation && (
-							<span className="btn btn-sm btn-outline-primary" style={{pointerEvents: 'none', cursor: 'default', fontSize: '10px', padding: '1px 6px', lineHeight: '1.2'}}>
-								{data.designation}
-							</span>
-						)}
 					</div>
 				</div>
 				{data.description && (

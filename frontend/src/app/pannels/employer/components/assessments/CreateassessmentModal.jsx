@@ -7,7 +7,7 @@ import 'react-quill/dist/quill.snow.css';
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
 export default function CreateAssessmentModal({ onClose, onCreate, editData = null }) {
 	const [title, setTitle] = useState(editData?.title || "");
-	const [type, setType] = useState(editData?.type || "Technical");
+	const [type, setType] = useState(editData?.type || "Aptitude Test");
 	const [designation, setDesignation] = useState(editData?.designation || "");
 	const [timeLimit, setTimeLimit] = useState(editData?.timer || 30);
 	const [description, setDescription] = useState(editData?.description || "");
@@ -327,9 +327,14 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 								value={type}
 								onChange={(e) => setType(e.target.value)}
 							>
-								<option value="Technical">Technical</option>
-								<option value="Soft Skill">Soft Skill</option>
-								<option value="General">General</option>
+								<option value="Aptitude Test">Aptitude Test</option>
+								<option value="Coding Assessment">Coding Assessment</option>
+								<option value="Case Study Round">Case Study Round</option>
+								<option value="Group Discussion">Group Discussion</option>
+								<option value="Managerial Round">Managerial Round</option>
+								<option value="Panel Interview">Panel Interview</option>
+								<option value="Final HR Round">Final HR Round</option>
+								<option value="Leadership Interview">Leadership Interview</option>
 							</select>
 						</div>
 						<div className="col-6">

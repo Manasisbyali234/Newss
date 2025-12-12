@@ -79,7 +79,7 @@ exports.createAssessment = async (req, res) => {
       employerId: req.user._id,
       serialNumber,
       title: title.trim(),
-      type: type || 'Technical',
+      type: type || 'Aptitude Test',
       designation: designation ? designation.trim() : '',
       description: description ? description.trim() : '',
       instructions: instructions ? instructions.trim() : '',
@@ -197,7 +197,7 @@ exports.updateAssessment = async (req, res) => {
     
     const updateData = {
       title: title.trim(),
-      type: type || 'Technical',
+      type: type || 'Aptitude Test',
       designation: designation ? designation.trim() : '',
       description: description ? description.trim() : '',
       instructions: instructions ? instructions.trim() : '',

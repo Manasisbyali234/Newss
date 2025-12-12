@@ -5,7 +5,7 @@ const AssessmentSchema = new mongoose.Schema({
   jobId: { type: mongoose.Schema.Types.ObjectId, ref: 'Job' },
   serialNumber: { type: Number, required: true },
   title: { type: String, required: true },
-  type: { type: String, enum: ['Technical', 'Soft Skill', 'General'], default: 'Technical' },
+  type: { type: String, enum: ['Aptitude Test', 'Coding Assessment', 'Case Study Round', 'Group Discussion', 'Managerial Round', 'Panel Interview', 'Final HR Round', 'Leadership Interview'], default: 'Aptitude Test' },
   designation: { type: String },
   description: { type: String },
   instructions: { type: String },
