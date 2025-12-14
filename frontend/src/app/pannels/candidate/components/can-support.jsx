@@ -18,6 +18,7 @@ function CanSupport() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+    const [isCompressing, setIsCompressing] = useState(false);
 
     useEffect(() => {
         fetchCandidateData();
@@ -100,7 +101,60 @@ function CanSupport() {
         }
     };
 
-    const handleFileChange = (e) => {
+    const compressImage = (file) => {
+        return new Promise((resolve) => {
+            // If not an image, return as is
+            if (!file.type.startsWith('image/')) {
+                resolve(file);
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    // Resize if image is too large
+                    const maxDimension = 1920;
+                    if (width > maxDimension || height > maxDimension) {
+                        if (width > height) {
+                            height = (height / width) * maxDimension;
+                            width = maxDimension;
+                        } else {
+                            width = (width / height) * maxDimension;
+                            height = maxDimension;
+                        }
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Convert to blob with compression
+                    canvas.toBlob((blob) => {
+                        if (blob) {
+                            const compressedFile = new File([blob], file.name, {
+                                type: 'image/jpeg',
+                                lastModified: Date.now()
+                            });
+                            resolve(compressedFile);
+                        } else {
+                            resolve(file);
+                        }
+                    }, 'image/jpeg', 0.8); // 80% quality
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    };
+
+    const handleFileChange = async (e) => {
         const selectedFiles = Array.from(e.target.files);
         
         const clearFileInput = () => {
@@ -113,31 +167,45 @@ function CanSupport() {
             return;
         }
         
-        const maxSize = 5 * 1024 * 1024; // 5MB per file for camera images
-        const oversizedFiles = selectedFiles.filter(file => file.size > maxSize);
+        // Compress images if they're too large
+        setIsCompressing(true);
+        const processedFiles = [];
+        for (const file of selectedFiles) {
+            if (file.type.startsWith('image/') && file.size > 5 * 1024 * 1024) {
+                // Compress large images
+                const compressed = await compressImage(file);
+                processedFiles.push(compressed);
+            } else {
+                processedFiles.push(file);
+            }
+        }
+        setIsCompressing(false);
+        
+        const maxSize = 5 * 1024 * 1024; // 5MB per file
+        const oversizedFiles = processedFiles.filter(file => file.size > maxSize);
         if (oversizedFiles.length > 0) {
             const fileList = oversizedFiles.map(f => `"${f.name}" (${(f.size / 1024 / 1024).toFixed(1)}MB)`).join(', ');
             setErrors(prev => ({ 
                 ...prev, 
-                files: `File size too large: ${fileList}. Each file must be under 5MB. Please compress images before uploading.` 
+                files: `File size too large: ${fileList}. Each file must be under 5MB. Please try taking a new photo or use a different file.` 
             }));
             clearFileInput();
             return;
         }
         
-        const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
+        const totalSize = processedFiles.reduce((sum, file) => sum + file.size, 0);
         const maxTotalSize = 15 * 1024 * 1024; // 15MB total
         if (totalSize > maxTotalSize) {
             const totalSizeMB = (totalSize / 1024 / 1024).toFixed(1);
             setErrors(prev => ({ 
                 ...prev, 
-                files: `Combined file size too large: ${totalSizeMB}MB exceeds the 15MB limit. Please compress images or reduce the number of files.` 
+                files: `Combined file size too large: ${totalSizeMB}MB exceeds the 15MB limit. Please reduce the number of files.` 
             }));
             clearFileInput();
             return;
         }
         
-        setFiles(selectedFiles);
+        setFiles(processedFiles);
         if (errors.files) {
             setErrors(prev => ({ ...prev, files: '' }));
         }
@@ -217,12 +285,12 @@ function CanSupport() {
                     // Server returned HTML or other non-JSON response
                     const text = await response.text();
                     console.error('Non-JSON response:', text.substring(0, 200));
-                    setErrors({ submit: 'Failed to upload resume: File size too large. Each file must be under 5MB. Please compress your files before uploading.' });
+                    setErrors({ submit: 'File upload failed: File size too large. Each file must be under 5MB. Please compress your images before uploading.' });
                 }
             }
         } catch (error) {
             console.error('Upload error:', error);
-            setErrors({ submit: 'Failed to upload resume: ' + (error.message || 'Network error. Please check your connection and try again.') });
+            setErrors({ submit: 'Failed to submit ticket: ' + (error.message || 'Network error. Please check your connection and try again.') });
         } finally {
             setIsSubmitting(false);
         }
@@ -390,10 +458,17 @@ function CanSupport() {
                                                 multiple 
                                                 accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.jpg,.jpeg,.png,.gif,.webp"
                                                 onChange={handleFileChange}
+                                                disabled={isCompressing}
                                             />
+                                            {isCompressing && (
+                                                <div className="mt-2" style={{ color: '#ff6b35' }}>
+                                                    <i className="fa fa-spinner fa-spin me-1"></i>
+                                                    Compressing images...
+                                                </div>
+                                            )}
                                             <small className="form-text d-block mt-2" style={{ color: '#ff6b35' }}>
                                                 <i className="fa fa-info-circle me-1"></i>
-                                                Upload up to 3 files (max 5MB each, 15MB total). Supported formats: PDF, DOC, DOCX, XLS, XLSX, CSV, TXT, JPG, PNG, GIF, WEBP
+                                                Upload up to 3 files (max 5MB each, 15MB total). Large images will be automatically compressed.
                                             </small>
                                             {errors.files && (
                                                 <div className="invalid-feedback d-block">

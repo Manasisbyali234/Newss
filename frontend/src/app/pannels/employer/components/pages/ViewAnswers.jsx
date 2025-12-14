@@ -70,65 +70,67 @@ export default function ViewAnswers() {
       width: '100%', 
       minHeight: '100vh', 
       background: '#f7f7f7', 
-      padding: '2rem' 
+      padding: '0'
     }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        {/* Header */}
+      <button
+        onClick={() => navigate(-1)}
+        style={{
+          background: 'white',
+          border: '1px solid #e5e7eb',
+          cursor: 'pointer',
+          padding: '0.5rem 1rem',
+          borderRadius: '8px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+          margin: '5rem 0 1rem 1rem',
+          position: 'relative',
+          zIndex: 1000
+        }}
+      >
+        <i className="fa fa-arrow-left" style={{ fontSize: '1rem', color: '#ff6b35' }}></i>
+        <span style={{ fontSize: '0.875rem', color: '#374151' }}>Back</span>
+      </button>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem 2rem 1rem' }}>
         <div style={{ 
           background: 'white', 
           borderRadius: '12px', 
-          padding: '2rem', 
+          padding: '1.5rem', 
           marginBottom: '2rem',
           boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)' 
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-            <button
-              onClick={() => navigate(-1)}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '0.5rem',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <i className="fa fa-arrow-left" style={{ fontSize: '1.125rem', color: '#ff6b35' }}></i>
-            </button>
-            <div>
-              <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111827', margin: 0 }}>
-                Assessment Answers
-              </h2>
-              <p style={{ color: '#6b7280', margin: '0.5rem 0 0 0' }}>
-                Candidate: {attempt.candidateId?.name || 'N/A'} ({attempt.candidateId?.email || 'N/A'})
-              </p>
-            </div>
+          <div style={{ marginBottom: '1rem' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#111827', margin: 0 }}>
+              Assessment Answers
+            </h2>
+            <p style={{ color: '#6b7280', margin: '0.25rem 0 0 0', fontSize: '0.8rem' }}>
+              {attempt.candidateId?.name || 'N/A'} • {attempt.candidateId?.email || 'N/A'}
+            </p>
           </div>
           <div style={{ 
-            display: 'flex', 
-            gap: '2rem', 
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+            gap: '1rem', 
             padding: '1rem', 
             background: '#f9fafb', 
-            borderRadius: '8px' 
+            borderRadius: '8px'
           }}>
-            <div>
-              <span style={{ color: '#6b7280', fontSize: '0.875rem' }}>Assessment: </span>
-              <span style={{ fontWeight: '600', color: '#111827' }}>{assessment.title}</span>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ color: '#6b7280', fontSize: '0.75rem', marginBottom: '0.25rem' }}>Assessment</div>
+              <div style={{ fontWeight: '600', color: '#111827', fontSize: '0.8rem' }}>{assessment.title}</div>
             </div>
             <div>
-              <span style={{ color: '#6b7280', fontSize: '0.875rem' }}>Score: </span>
-              <span style={{ fontWeight: '600', color: '#111827' }}>{attempt.score}/{attempt.totalMarks}</span>
+              <div style={{ color: '#6b7280', fontSize: '0.75rem', marginBottom: '0.25rem' }}>Score</div>
+              <div style={{ fontWeight: '600', color: '#111827', fontSize: '0.875rem' }}>{attempt.score}/{attempt.totalMarks}</div>
             </div>
             <div>
-              <span style={{ color: '#6b7280', fontSize: '0.875rem' }}>Percentage: </span>
-              <span style={{ fontWeight: '600', color: '#111827' }}>{attempt.percentage}%</span>
+              <div style={{ color: '#6b7280', fontSize: '0.75rem', marginBottom: '0.25rem' }}>Percentage</div>
+              <div style={{ fontWeight: '600', color: '#111827', fontSize: '0.875rem' }}>{attempt.percentage}%</div>
             </div>
           </div>
         </div>
 
-        {/* Answers */}
         {allAnswers.length === 0 ? (
           <div style={{ 
             background: 'white', 

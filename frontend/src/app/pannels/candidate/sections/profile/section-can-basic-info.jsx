@@ -17,7 +17,7 @@ const indianCities = [
 
 function SectionCandicateBasicInfo() {
     const mobileStyles = `
-        @media (max-width: 576px) {
+        @media (max-width: 767px) {
             .phone-input-field {
                 padding-left: 90px !important;
             }
@@ -375,6 +375,11 @@ function SectionCandicateBasicInfo() {
         
         setSaving(true);
         
+        // Ensure UI doesn't freeze on mobile
+        if (window.innerWidth <= 991) {
+            document.body.style.overflow = 'auto';
+        }
+        
         try {
             const submitData = new FormData();
             submitData.append('name', formData.name.trim());
@@ -394,9 +399,20 @@ function SectionCandicateBasicInfo() {
             const response = await api.updateCandidateProfile(submitData);
             
             if (response.success) {
+                // Close mobile sidebar if open
+                if (window.innerWidth <= 991) {
+                    document.body.classList.remove('sidebar-open');
+                    const overlay = document.querySelector('.sidebar-overlay');
+                    if (overlay) overlay.classList.remove('active');
+                }
+                
                 showSuccess('Profile updated successfully!');
-                // Scroll to top of the page
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                // Scroll to top after a brief delay to ensure content is rendered
+                setTimeout(() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 100);
+                
                 fetchProfile();
                 setImagePreview(null);
                 window.dispatchEvent(new Event('candidateProfileUpdated'));
@@ -422,6 +438,12 @@ function SectionCandicateBasicInfo() {
             }
         } finally {
             setSaving(false);
+            
+            // Ensure mobile UI is restored
+            if (window.innerWidth <= 991) {
+                document.body.style.overflow = 'auto';
+                document.body.classList.remove('sidebar-open');
+            }
         }
     };
 
@@ -556,7 +578,7 @@ function SectionCandicateBasicInfo() {
                                     />
                                 </div>
                                 <input
-                                    className={`form-control ${errors.phone ? 'is-invalid' : ''}`}
+                                    className={`form-control phone-input-field ${errors.phone ? 'is-invalid' : ''}`}
                                     type="tel"
                                     name="phone"
                                     value={formData.phone}
@@ -566,7 +588,6 @@ function SectionCandicateBasicInfo() {
                                     maxLength="15"
                                     required
                                     style={{ paddingLeft: '80px', height: '50px', borderRadius: '0 8px 8px 0', borderLeft: 'none' }}
-                                    className="phone-input-field"
                                 />
                             </div>
                             {errors.phone && <div className="invalid-feedback d-block">{errors.phone}</div>}

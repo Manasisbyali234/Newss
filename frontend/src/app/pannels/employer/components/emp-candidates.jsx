@@ -186,19 +186,20 @@ function EmpCandidatesPage() {
       {/* Content */}
       <div style={{ padding: '0 2rem 2rem 2rem' }}>
         <div className="panel panel-default site-bg-white p-3" style={{ background: 'white', borderRadius: '12px', border: '1px solid #eef2f7', boxShadow: 'none', margin: 0 }}>
-        <div className="panel-heading wt-panel-heading mb-3 d-flex align-items-center justify-content-between">
-          <h4 className="panel-tittle d-flex align-items-center m-0">
-            <ListChecks
-              size={18}
-              style={{ color: "#f97316" }}
-              className="me-2"
-            />
-            Job Applications
-          </h4>
-
-          <p className="text-muted mb-0">
-            Review and manage candidate applications
-          </p>
+        <div className="panel-heading wt-panel-heading mb-3">
+          <div>
+            <h4 className="panel-tittle d-flex align-items-center m-0">
+              <ListChecks
+                size={18}
+                style={{ color: "#f97316" }}
+                className="me-2"
+              />
+              Job Applications
+            </h4>
+            <p className="text-muted mb-0 mt-1">
+              Review and manage candidate applications
+            </p>
+          </div>
         </div>
 
         <div className="panel-body wt-panel-body">

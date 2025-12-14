@@ -192,15 +192,27 @@
     max-height: calc(100vh - 180px) !important;
   }
 
-  .modal-footer {
+  .modal-footer:not(.interview-modal-footer) {
     padding: 12px 15px !important;
     flex-direction: column !important;
   }
 
-  .modal-footer .btn {
+  .modal-footer:not(.interview-modal-footer) .btn {
     width: 100% !important;
     padding: 12px 15px !important;
     font-size: 14px !important;
+  }
+
+  .interview-modal-footer {
+    flex-direction: row !important;
+    padding: 12px 15px !important;
+  }
+
+  .interview-modal-footer .btn,
+  .interview-modal-footer button {
+    width: auto !important;
+    flex: 0 1 auto !important;
+    min-width: 100px !important;
   }
 
   .modal-title {

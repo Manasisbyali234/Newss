@@ -299,6 +299,9 @@ export default function EmpPostJob({ onNext }) {
 	}, [formData.ctc, autoSaveCTC]);
 
 	useEffect(() => {
+		// Reset scroll position
+		window.scrollTo(0, 0);
+		
 		if (isEditMode) {
 			fetchJobData();
 		} else {
@@ -851,7 +854,7 @@ export default function EmpPostJob({ onNext }) {
 
 	/* Inline style objects */
 	const page = {
-		padding: isMobile ? "15px 10px" : "30px 20px",
+		padding: isMobile ? "80px 10px 15px 10px" : "100px 20px 30px 20px",
 		maxWidth: 1200,
 		margin: "0 auto",
 		fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif",
@@ -958,36 +961,37 @@ export default function EmpPostJob({ onNext }) {
 		<div style={page}>
 			{/* Back to Jobs Button */}
 			<div style={{marginBottom: 16, display: 'flex', justifyContent: 'flex-end'}}>
-				<NavLink to={empRoute(employer.MANAGE_JOBS)} style={{textDecoration: 'none'}}>
-					<button
-						style={{
-							background: "#374151",
-							color: "#ffffff",
-							border: "2px solid #9ca3af",
-							padding: "10px 20px",
-							borderRadius: 8,
-							cursor: "pointer",
-							fontSize: 14,
-							fontWeight: 600,
-							transition: "all 0.2s ease",
-							boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-							display: 'flex',
-							alignItems: 'center',
-							gap: 8,
-						}}
-						onMouseEnter={(e) => {
-							e.currentTarget.style.background = '#4b5563';
-							e.currentTarget.style.borderColor = '#6b7280';
-						}}
-						onMouseLeave={(e) => {
-							e.currentTarget.style.background = '#374151';
-							e.currentTarget.style.borderColor = '#9ca3af';
-						}}
-					>
-						<i className="fa fa-arrow-left"></i>
-						Back to Jobs
-					</button>
-				</NavLink>
+				<button
+					onClick={() => {
+						window.location.href = empRoute(employer.MANAGE_JOBS);
+					}}
+					style={{
+						background: "#374151",
+						color: "#ffffff",
+						border: "2px solid #9ca3af",
+						padding: "10px 20px",
+						borderRadius: 8,
+						cursor: "pointer",
+						fontSize: 14,
+						fontWeight: 600,
+						transition: "all 0.2s ease",
+						boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+						display: 'flex',
+						alignItems: 'center',
+						gap: 8,
+					}}
+					onMouseEnter={(e) => {
+						e.currentTarget.style.background = '#4b5563';
+						e.currentTarget.style.borderColor = '#6b7280';
+					}}
+					onMouseLeave={(e) => {
+						e.currentTarget.style.background = '#374151';
+						e.currentTarget.style.borderColor = '#9ca3af';
+					}}
+				>
+					<i className="fa fa-arrow-left"></i>
+					Back to Jobs
+				</button>
 			</div>
 
 			{/* Header */}

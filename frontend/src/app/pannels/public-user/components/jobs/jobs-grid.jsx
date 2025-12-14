@@ -7,6 +7,7 @@ import SectionRecordsFilter from "../../sections/common/section-records-filter";
 import SectionJobsGrid from "../../sections/jobs/section-jobs-grid";
 import SectionJobsSidebar1 from "../../sections/jobs/sidebar/section-jobs-sidebar1";
 import "../../../../../job-grid-optimizations.css";
+import "../../../../../job-grid-spacing-fix.css";
 
 function JobsGridPage() {
     const [searchParams] = useSearchParams();
@@ -86,8 +87,12 @@ function JobsGridPage() {
                         </Col>
 
                         <Col lg={8} md={12} data-aos="fade-left" data-aos-delay="200">
-                            {/*Filter Short By - Desktop*/}
-                            <div className="mb-4 d-none d-lg-block">
+                            {/*Sidebar - Mobile (Before Job Cards)*/}
+                            <div className="d-lg-none mb-4">
+                                <SectionJobsSidebar1 onFilterChange={handleFilterChange} />
+                            </div>
+                            {/*Filter Short By - Desktop & Mobile*/}
+                            <div className="mb-4">
                                 <SectionRecordsFilter
                                     _config={_filterConfig}
                                     onSortChange={handleSortChange}
@@ -95,18 +100,6 @@ function JobsGridPage() {
                                 />
                             </div>
                             <SectionJobsGrid filters={filters} onTotalChange={handleTotalChange} />
-                            {/*Filter Short By - Mobile (After Job Cards)*/}
-                            <div className="mb-4 d-lg-none mt-4">
-                                <SectionRecordsFilter
-                                    _config={_filterConfig}
-                                    onSortChange={handleSortChange}
-                                    onItemsPerPageChange={handleItemsPerPageChange}
-                                />
-                            </div>
-                            {/*Sidebar - Mobile (After Filter Bar)*/}
-                            <div className="d-lg-none mt-4">
-                                <SectionJobsSidebar1 onFilterChange={handleFilterChange} />
-                            </div>
                         </Col>
                     </Row>
             </div>

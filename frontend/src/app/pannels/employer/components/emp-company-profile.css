@@ -928,6 +928,43 @@ button.btn-danger:hover i.fas {
   }
 }
 
+/* Authorization Letter Section Mobile Fix */
+@media (max-width: 991px) {
+  .col-md-6.mb-3 .form-group {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+  
+  .col-md-6.mb-3 .form-group > .d-flex {
+    order: 1 !important;
+    width: 100% !important;
+    margin-bottom: 0 !important;
+  }
+  
+  .col-md-6.mb-3 .form-group > .mb-2 {
+    order: 2 !important;
+    width: 100% !important;
+  }
+  
+  .col-md-6.mb-3 .form-group > input[type="file"] {
+    order: 3 !important;
+    width: calc(100% - 50px) !important;
+  }
+  
+  .col-md-6.mb-3 .form-group > .d-flex .btn-outline-danger {
+    position: absolute !important;
+    right: 10px !important;
+    top: 0 !important;
+  }
+  
+  .col-md-6.mb-3 .form-group {
+    position: relative !important;
+  }
+}
+
 /* Mobile Touch Optimizations */
 @media (hover: none) and (pointer: coarse) {
   .panel:hover,
@@ -963,6 +1000,25 @@ button.btn-danger:hover i.fas {
 @media (max-width: 991px) {
   .emp-company-profile {
     padding-top: 60px; /* Account for mobile menu toggle */
+  }
+  
+  .document-card .d-flex.justify-content-between {
+    flex-direction: row !important;
+    align-items: flex-start !important;
+  }
+  
+  .document-card .d-flex.justify-content-between > div {
+    flex: 1 !important;
+  }
+  
+  .document-card .d-flex.justify-content-between .btn-outline-danger {
+    position: absolute !important;
+    right: 10px !important;
+    top: 10px !important;
+  }
+  
+  .document-card {
+    position: relative !important;
   }
 }
 

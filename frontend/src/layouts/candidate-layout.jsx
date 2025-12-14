@@ -59,13 +59,13 @@ function CandidateLayout() {
         <>
             <div className="page-wraper">
 
-                {isMobile && (
+                {isMobile && !sidebarActive && (
                     <button
-                        className={`mobile-menu-toggle ${sidebarActive ? "sidebar-open" : ""}`}
+                        className="mobile-menu-toggle"
                         onClick={handleMobileMenuToggle}
                         aria-label="Toggle Menu"
                     >
-                        <i className={sidebarActive ? "fas fa-times" : "fas fa-bars"}></i>
+                        <i className="fas fa-bars"></i>
                     </button>
                 )}
 

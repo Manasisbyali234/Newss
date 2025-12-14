@@ -42,6 +42,15 @@ function TermsConditionsPage() {
                         .terms-content { padding: 20px; }
                         .accordion-header h3 { font-size: 1.1rem; }
                         .accordion-body { padding: 20px 15px; }
+                        .accordion-body strong { font-weight: normal !important; }
+                        .accordion-body em { font-style: normal !important; font-weight: normal !important; }
+                        .about-section strong { font-weight: normal !important; }
+                        .about-section em { font-style: normal !important; font-weight: normal !important; }
+                        strong { font-weight: normal !important; }
+                        em { font-style: normal !important; font-weight: normal !important; }
+                        .about-section p { text-align: left !important; }
+                        .accordion-body p { text-align: left !important; }
+                        .accordion-body li { text-align: left !important; }
                     }
                 `}
             </style>

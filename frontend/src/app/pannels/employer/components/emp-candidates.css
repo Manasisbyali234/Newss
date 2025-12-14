@@ -5,6 +5,10 @@
   padding: 0 !important;
 }
 
+.emp-candidates-page .panel-heading.wt-panel-heading {
+  display: block !important;
+}
+
 .emp-candidates-page .wt-admin-right-page-header {
   background: #ffffff;
   border-bottom: 1px solid #e5e7eb;

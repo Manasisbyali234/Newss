@@ -37,6 +37,18 @@ export function useHamburgerMenu() {
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen, close]);
 
+  // Auto-hide on scroll
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleScroll = () => {
+      close();
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isOpen, close]);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {

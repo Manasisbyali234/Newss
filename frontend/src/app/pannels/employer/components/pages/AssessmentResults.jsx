@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import ResponsiveTable from '../../../../../components/ResponsiveTable';
 import '../emp-dashboard.css';
 
 export default function AssessmentResults() {
@@ -130,7 +131,6 @@ export default function AssessmentResults() {
           background: 'white',
           borderRadius: '12px',
           border: '1px solid #e5e7eb',
-          overflow: 'hidden',
           boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
         }}>
           {results.length === 0 ? (
@@ -142,11 +142,7 @@ export default function AssessmentResults() {
               <p style={{ color: '#6b7280', fontSize: '1rem', margin: 0 }}>No candidates have completed this assessment yet. Results will appear here once candidates submit their assessments.</p>
             </div>
           ) : (
-            <div className="table-responsive">
-              <table style={{
-                width: '100%',
-                borderCollapse: 'collapse'
-              }}>
+            <ResponsiveTable>
                 <thead>
                   <tr style={{ backgroundColor: '#f8f9fa', borderBottom: '2px solid #dee2e6' }}>
                     <th style={{ padding: '16px 12px', textAlign: 'left', fontWeight: '600', color: '#232323', fontSize: '13px', border: 'none', verticalAlign: 'middle', whiteSpace: 'nowrap' }}>
@@ -357,8 +353,7 @@ export default function AssessmentResults() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
-            </div>
+            </ResponsiveTable>
           )}
         </div>
       </div>

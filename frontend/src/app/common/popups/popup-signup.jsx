@@ -3,6 +3,7 @@ import { pubRoute, publicUser } from '../../../globals/route-names';
 import { validatePhoneNumber, handlePhoneInputChange, validatePhoneOnBlur } from '../../../utils/phoneValidation';
 import TermsModal from '../../../components/TermsModal';
 import '../../../popup-nav-buttons.css';
+import '../../../signup-modal-mobile-fix.css';
 
 function SignUpPopup() {
     const [candidateData, setCandidateData] = useState({
@@ -50,6 +51,19 @@ function SignUpPopup() {
             setError('');
             setSuccess('');
             setFieldErrors({});
+            // Fix for mobile white screen - ensure modal is visible
+            if (modal) {
+                modal.style.display = 'block';
+                modal.style.opacity = '1';
+                document.body.classList.add('modal-open');
+            }
+        };
+
+        const handleModalHide = () => {
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
         };
 
         // Clear messages when tabs change
@@ -61,6 +75,7 @@ function SignUpPopup() {
 
         if (modal) {
             modal.addEventListener('show.bs.modal', handleModalShow);
+            modal.addEventListener('hide.bs.modal', handleModalHide);
             
             // Add event listeners for tab changes
             const tabButtons = modal.querySelectorAll('[data-bs-toggle="tab"]');
@@ -70,6 +85,7 @@ function SignUpPopup() {
 
             return () => {
                 modal.removeEventListener('show.bs.modal', handleModalShow);
+                modal.removeEventListener('hide.bs.modal', handleModalHide);
                 tabButtons.forEach(button => {
                     button.removeEventListener('click', handleTabChange);
                 });

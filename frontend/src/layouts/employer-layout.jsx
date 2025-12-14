@@ -47,7 +47,7 @@ function EmployerLayout() {
     return (
         <>
             <div className="page-wraper">
-                {isMobile && (
+                {isMobile && !sidebarActive && (
                     <button 
                         className="mobile-menu-toggle"
                         onClick={handleMobileMenuToggle}

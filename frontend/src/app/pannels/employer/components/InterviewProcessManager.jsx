@@ -351,16 +351,17 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
                     />
                   </div>
                 </div>
-                <div className="modal-footer">
+                <div className="modal-footer interview-modal-footer" style={{ gap: '10px', justifyContent: 'flex-end' }}>
                   <button
                     className="btn btn-secondary"
                     onClick={() => setShowEmailModal(false)}
+                    style={{ flex: '0 0 auto' }}
                   >
                     Cancel
                   </button>
                   <button
                     className="btn"
-                    style={{ backgroundColor: '#ff6600', color: 'white', border: 'none' }}
+                    style={{ backgroundColor: '#ff6600', color: 'white', border: 'none', flex: '0 0 auto' }}
                     onClick={sendInterviewInvite}
                     disabled={sendingEmail}
                   >

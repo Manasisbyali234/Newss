@@ -1,0 +1,79 @@
+/* Mobile Responsive Styles for Login Page */
+
+@media (max-width: 767px) {
+    .nav-pills {
+        flex-wrap: nowrap !important;
+        margin-left: -20px !important;
+        margin-right: -20px !important;
+    }
+    .col-md-6 {
+        width: 100% !important;
+    }
+    
+    .col-md-6:first-child {
+        display: none !important;
+    }
+    
+    .col-md-6:last-child {
+        border-left: none !important;
+        border-top: 4px solid #FF6A00 !important;
+    }
+    
+    .col-md-6 .p-5 {
+        padding: 1.5rem !important;
+        min-height: auto !important;
+    }
+    
+    .col-lg-11, .col-xl-10 {
+        max-width: 100% !important;
+        padding: 0 15px !important;
+    }
+    
+    .nav-pills .nav-item {
+        flex: 1 !important;
+    }
+    
+    .nav-pills .nav-link {
+        padding: 8px 2px !important;
+        font-size: 9px !important;
+    }
+    
+    .nav-pills .nav-link i {
+        display: none !important;
+    }
+    
+    h3.fw-bold {
+        font-size: 1.5rem !important;
+    }
+    
+    .form-control {
+        font-size: 16px !important;
+    }
+    
+    .btn {
+        font-size: 16px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .col-md-6 .p-5 {
+        padding: 1rem !important;
+    }
+    
+    h3.fw-bold {
+        font-size: 1.3rem !important;
+    }
+    
+    .nav-pills .nav-link {
+        font-size: 14px !important;
+        padding: 10px 12px !important;
+    }
+    
+    .form-control {
+        padding: 10px 14px !important;
+    }
+    
+    button[type="submit"] {
+        padding: 10px !important;
+    }
+}

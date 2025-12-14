@@ -903,12 +903,13 @@ function EmpCandidateReviewPage () {
 												style={{ width: "100px", height: "100px", objectFit: "cover" }}
 												onError={(e) => {
 													e.target.style.display = 'none';
-													e.target.parentElement.innerHTML = '<div class="d-flex align-items-center justify-content-center h-100" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); width: 100px; height: 100px;"><svg width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="#ff6600" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>';
+													e.target.parentElement.innerHTML = '<div class="d-flex flex-column align-items-center justify-content-center h-100" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); width: 100px; height: 100px;"><svg width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="#ff6600" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><small style="color: #6c757d; font-size: 0.65rem; margin-top: 4px; text-align: center;">Profile image<br/>not uploaded</small></div>';
 												}}
 											/>
 										) : (
-											<div className="d-flex align-items-center justify-content-center h-100" style={{background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)', width: '100px', height: '100px'}}>
+											<div className="d-flex flex-column align-items-center justify-content-center h-100" style={{background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)', width: '100px', height: '100px'}}>
 												<User size={45} style={{color: '#ff6600'}} />
+												<small style={{color: '#6c757d', fontSize: '0.65rem', marginTop: '4px', textAlign: 'center'}}>Profile image<br/>not uploaded</small>
 											</div>
 										)}
 									</div>

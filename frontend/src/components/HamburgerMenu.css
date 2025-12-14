@@ -14,10 +14,14 @@
   font-size: 18px;
   color: #333;
   line-height: 1;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
 }
 
 .hamburger-btn.active {
-  color: #fd7e14;
+  display: none !important;
 }
 
 .hamburger-overlay {
@@ -42,6 +46,7 @@
   right: 0;
   width: 280px;
   height: 100vh;
+  max-height: 100vh;
   background: #fff;
   box-shadow: -2px 0 15px rgba(0,0,0,0.15);
   z-index: 999999;

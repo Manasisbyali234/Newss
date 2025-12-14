@@ -100,8 +100,13 @@ function SectionCanKeySkills({ profile }) {
     };
 
     const handleAddCustom = () => {
-        if (customSkill.trim()) {
-            addSkill(customSkill.trim());
+        const trimmedSkill = customSkill.trim();
+        if (trimmedSkill) {
+            if (skills.includes(trimmedSkill)) {
+                showError(`Skill "${trimmedSkill}" already exists!`);
+                return;
+            }
+            addSkill(trimmedSkill);
         }
     };
 
@@ -218,13 +223,13 @@ function SectionCanKeySkills({ profile }) {
                                         autoFocus
                                     />
                                 </div>
-                                <div className="col-12 col-md-6 d-flex align-items-end gap-2">
+                                <div className="col-12 col-md-6 d-flex align-items-end" style={{gap: '10px'}}>
                                     <button 
                                         type="button"
                                         className="btn btn-outline-primary flex-fill"
                                         onClick={handleAddCustom}
                                         disabled={!customSkill.trim() || loading}
-                                        style={{backgroundColor: 'transparent'}}
+                                        style={{backgroundColor: 'transparent', marginRight: '8px'}}
                                     >
                                         <i className="fa fa-plus me-1"></i>
                                         Add

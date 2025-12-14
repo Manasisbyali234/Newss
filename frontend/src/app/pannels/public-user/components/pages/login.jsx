@@ -6,6 +6,7 @@ import { useAuth } from "../../../../../contexts/AuthContext";
 import { loadScript, publicUrlFor } from "../../../../../globals/constants";
 import { handleFacebookLogin, handleGoogleLogin } from "../../../../../utils/socialAuth";
 import './login-fix.css';
+import './login-mobile-responsive.css';
 import { removePasswordEyeIcons } from './remove-eye-icons';
 
 

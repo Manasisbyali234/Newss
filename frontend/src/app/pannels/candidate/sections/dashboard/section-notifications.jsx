@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import './section-notifications.css';
 
 function SectionNotifications() {
 	const [notifications, setNotifications] = useState([]);
@@ -53,7 +54,7 @@ function SectionNotifications() {
 	const displayedNotifications = showAll ? notifications : notifications.slice(0, 3);
 
 	return (
-		<div style={{ borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', background: 'white', maxHeight: '400px' }}>
+		<div className="notification-container" style={{ borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', background: 'white', maxHeight: '400px' }}>
 			<div style={{ padding: '12px 16px', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 				<h5 style={{ fontSize: '14px', fontWeight: 'bold', color: '#374151', margin: 0 }}>
 					<i className="feather-bell" style={{ marginRight: '8px' }}></i>Notifications
@@ -68,22 +69,23 @@ function SectionNotifications() {
 					<>
 						{displayedNotifications.map((notif, idx) => {
 							const { icon, color } = getIcon(notif.type);
+							const isMobile = window.innerWidth <= 767;
 							return (
-								<div key={notif._id} onMouseEnter={() => setHoveredId(notif._id)} onMouseLeave={() => setHoveredId(null)} style={{ padding: '10px 12px', borderBottom: idx < displayedNotifications.length - 1 ? '1px solid #f1f5f9' : 'none', display: 'flex', gap: '8px' }}>
-									<div style={{ width: '28px', height: '28px', borderRadius: '50%', background: `${color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+								<div key={notif._id} className="notification-item" onMouseEnter={() => setHoveredId(notif._id)} onMouseLeave={() => setHoveredId(null)} onClick={() => isMobile && setHoveredId(hoveredId === notif._id ? null : notif._id)} style={{ padding: '10px 12px', borderBottom: idx < displayedNotifications.length - 1 ? '1px solid #f1f5f9' : 'none', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+									<div className="notification-icon" style={{ width: '28px', height: '28px', borderRadius: '50%', background: `${color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
 										<i className={icon} style={{ color, fontSize: '14px' }}></i>
 									</div>
-									<div style={{ flex: 1 }}>
-										<h6 style={{ fontSize: '12px', fontWeight: '600', color: '#1f2937', margin: '0 0 4px 0' }}>{notif.title}</h6>
-										<p style={{ fontSize: '11px', color: '#6b7280', margin: '0 0 4px 0' }}>
-											{notif.message.length > 50 ? notif.message.substring(0, 50) + '...' : notif.message}
+									<div className="notification-content" style={{ flex: 1, minWidth: 0 }}>
+										<h6 className="notification-title" style={{ fontSize: '12px', fontWeight: '600', color: '#1f2937', margin: '0 0 4px 0', wordWrap: 'break-word' }}>{notif.title}</h6>
+										<p className="notification-message" style={{ fontSize: '11px', color: '#6b7280', margin: '0 0 4px 0', wordWrap: 'break-word', overflowWrap: 'break-word' }}>
+											{isMobile ? (notif.message.length > 80 ? notif.message.substring(0, 80) + '...' : notif.message) : (notif.message.length > 50 ? notif.message.substring(0, 50) + '...' : notif.message)}
 										</p>
 										<small style={{ fontSize: '10px', color: '#9ca3af' }}>
 											{new Date(notif.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
 										</small>
 									</div>
-									{hoveredId === notif._id && (
-										<button onClick={() => dismissNotification(notif._id)} style={{ background: '#fed7aa', border: 'none', color: 'black', fontSize: '12px', cursor: 'pointer', borderRadius: '2px', padding: '2px 6px', height: 'fit-content', flexShrink: 0, width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'none' }} onMouseEnter={(e) => {e.target.style.setProperty('background', '#fed7aa', 'important'); e.target.style.setProperty('color', 'black', 'important');}} onMouseLeave={(e) => {e.target.style.setProperty('background', '#fed7aa', 'important'); e.target.style.setProperty('color', 'black', 'important');}}>
+									{(hoveredId === notif._id || isMobile) && (
+										<button className="notification-dismiss" onClick={(e) => { e.stopPropagation(); dismissNotification(notif._id); }} style={{ background: '#fed7aa', border: 'none', color: 'black', fontSize: '12px', cursor: 'pointer', borderRadius: '2px', padding: '2px 6px', height: 'fit-content', flexShrink: 0, width: '20px', height: '20px', display: hoveredId === notif._id || isMobile ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center', transition: 'none' }} onMouseEnter={(e) => {e.target.style.setProperty('background', '#fed7aa', 'important'); e.target.style.setProperty('color', 'black', 'important');}} onMouseLeave={(e) => {e.target.style.setProperty('background', '#fed7aa', 'important'); e.target.style.setProperty('color', 'black', 'important');}}>
 											<i className="fa fa-times"></i>
 										</button>
 									)}

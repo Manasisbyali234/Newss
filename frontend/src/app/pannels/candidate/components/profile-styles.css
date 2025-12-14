@@ -185,6 +185,20 @@ label {
     input[name="phone"] {
         padding-left: 110px !important;
     }
+    
+    /* Ensure content is visible on mobile after save */
+    .twm-right-section-panel {
+        position: relative;
+        z-index: 1;
+        background: #f8f9fa;
+    }
+    
+    /* Prevent white screen by ensuring proper stacking */
+    #content {
+        position: relative;
+        z-index: 1;
+        background: #f8f9fa;
+    }
 }
 
 @media (max-width: 576px) {

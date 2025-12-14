@@ -315,7 +315,37 @@
    POPUP MODAL RESPONSIVE FIXES
    ============================================ */
 
+/* Fix white screen modal issue on mobile */
+.modal {
+  z-index: 1055 !important;
+}
+
+.modal-backdrop {
+  z-index: 1050 !important;
+}
+
+.modal-dialog {
+  position: relative;
+  z-index: 1056 !important;
+}
+
+.modal-content {
+  background-color: #ffffff !important;
+  border-radius: 10px !important;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.5) !important;
+}
+
 @media (max-width: 767px) {
+  /* Fix modal positioning on mobile */
+  .modal-dialog {
+    margin: 0.5rem !important;
+    max-width: calc(100% - 1rem) !important;
+  }
+
+  .modal-dialog-centered {
+    min-height: calc(100% - 1rem) !important;
+  }
+
   /* Popup modal body padding */
   .modal-body {
     padding: 15px !important;

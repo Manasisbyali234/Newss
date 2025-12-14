@@ -350,6 +350,11 @@ nav#sidebar-admin-wraper {
         visibility: visible !important;
     }
 
+    #sidebar-admin-wraper.active ~ .mobile-menu-toggle,
+    body:has(#sidebar-admin-wraper.active) .mobile-menu-toggle {
+        display: none !important;
+    }
+
     #content {
         margin-left: 0 !important;
         width: 100% !important;

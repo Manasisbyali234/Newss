@@ -1378,6 +1378,14 @@ function SectionCanEducation({ profile, onUpdate }) {
                                     max-width: 100% !important;
                                     scrollbar-width: thin !important;
                                     scrollbar-color: #888 #f1f1f1 !important;
+                                    padding: 2px 2px 2px 8px !important;
+                                }
+                                .education-table-wrapper table {
+                                    border: 1px solid #dee2e6 !important;
+                                }
+                                .education-table-wrapper table th,
+                                .education-table-wrapper table td {
+                                    border: 1px solid #dee2e6 !important;
                                 }
                                 .education-table-wrapper::-webkit-scrollbar {
                                     height: 14px !important;
@@ -1404,7 +1412,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                                     }
                                 }
                             `}</style>
-                            <div className="table-responsive education-table-wrapper" style={{border: '1px solid #dee2e6', borderRadius: '4px', marginBottom: '10px'}}>
+                            <div className="table-responsive education-table-wrapper" style={{border: '2px solid #dee2e6', borderRadius: '4px', marginBottom: '10px', marginLeft: '2px'}}>
                                 <table className="table table-bordered table-sm mb-0" style={{minWidth: '800px', fontSize: '14px', width: '100%'}}>
                                 <style>{`
                                     .table tbody tr:hover {
@@ -1520,19 +1528,23 @@ function SectionCanEducation({ profile, onUpdate }) {
                                     fontSize: '16px',
                                     backgroundColor: hasUnsavedChanges ? '#ff6600' : '',
                                     border: hasUnsavedChanges ? '2px solid #ff6600' : '',
-                                    animation: hasUnsavedChanges ? 'pulse 2s infinite' : 'none'
+                                    animation: hasUnsavedChanges ? 'pulse 2s infinite' : 'none',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    flexWrap: 'wrap',
+                                    gap: '8px'
                                 }}
                             >
                                 {loading ? (
                                     <>
-                                        <i className="fa fa-spinner fa-spin me-2"></i>
-                                        Saving...
+                                        <i className="fa fa-spinner fa-spin"></i>
+                                        <span>Saving...</span>
                                     </>
                                 ) : (
                                     <>
-                                        <i className="fa fa-save me-2"></i>
-                                        Save All Education Details
-                                        {hasUnsavedChanges && <span className="ms-2 badge bg-light text-dark">Required</span>}
+                                        <i className="fa fa-save"></i>
+                                        <span>Save All Education Details</span>
+                                        {hasUnsavedChanges && <span className="badge bg-light text-dark">Required</span>}
                                     </>
                                 )}
                             </button>

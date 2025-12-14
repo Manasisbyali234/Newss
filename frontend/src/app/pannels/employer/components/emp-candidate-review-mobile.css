@@ -235,6 +235,67 @@
     max-width: 100% !important;
     justify-content: center !important;
   }
+
+  /* Fix Send Interview Invite buttons alignment on mobile */
+  .emp-candidate-review-page .action-btn-consistent {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+  }
+
+  .emp-candidate-review-page .action-btn-consistent svg {
+    flex-shrink: 0 !important;
+    margin-right: 8px !important;
+  }
+
+  /* Fix Interview Invite modal buttons on mobile */
+  .interview-modal-footer {
+    flex-direction: row !important;
+    display: flex !important;
+  }
+
+  .interview-modal-footer .btn,
+  .interview-modal-footer button {
+    width: auto !important;
+    flex: 0 1 auto !important;
+    flex-grow: 0 !important;
+    flex-shrink: 1 !important;
+    flex-basis: auto !important;
+    min-width: 100px !important;
+    max-width: fit-content !important;
+  }
+
+  /* Fix Skills & Summary badges overflow */
+  .emp-candidate-review-page .d-flex.flex-wrap.gap-2 {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .emp-candidate-review-page .badge {
+    max-width: 100% !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+  }
+}
+
+/* Mobile reordering - show candidate profile first */
+@media (max-width: 991px) {
+  .emp-candidate-review-page .row.g-4 {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .emp-candidate-review-page .row.g-4 .col-lg-4 {
+    order: 2;
+  }
+  
+  .emp-candidate-review-page .row.g-4 .col-lg-8 {
+    order: 1;
+  }
 }
 
 /* Mobile reordering - show candidate profile first */

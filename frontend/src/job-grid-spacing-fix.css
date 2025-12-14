@@ -1,0 +1,43 @@
+/* Job Grid Page - Mobile Spacing Fix */
+
+@media (max-width: 768px) {
+  .wt-bnr-inr {
+    padding: 15px 0 !important;
+    min-height: auto !important;
+  }
+  
+  .wt-bnr-inr-entry {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  .banner-title-outer {
+    margin: 0 0 5px 0 !important;
+    padding: 0 !important;
+  }
+  
+  .banner-title-name {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .banner-title-name .wt-title {
+    margin: 0 0 5px 0 !important;
+    padding: 0 !important;
+  }
+  
+  .wt-breadcrumb {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .page-content {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  
+  .job-grid-page {
+    margin-top: 0 !important;
+    padding-top: 10px !important;
+  }
+}
