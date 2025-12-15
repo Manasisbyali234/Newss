@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../../../utils/api';
 import SearchBar from '../../../../components/SearchBar';
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
+import '../../../../admin-credits-button-fix.css';
 function AdminIndividualCredit() {
     const navigate = useNavigate();
     const [candidates, setCandidates] = useState([]);

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { showSuccess, showError } from '../../../../utils/popupNotification';
+import '../../../../admin-credits-button-fix.css';
 
 function AdminCreditsPage() {
 	const [searchTerm, setSearchTerm] = useState("");
