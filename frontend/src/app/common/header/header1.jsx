@@ -10,6 +10,7 @@ import "../../../header-responsive.css";
 import "../../../hamburger-menu-fix.css";
 import "../../../iphone-hamburger-fix.css";
 import "../../../hamburger-production-fix.css";
+import "../../../iphone-menu-visibility-fix.css";
 
 const Header1 = memo(function Header1({ _config }) {
     const { user, userType, isAuthenticated } = useAuth();

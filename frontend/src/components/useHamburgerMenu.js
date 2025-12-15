@@ -6,6 +6,7 @@ export function useHamburgerMenu() {
   const toggle = useCallback(() => {
     setIsOpen(prev => {
       const newState = !prev;
+      console.log('Hamburger menu toggle:', newState);
       if (newState) {
         document.body.classList.add('hamburger-open');
       } else {

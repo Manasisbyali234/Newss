@@ -1,0 +1,60 @@
+/* iPhone Menu Visibility Fix - Force menu to show on all iPhone devices */
+
+/* Target iPhone devices specifically */
+@media screen and (max-width: 991px) and (-webkit-min-device-pixel-ratio: 1) {
+  .hamburger-btn {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 999999999 !important;
+    background: #fff !important;
+    border: 1px solid #e0e0e0 !important;
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 18px !important;
+    color: #333 !important;
+  }
+}
+
+/* Force menu visibility on iPhone Safari */
+@supports (-webkit-appearance: none) {
+  @media (max-width: 991px) {
+    .hamburger-btn {
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+    
+    .hamburger-menu.open {
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      z-index: 999999999 !important;
+    }
+    
+    .hamburger-menu.open .menu-list {
+      display: block !important;
+      visibility: visible !important;
+    }
+    
+    .hamburger-menu.open .menu-list li {
+      display: block !important;
+      visibility: visible !important;
+    }
+  }
+}
+
+/* Override any conflicting styles */
+@media (max-width: 991px) {
+  .site-header .hamburger-btn,
+  .main-bar .hamburger-btn,
+  .extra-nav .hamburger-btn,
+  .extra-cell .hamburger-btn {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}

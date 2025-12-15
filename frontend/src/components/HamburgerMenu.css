@@ -322,6 +322,25 @@ body.hamburger-open {
   display: inline-flex !important;
 }
 
+/* iPhone specific overrides */
+@media (max-width: 991px) {
+  .hamburger-btn {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 999999999 !important;
+  }
+  
+  .hamburger-menu.open {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 999999998 !important;
+  }
+}
+
 /* Override any global ul/ol styles that might interfere */
 .hamburger-menu ul.menu-list {
   padding-left: 0 !important;
