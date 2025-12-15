@@ -384,15 +384,28 @@ function EmpSupport() {
                                             </small>
                                             {errors.files && <div className="invalid-feedback">{errors.files}</div>}
                                             {files.length > 0 && (
-                                                <div className="mt-2">
-                                                    <strong>Selected files:</strong>
-                                                    <ul className="list-unstyled mt-1">
-                                                        {files.map((file, index) => (
-                                                            <li key={index} className="text-muted small">
-                                                                <i className="fa fa-file me-1"></i>
-                                                                {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
-                                                            </li>
-                                                        ))}
+                                                <div className="mt-3">
+                                                    <strong className="d-block mb-2" style={{ color: '#ff6b35' }}>
+                                                        <i className="fa fa-check-circle me-1"></i>
+                                                        Selected files ({files.length}/3):
+                                                    </strong>
+                                                    <ul className="list-unstyled mb-0">
+                                                        {files.map((file, index) => {
+                                                            const fileSizeKB = file.size / 1024;
+                                                            const fileSizeMB = fileSizeKB / 1024;
+                                                            const displaySize = fileSizeMB >= 1 
+                                                                ? fileSizeMB.toFixed(2) + ' MB' 
+                                                                : fileSizeKB.toFixed(2) + ' KB';
+                                                            return (
+                                                                <li key={index} className="d-flex align-items-center mb-2">
+                                                                    <i className="fa fa-file me-2" style={{ color: '#ff6b35' }}></i>
+                                                                    <span className="flex-grow-1" style={{ fontSize: '14px', color: '#ff6b35' }}>{file.name}</span>
+                                                                    <span className="ms-2" style={{ fontSize: '12px', color: '#ff6b35', fontWeight: '600' }}>
+                                                                        {displaySize}
+                                                                    </span>
+                                                                </li>
+                                                            );
+                                                        })}
                                                     </ul>
                                                 </div>
                                             )}

@@ -139,8 +139,8 @@ app.use(limiter);
 app.use('/api/employer/profile/gallery', (req, res, next) => next());
 
 // Body Parser Middleware with increased limits for file uploads
-app.use(express.json({ limit: '20mb', parameterLimit: 50000 }));
-app.use(express.urlencoded({ extended: true, limit: '20mb', parameterLimit: 50000 }));
+app.use(express.json({ limit: '60mb', parameterLimit: 50000 }));
+app.use(express.urlencoded({ extended: true, limit: '60mb', parameterLimit: 50000 }));
 
 // Set timeout for requests
 app.use((req, res, next) => {
@@ -154,6 +154,23 @@ app.use((req, res, next) => {
 
 // Handle body parser and upload errors
 app.use((error, req, res, next) => {
+  console.log('Global error handler caught:', error.code, error.message);
+  
+  // Handle multer errors
+  if (error.code === 'LIMIT_FILE_SIZE') {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'File size exceeds the limit. Please upload a file smaller than 10MB.' 
+    });
+  }
+  
+  if (error.code === 'LIMIT_UNEXPECTED_FILE') {
+    return res.status(400).json({ 
+      success: false, 
+      message: 'Unexpected file field. Please use the correct form field name.' 
+    });
+  }
+  
   // Handle entity too large errors
   if (error.type === 'entity.too.large') {
     return res.status(413).json({ 
@@ -161,6 +178,15 @@ app.use((error, req, res, next) => {
       message: 'File size exceeds the limit. Please upload a file smaller than 10MB.' 
     });
   }
+  
+  // Handle payload too large errors
+  if (error.code === 'LIMIT_FIELD_SIZE' || error.status === 413) {
+    return res.status(413).json({ 
+      success: false, 
+      message: 'Upload size too large. Please compress your files or upload fewer files.' 
+    });
+  }
+  
   // Handle JSON parsing errors
   if (error instanceof SyntaxError && error.status === 400 && 'body' in error) {
     return res.status(400).json({ 
@@ -168,6 +194,7 @@ app.use((error, req, res, next) => {
       message: 'Invalid request format. Please try again.' 
     });
   }
+  
   // Handle connection errors
   if (error.code === 'ECONNRESET' || error.code === 'ETIMEDOUT') {
     return res.status(408).json({ 
@@ -175,6 +202,15 @@ app.use((error, req, res, next) => {
       message: 'Upload timeout. Please try uploading a smaller file or check your internet connection.' 
     });
   }
+  
+  // Handle file filter errors (from multer)
+  if (error.message && error.message.includes('Only')) {
+    return res.status(400).json({ 
+      success: false, 
+      message: error.message 
+    });
+  }
+  
   next(error);
 });
 

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 
-const SearchableSelect = ({ options, value, onChange, placeholder, className, isMulti = false }) => {
+const SearchableSelect = ({ options, value, onChange, placeholder, className, isMulti = false, showCategories = false }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [search, setSearch] = useState('');
     const wrapperRef = useRef(null);
@@ -18,6 +18,22 @@ const SearchableSelect = ({ options, value, onChange, placeholder, className, is
     const filtered = options.filter(opt => 
         opt.label.toLowerCase().includes(search.toLowerCase())
     );
+
+    // Group options by category if showCategories is true
+    const groupedOptions = showCategories ? filtered.reduce((groups, option) => {
+        const category = option.category || 'Other';
+        if (!groups[category]) {
+            groups[category] = [];
+        }
+        groups[category].push(option);
+        return groups;
+    }, {}) : null;
+
+    // Sort categories to show popular ones first
+    const sortedCategories = groupedOptions ? Object.keys(groupedOptions).sort((a, b) => {
+        const order = { 'Metro Cities': 1, 'Major Cities': 2, 'Other Cities': 3, 'Other': 4 };
+        return (order[a] || 999) - (order[b] || 999);
+    }) : [];
 
     const handleOptionClick = (optionValue) => {
         if (isMulti) {
@@ -69,21 +85,31 @@ const SearchableSelect = ({ options, value, onChange, placeholder, className, is
             return (
                 <div className="d-flex flex-wrap gap-1">
                     {currentValues.map((val, index) => (
-                        <span key={index} className="d-flex align-items-center" style={{border: '1px solid #ccc', borderRadius: '4px', padding: '2px 8px', fontSize: '0.875em', backgroundColor: 'transparent'}}>
+                        <span key={index} className="d-flex align-items-center" style={{
+                            border: '1px solid #007bff', 
+                            borderRadius: '20px', 
+                            padding: '4px 12px', 
+                            fontSize: '0.875em', 
+                            backgroundColor: '#e3f2fd',
+                            color: '#0056b3',
+                            fontWeight: '500'
+                        }}>
+                            <i className="fa fa-map-marker me-1" style={{ fontSize: '0.8em' }}></i>
                             {val}
                             <button
                                 type="button"
-                                className="btn-close ms-1"
+                                className="btn-close ms-2"
                                 style={{ 
-                                    fontSize: '0.6em', 
-                                    filter: 'invert(58%) sepia(69%) saturate(2618%) hue-rotate(16deg) brightness(101%) contrast(101%) !important',
-                                    opacity: '1 !important',
-                                    backgroundColor: 'transparent !important'
+                                    fontSize: '0.7em',
+                                    opacity: '0.7',
+                                    backgroundColor: 'transparent'
                                 }}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     removeValue(val);
                                 }}
+                                onMouseEnter={(e) => e.target.style.opacity = '1'}
+                                onMouseLeave={(e) => e.target.style.opacity = '0.7'}
                             ></button>
                         </span>
                     ))}
@@ -100,9 +126,17 @@ const SearchableSelect = ({ options, value, onChange, placeholder, className, is
             <div 
                 className={className}
                 onClick={() => setIsOpen(!isOpen)}
-                style={{ cursor: 'pointer', minHeight: '38px', padding: '6px 12px', display: 'flex', alignItems: 'center' }}
+                style={{ 
+                    cursor: 'pointer', 
+                    minHeight: '38px', 
+                    padding: '6px 12px', 
+                    display: 'flex', 
+                    alignItems: 'center',
+                    position: 'relative'
+                }}
             >
                 {renderValue()}
+                <i className={`fa fa-chevron-${isOpen ? 'up' : 'down'} ms-auto`} style={{ fontSize: '0.8em', color: '#6c757d' }}></i>
             </div>
             {isOpen && (
                 <div style={{
@@ -129,37 +163,99 @@ const SearchableSelect = ({ options, value, onChange, placeholder, className, is
                         style={{ borderRadius: 0, border: 'none', borderBottom: '1px solid #dee2e6' }}
                         autoFocus
                     />
-                    <div style={{ maxHeight: '250px', overflowY: 'auto' }}>
-                        {filtered.map(opt => {
-                            const isSelected = isMulti 
-                                ? Array.isArray(value) && value.includes(opt.value)
-                                : opt.value === value;
-                            return (
-                                <div
-                                    key={opt.value}
-                                    onClick={() => handleOptionClick(opt.value)}
-                                    style={{
+                    <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                        {showCategories && groupedOptions ? (
+                            sortedCategories.map(category => (
+                                <div key={category}>
+                                    <div style={{
                                         padding: '8px 12px',
-                                        cursor: 'pointer',
-                                        backgroundColor: isSelected ? '#e3f2fd' : '#fff',
-                                        display: 'flex',
-                                        alignItems: 'center'
-                                    }}
-                                    onMouseEnter={(e) => e.target.style.backgroundColor = '#f8f9fa'}
-                                    onMouseLeave={(e) => e.target.style.backgroundColor = isSelected ? '#e3f2fd' : '#fff'}
-                                >
-                                    {isMulti && (
-                                        <input
-                                            type="checkbox"
-                                            checked={isSelected}
-                                            onChange={() => {}}
-                                            style={{ marginRight: '8px' }}
-                                        />
-                                    )}
-                                    {opt.label}
+                                        backgroundColor: '#f8f9fa',
+                                        fontWeight: 'bold',
+                                        fontSize: '0.875em',
+                                        color: '#495057',
+                                        borderBottom: '1px solid #dee2e6',
+                                        position: 'sticky',
+                                        top: 0,
+                                        zIndex: 1
+                                    }}>
+                                        <i className={`fa ${category === 'Metro Cities' ? 'fa-star' : category === 'Major Cities' ? 'fa-building' : 'fa-map-marker'} me-2`}></i>
+                                        {category}
+                                    </div>
+                                    {groupedOptions[category].map(opt => {
+                                        const isSelected = isMulti 
+                                            ? Array.isArray(value) && value.includes(opt.value)
+                                            : opt.value === value;
+                                        return (
+                                            <div
+                                                key={opt.value}
+                                                onClick={() => handleOptionClick(opt.value)}
+                                                style={{
+                                                    padding: '8px 16px',
+                                                    cursor: 'pointer',
+                                                    backgroundColor: isSelected ? '#e3f2fd' : '#fff',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    borderLeft: opt.popular ? '3px solid #007bff' : 'none'
+                                                }}
+                                                onMouseEnter={(e) => e.target.style.backgroundColor = isSelected ? '#bbdefb' : '#f8f9fa'}
+                                                onMouseLeave={(e) => e.target.style.backgroundColor = isSelected ? '#e3f2fd' : '#fff'}
+                                            >
+                                                {isMulti && (
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={isSelected}
+                                                        onChange={() => {}}
+                                                        style={{ marginRight: '8px' }}
+                                                    />
+                                                )}
+                                                <span style={{ flex: 1 }}>{opt.label}</span>
+                                                {opt.popular && (
+                                                    <span style={{
+                                                        fontSize: '0.75em',
+                                                        color: '#007bff',
+                                                        fontWeight: 'bold',
+                                                        marginLeft: '8px'
+                                                    }}>
+                                                        POPULAR
+                                                    </span>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
                                 </div>
-                            );
-                        })}
+                            ))
+                        ) : (
+                            filtered.map(opt => {
+                                const isSelected = isMulti 
+                                    ? Array.isArray(value) && value.includes(opt.value)
+                                    : opt.value === value;
+                                return (
+                                    <div
+                                        key={opt.value}
+                                        onClick={() => handleOptionClick(opt.value)}
+                                        style={{
+                                            padding: '8px 12px',
+                                            cursor: 'pointer',
+                                            backgroundColor: isSelected ? '#e3f2fd' : '#fff',
+                                            display: 'flex',
+                                            alignItems: 'center'
+                                        }}
+                                        onMouseEnter={(e) => e.target.style.backgroundColor = '#f8f9fa'}
+                                        onMouseLeave={(e) => e.target.style.backgroundColor = isSelected ? '#e3f2fd' : '#fff'}
+                                    >
+                                        {isMulti && (
+                                            <input
+                                                type="checkbox"
+                                                checked={isSelected}
+                                                onChange={() => {}}
+                                                style={{ marginRight: '8px' }}
+                                            />
+                                        )}
+                                        {opt.label}
+                                    </div>
+                                );
+                            })
+                        )}
                         {search.trim() && !options.find(opt => opt.label.toLowerCase() === search.toLowerCase()) && (
                             <div
                                 onClick={handleAddCustom}
@@ -168,17 +264,28 @@ const SearchableSelect = ({ options, value, onChange, placeholder, className, is
                                     cursor: 'pointer',
                                     backgroundColor: '#f8f9fa',
                                     borderTop: '1px solid #dee2e6',
-                                    fontStyle: 'italic'
+                                    fontStyle: 'italic',
+                                    display: 'flex',
+                                    alignItems: 'center'
                                 }}
                                 onMouseEnter={(e) => e.target.style.backgroundColor = '#e9ecef'}
                                 onMouseLeave={(e) => e.target.style.backgroundColor = '#f8f9fa'}
                             >
+                                <i className="fa fa-plus-circle me-2 text-success"></i>
                                 Add "{search.trim()}"
                             </div>
                         )}
                         {filtered.length === 0 && !search.trim() && (
                             <div style={{ padding: '12px', textAlign: 'center', color: '#6c757d' }}>
-                                No results found
+                                <i className="fa fa-search mb-2" style={{ fontSize: '2em', opacity: 0.5 }}></i>
+                                <div>Start typing to search locations...</div>
+                            </div>
+                        )}
+                        {filtered.length === 0 && search.trim() && (
+                            <div style={{ padding: '12px', textAlign: 'center', color: '#6c757d' }}>
+                                <i className="fa fa-exclamation-circle mb-2" style={{ fontSize: '2em', opacity: 0.5 }}></i>
+                                <div>No locations found matching "{search}"</div>
+                                <small>You can add it as a custom location</small>
                             </div>
                         )}
                     </div>

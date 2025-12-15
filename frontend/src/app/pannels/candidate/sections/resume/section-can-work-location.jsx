@@ -11,110 +11,115 @@ function SectionCanWorkLocation({ profile, onUpdate }) {
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
 
-    const indianCities = [
-        { value: 'Mumbai', label: 'Mumbai' },
-        { value: 'Delhi', label: 'Delhi' },
-        { value: 'Bangalore', label: 'Bangalore' },
-        { value: 'Hyderabad', label: 'Hyderabad' },
-        { value: 'Chennai', label: 'Chennai' },
-        { value: 'Kolkata', label: 'Kolkata' },
-        { value: 'Pune', label: 'Pune' },
-        { value: 'Ahmedabad', label: 'Ahmedabad' },
-        { value: 'Jaipur', label: 'Jaipur' },
-        { value: 'Surat', label: 'Surat' },
-        { value: 'Lucknow', label: 'Lucknow' },
-        { value: 'Kanpur', label: 'Kanpur' },
-        { value: 'Nagpur', label: 'Nagpur' },
-        { value: 'Indore', label: 'Indore' },
-        { value: 'Thane', label: 'Thane' },
-        { value: 'Bhopal', label: 'Bhopal' },
-        { value: 'Visakhapatnam', label: 'Visakhapatnam' },
-        { value: 'Pimpri-Chinchwad', label: 'Pimpri-Chinchwad' },
-        { value: 'Patna', label: 'Patna' },
-        { value: 'Vadodara', label: 'Vadodara' },
-        { value: 'Ghaziabad', label: 'Ghaziabad' },
-        { value: 'Ludhiana', label: 'Ludhiana' },
-        { value: 'Agra', label: 'Agra' },
-        { value: 'Nashik', label: 'Nashik' },
-        { value: 'Faridabad', label: 'Faridabad' },
-        { value: 'Meerut', label: 'Meerut' },
-        { value: 'Rajkot', label: 'Rajkot' },
-        { value: 'Kalyan-Dombivali', label: 'Kalyan-Dombivali' },
-        { value: 'Vasai-Virar', label: 'Vasai-Virar' },
-        { value: 'Varanasi', label: 'Varanasi' },
-        { value: 'Srinagar', label: 'Srinagar' },
-        { value: 'Aurangabad', label: 'Aurangabad' },
-        { value: 'Dhanbad', label: 'Dhanbad' },
-        { value: 'Amritsar', label: 'Amritsar' },
-        { value: 'Navi Mumbai', label: 'Navi Mumbai' },
-        { value: 'Allahabad', label: 'Allahabad' },
-        { value: 'Ranchi', label: 'Ranchi' },
-        { value: 'Howrah', label: 'Howrah' },
-        { value: 'Coimbatore', label: 'Coimbatore' },
-        { value: 'Jabalpur', label: 'Jabalpur' },
-        { value: 'Gwalior', label: 'Gwalior' },
-        { value: 'Vijayawada', label: 'Vijayawada' },
-        { value: 'Jodhpur', label: 'Jodhpur' },
-        { value: 'Madurai', label: 'Madurai' },
-        { value: 'Raipur', label: 'Raipur' },
-        { value: 'Kota', label: 'Kota' },
-        { value: 'Guwahati', label: 'Guwahati' },
-        { value: 'Chandigarh', label: 'Chandigarh' },
-        { value: 'Solapur', label: 'Solapur' },
-        { value: 'Hubli-Dharwad', label: 'Hubli-Dharwad' },
-        { value: 'Bareilly', label: 'Bareilly' },
-        { value: 'Moradabad', label: 'Moradabad' },
-        { value: 'Mysore', label: 'Mysore' },
-        { value: 'Gurgaon', label: 'Gurgaon' },
-        { value: 'Aligarh', label: 'Aligarh' },
-        { value: 'Jalandhar', label: 'Jalandhar' },
-        { value: 'Tiruchirappalli', label: 'Tiruchirappalli' },
-        { value: 'Bhubaneswar', label: 'Bhubaneswar' },
-        { value: 'Salem', label: 'Salem' },
-        { value: 'Mira-Bhayandar', label: 'Mira-Bhayandar' },
-        { value: 'Warangal', label: 'Warangal' },
-        { value: 'Thiruvananthapuram', label: 'Thiruvananthapuram' },
-        { value: 'Guntur', label: 'Guntur' },
-        { value: 'Bhiwandi', label: 'Bhiwandi' },
-        { value: 'Saharanpur', label: 'Saharanpur' },
-        { value: 'Gorakhpur', label: 'Gorakhpur' },
-        { value: 'Bikaner', label: 'Bikaner' },
-        { value: 'Amravati', label: 'Amravati' },
-        { value: 'Noida', label: 'Noida' },
-        { value: 'Jamshedpur', label: 'Jamshedpur' },
-        { value: 'Bhilai', label: 'Bhilai' },
-        { value: 'Cuttack', label: 'Cuttack' },
-        { value: 'Firozabad', label: 'Firozabad' },
-        { value: 'Kochi', label: 'Kochi' },
-        { value: 'Nellore', label: 'Nellore' },
-        { value: 'Bhavnagar', label: 'Bhavnagar' },
-        { value: 'Dehradun', label: 'Dehradun' },
-        { value: 'Durgapur', label: 'Durgapur' },
-        { value: 'Asansol', label: 'Asansol' },
-        { value: 'Rourkela', label: 'Rourkela' },
-        { value: 'Nanded', label: 'Nanded' },
-        { value: 'Kolhapur', label: 'Kolhapur' },
-        { value: 'Ajmer', label: 'Ajmer' },
-        { value: 'Akola', label: 'Akola' },
-        { value: 'Gulbarga', label: 'Gulbarga' },
-        { value: 'Jamnagar', label: 'Jamnagar' },
-        { value: 'Ujjain', label: 'Ujjain' },
-        { value: 'Loni', label: 'Loni' },
-        { value: 'Siliguri', label: 'Siliguri' },
-        { value: 'Jhansi', label: 'Jhansi' },
-        { value: 'Ulhasnagar', label: 'Ulhasnagar' },
-        { value: 'Jammu', label: 'Jammu' },
-        { value: 'Sangli-Miraj & Kupwad', label: 'Sangli-Miraj & Kupwad' },
-        { value: 'Mangalore', label: 'Mangalore' },
-        { value: 'Erode', label: 'Erode' },
-        { value: 'Belgaum', label: 'Belgaum' },
-        { value: 'Ambattur', label: 'Ambattur' },
-        { value: 'Tirunelveli', label: 'Tirunelveli' },
-        { value: 'Malegaon', label: 'Malegaon' },
-        { value: 'Gaya', label: 'Gaya' },
-        { value: 'Jalgaon', label: 'Jalgaon' },
-        { value: 'Udaipur', label: 'Udaipur' },
-        { value: 'Maheshtala', label: 'Maheshtala' }
+    const locationOptions = [
+        // Popular Metro Cities (Top Priority)
+        { value: 'Mumbai', label: 'Mumbai', category: 'Metro Cities', popular: true },
+        { value: 'Delhi', label: 'Delhi', category: 'Metro Cities', popular: true },
+        { value: 'Bangalore', label: 'Bangalore', category: 'Metro Cities', popular: true },
+        { value: 'Hyderabad', label: 'Hyderabad', category: 'Metro Cities', popular: true },
+        { value: 'Chennai', label: 'Chennai', category: 'Metro Cities', popular: true },
+        { value: 'Kolkata', label: 'Kolkata', category: 'Metro Cities', popular: true },
+        { value: 'Pune', label: 'Pune', category: 'Metro Cities', popular: true },
+        { value: 'Gurgaon', label: 'Gurgaon', category: 'Metro Cities', popular: true },
+        { value: 'Noida', label: 'Noida', category: 'Metro Cities', popular: true },
+        { value: 'Navi Mumbai', label: 'Navi Mumbai', category: 'Metro Cities', popular: true },
+        
+        // Major Cities
+        { value: 'Ahmedabad', label: 'Ahmedabad', category: 'Major Cities' },
+        { value: 'Jaipur', label: 'Jaipur', category: 'Major Cities' },
+        { value: 'Surat', label: 'Surat', category: 'Major Cities' },
+        { value: 'Lucknow', label: 'Lucknow', category: 'Major Cities' },
+        { value: 'Kanpur', label: 'Kanpur', category: 'Major Cities' },
+        { value: 'Nagpur', label: 'Nagpur', category: 'Major Cities' },
+        { value: 'Indore', label: 'Indore', category: 'Major Cities' },
+        { value: 'Bhopal', label: 'Bhopal', category: 'Major Cities' },
+        { value: 'Visakhapatnam', label: 'Visakhapatnam', category: 'Major Cities' },
+        { value: 'Patna', label: 'Patna', category: 'Major Cities' },
+        { value: 'Vadodara', label: 'Vadodara', category: 'Major Cities' },
+        { value: 'Ludhiana', label: 'Ludhiana', category: 'Major Cities' },
+        { value: 'Agra', label: 'Agra', category: 'Major Cities' },
+        { value: 'Nashik', label: 'Nashik', category: 'Major Cities' },
+        { value: 'Faridabad', label: 'Faridabad', category: 'Major Cities' },
+        { value: 'Meerut', label: 'Meerut', category: 'Major Cities' },
+        { value: 'Rajkot', label: 'Rajkot', category: 'Major Cities' },
+        { value: 'Varanasi', label: 'Varanasi', category: 'Major Cities' },
+        { value: 'Srinagar', label: 'Srinagar', category: 'Major Cities' },
+        { value: 'Aurangabad', label: 'Aurangabad', category: 'Major Cities' },
+        { value: 'Dhanbad', label: 'Dhanbad', category: 'Major Cities' },
+        { value: 'Amritsar', label: 'Amritsar', category: 'Major Cities' },
+        { value: 'Allahabad', label: 'Allahabad', category: 'Major Cities' },
+        { value: 'Ranchi', label: 'Ranchi', category: 'Major Cities' },
+        { value: 'Coimbatore', label: 'Coimbatore', category: 'Major Cities' },
+        { value: 'Jabalpur', label: 'Jabalpur', category: 'Major Cities' },
+        { value: 'Gwalior', label: 'Gwalior', category: 'Major Cities' },
+        { value: 'Vijayawada', label: 'Vijayawada', category: 'Major Cities' },
+        { value: 'Jodhpur', label: 'Jodhpur', category: 'Major Cities' },
+        { value: 'Madurai', label: 'Madurai', category: 'Major Cities' },
+        { value: 'Raipur', label: 'Raipur', category: 'Major Cities' },
+        { value: 'Kota', label: 'Kota', category: 'Major Cities' },
+        { value: 'Guwahati', label: 'Guwahati', category: 'Major Cities' },
+        { value: 'Chandigarh', label: 'Chandigarh', category: 'Major Cities' },
+        { value: 'Mysore', label: 'Mysore', category: 'Major Cities' },
+        { value: 'Tiruchirappalli', label: 'Tiruchirappalli', category: 'Major Cities' },
+        { value: 'Bhubaneswar', label: 'Bhubaneswar', category: 'Major Cities' },
+        { value: 'Salem', label: 'Salem', category: 'Major Cities' },
+        { value: 'Thiruvananthapuram', label: 'Thiruvananthapuram', category: 'Major Cities' },
+        { value: 'Guntur', label: 'Guntur', category: 'Major Cities' },
+        { value: 'Bikaner', label: 'Bikaner', category: 'Major Cities' },
+        { value: 'Amravati', label: 'Amravati', category: 'Major Cities' },
+        { value: 'Jamshedpur', label: 'Jamshedpur', category: 'Major Cities' },
+        { value: 'Bhilai', label: 'Bhilai', category: 'Major Cities' },
+        { value: 'Cuttack', label: 'Cuttack', category: 'Major Cities' },
+        { value: 'Kochi', label: 'Kochi', category: 'Major Cities' },
+        { value: 'Nellore', label: 'Nellore', category: 'Major Cities' },
+        { value: 'Bhavnagar', label: 'Bhavnagar', category: 'Major Cities' },
+        { value: 'Dehradun', label: 'Dehradun', category: 'Major Cities' },
+        { value: 'Durgapur', label: 'Durgapur', category: 'Major Cities' },
+        { value: 'Asansol', label: 'Asansol', category: 'Major Cities' },
+        { value: 'Rourkela', label: 'Rourkela', category: 'Major Cities' },
+        { value: 'Nanded', label: 'Nanded', category: 'Major Cities' },
+        { value: 'Kolhapur', label: 'Kolhapur', category: 'Major Cities' },
+        { value: 'Ajmer', label: 'Ajmer', category: 'Major Cities' },
+        { value: 'Akola', label: 'Akola', category: 'Major Cities' },
+        { value: 'Gulbarga', label: 'Gulbarga', category: 'Major Cities' },
+        { value: 'Jamnagar', label: 'Jamnagar', category: 'Major Cities' },
+        { value: 'Ujjain', label: 'Ujjain', category: 'Major Cities' },
+        { value: 'Siliguri', label: 'Siliguri', category: 'Major Cities' },
+        { value: 'Jhansi', label: 'Jhansi', category: 'Major Cities' },
+        { value: 'Jammu', label: 'Jammu', category: 'Major Cities' },
+        { value: 'Mangalore', label: 'Mangalore', category: 'Major Cities' },
+        { value: 'Erode', label: 'Erode', category: 'Major Cities' },
+        { value: 'Belgaum', label: 'Belgaum', category: 'Major Cities' },
+        { value: 'Tirunelveli', label: 'Tirunelveli', category: 'Major Cities' },
+        { value: 'Gaya', label: 'Gaya', category: 'Major Cities' },
+        { value: 'Jalgaon', label: 'Jalgaon', category: 'Major Cities' },
+        { value: 'Udaipur', label: 'Udaipur', category: 'Major Cities' },
+        
+        // Other Cities
+        { value: 'Thane', label: 'Thane', category: 'Other Cities' },
+        { value: 'Pimpri-Chinchwad', label: 'Pimpri-Chinchwad', category: 'Other Cities' },
+        { value: 'Ghaziabad', label: 'Ghaziabad', category: 'Other Cities' },
+        { value: 'Kalyan-Dombivali', label: 'Kalyan-Dombivali', category: 'Other Cities' },
+        { value: 'Vasai-Virar', label: 'Vasai-Virar', category: 'Other Cities' },
+        { value: 'Howrah', label: 'Howrah', category: 'Other Cities' },
+        { value: 'Solapur', label: 'Solapur', category: 'Other Cities' },
+        { value: 'Hubli-Dharwad', label: 'Hubli-Dharwad', category: 'Other Cities' },
+        { value: 'Bareilly', label: 'Bareilly', category: 'Other Cities' },
+        { value: 'Moradabad', label: 'Moradabad', category: 'Other Cities' },
+        { value: 'Aligarh', label: 'Aligarh', category: 'Other Cities' },
+        { value: 'Jalandhar', label: 'Jalandhar', category: 'Other Cities' },
+        { value: 'Mira-Bhayandar', label: 'Mira-Bhayandar', category: 'Other Cities' },
+        { value: 'Warangal', label: 'Warangal', category: 'Other Cities' },
+        { value: 'Bhiwandi', label: 'Bhiwandi', category: 'Other Cities' },
+        { value: 'Saharanpur', label: 'Saharanpur', category: 'Other Cities' },
+        { value: 'Gorakhpur', label: 'Gorakhpur', category: 'Other Cities' },
+        { value: 'Firozabad', label: 'Firozabad', category: 'Other Cities' },
+        { value: 'Loni', label: 'Loni', category: 'Other Cities' },
+        { value: 'Ulhasnagar', label: 'Ulhasnagar', category: 'Other Cities' },
+        { value: 'Sangli-Miraj & Kupwad', label: 'Sangli-Miraj & Kupwad', category: 'Other Cities' },
+        { value: 'Ambattur', label: 'Ambattur', category: 'Other Cities' },
+        { value: 'Malegaon', label: 'Malegaon', category: 'Other Cities' },
+        { value: 'Maheshtala', label: 'Maheshtala', category: 'Other Cities' }
     ];
 
 
@@ -220,15 +225,19 @@ function SectionCanWorkLocation({ profile, onUpdate }) {
                             <div className="col-md-6">
                                 <label className="form-label fw-bold">Preferred Work Locations *</label>
                                 <SearchableSelect
-                                    options={indianCities}
+                                    options={locationOptions}
                                     value={workLocationData.preferredLocations}
                                     onChange={handleLocationChange}
-                                    placeholder="Select preferred locations"
+                                    placeholder="Search and select your preferred work locations..."
                                     isMulti={true}
                                     className={`form-select ${errors.preferredLocations ? 'is-invalid' : ''}`}
+                                    showCategories={true}
                                 />
                                 {errors.preferredLocations && <div className="invalid-feedback d-block">{errors.preferredLocations}</div>}
-                                <small className="text-muted">You can select multiple locations</small>
+                                <small className="text-muted">
+                                    <i className="fa fa-info-circle me-1"></i>
+                                    Select multiple locations to increase your job opportunities. Popular metro cities are shown first.
+                                </small>
                             </div>
 
 
@@ -274,26 +283,52 @@ function SectionCanWorkLocation({ profile, onUpdate }) {
                         <div className="twm-panel-inner">
                             {Array.isArray(workLocationData.preferredLocations) && workLocationData.preferredLocations.length > 0 ? (
                                 <div className="row">
-                                    <div className="col-md-6">
-                                        <div className="mb-3">
-                                            <strong>Preferred Locations:</strong>
-                                            <div className="mt-1">
+                                    <div className="col-12">
+                                        <div className="mb-4">
+                                            <div className="d-flex align-items-center mb-3">
+                                                <i className="fa fa-map-marker-alt text-primary me-2" style={{ fontSize: '1.2em' }}></i>
+                                                <strong style={{ fontSize: '1.1em' }}>Preferred Work Locations</strong>
+                                                <span className="badge bg-success ms-2">{workLocationData.preferredLocations.length} selected</span>
+                                            </div>
+                                            <div className="d-flex flex-wrap gap-2">
                                                 {Array.isArray(workLocationData.preferredLocations) && workLocationData.preferredLocations.map((location, index) => (
-                                                    <span key={index} className="badge bg-primary me-1 mb-1">
+                                                    <span key={index} className="d-inline-flex align-items-center" style={{
+                                                        backgroundColor: '#f8f9fa',
+                                                        border: '2px solid #007bff',
+                                                        borderRadius: '25px',
+                                                        padding: '8px 16px',
+                                                        fontSize: '0.9em',
+                                                        fontWeight: '500',
+                                                        color: '#0056b3'
+                                                    }}>
+                                                        <i className="fa fa-map-marker me-2" style={{ fontSize: '0.8em' }}></i>
                                                         {location}
                                                     </span>
                                                 ))}
                                             </div>
+                                            <div className="mt-3 p-3" style={{ backgroundColor: '#f8f9fa', borderRadius: '8px', border: '1px solid #e9ecef' }}>
+                                                <small className="text-muted">
+                                                    <i className="fa fa-info-circle me-1"></i>
+                                                    These locations will be visible to employers when they search for candidates. Having multiple preferred locations increases your job opportunities.
+                                                </small>
+                                            </div>
                                         </div>
                                     </div>
-
-
                                 </div>
                             ) : (
-                                <div className="text-center py-4">
-                                    <i className="fa fa-map-marker fa-3x text-muted mb-3"></i>
-                                    <h5 className="text-muted">No work location preferences added</h5>
-                                    <p className="text-muted">Add your preferred work locations and job preferences to help employers find you better.</p>
+                                <div className="text-center py-5" style={{ backgroundColor: '#f8f9fa', borderRadius: '12px', border: '2px dashed #dee2e6' }}>
+                                    <div className="mb-4">
+                                        <i className="fa fa-map-marker-alt" style={{ fontSize: '3em', color: '#6c757d', opacity: 0.5 }}></i>
+                                    </div>
+                                    <h5 className="text-muted mb-3">No work location preferences added yet</h5>
+                                    <p className="text-muted mb-4" style={{ maxWidth: '400px', margin: '0 auto' }}>
+                                        Add your preferred work locations to help employers find you more easily. You can select multiple cities to increase your job opportunities.
+                                    </p>
+                                    <div className="d-flex justify-content-center gap-3 text-muted" style={{ fontSize: '0.9em' }}>
+                                        <div><i className="fa fa-star text-warning me-1"></i>Metro Cities</div>
+                                        <div><i className="fa fa-building text-info me-1"></i>Major Cities</div>
+                                        <div><i className="fa fa-plus-circle text-success me-1"></i>Custom Locations</div>
+                                    </div>
                                 </div>
                             )}
                             

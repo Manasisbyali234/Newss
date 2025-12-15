@@ -1119,7 +1119,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                             value={selectedEducationLevel}
                             onChange={handleEducationLevelChange}
                             placeholder="Choose Education Level"
-                            className={`form-select ${errors.educationLevel ? 'is-invalid' : ''}`}
+                            className={`form-control ${errors.educationLevel ? 'is-invalid' : ''}`}
                         />
                         {errors.educationLevel && <div className="invalid-feedback d-block">{errors.educationLevel}</div>}
                     </div>

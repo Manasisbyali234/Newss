@@ -925,13 +925,31 @@ exports.submitSupportTicket = async (req, res) => {
         });
       }
       
-      attachments = req.files.map(file => ({
-        filename: file.originalname,
-        originalName: file.originalname,
-        data: fileToBase64(file),
-        size: file.size,
-        mimetype: file.mimetype
-      }));
+      // Validate individual file sizes
+      for (const file of req.files) {
+        if (file.size > 15 * 1024 * 1024) {
+          return res.status(413).json({
+            success: false,
+            message: `File "${file.originalname}" is too large. Maximum file size is 10MB.`
+          });
+        }
+      }
+      
+      try {
+        attachments = req.files.map(file => ({
+          filename: file.originalname,
+          originalName: file.originalname,
+          data: fileToBase64(file),
+          size: file.size,
+          mimetype: file.mimetype
+        }));
+      } catch (conversionError) {
+        console.error('File conversion error:', conversionError);
+        return res.status(400).json({
+          success: false,
+          message: 'Failed to process uploaded files. Please try with smaller files.'
+        });
+      }
     }
 
     // Create support ticket
@@ -970,7 +988,7 @@ exports.submitSupportTicket = async (req, res) => {
     if (error.code === 'LIMIT_FILE_SIZE') {
       return res.status(413).json({
         success: false,
-        message: 'File size too large. Each file must be under 15MB.'
+        message: 'File size too large. Each file must be under 12MB.'
       });
     }
     

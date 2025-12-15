@@ -3,7 +3,7 @@ const { body } = require('express-validator');
 const router = express.Router();
 const candidateController = require('../controllers/candidateController');
 const { auth } = require('../middlewares/auth');
-const { upload, uploadMarksheet, uploadAnswerFile } = require('../middlewares/upload');
+const { upload, uploadMarksheet, uploadAnswerFile, uploadEducation } = require('../middlewares/upload');
 const handleValidationErrors = require('../middlewares/validation');
 const { mobileValidationRules } = require('../middlewares/phoneValidation');
 
@@ -192,9 +192,75 @@ router.put('/profile', upload.single('profilePicture'), (req, res, next) => {
     })
     .catch(next);
 });
-router.post('/upload-resume', upload.single('resume'), [
-  // File validation will be handled in the controller
-], candidateController.uploadResume);
+// Multer error handling middleware
+const handleMulterError = (error, req, res, next) => {
+  if (error) {
+    console.error('Multer error:', error);
+    
+    if (error.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'File size exceeds the limit. Please upload a file smaller than 10MB.' 
+      });
+    }
+    
+    if (error.code === 'LIMIT_UNEXPECTED_FILE') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Unexpected file field. Please use the correct form field name.' 
+      });
+    }
+    
+    if (error.message && error.message.includes('Only')) {
+      return res.status(400).json({ 
+        success: false, 
+        message: error.message 
+      });
+    }
+    
+    return res.status(400).json({ 
+      success: false, 
+      message: error.message || 'File upload error. Please try again.' 
+    });
+  }
+  next();
+};
+
+// Education document error handling middleware (50MB limit)
+const handleEducationMulterError = (error, req, res, next) => {
+  if (error) {
+    console.error('Education document multer error:', error);
+    
+    if (error.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'File size exceeds the 50MB limit. Please upload a smaller file.' 
+      });
+    }
+    
+    if (error.code === 'LIMIT_UNEXPECTED_FILE') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Unexpected file field. Please use the correct form field name.' 
+      });
+    }
+    
+    if (error.message && error.message.includes('Only PDF files are allowed')) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Only PDF files are allowed for education documents.' 
+      });
+    }
+    
+    return res.status(400).json({ 
+      success: false, 
+      message: error.message || 'Education document upload error. Please try again.' 
+    });
+  }
+  next();
+};
+
+router.post('/upload-resume', upload.single('resume'), handleMulterError, candidateController.uploadResume);
 router.delete('/delete-resume', candidateController.deleteResume);
 router.post('/upload-marksheet', uploadMarksheet.single('marksheet'), [
   // File validation will be handled in the controller
@@ -274,16 +340,16 @@ router.put('/password/change', [
 ], handleValidationErrors, candidateController.changePassword);
 
 // Education Management Routes
-router.post('/education', uploadMarksheet.single('marksheet'), [
+router.post('/education', uploadEducation.single('marksheet'), handleEducationMulterError, [
   body('schoolName').notEmpty().withMessage('School name is required'),
   body('location').notEmpty().withMessage('Location is required'),
   body('passoutYear').notEmpty().withMessage('Passout year is required'),
   body('percentage').notEmpty().withMessage('Percentage is required')
 ], handleValidationErrors, candidateController.addEducation);
 
-router.put('/education/marksheet', uploadMarksheet.single('marksheet'), candidateController.updateEducationWithMarksheet);
+router.put('/education/marksheet', uploadEducation.single('marksheet'), handleEducationMulterError, candidateController.updateEducationWithMarksheet);
 
-router.put('/education/document', upload.single('document'), candidateController.uploadEducationDocument);
+router.put('/education/document', uploadEducation.single('document'), handleEducationMulterError, candidateController.uploadEducationDocument);
 
 router.delete('/education/:educationId', candidateController.deleteEducation);
 

@@ -55,7 +55,12 @@ function SectionCanKeySkills({ profile }) {
     }, []);
 
     const addSkill = async (skillToAdd) => {
-        if (!skillToAdd || skills.includes(skillToAdd)) return;
+        if (!skillToAdd) return;
+        
+        if (skills.includes(skillToAdd)) {
+            showWarning(`Skill "${skillToAdd}" is already added!`);
+            return;
+        }
         
         setLoading(true);
         try {
@@ -102,10 +107,6 @@ function SectionCanKeySkills({ profile }) {
     const handleAddCustom = () => {
         const trimmedSkill = customSkill.trim();
         if (trimmedSkill) {
-            if (skills.includes(trimmedSkill)) {
-                showError(`Skill "${trimmedSkill}" already exists!`);
-                return;
-            }
             addSkill(trimmedSkill);
         }
     };

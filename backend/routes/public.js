@@ -32,11 +32,12 @@ router.post('/contact', [
 router.post('/support', (req, res, next) => {
   uploadSupport.array('attachments', 3)(req, res, (err) => {
     if (err) {
+      console.error('Support upload error:', err);
       // Handle multer errors
       if (err.code === 'LIMIT_FILE_SIZE') {
-        return res.status(400).json({
+        return res.status(413).json({
           success: false,
-          message: 'File size too large. Each file must be under 5MB. Please compress your files before uploading.'
+          message: 'File size too large. Each file must be under 10MB. Please compress your files before uploading.'
         });
       }
       if (err.code === 'LIMIT_FILE_COUNT') {
@@ -46,9 +47,21 @@ router.post('/support', (req, res, next) => {
         });
       }
       if (err.code === 'LIMIT_FIELD_SIZE') {
+        return res.status(413).json({
+          success: false,
+          message: 'Total upload size too large. Combined file size must be under 45MB. Please compress your files or reduce the number of files.'
+        });
+      }
+      if (err.code === 'LIMIT_UNEXPECTED_FILE') {
         return res.status(400).json({
           success: false,
-          message: 'Total upload size too large. Combined file size must be under 15MB. Please compress your files or reduce the number of files.'
+          message: 'Unexpected file field. Please use the correct form field name "attachments".'
+        });
+      }
+      if (err.message && err.message.includes('File type not supported')) {
+        return res.status(400).json({
+          success: false,
+          message: err.message
         });
       }
       if (err.message) {
@@ -57,7 +70,7 @@ router.post('/support', (req, res, next) => {
           message: err.message
         });
       }
-      return res.status(400).json({
+      return res.status(500).json({
         success: false,
         message: 'File upload error. Please try again with smaller files.'
       });

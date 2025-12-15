@@ -82,7 +82,7 @@ const upload = multer({
   storage,
   fileFilter,
   limits: { 
-    fileSize: 20 * 1024 * 1024, // 20MB limit (to handle 5MB files with Base64 overhead)
+    fileSize: 15 * 1024 * 1024, // 15MB limit (to handle 10MB files with Base64 overhead)
     files: 1 // Only allow 1 file at a time
   }
 });
@@ -156,9 +156,11 @@ const uploadSupport = multer({
     }
   },
   limits: { 
-    fileSize: 5 * 1024 * 1024, // 5MB limit per file for support attachments
+    fileSize: 15 * 1024 * 1024, // 15MB limit per file to handle 10MB files with Base64 overhead
     files: 3, // Allow up to 3 files
-    fieldSize: 15 * 1024 * 1024 // 15MB total field size
+    fieldSize: 45 * 1024 * 1024, // 45MB total field size
+    fieldNameSize: 100,
+    fields: 10
   }
 });
 
@@ -296,6 +298,27 @@ const uploadQuestionImage = multer({
   }
 });
 
+// Upload configuration for education documents with 50MB limit
+const uploadEducation = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (file.fieldname === 'marksheet' || file.fieldname === 'document') {
+      const allowedTypes = ['application/pdf'];
+      if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
+      } else {
+        cb(new Error('Only PDF files are allowed for education documents'), false);
+      }
+    } else {
+      cb(new Error('Invalid field name for education document upload'), false);
+    }
+  },
+  limits: { 
+    fileSize: 50 * 1024 * 1024, // 50MB limit for education documents
+    files: 1
+  }
+});
+
 // Upload configuration for assessment answer files (disk storage)
 const answerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -331,4 +354,4 @@ const uploadAnswerFile = multer({
   }
 });
 
-module.exports = { upload, uploadMarksheet, uploadSupport, uploadGallery, uploadQuestionImage, uploadAnswerFile, fileToBase64, validateFileContent, validateExcelContent };
+module.exports = { upload, uploadMarksheet, uploadSupport, uploadGallery, uploadQuestionImage, uploadAnswerFile, uploadEducation, fileToBase64, validateFileContent, validateExcelContent };
