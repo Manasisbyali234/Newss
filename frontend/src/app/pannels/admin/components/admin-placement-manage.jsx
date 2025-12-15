@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { api } from '../../../../utils/api';
 import './admin-emp-manage-styles.css';
 import './admin-search-styles.css';
+import './button-override.css';
 import SearchBar from '../../../../components/SearchBar';
 import PlacementNavigationButtons from './PlacementNavigationButtons';
 
@@ -164,26 +165,65 @@ function AdminPlacementOfficersAllRequest() {
                                                 </span>
                                             </td>
                                             <td style={{textAlign: 'center'}}>
-                                                <div className="action-buttons">
+                                                <div style={{display: 'flex', justifyContent: 'center', gap: '4px'}}>
                                                     <button
-                                                        className="action-btn btn-approve"
+                                                        style={{
+                                                            all: 'unset',
+                                                            backgroundColor: 'rgba(255, 122, 0, 0.08)',
+                                                            color: '#FF7A00',
+                                                            border: '1px solid #FF7A00',
+                                                            borderRadius: '6px',
+                                                            width: '70px',
+                                                            height: '28px',
+                                                            fontSize: '0.7rem',
+                                                            fontWeight: '600',
+                                                            cursor: 'pointer',
+                                                            display: 'inline-block',
+                                                            textAlign: 'center',
+                                                            lineHeight: '26px'
+                                                        }}
                                                         onClick={() => handleApprove(placement._id)}
                                                     >
-                                                        <i className="fa fa-check"></i>
                                                         Approve
                                                     </button>
                                                     <button
-                                                        className="action-btn btn-reject"
+                                                        style={{
+                                                            all: 'unset',
+                                                            backgroundColor: 'rgba(255, 122, 0, 0.08)',
+                                                            color: '#FF7A00',
+                                                            border: '1px solid #FF7A00',
+                                                            borderRadius: '6px',
+                                                            width: '70px',
+                                                            height: '28px',
+                                                            fontSize: '0.7rem',
+                                                            fontWeight: '600',
+                                                            cursor: 'pointer',
+                                                            display: 'inline-block',
+                                                            textAlign: 'center',
+                                                            lineHeight: '26px'
+                                                        }}
                                                         onClick={() => handleReject(placement._id)}
                                                     >
-                                                        <i className="fa fa-times"></i>
                                                         Reject
                                                     </button>
                                                     <button
-                                                        className="action-btn btn-view"
+                                                        style={{
+                                                            all: 'unset',
+                                                            backgroundColor: 'rgba(255, 122, 0, 0.08)',
+                                                            color: '#FF7A00',
+                                                            border: '1px solid #FF7A00',
+                                                            borderRadius: '6px',
+                                                            width: '70px',
+                                                            height: '28px',
+                                                            fontSize: '0.7rem',
+                                                            fontWeight: '600',
+                                                            cursor: 'pointer',
+                                                            display: 'inline-block',
+                                                            textAlign: 'center',
+                                                            lineHeight: '26px'
+                                                        }}
                                                         onClick={() => navigate(`/admin/placement-details/${placement._id}`)}
                                                     >
-                                                        <i className="fa fa-eye"></i>
                                                         View
                                                     </button>
                                                 </div>

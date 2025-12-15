@@ -24,6 +24,9 @@
   .hamburger-btn {
     position: relative !important;
     z-index: 999999 !important;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   .hamburger-overlay {
@@ -42,5 +45,24 @@
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
+  }
+}
+
+/* iPhone specific fixes */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 991px) {
+    .hamburger-btn {
+      -webkit-tap-highlight-color: transparent !important;
+      -webkit-touch-callout: none !important;
+      -webkit-user-select: none !important;
+      touch-action: manipulation !important;
+      display: flex !important;
+      visibility: visible !important;
+    }
+    
+    .hamburger-btn.active {
+      display: flex !important;
+      visibility: visible !important;
+    }
   }
 }

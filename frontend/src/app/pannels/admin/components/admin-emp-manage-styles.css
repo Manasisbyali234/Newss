@@ -292,31 +292,32 @@
 
 .action-buttons {
     display: flex;
-    gap: 12px;
-    justify-content: flex-end;
+    gap: 8px;
+    justify-content: center;
     align-items: center;
     flex-wrap: wrap;
 }
 
 .action-btn {
-    width: 100px;
-    min-width: 100px;
-    max-width: 100px;
-    height: 36px;
-    min-height: 36px;
-    padding: 8px 12px;
+    width: 85px;
+    min-width: 85px;
+    max-width: 85px;
+    height: 32px;
+    min-height: 32px;
+    padding: 0;
     border: 1px solid rgba(255, 122, 0, 0.3);
-    border-radius: 10px;
-    font-size: 0.8rem;
+    border-radius: 8px;
+    font-size: 0.75rem;
     font-weight: 600;
+    line-height: 30px;
     cursor: pointer;
     transition: all 0.3s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 3px;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.2px;
     text-align: center;
     background: rgba(255, 122, 0, 0.08);
     color: rgba(255, 122, 0, 0.7);
@@ -356,15 +357,16 @@
 .btn-approve,
 .btn-reject,
 .btn-view {
-    width: 100px !important;
-    min-width: 100px !important;
-    max-width: 100px !important;
-    height: 36px !important;
-    min-height: 36px !important;
-    max-height: 36px !important;
-    padding: 8px 12px !important;
-    font-size: 0.8rem !important;
-    gap: 4px !important;
+    width: 85px !important;
+    min-width: 85px !important;
+    max-width: 85px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    padding: 0 !important;
+    line-height: 30px !important;
+    font-size: 0.75rem !important;
+    gap: 3px !important;
     box-sizing: border-box !important;
 }
 

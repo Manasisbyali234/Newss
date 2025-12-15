@@ -14,14 +14,15 @@
   font-size: 18px;
   color: #333;
   line-height: 1;
-  display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   padding: 0 !important;
 }
 
 .hamburger-btn.active {
-  display: none !important;
+  background: #f8f9fa !important;
+  color: #fd7e14 !important;
+  border-color: #fd7e14 !important;
 }
 
 .hamburger-overlay {
@@ -205,7 +206,19 @@
 }
 
 @media (max-width: 991px) {
-  .hamburger-btn { display: block !important; }
+  .hamburger-btn { 
+    display: flex !important;
+    visibility: visible !important;
+  }
+  
+  /* Ensure hamburger button is always visible on mobile */
+  .hamburger-btn,
+  .hamburger-btn.active {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
 }
 
 @media (min-width: 992px) {
@@ -239,4 +252,45 @@
   }
 }
 
-body.hamburger-open { overflow: hidden; }
+/* iPhone specific fixes */
+@supports (-webkit-touch-callout: none) {
+  .hamburger-btn {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    touch-action: manipulation !important;
+  }
+  
+  .hamburger-overlay {
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  .hamburger-menu {
+    -webkit-overflow-scrolling: touch !important;
+    -webkit-transform: translateZ(0) !important;
+  }
+}
+
+/* iOS Safari specific viewport fixes */
+@media screen and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2) {
+  .hamburger-btn {
+    position: relative !important;
+    z-index: 1000000 !important;
+    display: flex !important;
+    visibility: visible !important;
+  }
+  
+  .hamburger-menu {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+  }
+}
+
+body.hamburger-open { 
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
