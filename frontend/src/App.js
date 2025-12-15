@@ -25,6 +25,8 @@ import "./styles/scroll-lock.css";
 import "./candidate-header-mobile-fix.css";
 // ENHANCED MOBILE RESPONSIVE - Comprehensive mobile fixes for all pages
 import "./mobile-responsive-enhancements.css";
+// HAMBURGER MENU PRODUCTION FIX - Ensures hamburger menu works after hosting
+import "./hamburger-production-fix.css";
 
 
 function App() {

@@ -42,26 +42,30 @@
 }
 
 .hamburger-menu {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 280px;
-  height: 100vh;
-  max-height: 100vh;
-  background: #fff;
-  box-shadow: -2px 0 15px rgba(0,0,0,0.15);
-  z-index: 999999;
-  display: flex;
-  flex-direction: column;
-  border-left: 1px solid #e0e0e0;
-  overflow: hidden;
-  pointer-events: auto;
-  transform: translateX(100%);
-  transition: transform 0.3s ease;
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  width: 280px !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  background: #fff !important;
+  box-shadow: -2px 0 15px rgba(0,0,0,0.15) !important;
+  z-index: 999999 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  border-left: 1px solid #e0e0e0 !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+  transform: translateX(100%) !important;
+  transition: transform 0.3s ease !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
 }
 
 .hamburger-menu.open { 
-  transform: translateX(0);
+  transform: translateX(0) !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .hamburger-header {
@@ -114,16 +118,20 @@
   min-height: 0;
 }
 
-.menu-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  flex: 1;
+.hamburger-menu .menu-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  flex: 1 !important;
+  display: block !important;
+  visibility: visible !important;
 }
 
-.menu-list li {
-  border-bottom: 1px solid #f0f0f0;
-  margin: 0;
+.hamburger-menu .menu-list li {
+  border-bottom: 1px solid #f0f0f0 !important;
+  margin: 0 !important;
+  display: block !important;
+  visibility: visible !important;
 }
 
 .menu-list li:last-child {
@@ -155,11 +163,13 @@
   font-weight: 600;
 }
 
-.auth-section {
-  padding: 20px;
-  border-top: 1px solid #e0e0e0;
-  background: #f8f9fa;
-  flex-shrink: 0;
+.hamburger-menu .auth-section {
+  padding: 20px !important;
+  border-top: 1px solid #e0e0e0 !important;
+  background: #f8f9fa !important;
+  flex-shrink: 0 !important;
+  display: block !important;
+  visibility: visible !important;
 }
 
 .auth-btn {
@@ -293,4 +303,43 @@ body.hamburger-open {
   overflow: hidden;
   position: fixed;
   width: 100%;
+}
+
+/* Force visibility overrides for production */
+.hamburger-menu.open .hamburger-content,
+.hamburger-menu.open .menu-list,
+.hamburger-menu.open .menu-list li,
+.hamburger-menu.open .menu-link,
+.hamburger-menu.open .auth-section,
+.hamburger-menu.open .auth-btn {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.hamburger-menu.open .auth-btn {
+  display: inline-flex !important;
+}
+
+/* Override any global ul/ol styles that might interfere */
+.hamburger-menu ul.menu-list {
+  padding-left: 0 !important;
+  margin-bottom: 0 !important;
+  list-style-position: initial !important;
+}
+
+/* Ensure menu is above all other content */
+@media (max-width: 991px) {
+  .hamburger-menu {
+    z-index: 2147483647 !important;
+  }
+  
+  .hamburger-overlay {
+    z-index: 2147483646 !important;
+  }
+  
+  .hamburger-btn {
+    z-index: 2147483647 !important;
+  }
 }
