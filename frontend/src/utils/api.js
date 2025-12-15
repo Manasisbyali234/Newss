@@ -172,7 +172,25 @@ export const api = {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: formData,
-    }).then((res) => res.json());
+    }).then(async (res) => {
+      console.log('Upload response status:', res.status);
+      console.log('Upload response headers:', Object.fromEntries(res.headers.entries()));
+      
+      const responseText = await res.text();
+      console.log('Upload response text:', responseText);
+      
+      try {
+        const jsonResponse = JSON.parse(responseText);
+        if (!res.ok) {
+          throw new Error(jsonResponse.message || `HTTP ${res.status}`);
+        }
+        return jsonResponse;
+      } catch (parseError) {
+        console.error('Failed to parse JSON response:', parseError);
+        console.error('Raw response:', responseText);
+        throw new Error(`Server returned invalid response: ${responseText.substring(0, 100)}...`);
+      }
+    });
   },
 
   deleteResume: () => {

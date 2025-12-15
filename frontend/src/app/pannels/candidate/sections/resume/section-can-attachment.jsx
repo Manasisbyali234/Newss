@@ -110,8 +110,9 @@ function SectionCanAttachment({ profile }) {
             container.id = 'toast-container';
             container.style.cssText = `
                 position: fixed;
-                top: 20px;
-                right: 20px;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
                 z-index: 9999;
                 display: flex;
                 flex-direction: column;

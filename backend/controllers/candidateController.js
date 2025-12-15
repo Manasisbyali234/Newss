@@ -189,6 +189,12 @@ exports.updateProfile = async (req, res) => {
       updateData.profilePicture = fileToBase64(req.file);
     }
     
+    // Handle skills validation - remove duplicates and empty values
+    if (updateData.skills && Array.isArray(updateData.skills)) {
+      const uniqueSkills = [...new Set(updateData.skills.filter(skill => skill && skill.trim()))];
+      updateData.skills = uniqueSkills;
+    }
+    
     console.log('Update data before DB save:', updateData);
     console.log('Pincode in updateData:', updateData.pincode);
     
@@ -263,12 +269,14 @@ exports.updateProfile = async (req, res) => {
 
 exports.uploadResume = async (req, res) => {
   try {
+    console.log('Resume upload request received');
+    console.log('File info:', req.file ? { size: req.file.size, type: req.file.mimetype, name: req.file.originalname } : 'No file');
+    
     if (!req.file) {
       return res.status(400).json({ success: false, message: 'No file uploaded' });
     }
 
     // Additional file validation - 10MB limit to account for Base64 encoding overhead
-    // Base64 encoding increases size by ~33%, so 10MB becomes ~13.3MB after encoding
     const maxSize = 10 * 1024 * 1024; // 10MB
     if (req.file.size > maxSize) {
       return res.status(400).json({ 
@@ -310,21 +318,40 @@ exports.uploadResume = async (req, res) => {
       console.error('Profile completion notification error:', notifError);
     }
 
+    console.log('Resume upload successful');
     res.json({ success: true, resume: resumeBase64, profile, profileCompletion: completionPercentage, profileCompletionDetails });
   } catch (error) {
     console.error('Resume upload error:', error);
+    
+    // Handle multer errors
     if (error.code === 'LIMIT_FILE_SIZE') {
       return res.status(400).json({ 
         success: false, 
         message: 'File size exceeds the limit. Please upload a file smaller than 10MB.' 
       });
     }
-    if (error.message && error.message.includes('too large')) {
+    
+    if (error.code === 'LIMIT_UNEXPECTED_FILE') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Unexpected file field. Please use the correct form field name.' 
+      });
+    }
+    
+    if (error.message && (error.message.includes('too large') || error.message.includes('File size'))) {
       return res.status(400).json({ 
         success: false, 
         message: 'File size is too large. Please upload a file smaller than 10MB.' 
       });
     }
+    
+    if (error.message && error.message.includes('Only')) {
+      return res.status(400).json({ 
+        success: false, 
+        message: error.message 
+      });
+    }
+    
     res.status(500).json({ 
       success: false, 
       message: error.message || 'Failed to upload resume. Please try again.' 
@@ -404,6 +431,15 @@ exports.uploadEducationDocument = async (req, res) => {
       return res.status(400).json({ success: false, message: 'No file uploaded' });
     }
 
+    // Additional file validation - 50MB limit for education documents
+    const maxSize = 50 * 1024 * 1024; // 50MB
+    if (req.file.size > maxSize) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'File size must be less than 50MB. Please compress your file or choose a smaller one.' 
+      });
+    }
+
     // Validate file type
     const allowedTypes = ['application/pdf'];
     if (!allowedTypes.includes(req.file.mimetype)) {
@@ -429,6 +465,15 @@ exports.updateEducationWithMarksheet = async (req, res) => {
     let marksheetBase64 = null;
 
     if (req.file) {
+      // Additional file validation - 50MB limit for education documents
+      const maxSize = 50 * 1024 * 1024; // 50MB
+      if (req.file.size > maxSize) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'File size must be less than 50MB. Please compress your file or choose a smaller one.' 
+        });
+      }
+
       const { fileToBase64 } = require('../middlewares/upload');
       marksheetBase64 = fileToBase64(req.file);
     }
@@ -478,6 +523,22 @@ exports.updateEducationWithMarksheet = async (req, res) => {
     res.json({ success: true, profile: updatedProfile, marksheet: marksheetBase64 });
   } catch (error) {
     console.error('Error updating education with marksheet:', error);
+    
+    // Handle multer errors
+    if (error.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'File size exceeds the 50MB limit. Please upload a smaller file.' 
+      });
+    }
+    
+    if (error.message && error.message.includes('Only PDF files are allowed')) {
+      return res.status(400).json({ 
+        success: false, 
+        message: error.message 
+      });
+    }
+    
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -1415,6 +1476,15 @@ exports.addEducation = async (req, res) => {
 
     let marksheetBase64 = null;
     if (req.file) {
+      // Additional file validation - 50MB limit for education documents
+      const maxSize = 50 * 1024 * 1024; // 50MB
+      if (req.file.size > maxSize) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'File size must be less than 50MB. Please compress your file or choose a smaller one.' 
+        });
+      }
+
       const { fileToBase64 } = require('../middlewares/upload');
       marksheetBase64 = fileToBase64(req.file);
     }
@@ -1438,6 +1508,21 @@ exports.addEducation = async (req, res) => {
 
     res.json({ success: true, education: educationData, profile });
   } catch (error) {
+    // Handle multer errors
+    if (error.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'File size exceeds the 50MB limit. Please upload a smaller file.' 
+      });
+    }
+    
+    if (error.message && error.message.includes('Only PDF files are allowed')) {
+      return res.status(400).json({ 
+        success: false, 
+        message: error.message 
+      });
+    }
+    
     res.status(500).json({ success: false, message: error.message });
   }
 };

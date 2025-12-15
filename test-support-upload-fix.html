@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Support Upload Fix</title>
+</head>
+<body>
+    <h1>Test Support Upload - 10MB File Limit</h1>
+    
+    <form id="supportForm" enctype="multipart/form-data">
+        <div>
+            <label>Name:</label>
+            <input type="text" name="name" value="Test User" required>
+        </div>
+        <div>
+            <label>Email:</label>
+            <input type="email" name="email" value="test@example.com" required>
+        </div>
+        <div>
+            <label>Phone:</label>
+            <input type="text" name="phone" value="1234567890">
+        </div>
+        <div>
+            <label>User Type:</label>
+            <select name="userType" required>
+                <option value="employer">Employer</option>
+                <option value="candidate">Candidate</option>
+                <option value="guest">Guest</option>
+            </select>
+        </div>
+        <div>
+            <label>Subject:</label>
+            <input type="text" name="subject" value="Test Upload Issue" required>
+        </div>
+        <div>
+            <label>Category:</label>
+            <select name="category">
+                <option value="technical">Technical</option>
+                <option value="general">General</option>
+            </select>
+        </div>
+        <div>
+            <label>Priority:</label>
+            <select name="priority">
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select>
+        </div>
+        <div>
+            <label>Message:</label>
+            <textarea name="message" required>Testing file upload with 9MB file that was previously failing.</textarea>
+        </div>
+        <div>
+            <label>Attachments (Max 3 files, 10MB each):</label>
+            <input type="file" name="attachments" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.jpg,.jpeg,.png,.gif,.webp">
+        </div>
+        <button type="submit">Submit Support Ticket</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('supportForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                resultDiv.innerHTML = '<p>Uploading...</p>';
+                
+                const response = await fetch('http://localhost:5000/api/public/support', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `<p style="color: green;">✅ Success: ${data.message}</p><p>Ticket ID: ${data.ticketId}</p>`;
+                } else {
+                    resultDiv.innerHTML = `<p style="color: red;">❌ Error: ${data.message}</p>`;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `<p style="color: red;">❌ Network Error: ${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>

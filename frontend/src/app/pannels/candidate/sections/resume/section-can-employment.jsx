@@ -62,7 +62,13 @@ function SectionCanEmployment({ profile }) {
 
     useEffect(() => {
         if (profile?.employment) {
-            setEmployment(profile.employment);
+            // Sort employment by start date (most recent first)
+            const sortedEmployment = [...profile.employment].sort((a, b) => {
+                const dateA = new Date(a.startDate || '1900-01-01');
+                const dateB = new Date(b.startDate || '1900-01-01');
+                return dateB - dateA;
+            });
+            setEmployment(sortedEmployment);
         }
         if (profile?.totalExperience) {
             setTotalExperience(profile.totalExperience);
@@ -186,12 +192,18 @@ function SectionCanEmployment({ profile }) {
     const handleDelete = async (indexToDelete) => {
         try {
             const updatedEmployment = employment.filter((_, index) => index !== indexToDelete);
-            const updateData = { employment: updatedEmployment };
+            // Sort employment by start date (most recent first)
+            const sortedEmployment = [...updatedEmployment].sort((a, b) => {
+                const dateA = new Date(a.startDate || '1900-01-01');
+                const dateB = new Date(b.startDate || '1900-01-01');
+                return dateB - dateA;
+            });
+            const updateData = { employment: sortedEmployment };
             
             const response = await api.updateCandidateProfile(updateData);
             
             if (response && (response.success || response.candidate)) {
-                setEmployment(updatedEmployment);
+                setEmployment(sortedEmployment);
                 showSuccess('Employment deleted successfully!');
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
             } else {
@@ -257,10 +269,16 @@ function SectionCanEmployment({ profile }) {
                 newEmployment = [...employment];
                 newEmployment[editingIndex] = employmentEntry;
             } else {
-                // Add new employment
-                newEmployment = [...employment, employmentEntry];
+                // Add new employment at the beginning (most recent first)
+                newEmployment = [employmentEntry, ...employment];
             }
-            const updateData = { employment: newEmployment };
+            // Sort employment by start date (most recent first) before saving
+            const sortedEmployment = [...newEmployment].sort((a, b) => {
+                const dateA = new Date(a.startDate || '1900-01-01');
+                const dateB = new Date(b.startDate || '1900-01-01');
+                return dateB - dateA;
+            });
+            const updateData = { employment: sortedEmployment };
             
             if (totalExperience && totalExperience.trim()) {
                 updateData.totalExperience = totalExperience.trim();
@@ -269,7 +287,7 @@ function SectionCanEmployment({ profile }) {
             const response = await api.updateCandidateProfile(updateData);
             
             if (response && (response.success || response.candidate)) {
-                setEmployment(newEmployment);
+                setEmployment(sortedEmployment);
                 const resetFormData = { designation: '', organization: '', isCurrent: false, startDate: '', endDate: '', description: '', workType: '', presentCTC: '', expectedCTC: '' };
                 setFormData(resetFormData);
                 localStorage.removeItem('employmentFormData');
@@ -516,8 +534,6 @@ function SectionCanEmployment({ profile }) {
                                             fontSize: '12px',
                                             transition: 'background-color 0.2s ease'
                                         }}
-                                        onMouseEnter={(e) => e.target.style.backgroundColor = '#0056b3'}
-                                        onMouseLeave={(e) => e.target.style.backgroundColor = '#007bff'}
                                         title="Edit Employment"
                                     >
                                         <i className="fa fa-edit"></i>
