@@ -215,7 +215,7 @@
   box-shadow: 0 4px 12px rgba(255, 122, 0, 0.2) !important;
 }
 
-@media (max-width: 991px) {
+@media (max-width: 1199px) {
   .hamburger-btn { 
     display: flex !important;
     visibility: visible !important;
@@ -231,7 +231,7 @@
   }
 }
 
-@media (min-width: 992px) {
+@media (min-width: 1200px) {
   .hamburger-btn { display: none !important; }
   .hamburger-menu { display: none !important; }
   .hamburger-overlay { display: none !important; }
@@ -262,42 +262,7 @@
   }
 }
 
-/* iPhone specific fixes */
-@supports (-webkit-touch-callout: none) {
-  .hamburger-btn {
-    -webkit-tap-highlight-color: transparent !important;
-    -webkit-touch-callout: none !important;
-    -webkit-user-select: none !important;
-    touch-action: manipulation !important;
-  }
-  
-  .hamburger-overlay {
-    -webkit-overflow-scrolling: touch !important;
-  }
-  
-  .hamburger-menu {
-    -webkit-overflow-scrolling: touch !important;
-    -webkit-transform: translateZ(0) !important;
-  }
-}
 
-/* iOS Safari specific viewport fixes */
-@media screen and (max-device-width: 480px) and (-webkit-min-device-pixel-ratio: 2) {
-  .hamburger-btn {
-    position: relative !important;
-    z-index: 1000000 !important;
-    display: flex !important;
-    visibility: visible !important;
-  }
-  
-  .hamburger-menu {
-    position: fixed !important;
-    top: 0 !important;
-    right: 0 !important;
-    height: 100vh !important;
-    height: 100dvh !important;
-  }
-}
 
 body.hamburger-open { 
   overflow: hidden;

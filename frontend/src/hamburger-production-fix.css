@@ -156,3 +156,70 @@
     width: 260px !important;
   }
 }
+
+/* All device compatibility */
+@media (max-width: 1200px) {
+  .hamburger-btn {
+    display: flex !important;
+    visibility: visible !important;
+  }
+}
+
+/* Tablet landscape */
+@media (max-width: 1024px) {
+  .hamburger-menu {
+    width: 300px !important;
+  }
+}
+
+/* Tablet portrait */
+@media (max-width: 768px) {
+  .hamburger-menu {
+    width: 280px !important;
+  }
+}
+
+/* Large phones */
+@media (max-width: 576px) {
+  .hamburger-menu {
+    width: 270px !important;
+  }
+}
+
+/* Small phones */
+@media (max-width: 375px) {
+  .hamburger-menu {
+    width: 250px !important;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 320px) {
+  .hamburger-menu {
+    width: 240px !important;
+  }
+}
+
+/* Touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .hamburger-btn {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    touch-action: manipulation !important;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .hamburger-btn {
+    border-width: 0.5px !important;
+  }
+}
+
+/* Landscape orientation */
+@media (orientation: landscape) and (max-height: 500px) {
+  .hamburger-menu {
+    height: 100vh !important;
+    overflow-y: auto !important;
+  }
+}

@@ -58,13 +58,13 @@
   height: 40px !important;
 }
 
-@media (min-width: 992px) {
+@media (min-width: 1200px) {
   .hamburger-btn { display: none !important; }
   .header-nav.navbar-collapse { display: flex !important; }
   .extra-nav.header-2-nav { display: flex !important; }
 }
 
-@media (max-width: 991px) {
+@media (max-width: 1199px) {
   .header-nav.navbar-collapse { display: none !important; }
   .hamburger-btn { display: flex !important; }
   .header-nav-btn-section { display: none !important; }
