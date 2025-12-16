@@ -43,7 +43,7 @@ function Footer3 () {
 													<span>Email :</span> <a href="mailto:info@taleglobal.net" style={{color: '#f97316', textDecoration: 'underline', cursor: 'pointer'}}>info@taleglobal.net</a>
 												</p>
 											</li>
-											<li>
+											<li style={{display: 'none'}}>
 												<p>
 													<span>Call :</span> <a href="tel:+919876543210" style={{color: '#f97316', textDecoration: 'underline', cursor: 'pointer'}}>(+91) 9876543210</a>
 												</p>

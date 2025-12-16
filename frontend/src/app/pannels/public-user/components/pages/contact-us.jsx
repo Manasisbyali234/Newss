@@ -214,7 +214,7 @@ function ContactUsPage() {
                                     <div className="contact-info-wrap">
                                         <div className="contact-info">
                                             <div className="contact-info-section">
-                                                <div className="c-info-column">
+                                                <div className="c-info-column" style={{display: 'none'}}>
                                                     <div className="c-info-icon custome-size"><i className="fas fa-mobile-alt" /></div>
                                                     <h3 className="twm-title">Feel free to contact us</h3>
                                                     <p><a href="tel:+919876543210">+91 9876543210</a></p>
