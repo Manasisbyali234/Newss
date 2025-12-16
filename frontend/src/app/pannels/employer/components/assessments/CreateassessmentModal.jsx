@@ -197,6 +197,16 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 			}
 		}
 		
+		// Show encryption notification for published assessments
+		if (!isDraft) {
+			setTimeout(() => {
+				showInfo(
+					"🔒 End-to-end encryption keeps your assessments secure between you and the candidates you choose.\n\n• No one outside can read, copy, or share them\n• 📝 Questions and answers are protected\n• 📄 Assessment content is encrypted\n• 💬 Candidate responses are secure\n• 📊 Results and evaluations are private\n• 🔒 All assessment data is protected",
+					12000
+				);
+			}, 500);
+		}
+		
 		onCreate({
 			id: editData?._id,
 			title,

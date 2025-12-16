@@ -6,7 +6,7 @@ const Application = require('../models/Application');
 const Message = require('../models/Message');
 const InterviewProcess = require('../models/InterviewProcess');
 const { createProfileCompletionNotification } = require('./notificationController');
-const { sendWelcomeEmail } = require('../utils/emailService');
+const { sendWelcomeEmail, sendJobApplicationConfirmationEmail } = require('../utils/emailService');
 
 const generateToken = (id, role) => {
   return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
@@ -553,7 +553,7 @@ exports.applyForJob = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Job ID is required' });
     }
     
-    const job = await Job.findById(jobId);
+    const job = await Job.findById(jobId).populate('employerId', 'companyName');
     if (!job) {
       return res.status(404).json({ success: false, message: 'Job not found' });
     }
@@ -683,6 +683,32 @@ exports.applyForJob = async (req, res) => {
       } catch (notifError) {
         console.error('Notification creation failed:', notifError);
       }
+    }
+
+    // Send job application confirmation email to candidate with job details
+    try {
+      await sendJobApplicationConfirmationEmail(
+        candidate.email,
+        candidate.name,
+        job.title,
+        job.companyName || job.employerId?.companyName || 'Company',
+        new Date(),
+        {
+          assessmentId: job.assessmentId,
+          assessmentStartDate: job.assessmentStartDate,
+          assessmentEndDate: job.assessmentEndDate,
+          assessmentStartTime: job.assessmentStartTime,
+          assessmentEndTime: job.assessmentEndTime,
+          interviewRoundOrder: job.interviewRoundOrder,
+          interviewRoundTypes: job.interviewRoundTypes,
+          interviewRoundDetails: job.interviewRoundDetails,
+          interviewScheduled: job.interviewScheduled
+        }
+      );
+      console.log(`Job application confirmation email sent to: ${candidate.email}`);
+    } catch (emailError) {
+      console.error('Failed to send job application confirmation email:', emailError);
+      // Don't fail the application if email fails
     }
 
     // If we just hit the limit, mark job as closed

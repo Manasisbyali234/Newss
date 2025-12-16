@@ -714,7 +714,7 @@ exports.applyForJob = async (req, res) => {
     }
 
     // Check if job exists and is active
-    const job = await Job.findById(jobId);
+    const job = await Job.findById(jobId).populate('employerId', 'companyName');
     if (!job) {
       return res.status(404).json({ success: false, message: 'Job not found' });
     }
@@ -752,6 +752,22 @@ exports.applyForJob = async (req, res) => {
       appliedAt: new Date(),
       isGuestApplication: true
     });
+
+    // Send job application confirmation email to guest applicant
+    try {
+      const { sendJobApplicationConfirmationEmail } = require('../utils/emailService');
+      await sendJobApplicationConfirmationEmail(
+        email,
+        name,
+        job.title,
+        job.companyName || job.employerId?.companyName || 'Company',
+        new Date()
+      );
+      console.log(`Guest job application confirmation email sent to: ${email}`);
+    } catch (emailError) {
+      console.error('Failed to send guest job application confirmation email:', emailError);
+      // Don't fail the application if email fails
+    }
 
     // Increment the job's application count and close if limit reached
     await Job.findByIdAndUpdate(jobId, { $inc: { applicationCount: 1 } });

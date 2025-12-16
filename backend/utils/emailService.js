@@ -513,6 +513,183 @@ const sendApprovalEmail = async (email, name, userType) => {
   await transporter.sendMail(mailOptions);
 };
 
+const sendJobApplicationConfirmationEmail = async (candidateEmail, candidateName, jobTitle, companyName, applicationDate, jobDetails = null) => {
+  const transporter = createTransport();
+  
+  // Generate interview rounds section if job details are provided
+  let interviewRoundsSection = '';
+  let termsAndConditionsSection = '';
+  
+  if (jobDetails) {
+    // Build interview rounds section
+    const rounds = [];
+    
+    // Add assessment if present
+    if (jobDetails.assessmentId) {
+      rounds.push({
+        name: 'Technical Assessment',
+        type: 'assessment',
+        description: 'Complete the online technical assessment',
+        dateRange: jobDetails.assessmentStartDate && jobDetails.assessmentEndDate ? 
+          `${new Date(jobDetails.assessmentStartDate).toLocaleDateString()} - ${new Date(jobDetails.assessmentEndDate).toLocaleDateString()}` : 
+          'Date will be communicated',
+        time: jobDetails.assessmentStartTime && jobDetails.assessmentEndTime ? 
+          `${jobDetails.assessmentStartTime} - ${jobDetails.assessmentEndTime}` : 
+          'Available 24/7 during assessment period'
+      });
+    }
+    
+    // Add interview rounds based on order
+    if (jobDetails.interviewRoundOrder && jobDetails.interviewRoundDetails) {
+      const roundNames = {
+        technical: 'Technical Round',
+        nonTechnical: 'Non-Technical Round',
+        managerial: 'Managerial Round',
+        final: 'Final Round',
+        hr: 'HR Round'
+      };
+      
+      jobDetails.interviewRoundOrder.forEach((roundKey, index) => {
+        const roundType = jobDetails.interviewRoundTypes[roundKey];
+        const roundDetails = jobDetails.interviewRoundDetails[roundKey];
+        
+        if (roundType && roundDetails && (roundDetails.fromDate || roundDetails.description)) {
+          rounds.push({
+            name: roundNames[roundType] || roundType,
+            type: roundType,
+            description: roundDetails.description || `${roundNames[roundType]} interview`,
+            dateRange: roundDetails.fromDate && roundDetails.toDate ? 
+              `${new Date(roundDetails.fromDate).toLocaleDateString()} - ${new Date(roundDetails.toDate).toLocaleDateString()}` : 
+              'Date will be communicated',
+            time: roundDetails.time || 'Time will be communicated'
+          });
+        }
+      });
+    }
+    
+    if (rounds.length > 0) {
+      interviewRoundsSection = `
+        <div style="background-color: #fff3cd; padding: 25px; border-radius: 10px; margin: 25px 0; border-left: 5px solid #ffc107;">
+          <h3 style="color: #856404; margin: 0 0 20px 0; font-size: 18px;">📅 Interview Process Schedule:</h3>
+          <div style="color: #856404; line-height: 1.6; font-size: 15px;">
+            ${rounds.map((round, index) => `
+              <div style="margin-bottom: 16px; padding: 12px; background-color: rgba(255,255,255,0.7); border-radius: 6px;">
+                <div style="font-weight: bold; margin-bottom: 4px;">Round ${index + 1}: ${round.name}</div>
+                <div style="margin-bottom: 2px;"><strong>Description:</strong> ${round.description}</div>
+                <div style="margin-bottom: 2px;"><strong>Date:</strong> ${round.dateRange}</div>
+                <div><strong>Time:</strong> ${round.time}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+    
+    // Terms and Conditions section
+    termsAndConditionsSection = `
+      <div style="background-color: #f8d7da; padding: 25px; border-radius: 10px; margin: 25px 0; border-left: 5px solid #dc3545;">
+        <h3 style="color: #721c24; margin: 0 0 20px 0; font-size: 18px;">📋 Terms & Conditions:</h3>
+        <div style="color: #721c24; line-height: 1.6; font-size: 14px;">
+          <div style="margin-bottom: 12px;">
+            <strong>🎯 Round Progression:</strong> Candidates must successfully pass each round to proceed to the next stage.
+          </div>
+          <div style="margin-bottom: 12px;">
+            <strong>⚠️ Eligibility Criteria:</strong> Only candidates who pass Round 1 will be eligible for Round 2 and subsequent rounds.
+          </div>
+          <div style="margin-bottom: 12px;">
+            <strong>📧 Communication:</strong> All interview updates and results will be communicated via email and your dashboard.
+          </div>
+          <div style="margin-bottom: 12px;">
+            <strong>⏰ Punctuality:</strong> Please be on time for all scheduled interviews. Late arrivals may result in disqualification.
+          </div>
+          <div style="margin-bottom: 12px;">
+            <strong>📱 Technical Requirements:</strong> Ensure stable internet connection and working camera/microphone for online interviews.
+          </div>
+          <div>
+            <strong>🔄 Updates:</strong> Interview schedules may be updated. Please check your email and dashboard regularly.
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  const applicationTemplate = `
+    <div style="font-family: 'Poppins', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa;">
+      <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="color: #28a745; margin: 0; font-size: 28px;">✅ Application Submitted!</h1>
+        </div>
+        
+        <p style="color: #666; font-size: 16px; line-height: 1.6;">Dear ${candidateName},</p>
+        
+        <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0f9ff 100%); padding: 25px; border-radius: 10px; margin: 25px 0; border-left: 5px solid #28a745;">
+          <p style="color: #155724; margin: 0; font-size: 18px; line-height: 1.6; font-weight: 600;">
+            🎉 Your job application has been successfully submitted!
+          </p>
+        </div>
+        
+        <div style="background-color: #f8f9fa; padding: 25px; border-radius: 10px; margin: 25px 0;">
+          <h3 style="color: #2c3e50; margin: 0 0 20px 0; font-size: 18px;">📋 Application Details:</h3>
+          <div style="color: #495057; line-height: 1.8; font-size: 15px;">
+            <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+              <span style="color: #fd7e14; font-weight: bold; margin-right: 10px; min-width: 120px;">Position:</span>
+              <span><strong>${jobTitle}</strong></span>
+            </div>
+            <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+              <span style="color: #fd7e14; font-weight: bold; margin-right: 10px; min-width: 120px;">Company:</span>
+              <span><strong>${companyName}</strong></span>
+            </div>
+            <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
+              <span style="color: #fd7e14; font-weight: bold; margin-right: 10px; min-width: 120px;">Applied On:</span>
+              <span>${new Date(applicationDate).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })}</span>
+            </div>
+          </div>
+        </div>
+        
+        ${interviewRoundsSection}
+        
+        ${termsAndConditionsSection}
+        
+        <p style="color: #666; font-size: 16px; line-height: 1.6;">
+          Your application is now under review by the employer. You will be notified of any updates regarding your application status.
+        </p>
+        
+        <div style="background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #2196f3;">
+          <h4 style="color: #1565c0; margin: 0 0 10px 0; font-size: 16px;">📱 What's Next?</h4>
+          <ul style="color: #1565c0; margin: 0; font-size: 14px; padding-left: 20px;">
+            <li>Keep your profile updated</li>
+            <li>Check your email regularly for updates</li>
+            <li>Track your application status in your dashboard</li>
+            <li>Prepare for potential interviews</li>
+            ${jobDetails && jobDetails.assessmentId ? '<li><strong>Complete the technical assessment when available</strong></li>' : ''}
+          </ul>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px; padding-top: 30px; border-top: 2px solid #e9ecef;">
+          <p style="color: #6c757d; font-size: 16px; margin: 0 0 5px 0; font-weight: 600;">Best of luck!</p>
+          <p style="color: #fd7e14; font-size: 18px; margin: 0 0 5px 0; font-weight: 700;">The TaleGlobal Team</p>
+          <p style="color: #6c757d; font-size: 14px; margin: 0;">🌟 Connecting Talent with Opportunities 🌟</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const mailOptions = {
+    from: `"TaleGlobal Team" <${process.env.EMAIL_USER}>`,
+    to: candidateEmail,
+    subject: `✅ Application Submitted - ${jobTitle} at ${companyName}`,
+    html: applicationTemplate
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
 module.exports = { 
   sendWelcomeEmail, 
   sendResetEmail, 
@@ -521,5 +698,6 @@ module.exports = {
   sendOTPEmail, 
   sendPlacementCandidateWelcomeEmail,
   retryFailedEmail,
-  sendApprovalEmail
+  sendApprovalEmail,
+  sendJobApplicationConfirmationEmail
 };
