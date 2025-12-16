@@ -81,9 +81,10 @@
 }
 
 .hamburger-logo {
-  height: 32px;
-  width: auto;
-  object-fit: contain;
+  height: 20px !important;
+  width: auto !important;
+  max-width: 120px !important;
+  object-fit: contain !important;
 }
 
 .hamburger-menu .close-btn {

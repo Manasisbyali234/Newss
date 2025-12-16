@@ -13,6 +13,7 @@ import "../../../iphone-menu-visibility-fix.css";
 import "../../../iphone-hamburger-fix.css";
 import "../../../iphone-safari-menu-fix.css";
 import "../../../iphone-android-parity-fix.css";
+import "../../../hamburger-logo-override.css";
 
 const Header1 = memo(function Header1({ _config }) {
     const { user, userType, isAuthenticated } = useAuth();

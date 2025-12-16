@@ -1,5 +1,12 @@
 /* Force iPhone to display exactly like Android mobile */
 @media (max-width: 991px) {
+  /* Override logo size specifically */
+  .hamburger-menu .hamburger-logo {
+    height: 20px !important;
+    width: auto !important;
+    max-width: 120px !important;
+    max-height: 20px !important;
+  }
   /* Override ALL possible hiding styles */
   .hamburger-menu.open,
   .hamburger-menu.open *,

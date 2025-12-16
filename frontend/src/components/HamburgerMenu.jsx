@@ -33,7 +33,11 @@ const HamburgerMenu = ({ isOpen, onToggle, onClose }) => {
 
   return (
     <>
-      <button className={`hamburger-btn ${isOpen ? 'active' : ''}`} onClick={onToggle}>
+      <button 
+        className={`hamburger-btn ${isOpen ? 'active' : ''}`} 
+        onClick={onToggle}
+        style={isOpen ? { display: 'none' } : {}}
+      >
         {isOpen ? '✕' : '☰'}
       </button>
 
@@ -60,7 +64,12 @@ const HamburgerMenu = ({ isOpen, onToggle, onClose }) => {
           className="hamburger-header"
           style={isOpen ? { display: 'flex', visibility: 'visible', opacity: 1 } : {}}
         >
-          <img src="/assets/images/logo-dark.png" alt="Logo" className="hamburger-logo" />
+          <img 
+            src="/assets/images/logo-dark.png" 
+            alt="Logo" 
+            className="hamburger-logo"
+            style={{ height: '32px !important', width: 'auto !important', maxWidth: '150px !important', objectFit: 'contain !important', maxHeight: '32px !important' }}
+          />
           <button 
             className="close-btn" 
             onClick={onClose}
