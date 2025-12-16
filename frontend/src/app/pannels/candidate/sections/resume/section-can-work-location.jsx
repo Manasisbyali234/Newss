@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../../../../../utils/api';
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
 import SearchableSelect from '../../../../../components/SearchableSelect';
+import '../../../../../searchable-select-overflow-fix.css';
 
 function SectionCanWorkLocation({ profile, onUpdate }) {
     const [workLocationData, setWorkLocationData] = useState({

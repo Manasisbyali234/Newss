@@ -83,26 +83,48 @@ const SearchableSelect = ({ options, value, onChange, placeholder, className, is
                 return <span className="text-muted">{placeholder}</span>;
             }
             return (
-                <div className="d-flex flex-wrap gap-1">
+                <div className="d-flex flex-wrap gap-1" style={{
+                    paddingRight: '20px',
+                    width: '100%',
+                    maxHeight: window.innerWidth <= 768 ? '80px' : 'none',
+                    overflowY: window.innerWidth <= 768 ? 'auto' : 'visible'
+                }}>
                     {currentValues.map((val, index) => (
-                        <span key={index} className="d-flex align-items-center" style={{
+                        <span key={index} style={{
                             border: '1px solid #007bff', 
-                            borderRadius: '20px', 
-                            padding: '4px 12px', 
-                            fontSize: '0.875em', 
+                            borderRadius: window.innerWidth <= 768 ? '8px' : '20px', 
+                            padding: window.innerWidth <= 768 ? '1px 4px' : '4px 8px 4px 12px', 
+                            fontSize: window.innerWidth <= 768 ? '0.6em' : '0.875em', 
                             backgroundColor: '#e3f2fd',
                             color: '#0056b3',
-                            fontWeight: '500'
+                            fontWeight: '500',
+                            flexShrink: 0,
+                            marginBottom: window.innerWidth <= 768 ? '1px' : '2px',
+                            marginRight: window.innerWidth <= 768 ? '1px' : '2px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            height: window.innerWidth <= 768 ? '16px' : 'auto',
+                            lineHeight: 1,
+                            minWidth: window.innerWidth <= 768 ? '40px' : '60px'
                         }}>
-                            <i className="fa fa-map-marker me-1" style={{ fontSize: '0.8em' }}></i>
-                            {val}
-                            <button
-                                type="button"
-                                className="btn-close ms-2"
+                            <div style={{ display: 'flex', alignItems: 'center', gap: window.innerWidth <= 768 ? '1px' : '4px' }}>
+                                <i className="fa fa-map-marker" style={{ fontSize: window.innerWidth <= 768 ? '0.5em' : '0.8em' }}></i>
+                                <span style={{ fontSize: 'inherit', lineHeight: 1 }}>{val}</span>
+                            </div>
+                            <span
                                 style={{ 
-                                    fontSize: '0.7em',
+                                    fontSize: window.innerWidth <= 768 ? '0.5em' : '0.7em',
                                     opacity: '0.7',
-                                    backgroundColor: 'transparent'
+                                    cursor: 'pointer',
+                                    width: window.innerWidth <= 768 ? '8px' : '12px',
+                                    height: window.innerWidth <= 768 ? '8px' : '12px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    borderRadius: '50%',
+                                    backgroundColor: '#FF7A00',
+                                    color: '#fff'
                                 }}
                                 onClick={(e) => {
                                     e.stopPropagation();
@@ -110,7 +132,7 @@ const SearchableSelect = ({ options, value, onChange, placeholder, className, is
                                 }}
                                 onMouseEnter={(e) => e.target.style.opacity = '1'}
                                 onMouseLeave={(e) => e.target.style.opacity = '0.7'}
-                            ></button>
+                            >×</span>
                         </span>
                     ))}
                 </div>
@@ -128,15 +150,25 @@ const SearchableSelect = ({ options, value, onChange, placeholder, className, is
                 onClick={() => setIsOpen(!isOpen)}
                 style={{ 
                     cursor: 'pointer', 
-                    minHeight: '38px', 
+                    minHeight: '38px',
+                    height: 'auto',
                     padding: '6px 12px', 
                     display: 'flex', 
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                     position: 'relative'
                 }}
             >
                 {renderValue()}
-                <i className={`fa fa-chevron-${isOpen ? 'up' : 'down'} ms-auto`} style={{ fontSize: '0.8em', color: '#6c757d' }}></i>
+                {!isMulti && (
+                    <i className={`fa fa-chevron-${isOpen ? 'up' : 'down'}`} style={{ 
+                        fontSize: '0.8em', 
+                        color: '#6c757d',
+                        position: 'absolute',
+                        right: '12px',
+                        top: '50%',
+                        transform: 'translateY(-50%)'
+                    }}></i>
+                )}
             </div>
             {isOpen && (
                 <div style={{
