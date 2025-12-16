@@ -56,9 +56,7 @@ const calculateProfileCompletion = (profile) => {
   if (profile.jobPreferences && 
       profile.jobPreferences.preferredLocations && 
       Array.isArray(profile.jobPreferences.preferredLocations) && 
-      profile.jobPreferences.preferredLocations.length > 0 &&
-      profile.jobPreferences.jobType &&
-      profile.jobPreferences.noticePeriod) {
+      profile.jobPreferences.preferredLocations.length > 0) {
     completedSections++;
   } else {
     missingSections.push('Work Location Preferences');
