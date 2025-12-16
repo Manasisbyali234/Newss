@@ -237,13 +237,13 @@ const SectionJobsGrid = memo(({ filters, onTotalChange }) => {
                         </div>
                         <div className="job-type-badge" style={{alignSelf: 'flex-start'}}>
                             <span className={`job-type-pill ${
-                                job.jobType === "Full-Time" || job.jobType === "full-time" ? "full-time" :
-                                job.jobType === "Part-Time" || job.jobType === "part-time" ? "part-time" :
-                                job.jobType === "Contract" || job.jobType === "contract" ? "contract" :
-                                job.jobType?.toLowerCase().includes("internship") ? "internship" :
-                                job.jobType === "Work From Home" ? "wfh" : "full-time"
+                                job.jobType === "full-time" ? "full-time" :
+                                job.jobType === "part-time" ? "part-time" :
+                                job.jobType === "contract" ? "contract" :
+                                job.jobType?.includes("internship") ? "internship" :
+                                job.jobType === "work-from-home" ? "wfh" : "full-time"
                             }`} style={{padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: '500', backgroundColor: '#e3f2fd', color: '#1976d2'}}>
-                                {job.jobType || "Full-Time"}
+                                {job.jobType ? job.jobType.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : "Full Time"}
                             </span>
                         </div>
                     </div>

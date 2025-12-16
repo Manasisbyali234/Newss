@@ -186,7 +186,7 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                 });
                 
                 // Add default job types if they don't exist
-                const defaultTypes = ['Full-Time', 'Part-Time', 'Contract', 'Internship'];
+                const defaultTypes = ['full-time', 'part-time', 'contract', 'internship'];
                 defaultTypes.forEach(type => {
                     if (!typeCounts[type]) {
                         typeCounts[type] = 0;
@@ -198,7 +198,7 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
         } catch (error) {
             console.error('Error fetching job types:', error);
             // Set default job types
-            setJobTypes([['Full-Time', 4], ['Part-Time', 0], ['Contract', 0], ['Internship', 0]]);
+            setJobTypes([['full-time', 4], ['part-time', 0], ['contract', 0], ['internship', 0]]);
         }
     };
 
@@ -359,7 +359,7 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                                                 style={{marginRight: '8px'}}
                                             />
                                             <label className="form-check-label" htmlFor={`jobType${index}`} style={{fontSize: '14px', color: '#333', fontWeight: filters.jobType.includes(type) ? '600' : 'normal'}}>
-                                                {type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ')}
+                                                {type.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                                             </label>
                                         </div>
                                         <span className="twm-job-type-count" style={{fontSize: '14px', color: '#000', backgroundColor: '#f0f0f0', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold'}}>{count}</span>

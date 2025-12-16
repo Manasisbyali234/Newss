@@ -90,15 +90,6 @@ function PrivacyPolicyPage() {
                         text-align: justify;
                     }
                     
-                    .privacy-content li::before {
-                        content: '▶';
-                        color: #fd7e14;
-                        font-weight: bold;
-                        position: absolute;
-                        left: 0;
-                        top: 0;
-                        font-size: 0.9rem;
-                    }
                     
                     .privacy-content strong {
                         color: #2c3e50;
