@@ -6,23 +6,24 @@ const { auth } = require('../middlewares/auth');
 const { upload, uploadMarksheet, uploadAnswerFile, uploadEducation } = require('../middlewares/upload');
 const handleValidationErrors = require('../middlewares/validation');
 const { mobileValidationRules } = require('../middlewares/phoneValidation');
+const { validateEmailMiddleware } = require('../middlewares/emailValidation');
 
 // Authentication Routes
 router.post('/register', [
   body('name').notEmpty().trim().withMessage('Name is required'),
-  body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
+  body('email').isEmail().withMessage('Valid email is required'),
   ...mobileValidationRules()
-], handleValidationErrors, candidateController.registerCandidate);
+], validateEmailMiddleware, handleValidationErrors, candidateController.registerCandidate);
 
 router.post('/login', [
   body('email').isEmail().withMessage('Valid email is required'),
   body('password').notEmpty().withMessage('Password is required')
-], handleValidationErrors, candidateController.loginCandidate);
+], validateEmailMiddleware, handleValidationErrors, candidateController.loginCandidate);
 
 // Email Check Route (Public - before auth middleware)
 router.post('/check-email', [
   body('email').isEmail().withMessage('Valid email is required')
-], handleValidationErrors, candidateController.checkEmail);
+], validateEmailMiddleware, handleValidationErrors, candidateController.checkEmail);
 
 // Password Reset Routes (Public - before auth middleware)
 router.post('/password/reset', [
@@ -51,7 +52,7 @@ router.post('/password/verify-otp', [
 ], handleValidationErrors, candidateController.verifyOTPAndResetPassword);
 
 router.post('/create-password', [
-  body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
+  body('email').isEmail().withMessage('Valid email is required'),
   body('password')
     .isLength({ min: 10, max: 25 }).withMessage('Password must be between 10 and 25 characters')
     .matches(/[A-Z]/).withMessage('Password must contain at least one uppercase letter')
@@ -200,7 +201,7 @@ const handleMulterError = (error, req, res, next) => {
     if (error.code === 'LIMIT_FILE_SIZE') {
       return res.status(400).json({ 
         success: false, 
-        message: 'File size exceeds the limit. Please upload a file smaller than 10MB.' 
+        message: 'File size exceeds the limit. Please upload a file smaller than 15MB.' 
       });
     }
     

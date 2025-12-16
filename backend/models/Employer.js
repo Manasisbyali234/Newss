@@ -3,7 +3,15 @@ const bcrypt = require('bcryptjs');
 
 const employerSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
+  email: { 
+    type: String, 
+    required: true, 
+    unique: true,
+    set: function(email) {
+      // Store email as-is to preserve original formatting
+      return email;
+    }
+  },
   password: { type: String, required: false },
   phone: { type: String },
   companyName: { type: String, required: true },
@@ -22,6 +30,18 @@ const employerSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+
+// Email normalization for queries while preserving original email
+employerSchema.index({ email: 1 }, { 
+  collation: { locale: 'en', strength: 2 } // Case-insensitive index
+});
+
+// Static method for case-insensitive email lookup
+employerSchema.statics.findByEmail = function(email) {
+  return this.findOne({ 
+    email: new RegExp(`^${email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') 
+  });
+};
 
 employerSchema.pre('save', async function(next) {
   if (!this.isModified('password') || !this.password) return next();

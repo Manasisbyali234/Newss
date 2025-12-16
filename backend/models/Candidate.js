@@ -3,7 +3,15 @@ const bcrypt = require('bcryptjs');
 
 const candidateSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
+  email: { 
+    type: String, 
+    required: true, 
+    unique: true,
+    set: function(email) {
+      // Store email as-is to preserve original formatting
+      return email;
+    }
+  },
   password: { type: String, required: false },
   phone: { type: String },
   course: { type: String }, // Course/Branch from Excel data
@@ -20,6 +28,18 @@ const candidateSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+
+// Email normalization for queries while preserving original email
+candidateSchema.index({ email: 1 }, { 
+  collation: { locale: 'en', strength: 2 } // Case-insensitive index
+});
+
+// Static method for case-insensitive email lookup
+candidateSchema.statics.findByEmail = function(email) {
+  return this.findOne({ 
+    email: new RegExp(`^${email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') 
+  });
+};
 
 candidateSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();

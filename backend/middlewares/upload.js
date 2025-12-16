@@ -82,7 +82,7 @@ const upload = multer({
   storage,
   fileFilter,
   limits: { 
-    fileSize: 15 * 1024 * 1024, // 15MB limit (to handle 10MB files with Base64 overhead)
+    fileSize: 20 * 1024 * 1024, // 20MB limit (to handle 15MB files with Base64 overhead)
     files: 1 // Only allow 1 file at a time
   }
 });
@@ -156,9 +156,9 @@ const uploadSupport = multer({
     }
   },
   limits: { 
-    fileSize: 15 * 1024 * 1024, // 15MB limit per file to handle 10MB files with Base64 overhead
+    fileSize: 10 * 1024 * 1024, // 10MB limit per file
     files: 3, // Allow up to 3 files
-    fieldSize: 45 * 1024 * 1024, // 45MB total field size
+    fieldSize: 30 * 1024 * 1024, // 30MB total field size
     fieldNameSize: 100,
     fields: 10
   }

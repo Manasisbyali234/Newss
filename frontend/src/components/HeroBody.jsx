@@ -255,7 +255,7 @@ const HeroBody = ({ onSearch }) => {
               onChange={(e) => handleFieldChange('type', e.target.value)}
               onBlur={() => handleFieldBlur('type')}
             >
-              <option value="">Select Education</option>
+              <option value="">Select</option>
               <option value="Below 10th">Below 10th</option>
               <option value="10th Pass">10th Pass</option>
               <option value="12th Pass">12th Pass</option>
@@ -327,14 +327,14 @@ const HeroBody = ({ onSearch }) => {
           </div>
           
           <div className="search-field">
-            <label className="search-label">CATEGORY</label>
+            <label className="search-label">INDUSTRY</label>
             <select 
               className={`search-select${touched.category && errors.category ? ' has-error' : ''}`}
               value={searchData.category}
               onChange={(e) => handleFieldChange('category', e.target.value)}
               onBlur={() => handleFieldBlur('category')}
             >
-              <option value=""hidden>Select Categories</option>
+              <option value=""hidden>Select</option>
               <option value="Information Technology (IT) & Software">Information Technology (IT) & Software</option>
               <option value="Design & Creative">Design & Creative</option>
               <option value="Marketing & Advertising">Marketing & Advertising</option>
@@ -381,7 +381,7 @@ const HeroBody = ({ onSearch }) => {
               onChange={(e) => handleFieldChange('what', e.target.value)}
               onBlur={() => handleFieldBlur('what')}
             >
-              <option value="" hidden>Select skills</option>
+              <option value="" hidden>Select</option>
               <option value="Data Entry Operator">Data Entry Operator</option>
               <option value="Computer Operator">Computer Operator</option>
               <option value="IT Support Assistant">IT Support Assistant</option>

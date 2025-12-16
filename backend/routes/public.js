@@ -13,6 +13,7 @@ router.use(performanceMiddleware);
 // Job Routes
 router.get('/jobs', publicController.getJobs);
 router.get('/jobs/search', publicController.searchJobs);
+router.get('/jobs/filter-counts', publicController.getJobFilterCounts);
 router.get('/jobs/:id', publicController.getJobById);
 router.get('/jobs/category/:category', publicController.getJobsByCategory);
 
@@ -49,7 +50,7 @@ router.post('/support', (req, res, next) => {
       if (err.code === 'LIMIT_FIELD_SIZE') {
         return res.status(413).json({
           success: false,
-          message: 'Total upload size too large. Combined file size must be under 45MB. Please compress your files or reduce the number of files.'
+          message: 'Total upload size too large. Combined file size must be under 30MB. Please compress your files or reduce the number of files.'
         });
       }
       if (err.code === 'LIMIT_UNEXPECTED_FILE') {

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { api } from '../../../../../utils/api';
+import { showConfirmation, showSuccess, showError } from '../../../../../utils/popupNotification';
 
 const LOCATIONS = [
     'Bagalkot', 'Ballari', 'Belagavi', 'Bengaluru Rural', 'Bengaluru Urban', 'Bidar',
@@ -127,7 +128,7 @@ function SectionCanEducation({ profile }) {
 
     const handleSave = async () => {
         if (!formData.schoolName || !formData.location || !formData.passoutYear || !formData.percentage) {
-            alert('Please fill all required fields');
+            showError('Please fill all required fields');
             return;
         }
         
@@ -176,38 +177,41 @@ function SectionCanEducation({ profile }) {
                 
                 // Trigger profile refresh
                 window.dispatchEvent(new CustomEvent('profileUpdated'));
+                showSuccess('Education details saved successfully!');
             } else {
-                alert('Failed to save education details');
+                showError('Failed to save education details');
             }
         } catch (error) {
-            
-            alert('Error saving education details');
+            showError('Error saving education details');
         } finally {
             setLoading(false);
         }
     };
     
     const handleDelete = async (educationId) => {
-        if (!confirm('Are you sure you want to delete this education record?')) {
-            return;
-        }
-        
-        setLoading(true);
-        try {
-            const response = await api.deleteEducation(educationId);
-            if (response.success) {
-                setEducationList(educationList.filter(e => e.id !== educationId));
-                // Trigger profile refresh
-                window.dispatchEvent(new CustomEvent('profileUpdated'));
-            } else {
-                alert('Failed to delete education record');
-            }
-        } catch (error) {
-            
-            alert('Error deleting education record');
-        } finally {
-            setLoading(false);
-        }
+        showConfirmation(
+            'Are you sure you want to delete this education entry? This action cannot be undone.',
+            async () => {
+                setLoading(true);
+                try {
+                    const response = await api.deleteEducation(educationId);
+                    if (response.success) {
+                        setEducationList(educationList.filter(e => e.id !== educationId));
+                        // Trigger profile refresh
+                        window.dispatchEvent(new CustomEvent('profileUpdated'));
+                        showSuccess('Education record deleted successfully!');
+                    } else {
+                        showError('Failed to delete education record');
+                    }
+                } catch (error) {
+                    showError('Error deleting education record');
+                } finally {
+                    setLoading(false);
+                }
+            },
+            null,
+            'warning'
+        );
     };
 
     return (
@@ -359,13 +363,13 @@ function SectionCanEducation({ profile }) {
                                             if (file) {
                                                 // Validate file type
                                                 if (file.type !== 'application/pdf') {
-                                                    alert('Only PDF files are allowed');
+                                                    showError('Only PDF files are allowed');
                                                     e.target.value = '';
                                                     return;
                                                 }
                                                 // Validate file size (50MB limit)
                                                 if (file.size > 50 * 1024 * 1024) {
-                                                    alert('File size must be less than 50MB');
+                                                    showError('File size must be less than 50MB');
                                                     e.target.value = '';
                                                     return;
                                                 }

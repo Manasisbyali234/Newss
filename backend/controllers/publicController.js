@@ -920,6 +920,124 @@ exports.getSubmittedReviews = async (req, res) => {
   }
 };
 
+// Get filter counts for job search sidebar
+exports.getJobFilterCounts = async (req, res) => {
+  try {
+    // Check if database is connected
+    if (!isDBConnected()) {
+      return res.json({ 
+        success: true, 
+        counts: {
+          jobTypes: [],
+          locations: [],
+          categories: [],
+          designations: []
+        }
+      });
+    }
+
+    const cacheKey = 'job_filter_counts';
+    const cached = cache.get(cacheKey);
+    
+    if (cached) {
+      return res.json(cached);
+    }
+
+    // Get all active jobs with approved employers
+    const jobs = await Job.find({
+      status: { $in: ['active', 'pending'] },
+      'employerId': { $exists: true }
+    })
+    .populate({
+      path: 'employerId',
+      select: 'status isApproved',
+      match: { status: 'active', isApproved: true }
+    })
+    .select('jobType location category title requiredSkills description')
+    .lean();
+
+    // Filter out jobs where employer is not approved
+    const activeJobs = jobs.filter(job => job.employerId);
+
+    // Calculate job type counts
+    const jobTypeCounts = {};
+    activeJobs.forEach(job => {
+      const type = job.jobType || 'full-time';
+      jobTypeCounts[type] = (jobTypeCounts[type] || 0) + 1;
+    });
+
+    // Calculate location counts
+    const locationCounts = {};
+    activeJobs.forEach(job => {
+      if (job.location) {
+        locationCounts[job.location] = (locationCounts[job.location] || 0) + 1;
+      }
+    });
+
+    // Calculate category counts
+    const categoryCounts = {};
+    activeJobs.forEach(job => {
+      if (job.category) {
+        categoryCounts[job.category] = (categoryCounts[job.category] || 0) + 1;
+      }
+    });
+
+    // Calculate designation/title counts
+    const designationCounts = {};
+    const allDesignations = new Set();
+    
+    activeJobs.forEach(job => {
+      if (job.title) {
+        allDesignations.add(job.title);
+        designationCounts[job.title] = (designationCounts[job.title] || 0) + 1;
+      }
+      
+      // Also add skills as potential designations
+      if (job.requiredSkills && Array.isArray(job.requiredSkills)) {
+        job.requiredSkills.forEach(skill => {
+          allDesignations.add(skill);
+        });
+      }
+      
+      // Extract tech keywords from description
+      if (job.description) {
+        const techWords = ['React', 'Angular', 'Vue', 'Node', 'Python', 'Java', 'JavaScript', 'TypeScript', 'PHP', 'Laravel', 'Django', 'Spring', 'MongoDB', 'MySQL', 'PostgreSQL', 'AWS', 'Azure', 'Docker', 'Kubernetes', 'Git', 'HTML', 'CSS', 'Bootstrap', 'jQuery', 'Express', 'API', 'REST', 'GraphQL', 'Redux', 'DevOps', 'Linux', 'Windows', 'iOS', 'Android', 'Flutter', 'React Native', 'Swift', 'Kotlin', 'C++', 'C#', '.NET', 'Ruby', 'Rails', 'Golang', 'Rust', 'Scala', 'Jenkins', 'CI/CD', 'Agile', 'Scrum', 'Jira', 'Figma', 'Photoshop', 'Illustrator', 'Unity', 'Salesforce', 'Tableau', 'Power BI', 'Excel', 'Machine Learning', 'AI', 'Data Science', 'Big Data', 'Cloud', 'Cybersecurity', 'Blockchain', 'UI', 'UX', 'Frontend', 'Backend', 'Full Stack', 'Mobile', 'Web', 'Database', 'Testing', 'QA', 'Automation'];
+        techWords.forEach(word => {
+          if (job.description.toLowerCase().includes(word.toLowerCase())) {
+            allDesignations.add(word);
+          }
+        });
+      }
+    });
+
+    const response = {
+      success: true,
+      counts: {
+        jobTypes: Object.entries(jobTypeCounts),
+        locations: Object.keys(locationCounts).sort(),
+        categories: Object.entries(categoryCounts),
+        designations: Array.from(allDesignations).sort()
+      }
+    };
+
+    // Cache for 60 seconds
+    cache.set(cacheKey, response, 60000);
+    
+    res.json(response);
+  } catch (error) {
+    console.error('Error in getJobFilterCounts:', error);
+    res.json({ 
+      success: true, 
+      counts: {
+        jobTypes: [],
+        locations: [],
+        categories: [],
+        designations: []
+      }
+    });
+  }
+};
+
 // Support Controller
 exports.submitSupportTicket = async (req, res) => {
   try {
@@ -932,18 +1050,18 @@ exports.submitSupportTicket = async (req, res) => {
       
       // Check total file size
       const totalSize = req.files.reduce((sum, file) => sum + file.size, 0);
-      const maxTotalSize = 45 * 1024 * 1024; // 45MB total limit
+      const maxTotalSize = 30 * 1024 * 1024; // 30MB total limit
       
       if (totalSize > maxTotalSize) {
         return res.status(413).json({
           success: false,
-          message: 'Total file size exceeds 45MB limit. Please reduce file sizes or upload fewer files.'
+          message: 'Total file size exceeds 30MB limit. Please reduce file sizes or upload fewer files.'
         });
       }
       
       // Validate individual file sizes
       for (const file of req.files) {
-        if (file.size > 15 * 1024 * 1024) {
+        if (file.size > 10 * 1024 * 1024) {
           return res.status(413).json({
             success: false,
             message: `File "${file.originalname}" is too large. Maximum file size is 10MB.`
@@ -1004,7 +1122,7 @@ exports.submitSupportTicket = async (req, res) => {
     if (error.code === 'LIMIT_FILE_SIZE') {
       return res.status(413).json({
         success: false,
-        message: 'File size too large. Each file must be under 12MB.'
+        message: 'File size too large. Each file must be under 10MB.'
       });
     }
     

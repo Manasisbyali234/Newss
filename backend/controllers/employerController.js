@@ -19,7 +19,7 @@ exports.registerEmployer = async (req, res) => {
     console.log('Request body:', JSON.stringify(req.body, null, 2));
     const { name, email, password, phone, companyName, employerCategory, employerType, sendWelcomeEmail: shouldSendEmail } = req.body;
 
-    const existingEmployer = await Employer.findOne({ email });
+    const existingEmployer = await Employer.findByEmail(email);
     if (existingEmployer) {
       return res.status(400).json({ success: false, message: 'Email already registered' });
     }
@@ -29,7 +29,7 @@ exports.registerEmployer = async (req, res) => {
     // Create employer without password - they will create it via email link
     const employer = await Employer.create({ 
       name, 
-      email, 
+      email: email.trim(), // Preserve original email format, just trim whitespace
       phone, 
       companyName,
       employerType: finalEmployerType
@@ -76,7 +76,7 @@ exports.loginEmployer = async (req, res) => {
     
     // Removed console debug line for security
 
-    const employer = await Employer.findOne({ email });
+    const employer = await Employer.findByEmail(email.trim());
     if (!employer) {
       // Removed console debug line for security
       return res.status(401).json({ success: false, message: 'Invalid credentials' });

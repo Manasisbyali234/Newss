@@ -172,7 +172,7 @@ function CanSupport() {
         const processedFiles = [];
         for (const file of selectedFiles) {
             if (file.type.startsWith('image/') && file.size > 5 * 1024 * 1024) {
-                // Compress large images
+                // Compress large images (over 5MB)
                 const compressed = await compressImage(file);
                 processedFiles.push(compressed);
             } else {
@@ -181,25 +181,25 @@ function CanSupport() {
         }
         setIsCompressing(false);
         
-        const maxSize = 5 * 1024 * 1024; // 5MB per file
+        const maxSize = 10 * 1024 * 1024; // 10MB per file
         const oversizedFiles = processedFiles.filter(file => file.size > maxSize);
         if (oversizedFiles.length > 0) {
             const fileList = oversizedFiles.map(f => `"${f.name}" (${(f.size / 1024 / 1024).toFixed(1)}MB)`).join(', ');
             setErrors(prev => ({ 
                 ...prev, 
-                files: `File size too large: ${fileList}. Each file must be under 5MB. Please try taking a new photo or use a different file.` 
+                files: `File size too large: ${fileList}. Each file must be under 10MB. Please compress your files before uploading.` 
             }));
             clearFileInput();
             return;
         }
         
         const totalSize = processedFiles.reduce((sum, file) => sum + file.size, 0);
-        const maxTotalSize = 15 * 1024 * 1024; // 15MB total
+        const maxTotalSize = 30 * 1024 * 1024; // 30MB total
         if (totalSize > maxTotalSize) {
             const totalSizeMB = (totalSize / 1024 / 1024).toFixed(1);
             setErrors(prev => ({ 
                 ...prev, 
-                files: `Combined file size too large: ${totalSizeMB}MB exceeds the 15MB limit. Please reduce the number of files.` 
+                files: `Combined file size too large: ${totalSizeMB}MB exceeds the 30MB limit. Please reduce file sizes or number of files.` 
             }));
             clearFileInput();
             return;
@@ -285,7 +285,7 @@ function CanSupport() {
                     // Server returned HTML or other non-JSON response
                     const text = await response.text();
                     console.error('Non-JSON response:', text.substring(0, 200));
-                    setErrors({ submit: 'File upload failed: File size too large. Each file must be under 5MB. Please compress your images before uploading.' });
+                    setErrors({ submit: 'File upload failed: File size too large. Each file must be under 10MB. Please compress your files before uploading.' });
                 }
             }
         } catch (error) {
@@ -468,7 +468,7 @@ function CanSupport() {
                                             )}
                                             <small className="form-text d-block mt-2" style={{ color: '#ff6b35' }}>
                                                 <i className="fa fa-info-circle me-1"></i>
-                                                Upload up to 3 files (max 5MB each, 15MB total). Large images will be automatically compressed.
+                                                Upload up to 3 files (max 10MB each, 30MB total). Large images will be automatically compressed.
                                             </small>
                                             {errors.files && (
                                                 <div className="invalid-feedback d-block">

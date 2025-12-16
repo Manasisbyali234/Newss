@@ -139,8 +139,8 @@ app.use(limiter);
 app.use('/api/employer/profile/gallery', (req, res, next) => next());
 
 // Body Parser Middleware with increased limits for file uploads
-app.use(express.json({ limit: '60mb', parameterLimit: 50000 }));
-app.use(express.urlencoded({ extended: true, limit: '60mb', parameterLimit: 50000 }));
+app.use(express.json({ limit: '100mb', parameterLimit: 50000 }));
+app.use(express.urlencoded({ extended: true, limit: '100mb', parameterLimit: 50000 }));
 
 // Set timeout for requests
 app.use((req, res, next) => {
@@ -160,7 +160,7 @@ app.use((error, req, res, next) => {
   if (error.code === 'LIMIT_FILE_SIZE') {
     return res.status(400).json({ 
       success: false, 
-      message: 'File size exceeds the limit. Please upload a file smaller than 10MB.' 
+      message: 'File size exceeds the limit. Please upload a file smaller than 20MB.' 
     });
   }
   
@@ -175,7 +175,7 @@ app.use((error, req, res, next) => {
   if (error.type === 'entity.too.large') {
     return res.status(413).json({ 
       success: false, 
-      message: 'File size exceeds the limit. Please upload a file smaller than 10MB.' 
+      message: 'File size exceeds the limit. Please upload a file smaller than 15MB.' 
     });
   }
   

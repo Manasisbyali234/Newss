@@ -8,7 +8,7 @@ import SectionRecommendedJobs from "../sections/dashboard/section-recommended-jo
 import './can-dashboard.css';
 
 function CanDashboardPage() {
-  const [candidate, setCandidate] = useState({ name: 'Loading...', location: 'Bangalore', profilePicture: null });
+  const [candidate, setCandidate] = useState({ name: 'Loading...', location: '', profilePicture: null });
 
   useEffect(() => {
     loadScript("js/custom.js");
@@ -21,15 +21,21 @@ function CanDashboardPage() {
       if (!token) return;
 
       const response = await fetch('http://localhost:5000/api/candidate/profile', {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
       });
 
       if (response.ok) {
         const data = await response.json();
+        console.log('Dashboard API Response:', data);
+        console.log('Location from API:', data.profile?.location);
         if (data.success && data.profile) {
           setCandidate({
             name: data.profile.candidateId?.name || data.profile.name || 'Candidate',
-            location: data.profile.location || 'Bangalore',
+            location: data.profile.location || '',
             profilePicture: data.profile.profilePicture
           });
         }
@@ -76,10 +82,12 @@ function CanDashboardPage() {
               )}
               <div style={{ minWidth: '0' }}>
                 <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#111827', margin: '0 0 0.25rem 0', wordBreak: 'break-word' }}>Welcome, {candidate.name}</h2>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem', flexWrap: 'wrap' }}>
-                  <MapPin size={16} style={{ color: '#f97316', flexShrink: 0 }} />
-                  <span style={{ color: '#f97316', fontSize: '0.875rem', fontWeight: '500', wordBreak: 'break-word' }}>{candidate.location}</span>
-                </div>
+                {candidate.location && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem', flexWrap: 'wrap' }}>
+                    <MapPin size={16} style={{ color: '#f97316', flexShrink: 0 }} />
+                    <span style={{ color: '#f97316', fontSize: '0.875rem', fontWeight: '500', wordBreak: 'break-word' }}>{candidate.location}</span>
+                  </div>
+                )}
                 <p style={{ color: '#6b7280', margin: 0, fontSize: '0.9rem' }}>Here&apos;s an overview of your job applications and profile</p>
               </div>
             </div>

@@ -48,3 +48,12 @@ input[type="password"] ~ i[class*="eye"] {
 .password-toggle-icon ~ .password-toggle-icon {
     display: none !important;
 }
+
+/* Active tab highlighting */
+#myTab2 .nav-link.active {
+    border: 2px solid #DE6900 !important;
+}
+
+#myTab2 .nav-link:not(.active) {
+    border: 2px solid transparent !important;
+}

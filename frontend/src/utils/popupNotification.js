@@ -1,12 +1,20 @@
 let showPopupFunction = null;
+let showConfirmationFunction = null;
 
-export const initPopupNotification = (showPopupFn) => {
+export const initPopupNotification = (showPopupFn, showConfirmationFn) => {
   showPopupFunction = showPopupFn;
+  showConfirmationFunction = showConfirmationFn;
 };
 
 export const showPopup = (message, type = 'info', duration = 5000) => {
   if (showPopupFunction) {
     showPopupFunction(message, type, duration);
+  }
+};
+
+export const showConfirmation = (message, onConfirm, onCancel, type = 'warning') => {
+  if (showConfirmationFunction) {
+    showConfirmationFunction(message, onConfirm, onCancel, type);
   }
 };
 

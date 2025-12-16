@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { api } from '../../../../../utils/api';
-import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
+import { showPopup, showSuccess, showError, showWarning, showInfo, showConfirmation } from '../../../../../utils/popupNotification';
 import SearchableSelect from '../../../../../components/SearchableSelect';
 function SectionCanEducation({ profile, onUpdate }) {
     const [selectedEducationLevel, setSelectedEducationLevel] = useState('');
@@ -327,6 +327,8 @@ function SectionCanEducation({ profile, onUpdate }) {
                 }
             }
 
+
+
             // Clear error for this field
             if (errors[name]) {
                 setErrors(prev => ({ ...prev, [name]: null }));
@@ -377,11 +379,7 @@ function SectionCanEducation({ profile, onUpdate }) {
             }
         }
 
-        // Year of Passing is required for all education levels
-        if (!formData.yearOfPassing || !formData.yearOfPassing.trim()) {
-            newErrors.yearOfPassing = 'Year of Passing is required';
-            isValid = false;
-        }
+
 
         // Additional fields for higher education levels (all except 10th pass)
         if (selectedEducationLevel !== '10th_pass' && selectedEducationLevel !== 'sslc' && selectedEducationLevel) {
@@ -540,9 +538,16 @@ function SectionCanEducation({ profile, onUpdate }) {
     };
 
     const handleDeleteEntry = (id) => {
-        setEducationEntries(prev => prev.filter(entry => entry.id !== id));
-        setHasUnsavedChanges(true);
-        showSuccess('Education entry deleted successfully! Please click "Save All Education Details" to save changes.');
+        showConfirmation(
+            'Are you sure you want to delete this education entry? This action cannot be undone.',
+            () => {
+                setEducationEntries(prev => prev.filter(entry => entry.id !== id));
+                setHasUnsavedChanges(true);
+                showSuccess('Education entry deleted successfully! Please click "Save All Education Details" to save changes.');
+            },
+            null,
+            'warning'
+        );
     };
 
     const handleSaveAll = async () => {
@@ -609,15 +614,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                 }
                 break;
             case 'passoutYear':
-                if (!value) {
-                    errors[field] = 'Passout year is required';
-                } else {
-                    const year = parseInt(value);
-                    const currentYear = new Date().getFullYear();
-                    if (isNaN(year) || year < 1950 || year > currentYear + 10) {
-                        errors[field] = `Passout year must be between 1950 and ${currentYear + 10}`;
-                    }
-                }
+                // No validation for passout year
                 break;
             case 'percentage':
                 if (value) {
@@ -812,11 +809,11 @@ function SectionCanEducation({ profile, onUpdate }) {
             const hasAnyData = educationData[level].schoolName || educationData[level].location || educationData[level].passoutYear || educationData[level].percentage;
             
             if (hasAnyData) {
-                // If any field has data, all required fields must be filled
-                ['schoolName', 'location', 'passoutYear'].forEach(field => {
+                // If any field has data, only school name and location are required
+                ['schoolName', 'location'].forEach(field => {
                     const value = educationData[level][field];
                     if (!value || !value.trim()) {
-                        const fieldNames = {schoolName: 'School/College name', location: 'Location', passoutYear: 'Passout year'};
+                        const fieldNames = {schoolName: 'School/College name', location: 'Location'};
                         const levelNames = {tenth: '10th School', diploma: 'Diploma/PUC', degree: 'Degree'};
                         newErrors[`${level}_${field}`] = `${levelNames[level]} - ${fieldNames[field]} is required`;
                         hasErrors = true;
@@ -840,9 +837,9 @@ function SectionCanEducation({ profile, onUpdate }) {
             const hasAnyData = row.schoolName || row.location || row.passoutYear || row.percentage;
             
             if (hasAnyData) {
-                ['schoolName', 'location', 'passoutYear'].forEach(field => {
+                ['schoolName', 'location'].forEach(field => {
                     if (!row[field] || !row[field].trim()) {
-                        const fieldNames = {schoolName: 'School/College name', location: 'Location', passoutYear: 'Passout year'};
+                        const fieldNames = {schoolName: 'School/College name', location: 'Location'};
                         rowErrors[field] = `Additional Education Row ${index + 1} - ${fieldNames[field]} is required`;
                         hasErrors = true;
                     } else if (!validateEducationField('additional', field, row[field], index)) {
@@ -897,9 +894,9 @@ function SectionCanEducation({ profile, onUpdate }) {
             const hasAnyData = row.schoolName || row.location || row.passoutYear || row.percentage;
             
             if (hasAnyData) {
-                ['schoolName', 'location', 'passoutYear'].forEach(field => {
+                ['schoolName', 'location'].forEach(field => {
                     if (!row[field] || !row[field].trim()) {
-                        const fieldNames = {schoolName: 'School/College name', location: 'Location', passoutYear: 'Passout year'};
+                        const fieldNames = {schoolName: 'School/College name', location: 'Location'};
                         rowErrors[field] = `${fieldNames[field]} is required`;
                         hasErrors = true;
                     }
@@ -1243,15 +1240,13 @@ function SectionCanEducation({ profile, onUpdate }) {
                                             <label className="form-label">Year of Passing</label>
                                             <input
                                                 type="number"
-                                                className={`form-control ${errors.yearOfPassing ? 'is-invalid' : ''}`}
+                                                className="form-control"
                                                 name="yearOfPassing"
                                                 value={formData.yearOfPassing}
                                                 onChange={handleInputChange}
-                                                placeholder="Enter year of passing"
-                                                min="1950"
-                                                max={new Date().getFullYear() + 10}
+                                                placeholder="Enter year of passing (e.g., 2023)"
+                                                title="Enter the year you passed/completed this qualification"
                                             />
-                                            {errors.yearOfPassing && <div className="invalid-feedback">{errors.yearOfPassing}</div>}
                                         </div>
                                     )}
 
@@ -1275,15 +1270,13 @@ function SectionCanEducation({ profile, onUpdate }) {
                                                 <label className="form-label">Year of Passing</label>
                                                 <input
                                                     type="number"
-                                                    className={`form-control ${errors.yearOfPassing ? 'is-invalid' : ''}`}
+                                                    className="form-control"
                                                     name="yearOfPassing"
                                                     value={formData.yearOfPassing}
                                                     onChange={handleInputChange}
-                                                    placeholder="Enter year of passing"
-                                                    min="1950"
-                                                    max={new Date().getFullYear() + 10}
+                                                    placeholder="Enter year of passing (e.g., 2023)"
+                                                    title="Enter the year you passed/completed this qualification"
                                                 />
-                                                {errors.yearOfPassing && <div className="invalid-feedback">{errors.yearOfPassing}</div>}
                                             </div>
                                         </>
                                     )}

@@ -70,7 +70,7 @@ function SectionCanEmployment({ profile }) {
             });
             setEmployment(sortedEmployment);
         }
-        if (profile?.totalExperience) {
+        if (profile?.totalExperience && !localStorage.getItem('totalExperience')) {
             setTotalExperience(profile.totalExperience);
         }
     }, [profile]);
@@ -470,13 +470,18 @@ function SectionCanEmployment({ profile }) {
                 <h4 className="panel-tittle m-a0">Present Employment</h4>
                 <button
                     type="button"
-                    title="Edit"
+                    title="Add Employment"
                     className="btn btn-link site-text-primary p-0 border-0"
                     data-bs-toggle="modal"
                     data-bs-target={`#${modalId}`}
                     style={{background: 'none'}}
+                    onClick={() => {
+                        clearForm();
+                        setTotalExperience('');
+                        localStorage.removeItem('totalExperience');
+                    }}
                 >
-                    <span className="fa fa-edit" />
+                    <span className="fa fa-plus" />
                 </button>
             </div>
             <div className="panel-body wt-panel-body p-a20">
@@ -554,9 +559,7 @@ function SectionCanEmployment({ profile }) {
                                             fontSize: '12px',
                                             transition: 'background-color 0.2s ease'
                                         }}
-                                        onMouseEnter={(e) => e.target.style.backgroundColor = '#c82333'}
-                                        onMouseLeave={(e) => e.target.style.backgroundColor = '#dc3545'}
-                                        title="Delete Employment"
+                                         title="Delete Employment"
                                     >
                                         <i className="fa fa-trash"></i>
                                     </button>

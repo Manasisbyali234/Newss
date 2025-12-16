@@ -18,7 +18,7 @@ exports.registerCandidate = async (req, res) => {
     const { name, email, password, phone, sendWelcomeEmail: shouldSendWelcome } = req.body;
     console.log('Registration attempt:', { name, email, phone, shouldSendWelcome });
 
-    const existingCandidate = await Candidate.findOne({ email });
+    const existingCandidate = await Candidate.findByEmail(email);
     if (existingCandidate) {
       console.log('Email already exists:', email);
       return res.status(400).json({ success: false, message: 'Email already registered' });
@@ -27,7 +27,7 @@ exports.registerCandidate = async (req, res) => {
     // Create candidate without password - they will create it via email link
     const candidate = await Candidate.create({ 
       name, 
-      email, 
+      email: email.trim(), // Preserve original email format, just trim whitespace
       phone,
       registrationMethod: 'email_signup',
       credits: 0,
@@ -62,7 +62,7 @@ exports.loginCandidate = async (req, res) => {
     const { email, password } = req.body;
     // Removed console debug line for security;
 
-    const candidate = await Candidate.findOne({ email: email.toLowerCase().trim() });
+    const candidate = await Candidate.findByEmail(email.trim());
     if (!candidate) {
       // Removed console debug line for security;
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
@@ -276,12 +276,12 @@ exports.uploadResume = async (req, res) => {
       return res.status(400).json({ success: false, message: 'No file uploaded' });
     }
 
-    // Additional file validation - 10MB limit to account for Base64 encoding overhead
-    const maxSize = 10 * 1024 * 1024; // 10MB
+    // Additional file validation - 15MB limit to account for Base64 encoding overhead
+    const maxSize = 15 * 1024 * 1024; // 15MB
     if (req.file.size > maxSize) {
       return res.status(400).json({ 
         success: false, 
-        message: 'File size must be less than 10MB. Please compress your file or choose a smaller one.' 
+        message: 'File size must be less than 15MB. Please compress your file or choose a smaller one.' 
       });
     }
 
@@ -327,7 +327,7 @@ exports.uploadResume = async (req, res) => {
     if (error.code === 'LIMIT_FILE_SIZE') {
       return res.status(400).json({ 
         success: false, 
-        message: 'File size exceeds the limit. Please upload a file smaller than 10MB.' 
+        message: 'File size exceeds the limit. Please upload a file smaller than 15MB.' 
       });
     }
     
@@ -341,7 +341,7 @@ exports.uploadResume = async (req, res) => {
     if (error.message && (error.message.includes('too large') || error.message.includes('File size'))) {
       return res.status(400).json({ 
         success: false, 
-        message: 'File size is too large. Please upload a file smaller than 10MB.' 
+        message: 'File size is too large. Please upload a file smaller than 15MB.' 
       });
     }
     
@@ -887,7 +887,7 @@ exports.getMessages = async (req, res) => {
 exports.checkEmail = async (req, res) => {
   try {
     const { email } = req.body;
-    const candidate = await Candidate.findOne({ email: email.toLowerCase().trim() });
+    const candidate = await Candidate.findByEmail(email.trim());
     
     res.json({ 
       success: true, 
@@ -903,7 +903,7 @@ exports.createPassword = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const candidate = await Candidate.findOne({ email });
+    const candidate = await Candidate.findByEmail(email.trim());
     if (!candidate) {
       return res.status(404).json({ success: false, message: 'Candidate not found' });
     }
@@ -927,7 +927,7 @@ exports.createPassword = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   try {
     const { email } = req.body;
-    const candidate = await Candidate.findOne({ email });
+    const candidate = await Candidate.findByEmail(email.trim());
     
     if (!candidate) {
       return res.status(404).json({ success: false, message: 'Candidate not found' });
@@ -1004,7 +1004,7 @@ exports.updatePasswordReset = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Email and new password are required' });
     }
 
-    const candidate = await Candidate.findOne({ email });
+    const candidate = await Candidate.findByEmail(email.trim());
     if (!candidate) {
       return res.status(404).json({ success: false, message: 'Candidate not found' });
     }
@@ -1029,7 +1029,7 @@ exports.updatePasswordReset = async (req, res) => {
 exports.sendOTP = async (req, res) => {
   try {
     const { email } = req.body;
-    const candidate = await Candidate.findOne({ email });
+    const candidate = await Candidate.findByEmail(email.trim());
     
     if (!candidate) {
       return res.status(404).json({ success: false, message: 'Candidate not found' });

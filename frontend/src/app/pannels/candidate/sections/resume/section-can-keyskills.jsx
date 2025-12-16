@@ -57,7 +57,9 @@ function SectionCanKeySkills({ profile }) {
     const addSkill = async (skillToAdd) => {
         if (!skillToAdd) return;
         
-        if (skills.includes(skillToAdd)) {
+        // Case-insensitive duplicate check
+        const skillExists = skills.some(skill => skill.toLowerCase() === skillToAdd.toLowerCase());
+        if (skillExists) {
             showWarning(`Skill "${skillToAdd}" is already added!`);
             return;
         }

@@ -8,25 +8,26 @@ const { auth } = require('../middlewares/auth');
 const { upload, uploadGallery, uploadQuestionImage } = require('../middlewares/upload');
 const handleValidationErrors = require('../middlewares/validation');
 const { mobileValidationRules } = require('../middlewares/phoneValidation');
+const { validateEmailMiddleware } = require('../middlewares/emailValidation');
 
 // Authentication Routes
 router.post('/register', [
   body('name').notEmpty().trim().withMessage('Name is required'),
-  body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
+  body('email').isEmail().withMessage('Valid email is required'),
   body('companyName').notEmpty().trim().withMessage('Company name is required'),
   ...mobileValidationRules()
-], handleValidationErrors, employerController.registerEmployer);
+], validateEmailMiddleware, handleValidationErrors, employerController.registerEmployer);
 
-router.post('/login', employerController.loginEmployer);
+router.post('/login', validateEmailMiddleware, employerController.loginEmployer);
 
 router.post('/check-email', [
   body('email').isEmail().withMessage('Valid email is required')
-], handleValidationErrors, employerPasswordController.checkEmail);
+], validateEmailMiddleware, handleValidationErrors, employerPasswordController.checkEmail);
 
 router.post('/create-password', [
   body('email').isEmail().withMessage('Valid email is required'),
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
-], handleValidationErrors, employerPasswordController.createPassword);
+], validateEmailMiddleware, handleValidationErrors, employerPasswordController.createPassword);
 
 // Password Reset Routes (Public - before auth middleware)
 router.post('/password/reset', [
