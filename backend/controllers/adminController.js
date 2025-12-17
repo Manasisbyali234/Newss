@@ -310,7 +310,7 @@ exports.getAllEmployers = async (req, res) => {
 
     const employers = await Employer.find(query)
       .select('-password')
-      .populate('approvedBy', 'name email role')
+      .populate('approvedBy', 'name username email role firstName lastName')
       .sort({ createdAt: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit);
@@ -418,7 +418,7 @@ exports.updateEmployerStatus = async (req, res) => {
     if (isApproved !== undefined) {
       updateData.isApproved = !!isApproved;
       if (isApproved) {
-        updateData.approvedBy = req.user.id;
+        updateData.approvedBy = new mongoose.Types.ObjectId(req.user.id);
         updateData.approvedByModel = req.user.role === 'admin' ? 'Admin' : 'SubAdmin';
       }
     }
@@ -915,7 +915,7 @@ exports.getAllPlacements = async (req, res) => {
 
     const placements = await Placement.find(query)
       .select('-password')
-      .populate('approvedBy', 'name email role')
+      .populate('approvedBy', 'name username email role firstName lastName')
       .sort({ createdAt: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit);
@@ -943,7 +943,7 @@ exports.updatePlacementStatus = async (req, res) => {
     if (isApproved !== undefined) {
       updateData.isApproved = !!isApproved;
       if (isApproved) {
-        updateData.approvedBy = req.user.id;
+        updateData.approvedBy = new mongoose.Types.ObjectId(req.user.id);
         updateData.approvedByModel = req.user.role === 'admin' ? 'Admin' : 'SubAdmin';
       }
     }

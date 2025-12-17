@@ -133,9 +133,8 @@ function AdminPlacementOfficersApproved() {
                                             </td>
                                             <td style={{textAlign: 'center'}}>
                                                 {(() => {
-                                                    const approverName = placement.approvedBy?.name || placement.approvedBy?.username || null;
+                                                    const displayText = placement.approvedBy?.name || placement.approvedBy?.username || placement.approvedBy?.firstName || (placement.approvedByModel === 'Admin' ? 'Admin' : 'Not Available');
                                                     const approverType = placement.approvedByModel || 'Admin';
-                                                    const displayText = approverName || approverType;
                                                     
                                                     return (
                                                         <span style={{

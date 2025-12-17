@@ -145,9 +145,8 @@ function AdminEmployersApproved() {
                                                 <td style={{textAlign: 'center', fontSize: '0.85rem'}}>{formatDate(employer.updatedAt || employer.createdAt)}</td>
                                                 <td style={{textAlign: 'center'}}>
                                                     {(() => {
-                                                        const approverName = employer.approvedBy?.name || employer.approvedBy?.username || null;
+                                                        const displayText = employer.approvedBy?.name || employer.approvedBy?.username || employer.approvedBy?.firstName || (employer.approvedByModel === 'Admin' ? 'Admin' : 'Not Available');
                                                         const approverType = employer.approvedByModel || 'Admin';
-                                                        const displayText = approverName || approverType;
                                                         
                                                         return (
                                                             <span style={{
