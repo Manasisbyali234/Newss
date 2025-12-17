@@ -325,7 +325,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 3px;
+    gap: 6px;
     text-transform: uppercase;
     letter-spacing: 0.2px;
     text-align: center;
@@ -376,7 +376,7 @@
     padding: 0 !important;
     line-height: 30px !important;
     font-size: 0.75rem !important;
-    gap: 3px !important;
+    gap: 6px !important;
     box-sizing: border-box !important;
 }
 
@@ -390,6 +390,15 @@
     background: rgba(255, 122, 0, 0.08) !important;
     color: rgba(255, 122, 0, 0.7) !important;
     box-shadow: 0 5px 15px rgba(255, 122, 0, 0.2) !important;
+}
+
+/* Ensure proper gap between icon and text */
+.action-buttons .action-btn i {
+    margin-right: 6px !important;
+}
+
+.emp-table .action-btn i {
+    margin-right: 6px !important;
 }
 
 .loading-container {

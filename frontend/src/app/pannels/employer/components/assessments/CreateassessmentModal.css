@@ -125,6 +125,27 @@
   font-style: normal;
 }
 
+/* Prevent dropdown overflow in modal */
+.position-fixed .bg-white.rounded-3 {
+  overflow: hidden !important;
+}
+
+.position-fixed .bg-white.rounded-3 .overflow-auto {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+/* Ensure dropdowns appear above modal content */
+.form-select {
+  position: relative;
+  z-index: 1060;
+}
+
+/* Datalist styling */
+input[list] {
+  position: relative;
+}
+
 /* Mobile Responsive Styles for Create Assessment Modal */
 
 @media (max-width: 768px) {

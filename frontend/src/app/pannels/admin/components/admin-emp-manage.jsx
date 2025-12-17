@@ -77,7 +77,7 @@ function AdminEmployersAllRequest() {
         
         try {
             setActionLoading(prev => ({ ...prev, [employerId]: true }));
-            const response = await api.updateEmployerStatus(employerId, 'approved');
+            const response = await api.updateEmployerStatus(employerId, { status: 'approved', isApproved: true });
             if (response.success) {
                 const updatedEmployers = employers.filter(emp => emp._id !== employerId);
                 setEmployers(updatedEmployers);

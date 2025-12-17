@@ -363,41 +363,44 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 
 					<div className="mb-3">
 						<label className="form-label small text-muted mb-2">Designation</label>
-						<select
-							className="form-select"
+						<input
+							type="text"
+							className="form-control"
+							placeholder="Enter designation (e.g., Software Engineer)"
 							value={designation}
 							onChange={(e) => setDesignation(e.target.value)}
-						>
-							<option value="">Select Designation</option>
-							<option value="Software Engineer">Software Engineer</option>
-							<option value="Senior Software Engineer">Senior Software Engineer</option>
-							<option value="Frontend Developer">Frontend Developer</option>
-							<option value="Backend Developer">Backend Developer</option>
-							<option value="Full Stack Developer">Full Stack Developer</option>
-							<option value="Data Scientist">Data Scientist</option>
-							<option value="Data Analyst">Data Analyst</option>
-							<option value="Product Manager">Product Manager</option>
-							<option value="Project Manager">Project Manager</option>
-							<option value="Business Analyst">Business Analyst</option>
-							<option value="UI/UX Designer">UI/UX Designer</option>
-							<option value="Graphic Designer">Graphic Designer</option>
-							<option value="Marketing Manager">Marketing Manager</option>
-							<option value="Sales Manager">Sales Manager</option>
-							<option value="Sales Executive">Sales Executive</option>
-							<option value="HR Manager">HR Manager</option>
-							<option value="HR Executive">HR Executive</option>
-							<option value="Finance Manager">Finance Manager</option>
-							<option value="Accountant">Accountant</option>
-							<option value="Content Writer">Content Writer</option>
-							<option value="Digital Marketing Specialist">Digital Marketing Specialist</option>
-							<option value="Customer Support Executive">Customer Support Executive</option>
-							<option value="Operations Manager">Operations Manager</option>
-							<option value="Quality Assurance Engineer">Quality Assurance Engineer</option>
-							<option value="DevOps Engineer">DevOps Engineer</option>
-							<option value="System Administrator">System Administrator</option>
-							<option value="Network Administrator">Network Administrator</option>
-							<option value="Telecaller">Telecaller</option>
-						</select>
+							list="designations"
+						/>
+						<datalist id="designations">
+							<option value="Software Engineer" />
+							<option value="Senior Software Engineer" />
+							<option value="Frontend Developer" />
+							<option value="Backend Developer" />
+							<option value="Full Stack Developer" />
+							<option value="Data Scientist" />
+							<option value="Data Analyst" />
+							<option value="Product Manager" />
+							<option value="Project Manager" />
+							<option value="Business Analyst" />
+							<option value="UI/UX Designer" />
+							<option value="Graphic Designer" />
+							<option value="Marketing Manager" />
+							<option value="Sales Manager" />
+							<option value="Sales Executive" />
+							<option value="HR Manager" />
+							<option value="HR Executive" />
+							<option value="Finance Manager" />
+							<option value="Accountant" />
+							<option value="Content Writer" />
+							<option value="Digital Marketing Specialist" />
+							<option value="Customer Support Executive" />
+							<option value="Operations Manager" />
+							<option value="Quality Assurance Engineer" />
+							<option value="DevOps Engineer" />
+							<option value="System Administrator" />
+							<option value="Network Administrator" />
+							<option value="Telecaller" />
+						</datalist>
 					</div>
 
 					<div className="mb-4">
