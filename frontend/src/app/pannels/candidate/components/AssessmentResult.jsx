@@ -4,10 +4,21 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 export default function AssessmentResult({ result }) {
   const { score, totalMarks, percentage, correctAnswers, totalQuestions } = result;
 
+  // Debug logging
+  console.log('AssessmentResult component - result data:', result);
+  console.log('AssessmentResult component - values:', { score, totalMarks, percentage, correctAnswers, totalQuestions });
+
+  // Validate data
+  const validCorrectAnswers = Math.max(0, correctAnswers || 0);
+  const validTotalQuestions = Math.max(0, totalQuestions || 0);
+  const validIncorrectAnswers = Math.max(0, validTotalQuestions - validCorrectAnswers);
+
   const pieData = [
-    { name: 'Correct', value: correctAnswers, color: '#10b981' },
-    { name: 'Incorrect', value: totalQuestions - correctAnswers, color: '#ef4444' }
+    { name: 'Correct', value: validCorrectAnswers, color: '#10b981' },
+    { name: 'Incorrect', value: validIncorrectAnswers, color: '#ef4444' }
   ];
+
+  console.log('AssessmentResult component - pie data:', pieData);
 
   return (
     <div className="mt-5">
@@ -59,7 +70,7 @@ export default function AssessmentResult({ result }) {
                 </div>
                 <div className="list-group-item d-flex justify-content-between">
                   <span>Incorrect Answers:</span>
-                  <strong className="text-danger">{totalQuestions - correctAnswers}</strong>
+                  <strong className="text-danger">{validIncorrectAnswers}</strong>
                 </div>
                 <div className="list-group-item d-flex justify-content-between">
                   <span>Score:</span>

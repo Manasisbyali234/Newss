@@ -161,8 +161,10 @@ const AssessmentResults = () => {
 			try {
 				if (applicationId) {
 					const response = await api.getApplicationAssessmentResult(applicationId);
+					console.log('Assessment result response:', response);
 					if (response.success) {
 						setAssessmentResult(response.data);
+						console.log('Assessment result data:', response.data);
 					} else {
 						setError(response.message || 'Failed to fetch assessment result');
 					}
@@ -191,17 +193,43 @@ const AssessmentResults = () => {
 	const totalMarks = result?.totalMarks || 0;
 	const resultStatus = result?.result || 'pending';
 
-	// Calculate incorrect answers
-	const incorrectAnswers = totalQuestions - correctAnswers;
+	// Calculate incorrect answers - ensure we don't have negative values
+	const incorrectAnswers = Math.max(0, totalQuestions - correctAnswers);
+	
+	// Debug logging
+	console.log('Assessment result values:', {
+		correctAnswers,
+		totalQuestions,
+		percentage,
+		score,
+		totalMarks,
+		resultStatus,
+		result,
+		assessment
+	});
+	
+	// Validate data for chart - if no valid data, show empty state
+	const hasValidData = totalQuestions > 0 && (correctAnswers >= 0 && correctAnswers <= totalQuestions);
+	console.log('Chart validation:', { hasValidData, totalQuestions, correctAnswers, incorrectAnswers });
 
-	// Pie chart data
-	const chartData = {
+	// Pie chart data - only show if we have valid data
+	const chartData = hasValidData ? {
 		labels: ['Correct Answers', 'Incorrect Answers'],
 		datasets: [
 			{
 				data: [correctAnswers, incorrectAnswers],
 				backgroundColor: ['#28a745', '#dc3545'],
 				borderColor: ['#28a745', '#dc3545'],
+				borderWidth: 1,
+			},
+		],
+	} : {
+		labels: ['No Data'],
+		datasets: [
+			{
+				data: [1],
+				backgroundColor: ['#e9ecef'],
+				borderColor: ['#dee2e6'],
 				borderWidth: 1,
 			},
 		],
@@ -406,7 +434,14 @@ const AssessmentResults = () => {
 						Performance Breakdown
 					</h3>
 					<div style={{ maxWidth: "400px", margin: "0 auto" }}>
-						<Pie data={chartData} options={chartOptions} />
+						{hasValidData ? (
+							<Pie data={chartData} options={chartOptions} />
+						) : (
+							<div style={{ textAlign: "center", padding: "40px", color: "#666" }}>
+								<p>No assessment data available to display</p>
+								<small>Please ensure the assessment was completed properly</small>
+							</div>
+						)}
 					</div>
 				</div>
 
