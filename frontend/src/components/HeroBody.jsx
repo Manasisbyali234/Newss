@@ -256,7 +256,6 @@ const HeroBody = ({ onSearch }) => {
               onBlur={() => handleFieldBlur('type')}
             >
               <option value="">Select</option>
-              <option value="Below 10th">Below 10th</option>
               <option value="10th Pass">10th Pass</option>
               <option value="12th Pass">12th Pass</option>
               <option value="ITI">ITI</option>
