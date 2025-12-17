@@ -145,7 +145,20 @@ function AdminEmployersApproved() {
                                                 <td style={{textAlign: 'center', fontSize: '0.85rem'}}>{formatDate(employer.updatedAt || employer.createdAt)}</td>
                                                 <td style={{textAlign: 'center'}}>
                                                     {(() => {
-                                                        const displayText = employer.approvedBy?.name || employer.approvedBy?.username || employer.approvedBy?.firstName || (employer.approvedByModel === 'Admin' ? 'Admin' : 'Not Available');
+                                                        let displayText = 'Not Available';
+                                                        
+                                                        if (employer.approvedBy) {
+                                                            if (employer.approvedByModel === 'Admin') {
+                                                                displayText = employer.approvedBy.name || 'Admin';
+                                                            } else if (employer.approvedByModel === 'SubAdmin') {
+                                                                displayText = employer.approvedBy.name || 
+                                                                            (employer.approvedBy.firstName && employer.approvedBy.lastName 
+                                                                                ? `${employer.approvedBy.firstName} ${employer.approvedBy.lastName}` 
+                                                                                : employer.approvedBy.username) || 'SubAdmin';
+                                                            }
+                                                        } else if (employer.isApproved) {
+                                                            displayText = employer.approvedByModel === 'Admin' ? 'Admin' : 'SubAdmin';
+                                                        }
                                                         const approverType = employer.approvedByModel || 'Admin';
                                                         
                                                         return (

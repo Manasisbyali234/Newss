@@ -11,6 +11,7 @@ import '../../../../components/ErrorDisplay.css';
 import '../../../../remove-profile-hover-effects.css';
 
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
+import ConfirmationDialog from '../../../../components/ConfirmationDialog';
 function EmpCompanyProfilePage() {
     const [formData, setFormData] = useState({
         // Basic Information
@@ -76,6 +77,8 @@ function EmpCompanyProfilePage() {
     const [globalErrors, setGlobalErrors] = useState([]);
     const [fetchingCity, setFetchingCity] = useState(false);
     const [deleteConfirmation, setDeleteConfirmation] = useState(null);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [imageToDelete, setImageToDelete] = useState(null);
     const [showTermsModal, setShowTermsModal] = useState(false);
     const [termsAccepted, setTermsAccepted] = useState(false);
     const [validationRules] = useState({
@@ -848,13 +851,16 @@ function EmpCompanyProfilePage() {
     };
 
     const handleDeleteGalleryImage = (imageId) => {
-        setDeleteConfirmation(imageId);
+        setImageToDelete(imageId);
+        setShowDeleteDialog(true);
     };
 
-    const confirmDeleteImage = async (imageId) => {
+    const confirmDeleteImage = async () => {
+        if (!imageToDelete) return;
+        
         try {
             const token = localStorage.getItem('employerToken');
-            const response = await fetch(`http://localhost:5000/api/employer/profile/gallery/${imageId}`, {
+            const response = await fetch(`http://localhost:5000/api/employer/profile/gallery/${imageToDelete}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -863,16 +869,21 @@ function EmpCompanyProfilePage() {
             
             if (data.success) {
                 setFormData(prev => ({ ...prev, gallery: data.gallery }));
-                showSuccess('Image deleted');
+                showSuccess('Image deleted successfully!');
+            } else {
+                showError(data.message || 'Failed to delete image');
             }
         } catch (error) {
-            showError('Delete failed');
+            showError('Delete failed. Please try again.');
         }
-        setDeleteConfirmation(null);
+        
+        setShowDeleteDialog(false);
+        setImageToDelete(null);
     };
 
     const cancelDeleteImage = () => {
-        setDeleteConfirmation(null);
+        setShowDeleteDialog(false);
+        setImageToDelete(null);
     };
 
     const addNewAuthSection = () => {
@@ -1963,29 +1974,7 @@ function EmpCompanyProfilePage() {
                                 </div>
                             </div>
                             
-                            {deleteConfirmation && (
-                                <div className="col-md-12">
-                                    <div className="alert alert-warning d-flex justify-content-between align-items-center" style={{backgroundColor: '#ffffff', border: '1px solid #dee2e6', color: '#333333'}}>
-                                        <span>Delete this image? Click "Delete" to confirm</span>
-                                        <div>
-                                            <button 
-                                                type="button" 
-                                                className="btn btn-danger btn-sm me-2"
-                                                onClick={() => confirmDeleteImage(deleteConfirmation)}
-                                            >
-                                                Delete
-                                            </button>
-                                            <button 
-                                                type="button" 
-                                                className="btn btn-secondary btn-sm"
-                                                onClick={cancelDeleteImage}
-                                            >
-                                                Cancel
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
+
                             
                             {formData.gallery && formData.gallery.length > 0 && (
                                 <div className="col-md-12">
@@ -2067,6 +2056,15 @@ function EmpCompanyProfilePage() {
                 }}
                 role="employerProfile"
             />
+            
+            {showDeleteDialog && (
+                <ConfirmationDialog
+                    message="Delete this image? Click 'Yes' to confirm"
+                    onConfirm={confirmDeleteImage}
+                    onCancel={cancelDeleteImage}
+                    type="warning"
+                />
+            )}
         </div>
     );
 }
