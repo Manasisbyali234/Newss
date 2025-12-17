@@ -9,6 +9,7 @@ function AdminCandidateReviewPage() {
     const [candidate, setCandidate] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('personal');
+    const [documentModal, setDocumentModal] = useState({ isOpen: false, url: '', title: '' });
 
     useEffect(() => {
         fetchCandidateDetails();
@@ -58,9 +59,10 @@ function AdminCandidateReviewPage() {
         }
     };
 
-    const viewDocument = (fileData) => {
+    const viewDocument = (fileData, title = 'Document') => {
         if (!fileData) return;
         
+        let documentUrl;
         if (fileData.startsWith('data:')) {
             const byteCharacters = atob(fileData.split(',')[1]);
             const byteNumbers = new Array(byteCharacters.length);
@@ -70,11 +72,19 @@ function AdminCandidateReviewPage() {
             const byteArray = new Uint8Array(byteNumbers);
             const mimeType = fileData.split(',')[0].split(':')[1].split(';')[0];
             const blob = new Blob([byteArray], { type: mimeType });
-            const blobUrl = URL.createObjectURL(blob);
-            window.open(blobUrl, '_blank');
+            documentUrl = URL.createObjectURL(blob);
         } else {
-            window.open(`http://localhost:5000/${fileData}`, '_blank');
+            documentUrl = `http://localhost:5000/${fileData}`;
         }
+        
+        setDocumentModal({ isOpen: true, url: documentUrl, title });
+    };
+
+    const closeDocumentModal = () => {
+        if (documentModal.url && documentModal.url.startsWith('blob:')) {
+            URL.revokeObjectURL(documentModal.url);
+        }
+        setDocumentModal({ isOpen: false, url: '', title: '' });
     };
 
     if (loading) {
@@ -350,7 +360,7 @@ function AdminCandidateReviewPage() {
                                                         <div className="document-actions">
                                                             <button
                                                                 className="action-btn view"
-                                                                onClick={() => viewDocument(edu.marksheet)}
+                                                                onClick={() => viewDocument(edu.marksheet, `${levels[index]} Marksheet`)}
                                                             >
                                                                 <i className="fas fa-eye"></i>
                                                                 View Marksheet
@@ -456,7 +466,7 @@ function AdminCandidateReviewPage() {
                                         <div className="document-actions">
                                             <button
                                                 className="action-btn view"
-                                                onClick={() => viewDocument(candidate.resume)}
+                                                onClick={() => viewDocument(candidate.resume, 'Resume')}
                                             >
                                                 <i className="fas fa-eye"></i>
                                                 View
@@ -487,7 +497,7 @@ function AdminCandidateReviewPage() {
                                             <div className="document-actions">
                                                 <button
                                                     className="action-btn view"
-                                                    onClick={() => viewDocument(edu.marksheet)}
+                                                    onClick={() => viewDocument(edu.marksheet, `${levels[index]} Marksheet`)}
                                                 >
                                                     <i className="fas fa-eye"></i>
                                                     View
@@ -573,6 +583,29 @@ function AdminCandidateReviewPage() {
                     </div>
                 )}
             </div>
+
+            {/* Document Modal */}
+            {documentModal.isOpen && (
+                <div className="document-modal-overlay" onClick={closeDocumentModal}>
+                    <div className="document-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="document-modal-header">
+                            <h3>{documentModal.title}</h3>
+                            <button className="close-btn" onClick={closeDocumentModal}>
+                                <i className="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div className="document-modal-content">
+                            <iframe
+                                src={documentModal.url}
+                                title={documentModal.title}
+                                width="100%"
+                                height="100%"
+                                frameBorder="0"
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

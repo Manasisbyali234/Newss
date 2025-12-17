@@ -1124,3 +1124,125 @@
         border: 1px solid #FF7A00 !important;
     }
 }
+/* Document Modal Styles */
+.document-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+.document-modal {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    height: 90%;
+    max-width: 1200px;
+    max-height: 800px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.document-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 2px solid #f8f9fa;
+    background: #f8f9fa;
+    border-radius: 12px 12px 0 0;
+}
+
+.document-modal-header h3 {
+    margin: 0;
+    color: #212529;
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+.close-btn {
+    background: #ff6600;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.close-btn:hover {
+    background: #e55a00;
+    transform: scale(1.1);
+}
+
+.document-modal-content {
+    flex: 1;
+    padding: 0;
+    overflow: hidden;
+    border-radius: 0 0 12px 12px;
+}
+
+.document-modal-content iframe {
+    border: none;
+    border-radius: 0 0 12px 12px;
+}
+
+/* Mobile responsiveness for document modal */
+@media (max-width: 768px) {
+    .document-modal-overlay {
+        padding: 10px;
+    }
+    
+    .document-modal {
+        width: 95%;
+        height: 95%;
+    }
+    
+    .document-modal-header {
+        padding: 15px 20px;
+    }
+    
+    .document-modal-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .close-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .document-modal {
+        width: 98%;
+        height: 98%;
+    }
+    
+    .document-modal-header {
+        padding: 12px 15px;
+    }
+    
+    .document-modal-header h3 {
+        font-size: 1rem;
+    }
+    
+    .close-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+}
