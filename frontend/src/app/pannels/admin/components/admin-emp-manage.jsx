@@ -73,7 +73,10 @@ function AdminEmployersAllRequest() {
     };
 
     const handleApprove = async (employerId) => {
+        if (actionLoading[employerId]) return;
+        
         try {
+            setActionLoading(prev => ({ ...prev, [employerId]: true }));
             const response = await api.updateEmployerStatus(employerId, 'approved');
             if (response.success) {
                 const updatedEmployers = employers.filter(emp => emp._id !== employerId);
@@ -85,12 +88,16 @@ function AdminEmployersAllRequest() {
             }
         } catch (error) {
             showError('Error approving employer');
-            
+        } finally {
+            setActionLoading(prev => ({ ...prev, [employerId]: false }));
         }
     };
 
     const handleReject = async (employerId) => {
+        if (actionLoading[employerId]) return;
+        
         try {
+            setActionLoading(prev => ({ ...prev, [employerId]: true }));
             const response = await api.updateEmployerStatus(employerId, 'rejected');
             if (response.success) {
                 const updatedEmployers = employers.filter(emp => emp._id !== employerId);
@@ -102,7 +109,8 @@ function AdminEmployersAllRequest() {
             }
         } catch (error) {
             showError('Error rejecting employer');
-            
+        } finally {
+            setActionLoading(prev => ({ ...prev, [employerId]: false }));
         }
     };
 
