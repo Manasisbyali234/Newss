@@ -18,8 +18,10 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
   const canvasRef = React.useRef(null);
 
   useEffect(() => {
+    console.log('🎬 Assessment Quiz mounted, initializing webcam...');
     initWebcam();
     return () => {
+      console.log('🛑 Assessment Quiz unmounting, stopping webcam...');
       if (videoRef.current && videoRef.current.srcObject) {
         videoRef.current.srcObject.getTracks().forEach(track => track.stop());
       }
@@ -28,71 +30,142 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
 
   const initWebcam = async () => {
     try {
-      console.log('🎥 Initializing webcam...');
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      console.log('🎥 Requesting webcam access...');
+      
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        console.error('❌ getUserMedia not supported');
+        return;
+      }
+      
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          width: { ideal: 640 },
+          height: { ideal: 480 }
+        } 
+      });
+      
+      console.log('✅ Webcam access granted');
+      
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        await videoRef.current.play();
-        console.log('✅ Webcam initialized');
-        // Wait for video to be ready
+        
         videoRef.current.onloadedmetadata = () => {
-          console.log('📹 Video ready, starting captures');
-          startPeriodicCapture();
+          console.log('📹 Video metadata loaded, dimensions:', videoRef.current.videoWidth, 'x', videoRef.current.videoHeight);
+          console.log('⏰ Starting captures in 3 seconds...');
+          setTimeout(() => {
+            startPeriodicCapture();
+          }, 3000);
         };
+        
+        videoRef.current.oncanplay = () => {
+          console.log('📹 Video can play');
+        };
+        
+        await videoRef.current.play();
+        console.log('▶️ Video playing');
+      } else {
+        console.error('❌ Video ref not available');
       }
     } catch (error) {
-      console.error('❌ Webcam access denied:', error);
+      console.error('❌ Webcam initialization failed:', error);
+      if (error.name === 'NotAllowedError') {
+        console.error('❌ Camera permission denied by user');
+      } else if (error.name === 'NotFoundError') {
+        console.error('❌ No camera found');
+      }
     }
   };
 
   const captureImage = async () => {
-    if (!videoRef.current || !canvasRef.current || captureCount >= 5) return;
+    if (!videoRef.current || !canvasRef.current) {
+      console.warn('⚠️ Video or canvas ref not available');
+      return;
+    }
+    
+    if (captureCount >= 5) {
+      console.log('✅ Already captured 5 images');
+      return;
+    }
     
     const canvas = canvasRef.current;
     const video = videoRef.current;
     
     if (video.videoWidth === 0 || video.videoHeight === 0) {
-      console.warn('⚠️ Video not ready yet');
+      console.warn('⚠️ Video not ready yet, retrying in 2 seconds');
+      setTimeout(() => captureImage(), 2000);
       return;
     }
     
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0);
-    
-    console.log(`📸 Capturing image ${captureCount + 1}/5`);
-    
-    canvas.toBlob(async (blob) => {
-      try {
-        const token = localStorage.getItem('candidateToken');
-        const formData = new FormData();
-        formData.append('capture', blob, `capture_${Date.now()}.jpg`);
-        formData.append('attemptId', attemptId);
-        formData.append('captureIndex', captureCount);
+    try {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0);
+      
+      console.log(`📸 Capturing image ${captureCount + 1}/5 (${video.videoWidth}x${video.videoHeight})`);
+      
+      canvas.toBlob(async (blob) => {
+        if (!blob) {
+          console.error('❌ Failed to create blob from canvas');
+          return;
+        }
         
-        console.log(`📤 Uploading capture ${captureCount + 1}...`);
-        const response = await axios.post('/api/candidate/assessments/capture', formData, {
-          headers: { 
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
+        try {
+          const token = localStorage.getItem('candidateToken');
+          if (!token) {
+            console.error('❌ No auth token found');
+            return;
           }
-        });
-        
-        console.log(`✅ Capture ${captureCount + 1} uploaded successfully`);
-        setCaptureCount(prev => prev + 1);
-      } catch (error) {
-        console.error('❌ Capture upload failed:', error);
-      }
-    }, 'image/jpeg', 0.8);
+          
+          const formData = new FormData();
+          formData.append('capture', blob, `capture_${Date.now()}.jpg`);
+          formData.append('attemptId', attemptId);
+          formData.append('captureIndex', captureCount);
+          
+          console.log(`📤 Uploading capture ${captureCount + 1}... (${(blob.size/1024).toFixed(2)}KB)`);
+          
+          const response = await axios.post('/api/candidate/assessments/capture', formData, {
+            headers: { 
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data'
+            },
+            timeout: 10000
+          });
+          
+          if (response.data.success) {
+            console.log(`✅ Capture ${captureCount + 1} uploaded successfully:`, response.data.capturePath);
+            setCaptureCount(prev => prev + 1);
+          } else {
+            console.error('❌ Upload failed:', response.data.message);
+          }
+        } catch (error) {
+          console.error('❌ Capture upload failed:', error.response?.data || error.message);
+        }
+      }, 'image/jpeg', 0.8);
+    } catch (error) {
+      console.error('❌ Error in captureImage:', error);
+    }
   };
 
   const startPeriodicCapture = () => {
-    const interval = (assessment.timer * 60 * 1000) / 5;
-    console.log(`⏰ Starting periodic capture every ${interval/1000} seconds`);
-    let count = 0;
+    const totalTime = assessment.timer * 60 * 1000; // Total time in ms
+    const interval = Math.max(15000, totalTime / 5); // Min 15 seconds between captures
+    
+    console.log(`⏰ Starting periodic capture:`);
+    console.log(`   - Total assessment time: ${assessment.timer} minutes`);
+    console.log(`   - Capture interval: ${interval/1000} seconds`);
+    console.log(`   - Will take 5 captures total`);
+    
+    // Take first capture after 2 seconds
+    setTimeout(() => {
+      console.log('📸 Taking first capture...');
+      captureImage();
+    }, 2000);
+    
+    let count = 1;
     const captureInterval = setInterval(() => {
       if (count < 5) {
+        console.log(`📸 Taking capture ${count + 1}/5...`);
         captureImage();
         count++;
       } else {
@@ -100,6 +173,9 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
         clearInterval(captureInterval);
       }
     }, interval);
+    
+    // Store interval ID for cleanup
+    window.captureInterval = captureInterval;
   };
 
   useEffect(() => {
@@ -383,7 +459,8 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
 
   return (
     <>
-      <video ref={videoRef} style={{display: 'none'}} />
+      {/* Debug: Show video for testing - remove display:none to see webcam */}
+      <video ref={videoRef} style={{display: 'none', position: 'fixed', top: '10px', right: '10px', width: '200px', zIndex: 9999}} autoPlay playsInline muted />
       <canvas ref={canvasRef} style={{display: 'none'}} />
       <PopupNotification
         show={popup.show}
@@ -550,31 +627,45 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
             </div>
           )}
         </div>
-        <div className="card-footer text-end">
-          {currentQuestion === assessment.questions.length - 1 ? (
-            <button 
-              className="btn btn-success"
-              onClick={handleSubmit}
-              disabled={uploading}
-            >
-              Submit Assessment
-              <i className="fa fa-check ms-2"></i>
-            </button>
-          ) : (
-            <button 
-              className="btn btn-primary"
-              onClick={handleNext}
-              disabled={
-                (question.type === 'mcq' && selectedAnswer === null) ||
-                (question.type === 'subjective' && !textAnswer.trim() && !uploadedFile) ||
-                (question.type === 'upload' && !uploadedFile) ||
-                uploading
-              }
-            >
-              Next Question
-              <i className="fa fa-arrow-right ms-2"></i>
-            </button>
-          )}
+        <div className="card-footer d-flex justify-content-between align-items-center">
+          {/* Debug capture button - remove in production */}
+          <button 
+            className="btn btn-sm btn-outline-secondary"
+            onClick={() => {
+              console.log('🧪 Manual capture test');
+              captureImage();
+            }}
+            type="button"
+          >
+            🧪 Test Capture ({captureCount}/5)
+          </button>
+          
+          <div>
+            {currentQuestion === assessment.questions.length - 1 ? (
+              <button 
+                className="btn btn-success"
+                onClick={handleSubmit}
+                disabled={uploading}
+              >
+                Submit Assessment
+                <i className="fa fa-check ms-2"></i>
+              </button>
+            ) : (
+              <button 
+                className="btn btn-primary"
+                onClick={handleNext}
+                disabled={
+                  (question.type === 'mcq' && selectedAnswer === null) ||
+                  (question.type === 'subjective' && !textAnswer.trim() && !uploadedFile) ||
+                  (question.type === 'upload' && !uploadedFile) ||
+                  uploading
+                }
+              >
+                Next Question
+                <i className="fa fa-arrow-right ms-2"></i>
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

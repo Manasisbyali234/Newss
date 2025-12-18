@@ -439,9 +439,14 @@ export default function AssessmentResults() {
                 {selectedCaptures.map((capture, index) => (
                   <div key={index} style={{ border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden' }}>
                     <img 
-                      src={`http://localhost:5000/${capture}`} 
+                      src={`http://localhost:5000${capture.startsWith('/') ? capture : '/' + capture}`} 
                       alt={`Capture ${index + 1}`}
                       style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                      onError={(e) => {
+                        console.error('Image load error:', capture);
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.innerHTML = 'Image not found';
+                      }}
                     />
                     <div style={{ padding: '0.5rem', background: '#f9fafb', textAlign: 'center' }}>
                       <small style={{ color: '#6b7280' }}>Capture {index + 1}</small>

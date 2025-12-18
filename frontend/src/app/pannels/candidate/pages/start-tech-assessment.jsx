@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { FaClock } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 import { api } from "../../../../utils/api";
 import TermsModal from "../components/TermsModal";
 import ViolationModal from "../components/ViolationModal";
@@ -99,6 +100,11 @@ const StartAssessment = () => {
     const copyListener = useRef(null);
     const pasteListener = useRef(null);
     const saveTimeoutRef = useRef(null);
+    
+    // Webcam capture refs
+    const videoRef = useRef(null);
+    const canvasRef = useRef(null);
+    const [captureCount, setCaptureCount] = useState(0);
 
     // Violation detection functions
     const logViolation = useCallback(async (violationType, details = '') => {
@@ -170,6 +176,108 @@ const StartAssessment = () => {
             setShowViolationModal(true);
         }
     }, [assessmentState, logViolation]);
+    
+    // Webcam capture functions
+    const initWebcam = useCallback(async () => {
+        try {
+            console.log('🎥 Initializing webcam silently...');
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { 
+                    width: { ideal: 640 }, 
+                    height: { ideal: 480 },
+                    facingMode: 'user'
+                },
+                audio: false
+            });
+            
+            if (videoRef.current) {
+                videoRef.current.srcObject = stream;
+                videoRef.current.muted = true;
+                videoRef.current.onloadedmetadata = () => {
+                    console.log('📹 Video ready, starting captures');
+                    setTimeout(() => startPeriodicCapture(), 2000);
+                };
+                await videoRef.current.play();
+                console.log('✅ Webcam initialized silently');
+            }
+        } catch (error) {
+            console.log('⚠️ Webcam not available, continuing without capture');
+            // Continue assessment without webcam if not available
+        }
+    }, []);
+    
+    const startPeriodicCapture = useCallback(() => {
+        if (!assessment || captureCount >= 5) return;
+        
+        const totalTime = assessment.timer * 60 * 1000;
+        const interval = Math.max(15000, totalTime / 5);
+        
+        console.log(`⏰ Starting captures every ${interval/1000} seconds`);
+        
+        // First capture after 2 seconds
+        setTimeout(() => captureImage(), 2000);
+        
+        let count = 1;
+        const captureInterval = setInterval(() => {
+            if (count < 5) {
+                captureImage();
+                count++;
+            } else {
+                console.log('✅ All captures completed');
+                clearInterval(captureInterval);
+            }
+        }, interval);
+    }, [assessment, captureCount]);
+    
+    const captureImage = useCallback(async () => {
+        if (!videoRef.current || !canvasRef.current || !attemptId || captureCount >= 5) return;
+        
+        const canvas = canvasRef.current;
+        const video = videoRef.current;
+        
+        if (video.videoWidth === 0 || video.videoHeight === 0) {
+            console.warn('⚠️ Video not ready, retrying...');
+            setTimeout(() => captureImage(), 2000);
+            return;
+        }
+        
+        try {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0);
+            
+            console.log(`📸 Capturing image ${captureCount + 1}/5`);
+            
+            canvas.toBlob(async (blob) => {
+                if (!blob) return;
+                
+                try {
+                    const token = localStorage.getItem('candidateToken');
+                    const formData = new FormData();
+                    formData.append('capture', blob, `capture_${Date.now()}.jpg`);
+                    formData.append('attemptId', attemptId);
+                    formData.append('captureIndex', captureCount);
+                    
+                    const response = await axios.post('/api/candidate/assessments/capture', formData, {
+                        headers: { 
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    });
+                    
+                    if (response.data.success) {
+                        console.log(`✅ Capture ${captureCount + 1} uploaded`);
+                        setCaptureCount(prev => prev + 1);
+                    }
+                } catch (error) {
+                    console.error('❌ Capture upload failed:', error);
+                }
+            }, 'image/jpeg', 0.8);
+        } catch (error) {
+            console.error('❌ Capture error:', error);
+        }
+    }, [attemptId, captureCount]);
 
     // Security listeners management
     const addSecurityListeners = useCallback(() => {
@@ -230,14 +338,25 @@ const StartAssessment = () => {
 	useEffect(() => {
 		if (assessmentState === 'in_progress') {
 			addSecurityListeners();
+			// Initialize webcam silently after a short delay
+			setTimeout(() => {
+				initWebcam();
+			}, 1000);
 		} else {
 			removeSecurityListeners();
+			// Stop webcam when assessment ends
+			if (videoRef.current && videoRef.current.srcObject) {
+				videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+			}
 		}
 
 		return () => {
 			removeSecurityListeners();
+			if (videoRef.current && videoRef.current.srcObject) {
+				videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+			}
 		};
-	}, [assessmentState, addSecurityListeners, removeSecurityListeners]);
+	}, [assessmentState, addSecurityListeners, removeSecurityListeners, initWebcam]);
 
 
 
@@ -491,6 +610,18 @@ const StartAssessment = () => {
 
 	return (
 		<>
+			{/* Hidden webcam elements for capture */}
+			<video 
+				ref={videoRef} 
+				style={{display: 'none', position: 'absolute', top: '-9999px'}} 
+				autoPlay 
+				playsInline 
+				muted 
+				width="1" 
+				height="1"
+			/>
+			<canvas ref={canvasRef} style={{display: 'none'}} />
+			
 			<PopupNotification
 				show={popup.show}
 				message={popup.message}
