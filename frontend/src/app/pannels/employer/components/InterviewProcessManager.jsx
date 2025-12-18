@@ -16,6 +16,7 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
   });
   const [candidateResponse, setCandidateResponse] = useState(null);
   const [sendingEmail, setSendingEmail] = useState(false);
+  const [assessments, setAssessments] = useState([]);
 
   const stageTypes = [
     { value: 'assessment', label: 'Assessment Schedule', icon: '📝' },
@@ -29,8 +30,24 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
   useEffect(() => {
     if (applicationId) {
       fetchInterviewProcess();
+      fetchAssessments();
     }
   }, [applicationId]);
+
+  const fetchAssessments = async () => {
+    try {
+      const token = localStorage.getItem('employerToken');
+      const response = await fetch('http://localhost:5000/api/employer/assessments', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setAssessments(data.assessments || []);
+      }
+    } catch (error) {
+      console.error('Error fetching assessments:', error);
+    }
+  };
 
   const fetchInterviewProcess = async () => {
     setLoading(true);
@@ -104,6 +121,17 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
   };
 
   const updateStage = (index, field, value) => {
+    // Validate assessment selection before updating
+    if (field === 'assessmentId' && value) {
+      const isDuplicate = stages.some((stage, idx) => 
+        idx !== index && stage.stageType === 'assessment' && stage.assessmentId === value
+      );
+      if (isDuplicate) {
+        showError('This assessment is already assigned to another round. Please select a different assessment.');
+        return;
+      }
+    }
+    
     const updatedStages = [...stages];
     updatedStages[index] = { ...updatedStages[index], [field]: value };
     
@@ -112,6 +140,10 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
       const stageType = stageTypes.find(type => type.value === value);
       if (stageType) {
         updatedStages[index].stageName = stageType.label;
+      }
+      // Clear assessment if changing from assessment type
+      if (updatedStages[index].assessmentId && value !== 'assessment') {
+        updatedStages[index].assessmentId = null;
       }
     }
     
@@ -205,6 +237,15 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
   };
 
   const saveInterviewProcess = async () => {
+    // Validate assessment stages
+    const assessmentStages = stages.filter(s => s.stageType === 'assessment');
+    for (const stage of assessmentStages) {
+      if (!stage.assessmentId) {
+        showError('Please select an assessment for all assessment rounds before saving.');
+        return;
+      }
+    }
+    
     setSaving(true);
     try {
       const data = await api.createEmployerInterviewProcess(applicationId, {
@@ -504,6 +545,38 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
                           <div className="alert alert-info" style={{ backgroundColor: '#e3f2fd', borderColor: '#2196f3', color: '#1976d2' }}>
                             <strong>Assessment Schedule:</strong> Configure the date range when candidates can take the assessment.
                           </div>
+                        </div>
+                        
+                        <div className="col-12">
+                          <label className="form-label fw-semibold">Select Assessment * (Round {stage.stageOrder})</label>
+                          <select
+                            className="form-select"
+                            value={stage.assessmentId || ''}
+                            onChange={(e) => updateStage(index, 'assessmentId', e.target.value)}
+                            style={{ borderColor: '#ff6600' }}
+                          >
+                            <option value="">-- Select Assessment --</option>
+                            {assessments.map(assessment => {
+                              const isUsed = stages.some((s, idx) => 
+                                idx !== index && s.stageType === 'assessment' && s.assessmentId === assessment._id
+                              );
+                              return (
+                                <option 
+                                  key={assessment._id} 
+                                  value={assessment._id}
+                                  disabled={isUsed}
+                                >
+                                  {assessment.title} {isUsed ? '(Already assigned)' : ''}
+                                </option>
+                              );
+                            })}
+                          </select>
+                          {!stage.assessmentId && (
+                            <small className="text-danger">Please select an assessment for this round</small>
+                          )}
+                          {assessments.length === 0 && (
+                            <small className="text-warning d-block mt-1">No assessments available. Please create assessments first.</small>
+                          )}
                         </div>
                         
                         <div className="col-md-6">

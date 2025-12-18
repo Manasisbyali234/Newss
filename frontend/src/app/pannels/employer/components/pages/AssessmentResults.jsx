@@ -11,6 +11,8 @@ export default function AssessmentResults() {
   const [assessment, setAssessment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [showCapturesModal, setShowCapturesModal] = useState(false);
+  const [selectedCaptures, setSelectedCaptures] = useState([]);
 
   useEffect(() => {
     fetchResults();
@@ -177,6 +179,10 @@ export default function AssessmentResults() {
                       <i className="fa fa-file-text me-2" style={{color: '#ff6b35'}}></i>
                       Answers
                     </th>
+                    <th style={{ padding: '16px 12px', textAlign: 'left', fontWeight: '600', color: '#232323', fontSize: '13px', border: 'none', verticalAlign: 'middle', whiteSpace: 'nowrap' }}>
+                      <i className="fa fa-camera me-2" style={{color: '#ff6b35'}}></i>
+                      Captures
+                    </th>
                     <th style={{ padding: '16px 12px', textAlign: 'center', fontWeight: '600', color: '#232323', fontSize: '13px', border: 'none', verticalAlign: 'middle', whiteSpace: 'nowrap' }}>
                       <i className="fa fa-eye me-2" style={{color: '#ff6b35'}}></i>
                       Actions
@@ -286,6 +292,35 @@ export default function AssessmentResults() {
                         </button>
                       </td>
                       <td style={{ padding: '1rem' }}>
+                        <button 
+                          style={{
+                            background: '#8b5cf6',
+                            color: 'white',
+                            border: 'none',
+                            padding: '0.5rem 1rem',
+                            borderRadius: '0.5rem',
+                            fontSize: '0.875rem',
+                            fontWeight: '500',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onClick={() => {
+                            setSelectedCaptures(result.captures || []);
+                            setShowCapturesModal(true);
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = '#7c3aed';
+                            e.currentTarget.style.transform = 'translateY(-1px)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = '#8b5cf6';
+                            e.currentTarget.style.transform = 'translateY(0)';
+                          }}
+                        >
+                          View ({result.captures?.length || 0})
+                        </button>
+                      </td>
+                      <td style={{ padding: '1rem' }}>
                         {result.applicationId || (result.candidateId && result.jobId) ? (
                           <button 
                             style={{
@@ -357,6 +392,67 @@ export default function AssessmentResults() {
           )}
         </div>
       </div>
+
+      {/* Captures Modal */}
+      {showCapturesModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.7)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          padding: '1rem'
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '12px',
+            padding: '2rem',
+            maxWidth: '900px',
+            width: '100%',
+            maxHeight: '90vh',
+            overflow: 'auto'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h3 style={{ margin: 0, color: '#111827' }}>Captured Images ({selectedCaptures.length})</h3>
+              <button
+                onClick={() => setShowCapturesModal(false)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  fontSize: '1.5rem',
+                  cursor: 'pointer',
+                  color: '#6b7280'
+                }}
+              >
+                ×
+              </button>
+            </div>
+            {selectedCaptures.length === 0 ? (
+              <p style={{ textAlign: 'center', color: '#6b7280', padding: '2rem' }}>No captures available</p>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
+                {selectedCaptures.map((capture, index) => (
+                  <div key={index} style={{ border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden' }}>
+                    <img 
+                      src={`http://localhost:5000/${capture}`} 
+                      alt={`Capture ${index + 1}`}
+                      style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                    />
+                    <div style={{ padding: '0.5rem', background: '#f9fafb', textAlign: 'center' }}>
+                      <small style={{ color: '#6b7280' }}>Capture {index + 1}</small>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

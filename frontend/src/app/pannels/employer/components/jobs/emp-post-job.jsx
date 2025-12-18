@@ -238,7 +238,7 @@ export default function EmpPostJob({ onNext }) {
 	const [logoFile, setLogoFile] = useState(null);
 	const [isMobile, setIsMobile] = useState(false);
 	const [availableAssessments, setAvailableAssessments] = useState([]);
-	const [selectedAssessments, setSelectedAssessments] = useState({});
+	const [selectedAssessment, setSelectedAssessment] = useState('');
 	const [errors, setErrors] = useState({});
 	const [globalErrors, setGlobalErrors] = useState([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -416,15 +416,9 @@ export default function EmpPostJob({ onNext }) {
 					typeOfEmployment: job.typeOfEmployment || ''
 				});
 
-				// Set selected assessments for each round
+				// Set selected assessment
 				if (job.assessmentId) {
-					// For backward compatibility, set the same assessment for all assessment rounds
-					const assessmentRounds = job.interviewRoundOrder?.filter(key => job.interviewRoundTypes?.[key] === 'assessment') || [];
-					const assessmentSelections = {};
-					assessmentRounds.forEach(roundKey => {
-						assessmentSelections[roundKey] = job.assessmentId._id || job.assessmentId;
-					});
-					setSelectedAssessments(assessmentSelections);
+					setSelectedAssessment(job.assessmentId._id || job.assessmentId);
 				}
 				
 				// Load assessment dates into interview round details if they exist
@@ -682,8 +676,8 @@ export default function EmpPostJob({ onNext }) {
 		// Validate Assessment if selected
 		const assessmentKeys = formData.interviewRoundOrder.filter(key => formData.interviewRoundTypes[key] === 'assessment');
 		assessmentKeys.forEach((assessmentKey, index) => {
-			if (!selectedAssessments[assessmentKey]) {
-				errorMessages.push(`Please select an Assessment for Assessment Round ${index + 1}`);
+			if (!selectedAssessment) {
+				errorMessages.push('Please select an Assessment');
 			}
 			const assessmentDetails = formData.interviewRoundDetails[assessmentKey];
 			if (!assessmentDetails?.fromDate) {
@@ -702,13 +696,6 @@ export default function EmpPostJob({ onNext }) {
 				errorMessages.push(`Assessment ${index + 1} From Date cannot be after To Date`);
 			}
 		});
-
-		// Validate no duplicate assessments
-		const selectedAssessmentIds = Object.values(selectedAssessments).filter(Boolean);
-		const uniqueAssessmentIds = [...new Set(selectedAssessmentIds)];
-		if (selectedAssessmentIds.length > uniqueAssessmentIds.length) {
-			errorMessages.push('Cannot assign the same assessment to multiple rounds. Please select different assessments for each round.');
-		}
 
 		// Skip consultant field validation - these are optional
 
@@ -762,13 +749,9 @@ export default function EmpPostJob({ onNext }) {
 				jobType: formData.jobType
 			});
 
-			// Extract assessment data for all assessment rounds
-			const assessmentRounds = formData.interviewRoundOrder.filter(key => formData.interviewRoundTypes[key] === 'assessment');
-			const assessmentData = assessmentRounds.map(roundKey => ({
-				roundKey,
-				assessmentId: selectedAssessments[roundKey],
-				details: formData.interviewRoundDetails[roundKey]
-			}));
+			// Extract assessment dates from interview round details
+			const assessmentRoundKey = formData.interviewRoundOrder.find(key => formData.interviewRoundTypes[key] === 'assessment');
+			const assessmentDetails = assessmentRoundKey ? formData.interviewRoundDetails[assessmentRoundKey] : null;
 			
 			// Map interview round details from unique keys to base round types
 			const mappedInterviewRoundDetails = {};
@@ -800,11 +783,11 @@ export default function EmpPostJob({ onNext }) {
 				interviewRoundTypes: formData.interviewRoundTypes,
 				interviewRoundDetails: mappedInterviewRoundDetails,
 				interviewRoundOrder: formData.interviewRoundOrder || [],
-				assignedAssessment: null,
-				assessmentStartDate: null,
-				assessmentEndDate: null,
-				assessmentStartTime: null,
-				assessmentEndTime: null,
+				assignedAssessment: selectedAssessment || null,
+				assessmentStartDate: assessmentDetails?.fromDate || null,
+				assessmentEndDate: assessmentDetails?.toDate || null,
+				assessmentStartTime: assessmentDetails?.startTime || null,
+				assessmentEndTime: assessmentDetails?.endTime || null,
 				offerLetterDate: formData.offerLetterDate || null,
 				lastDateOfApplication: formData.lastDateOfApplication || null,
 				transportation: formData.transportation,
@@ -2096,44 +2079,58 @@ export default function EmpPostJob({ onNext }) {
 					{formData.interviewRoundOrder.some(key => formData.interviewRoundTypes[key] === 'assessment') && (
 						<>
 							<div style={fullRow}>
-								<div style={{
-									padding: '16px 20px',
-									background: 'linear-gradient(135deg, #fef3c7 0%, #ffffff 100%)',
-									borderRadius: 10,
-									color: '#92400e',
-									marginBottom: 16,
-									border: '2px solid #f59e0b'
-								}}>
-									<h4 style={{ margin: 0, fontSize: 16, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 10 }}>
-										<i className="fa fa-exclamation-triangle"></i>
-										Assessment Selection - Individual Round Configuration
-									</h4>
-									<p style={{margin: '6px 0 0 0', fontSize: 13, opacity: 0.9}}>
-										You must select a different assessment for each assessment round. The same assessment cannot be used for multiple rounds.
-									</p>
+								<label style={label}>
+									<i className="fa fa-clipboard-check" style={{marginRight: '8px', color: '#ff6b35'}}></i>
+									Select Assessment (Global)
+									<span style={{fontSize: 12, color: '#6b7280', fontWeight: 'normal', marginLeft: 8}}>
+										(This will be used for all assessment rounds)
+									</span>
+								</label>
+								<div style={{display: 'flex', alignItems: 'center', gap: 12}}>
+									<select
+										style={{ ...input, flex: 1, cursor: 'pointer', borderColor: selectedAssessment ? '#10b981' : '#d1d5db', borderWidth: 2 }}
+										value={selectedAssessment}
+										onChange={(e) => setSelectedAssessment(e.target.value)}
+									>
+										<option value="">-- Select Assessment --</option>
+										{availableAssessments.map((assessment) => (
+											<option key={assessment._id} value={assessment._id}>
+												{assessment.title}
+											</option>
+										))}
+									</select>
+									{selectedAssessment && (
+										<div style={{display: 'flex', alignItems: 'center', gap: 6, color: '#10b981', fontSize: 14, fontWeight: 600}}>
+											<i className="fa fa-check-circle"></i>
+											<span>Selected</span>
+										</div>
+									)}
 								</div>
+								{selectedAssessment && (
+									<div style={{
+										marginTop: 8,
+										padding: '8px 12px',
+										background: '#d1fae5',
+										borderRadius: 6,
+										color: '#065f46',
+										fontSize: 13,
+										display: 'flex',
+										alignItems: 'center',
+										gap: 6
+									}}>
+										<i className="fa fa-info-circle"></i>
+										<span>
+											Assessment "{availableAssessments.find(a => a._id === selectedAssessment)?.title}" will be used for all {formData.interviewRoundOrder.filter(key => formData.interviewRoundTypes[key] === 'assessment').length} assessment round(s)
+										</span>
+									</div>
+								)}
 							</div>
 
-							{/* Individual Assessment Selection and Scheduling for each Assessment instance */}
+							{/* Individual Assessment Scheduling for each Assessment instance */}
 							{formData.interviewRoundOrder
 								.filter(key => formData.interviewRoundTypes[key] === 'assessment')
 								.map((assessmentKey, assessmentIndex) => {
 									const stageNumber = formData.interviewRoundOrder.indexOf(assessmentKey) + 1;
-									const selectedAssessmentForRound = selectedAssessments[assessmentKey];
-									
-									// Get available assessments for this round (exclude already selected ones)
-									const getAvailableAssessmentsForRound = () => {
-										const alreadySelected = Object.entries(selectedAssessments)
-											.filter(([key, value]) => key !== assessmentKey && value)
-											.map(([key, value]) => value);
-										
-										return availableAssessments.filter(assessment => 
-											!alreadySelected.includes(assessment._id)
-										);
-									};
-									
-									const availableForThisRound = getAvailableAssessmentsForRound();
-									
 									return (
 										<div key={assessmentKey} style={fullRow}>
 											<h4 style={{ 
@@ -2159,122 +2156,66 @@ export default function EmpPostJob({ onNext }) {
 												}}>
 													{stageNumber}
 												</span>
-												Stage {stageNumber}: Assessment Round {assessmentIndex + 1}
-											</h4>
-											
-											{/* Assessment Selection for this specific round */}
-											<div style={{
-												padding: 16,
-												border: '2px solid #e5e7eb',
-												borderRadius: 12,
-												background: '#f9fafb',
-												marginBottom: 16
-											}}>
-												<label style={{
-													...label,
-													marginBottom: 8,
-													fontWeight: 600,
-													color: '#1f2937'
-												}}>
-													<i className="fa fa-clipboard-check" style={{marginRight: '8px', color: '#ff6b35'}}></i>
-													Select Assessment for Round {assessmentIndex + 1} *
-												</label>
-												<div style={{display: 'flex', alignItems: 'center', gap: 12}}>
-													<select
-														style={{ 
-															...input, 
-															flex: 1, 
-															cursor: 'pointer', 
-															borderColor: selectedAssessmentForRound ? '#10b981' : '#d1d5db', 
-															borderWidth: 2,
-															background: selectedAssessmentForRound ? '#f0fdf4' : '#fff'
+												Stage {stageNumber}: Assessment Schedule {assessmentIndex + 1}
+												<div style={{display: 'flex', alignItems: 'center', gap: 8, marginLeft: 12}}>
+													<button
+														style={{
+															background: '#10b981',
+															color: '#fff',
+															border: 'none',
+															padding: '6px 12px',
+															borderRadius: 6,
+															cursor: 'pointer',
+															fontSize: 12,
+															fontWeight: 600,
+															display: 'flex',
+															alignItems: 'center',
+															gap: 4
 														}}
-														value={selectedAssessmentForRound || ''}
-														onChange={(e) => {
-															const newAssessmentId = e.target.value;
+														title="Schedule Assessment"
+														onClick={() => {
+															const assessmentDetails = formData.interviewRoundDetails[assessmentKey];
 															
-															// Check if this assessment is already selected for another round
-															const isAlreadySelected = Object.entries(selectedAssessments)
-																.some(([key, value]) => key !== assessmentKey && value === newAssessmentId);
-															
-															if (isAlreadySelected && newAssessmentId) {
-																const assessmentTitle = availableAssessments.find(a => a._id === newAssessmentId)?.title;
-																showError(`Assessment "${assessmentTitle}" is already selected for another round. Please choose a different assessment.`);
+															if (!selectedAssessment) {
+																showWarning('Please select an assessment first');
 																return;
 															}
 															
-															// Update selected assessments
-															setSelectedAssessments(prev => ({
-																...prev,
-																[assessmentKey]: newAssessmentId
-															}));
-															
-															if (newAssessmentId) {
-																const assessmentTitle = availableAssessments.find(a => a._id === newAssessmentId)?.title;
-																showSuccess(`Assessment "${assessmentTitle}" selected for Round ${assessmentIndex + 1}`);
+															if (!assessmentDetails?.fromDate || !assessmentDetails?.toDate) {
+																showWarning(`Please set both From Date and To Date for Assessment ${assessmentIndex + 1}`);
+																return;
 															}
+															
+															if (new Date(assessmentDetails.fromDate) > new Date(assessmentDetails.toDate)) {
+																showError(`Assessment ${assessmentIndex + 1} From Date cannot be after To Date`);
+																return;
+															}
+															
+															// Mark this assessment as scheduled
+															setScheduledRounds(prev => ({...prev, [assessmentKey]: true}));
+															showSuccess(`Assessment ${assessmentIndex + 1} scheduled successfully! Assessment: ${availableAssessments.find(a => a._id === selectedAssessment)?.title} | From: ${new Date(assessmentDetails.fromDate).toLocaleDateString()} | To: ${new Date(assessmentDetails.toDate).toLocaleDateString()}`);
 														}}
 													>
-														<option value="">-- Select Assessment for Round {assessmentIndex + 1} --</option>
-														{availableForThisRound.map((assessment) => (
-															<option key={assessment._id} value={assessment._id}>
-																{assessment.title}
-															</option>
-														))}
-														{/* Show selected assessment even if it would normally be filtered out */}
-														{selectedAssessmentForRound && !availableForThisRound.find(a => a._id === selectedAssessmentForRound) && (
-															<option key={selectedAssessmentForRound} value={selectedAssessmentForRound}>
-																{availableAssessments.find(a => a._id === selectedAssessmentForRound)?.title} (Currently Selected)
-															</option>
-														)}
-													</select>
-													{selectedAssessmentForRound && (
-														<div style={{display: 'flex', alignItems: 'center', gap: 6, color: '#10b981', fontSize: 14, fontWeight: 600}}>
-															<i className="fa fa-check-circle"></i>
-															<span>Selected</span>
-														</div>
-													)}
+														<i className="fa fa-calendar-plus"></i>
+														Schedule
+													</button>
+													<i 
+														className="fa fa-edit"
+														style={{cursor: 'pointer', color: '#3b82f6', fontSize: 16}}
+														title="Edit assessment schedule"
+														onClick={() => {
+															const assessmentSection = document.querySelector(`[data-assessment-key="${assessmentKey}"]`);
+															if (assessmentSection) {
+																assessmentSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+																assessmentSection.style.border = '3px solid #3b82f6';
+																setTimeout(() => {
+																	assessmentSection.style.border = '1px solid #0ea5e9';
+																}, 2000);
+															}
+														}}
+													/>
 												</div>
-												
-												{/* Show available assessments count */}
-												<div style={{
-													marginTop: 8,
-													fontSize: 12,
-													color: availableForThisRound.length > 0 ? '#10b981' : '#ef4444',
-													display: 'flex',
-													alignItems: 'center',
-													gap: 4
-												}}>
-													<i className={`fa fa-${availableForThisRound.length > 0 ? 'info-circle' : 'exclamation-triangle'}`}></i>
-													<span>
-														{availableForThisRound.length > 0 
-															? `${availableForThisRound.length} assessment(s) available for selection`
-															: 'No assessments available - all assessments are already assigned to other rounds'
-														}
-													</span>
-												</div>
-												
-												{selectedAssessmentForRound && (
-													<div style={{
-														marginTop: 12,
-														padding: '8px 12px',
-														background: '#d1fae5',
-														borderRadius: 6,
-														color: '#065f46',
-														fontSize: 13,
-														display: 'flex',
-														alignItems: 'center',
-														gap: 6
-													}}>
-														<i className="fa fa-check-circle"></i>
-														<span>
-															Assessment "{availableAssessments.find(a => a._id === selectedAssessmentForRound)?.title}" is assigned to Round {assessmentIndex + 1}
-														</span>
-													</div>
-												)}
-											</div>
-											
-											{/* Assessment Scheduling */}
+											</h4>
 											<div 
 												data-assessment-key={assessmentKey}
 												style={{ 
@@ -2919,7 +2860,7 @@ export default function EmpPostJob({ onNext }) {
 								background: formData.lastDateOfApplication ? '#f0fdf4' : '#fff'
 							}}
 							type="date"
-							min={new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+							min={new Date().toISOString().split('T')[0]}
 							value={formData.lastDateOfApplication}
 							onChange={(e) => update({ lastDateOfApplication: e.target.value })}
 							placeholder="DD/MM/YYYY"

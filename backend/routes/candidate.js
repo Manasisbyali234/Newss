@@ -397,6 +397,7 @@ router.get('/assessments/:id', assessmentController.getAssessmentForCandidate);
 router.post('/assessments/start', assessmentDebugMiddleware, assessmentController.startAssessment);
 router.post('/assessments/answer', assessmentDebugMiddleware, assessmentController.submitAnswer);
 router.post('/assessments/upload-answer', uploadAnswerFile.single('answerFile'), assessmentController.uploadFileAnswer);
+router.post('/assessments/capture', uploadAnswerFile.single('capture'), assessmentController.uploadCapture);
 router.post('/assessments/submit', assessmentDebugMiddleware, assessmentController.submitAssessment);
 router.get('/assessments/result/application/:applicationId', assessmentController.getAssessmentResultByApplication);
 router.get('/assessments/result/:attemptId', assessmentController.getAssessmentResult);

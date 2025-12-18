@@ -13,6 +13,94 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
   const [violations, setViolations] = useState([]);
   const [startTime] = useState(Date.now());
   const { popup, showSuccess, hidePopup } = usePopupNotification();
+  const [captureCount, setCaptureCount] = useState(0);
+  const videoRef = React.useRef(null);
+  const canvasRef = React.useRef(null);
+
+  useEffect(() => {
+    initWebcam();
+    return () => {
+      if (videoRef.current && videoRef.current.srcObject) {
+        videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
+
+  const initWebcam = async () => {
+    try {
+      console.log('🎥 Initializing webcam...');
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+        console.log('✅ Webcam initialized');
+        // Wait for video to be ready
+        videoRef.current.onloadedmetadata = () => {
+          console.log('📹 Video ready, starting captures');
+          startPeriodicCapture();
+        };
+      }
+    } catch (error) {
+      console.error('❌ Webcam access denied:', error);
+    }
+  };
+
+  const captureImage = async () => {
+    if (!videoRef.current || !canvasRef.current || captureCount >= 5) return;
+    
+    const canvas = canvasRef.current;
+    const video = videoRef.current;
+    
+    if (video.videoWidth === 0 || video.videoHeight === 0) {
+      console.warn('⚠️ Video not ready yet');
+      return;
+    }
+    
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0);
+    
+    console.log(`📸 Capturing image ${captureCount + 1}/5`);
+    
+    canvas.toBlob(async (blob) => {
+      try {
+        const token = localStorage.getItem('candidateToken');
+        const formData = new FormData();
+        formData.append('capture', blob, `capture_${Date.now()}.jpg`);
+        formData.append('attemptId', attemptId);
+        formData.append('captureIndex', captureCount);
+        
+        console.log(`📤 Uploading capture ${captureCount + 1}...`);
+        const response = await axios.post('/api/candidate/assessments/capture', formData, {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        
+        console.log(`✅ Capture ${captureCount + 1} uploaded successfully`);
+        setCaptureCount(prev => prev + 1);
+      } catch (error) {
+        console.error('❌ Capture upload failed:', error);
+      }
+    }, 'image/jpeg', 0.8);
+  };
+
+  const startPeriodicCapture = () => {
+    const interval = (assessment.timer * 60 * 1000) / 5;
+    console.log(`⏰ Starting periodic capture every ${interval/1000} seconds`);
+    let count = 0;
+    const captureInterval = setInterval(() => {
+      if (count < 5) {
+        captureImage();
+        count++;
+      } else {
+        console.log('✅ All 5 captures completed');
+        clearInterval(captureInterval);
+      }
+    }, interval);
+  };
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -295,6 +383,8 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
 
   return (
     <>
+      <video ref={videoRef} style={{display: 'none'}} />
+      <canvas ref={canvasRef} style={{display: 'none'}} />
       <PopupNotification
         show={popup.show}
         message={popup.message}

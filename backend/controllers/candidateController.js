@@ -1236,7 +1236,7 @@ exports.getCandidateApplicationsWithInterviews = async (req, res) => {
       .populate({
         path: 'jobId',
         select: 'title location jobType status interviewRoundsCount interviewRoundTypes interviewRoundDetails interviewRoundOrder assessmentId assessmentStartDate assessmentEndDate assessmentStartTime assessmentEndTime',
-        options: { lean: false }
+        options: { lean: true }
       })
       .populate('employerId', 'companyName')
       .sort({ createdAt: -1 })
@@ -1248,6 +1248,11 @@ exports.getCandidateApplicationsWithInterviews = async (req, res) => {
       applications.map(async (app) => {
         const interviewProcess = await InterviewProcess.findOne({ applicationId: app._id }).lean();
         const assessmentTimerInfo = getAssessmentTimerInfo(app.jobId);
+        
+        // Log assessment ID for debugging
+        if (app.jobId?.assessmentId) {
+          console.log(`Job ${app.jobId._id} has assessmentId:`, app.jobId.assessmentId, 'Type:', typeof app.jobId.assessmentId);
+        }
         
         // Check if there's an assessment attempt for this application
         let assessmentAttempt = null;

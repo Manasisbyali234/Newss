@@ -578,6 +578,39 @@ exports.uploadFileAnswer = async (req, res) => {
   }
 };
 
+exports.uploadCapture = async (req, res) => {
+  try {
+    const { attemptId, captureIndex } = req.body;
+    
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No capture uploaded' });
+    }
+    
+    const attempt = await AssessmentAttempt.findOne({
+      _id: attemptId,
+      candidateId: req.user._id
+    });
+    
+    if (!attempt) {
+      return res.status(404).json({ success: false, message: 'Attempt not found' });
+    }
+    
+    const capturePath = `/uploads/${req.file.filename}`;
+    
+    if (!attempt.captures) {
+      attempt.captures = [];
+    }
+    
+    attempt.captures.push(capturePath);
+    await attempt.save();
+    
+    res.json({ success: true, capturePath });
+  } catch (error) {
+    console.error('Upload capture error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // Candidate: Submit Complete Assessment
 exports.submitAssessment = async (req, res) => {
   try {

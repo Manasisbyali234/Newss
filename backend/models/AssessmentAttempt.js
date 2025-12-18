@@ -35,7 +35,8 @@ const AssessmentAttemptSchema = new mongoose.Schema({
     type: { type: String, enum: ['tab_switch', 'window_minimize', 'copy_paste', 'right_click'] },
     timestamp: { type: Date },
     details: { type: String }
-  }]
+  }],
+  captures: [{ type: String }]
 }, { timestamps: true });
 
 AssessmentAttemptSchema.index({ candidateId: 1, assessmentId: 1 });
