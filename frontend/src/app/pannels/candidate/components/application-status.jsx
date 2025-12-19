@@ -411,7 +411,7 @@ function CanStatusPage() {
 	};
 
 	const handleStartAssessment = (application) => {
-		window.alert('Start Assessment button clicked!');
+		showInfo('🚀 Starting Assessment...', 3000);
 		console.log('=== HANDLE START ASSESSMENT CALLED ===');
 		const job = application.jobId;
 		const windowInfo = getAssessmentWindowInfo(job);

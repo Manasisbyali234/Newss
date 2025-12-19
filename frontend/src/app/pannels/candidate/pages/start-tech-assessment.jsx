@@ -183,13 +183,9 @@ const StartAssessment = () => {
     
     // Webcam capture functions
     const initWebcam = useCallback(async () => {
-        if (webcamInitialized.current) {
-            console.log('🚫 Webcam already initialized, skipping');
-            return;
-        }
+        console.log('🎥 Initializing webcam...');
         
         try {
-            webcamInitialized.current = true;
             console.log('🎥 Initializing webcam silently...');
             
             // Check if getUserMedia is supported
@@ -218,55 +214,42 @@ const StartAssessment = () => {
                 videoRef.current.srcObject = stream;
                 videoRef.current.muted = true;
                 
+                const playVideo = async () => {
+                    try {
+                        await videoRef.current.play();
+                        console.log('✅ Video playing successfully');
+                        setWebcamStatus('active');
+                    } catch (playError) {
+                        console.error('🎥 Video play error:', playError);
+                        setWebcamStatus('failed');
+                    }
+                };
+                
                 videoRef.current.onloadedmetadata = () => {
                     console.log('📹 Video metadata loaded:', {
                         videoWidth: videoRef.current.videoWidth,
                         videoHeight: videoRef.current.videoHeight,
-                        readyState: videoRef.current.readyState,
-                        srcObject: !!videoRef.current.srcObject,
-                        streamActive: videoRef.current.srcObject?.active,
-                        videoTracks: videoRef.current.srcObject?.getVideoTracks().length
+                        readyState: videoRef.current.readyState
                     });
-                    
-                    // Check if video tracks are enabled
-                    const videoTracks = videoRef.current.srcObject?.getVideoTracks();
-                    if (videoTracks && videoTracks.length > 0) {
-                        console.log('📹 Video track status:', {
-                            enabled: videoTracks[0].enabled,
-                            readyState: videoTracks[0].readyState,
-                            muted: videoTracks[0].muted
-                        });
+                    playVideo();
+                };
+                
+                videoRef.current.oncanplay = () => {
+                    console.log('📹 Video can play');
+                    if (videoRef.current.paused) {
+                        playVideo();
                     }
                 };
                 
                 videoRef.current.onerror = (error) => {
                     console.error('📹 Video element error:', error);
+                    setWebcamStatus('failed');
                 };
                 
-                await videoRef.current.play();
-                console.log('✅ Webcam initialized and playing');
-                
-                // Double-check stream after play
-                setTimeout(() => {
-                    if (videoRef.current) {
-                        console.log('🔍 Stream check after play:', {
-                            videoWidth: videoRef.current.videoWidth,
-                            videoHeight: videoRef.current.videoHeight,
-                            paused: videoRef.current.paused,
-                            ended: videoRef.current.ended,
-                            streamActive: videoRef.current.srcObject?.active
-                        });
-                    }
-                }, 1000);
-                
-                setWebcamStatus('active');
-                
-                // Start captures after webcam is active and assessment is loaded
-                setTimeout(() => {
-                    if (assessment) {
-                        startPeriodicCapture();
-                    }
-                }, 2000);
+                // If metadata is already loaded, play immediately
+                if (videoRef.current.readyState >= 1) {
+                    playVideo();
+                }
             }
         } catch (error) {
             console.warn('⚠️ Webcam initialization failed:', {
@@ -438,7 +421,7 @@ const StartAssessment = () => {
             return;
         }
         
-        const interval = 60000; // 1 minute = 60,000 milliseconds
+        const interval = 300000; // 5 minutes = 300,000 milliseconds
         
         console.log(`⏰ Starting captures every ${interval/1000} seconds`, {
             interval: interval/1000,
@@ -520,12 +503,8 @@ const StartAssessment = () => {
 	useEffect(() => {
 		if (assessmentState === 'in_progress') {
 			addSecurityListeners();
-			// Initialize webcam silently after a short delay
-			if (!webcamInitialized.current) {
-				setTimeout(() => {
-					initWebcam();
-				}, 1000);
-			}
+			// Initialize webcam immediately
+			initWebcam();
 		} else {
 			removeSecurityListeners();
 			// Stop webcam when assessment ends
@@ -546,7 +525,7 @@ const StartAssessment = () => {
 				setWebcamStatus('disabled');
 			}
 		};
-	}, [assessmentState, addSecurityListeners, removeSecurityListeners, initWebcam, startPeriodicCapture]);
+	}, [assessmentState, addSecurityListeners, removeSecurityListeners, initWebcam]);
 
 	// Start captures when both webcam is active and assessment is loaded
 	useEffect(() => {
@@ -809,15 +788,42 @@ const StartAssessment = () => {
 
 	return (
 		<>
-			{/* Webcam elements for capture - temporarily visible for debugging */}
+			{/* Webcam elements for capture - visible for testing */}
 			<video 
 				ref={videoRef} 
-				style={{position: 'fixed', bottom: '10px', right: '10px', width: '320px', height: '240px', border: '2px solid red', zIndex: '9999'}} 
+				style={{
+					position: 'fixed', 
+					top: '10px', 
+					right: '10px', 
+					width: '200px', 
+					height: '150px', 
+					border: '2px solid #ff6b35', 
+					zIndex: '9999',
+					borderRadius: '8px',
+					backgroundColor: '#000'
+				}} 
 				autoPlay 
 				playsInline 
 				muted
+				onLoadedData={() => console.log('📹 Video loaded data')}
+				onCanPlay={() => console.log('📹 Video can play')}
 			/>
 			<canvas ref={canvasRef} style={{display: 'none'}} />
+			{webcamStatus && (
+				<div style={{
+					position: 'fixed',
+					top: '170px',
+					right: '10px',
+					background: webcamStatus === 'active' ? '#4CAF50' : webcamStatus === 'failed' ? '#f44336' : '#ff9800',
+					color: 'white',
+					padding: '4px 8px',
+					borderRadius: '4px',
+					fontSize: '12px',
+					zIndex: '9999'
+				}}>
+					📹 {webcamStatus} ({captureCount}/5)
+				</div>
+			)}
 			
 			<PopupNotification
 				show={popup.show}
