@@ -25,6 +25,10 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
       if (videoRef.current && videoRef.current.srcObject) {
         videoRef.current.srcObject.getTracks().forEach(track => track.stop());
       }
+      // Clear capture interval
+      if (window.captureInterval) {
+        clearInterval(window.captureInterval);
+      }
     };
   }, []);
 
@@ -148,34 +152,33 @@ export default function AssessmentQuiz({ assessment, attemptId, onComplete }) {
   };
 
   const startPeriodicCapture = () => {
-    const totalTime = assessment.timer * 60 * 1000; // Total time in ms
-    const interval = Math.max(15000, totalTime / 5); // Min 15 seconds between captures
+    const captureInterval = 5 * 60 * 1000; // 5 minutes in milliseconds
     
-    console.log(`⏰ Starting periodic capture:`);
-    console.log(`   - Total assessment time: ${assessment.timer} minutes`);
-    console.log(`   - Capture interval: ${interval/1000} seconds`);
-    console.log(`   - Will take 5 captures total`);
+    console.log(`⏰ Starting periodic capture every 5 minutes`);
+    console.log(`   - Assessment time: ${assessment.timer} minutes`);
+    console.log(`   - Capture interval: 5 minutes`);
     
-    // Take first capture after 2 seconds
+    // Take first capture after 30 seconds to allow user to settle
     setTimeout(() => {
       console.log('📸 Taking first capture...');
       captureImage();
-    }, 2000);
+    }, 30000);
     
-    let count = 1;
-    const captureInterval = setInterval(() => {
-      if (count < 5) {
-        console.log(`📸 Taking capture ${count + 1}/5...`);
-        captureImage();
-        count++;
-      } else {
-        console.log('✅ All 5 captures completed');
-        clearInterval(captureInterval);
-      }
-    }, interval);
+    // Then capture every 5 minutes
+    const interval = setInterval(() => {
+      console.log(`📸 Taking periodic capture...`);
+      captureImage();
+    }, captureInterval);
     
     // Store interval ID for cleanup
-    window.captureInterval = captureInterval;
+    window.captureInterval = interval;
+    
+    // Cleanup on component unmount
+    return () => {
+      if (window.captureInterval) {
+        clearInterval(window.captureInterval);
+      }
+    };
   };
 
   useEffect(() => {
