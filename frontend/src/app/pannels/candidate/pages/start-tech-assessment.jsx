@@ -201,9 +201,10 @@ const StartAssessment = () => {
             
             const stream = await navigator.mediaDevices.getUserMedia({ 
                 video: { 
-                    width: { ideal: 640 }, 
-                    height: { ideal: 480 },
-                    facingMode: 'user'
+                    width: { min: 320, ideal: 640, max: 1280 }, 
+                    height: { min: 240, ideal: 480, max: 720 },
+                    facingMode: 'user',
+                    frameRate: { ideal: 30 }
                 },
                 audio: false
             });
@@ -315,9 +316,27 @@ const StartAssessment = () => {
         }
         
         try {
+            // Wait a moment for video to be fully ready
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             const ctx = canvas.getContext('2d');
+            
+            // Check if video is actually playing
+            const videoTracks = video.srcObject?.getVideoTracks();
+            const hasActiveTrack = videoTracks && videoTracks.length > 0 && videoTracks[0].readyState === 'live';
+            
+            if (video.paused || video.ended || !hasActiveTrack) {
+                console.warn('⚠️ Video not ready for capture:', {
+                    paused: video.paused,
+                    ended: video.ended,
+                    hasActiveTrack,
+                    trackState: videoTracks?.[0]?.readyState
+                });
+                return;
+            }
+            
             ctx.drawImage(video, 0, 0);
             
             console.log(`📸 Capturing image ${captureCount + 1}/5`, {

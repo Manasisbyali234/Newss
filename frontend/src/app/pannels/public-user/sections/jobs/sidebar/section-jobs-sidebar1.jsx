@@ -119,7 +119,7 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
         try {
             const response = await fetch('http://localhost:5000/api/public/jobs?limit=1000');
             const data = await response.json();
-            if (data.success) {
+            if (data.success && data.jobs && data.jobs.length > 0) {
                 const categoryCounts = {};
                 data.jobs.forEach(job => {
                     if (job.category) {
@@ -128,6 +128,8 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                 });
                 
                 setCategories(Object.entries(categoryCounts));
+            } else {
+                setCategories([]);
             }
         } catch (error) {
             console.error('Error fetching categories:', error);
@@ -139,19 +141,15 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
         try {
             const response = await fetch('http://localhost:5000/api/public/jobs?limit=1000');
             const data = await response.json();
-            if (data.success) {
+            if (data.success && data.jobs && data.jobs.length > 0) {
                 const dbLocations = [...new Set(data.jobs.map(job => job.location))].filter(location => location).sort();
-                
-                // Add default locations if none exist
-                const defaultLocations = ['Bangalore', 'Mumbai'];
-                const allLocations = [...new Set([...dbLocations, ...defaultLocations])].sort();
-                
-                setLocations(allLocations);
+                setLocations(dbLocations);
+            } else {
+                setLocations([]);
             }
         } catch (error) {
             console.error('Error fetching locations:', error);
-            // Set default locations
-            setLocations(['Bangalore', 'Mumbai', 'Delhi', 'Hyderabad', 'Chennai', 'Pune']);
+            setLocations([]);
         }
     };
 
@@ -176,7 +174,7 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
         try {
             const response = await fetch('http://localhost:5000/api/public/jobs?limit=1000');
             const data = await response.json();
-            if (data.success) {
+            if (data.success && data.jobs && data.jobs.length > 0) {
                 // Count job types
                 const typeCounts = {};
                 data.jobs.forEach(job => {
@@ -184,20 +182,13 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                     typeCounts[type] = (typeCounts[type] || 0) + 1;
                 });
                 
-                // Add default job types if they don't exist
-                const defaultTypes = ['full-time', 'part-time', 'contract', 'internship'];
-                defaultTypes.forEach(type => {
-                    if (!typeCounts[type]) {
-                        typeCounts[type] = 0;
-                    }
-                });
-                
                 setJobTypes(Object.entries(typeCounts).filter(([type, count]) => count > 0));
+            } else {
+                setJobTypes([]);
             }
         } catch (error) {
             console.error('Error fetching job types:', error);
-            // Set default job types
-            setJobTypes([['full-time', 4], ['part-time', 0], ['contract', 0], ['internship', 0]]);
+            setJobTypes([]);
         }
     };
 
@@ -205,7 +196,7 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
         try {
             const response = await fetch('http://localhost:5000/api/public/jobs?limit=1000');
             const data = await response.json();
-            if (data.success) {
+            if (data.success && data.jobs && data.jobs.length > 0) {
                 const allKeywords = new Set();
                 
                 data.jobs.forEach(job => {
@@ -223,16 +214,13 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                     }
                 });
                 
-                // Add default job titles if none exist
-                const defaultTitles = ['Software Developer', 'Frontend Developer', 'Backend Developer', 'Full Stack Developer'];
-                defaultTitles.forEach(title => allKeywords.add(title));
-                
                 setJobTitles(Array.from(allKeywords).sort());
+            } else {
+                setJobTitles([]);
             }
         } catch (error) {
             console.error('Error fetching job titles:', error);
-            // Set default job titles
-            setJobTitles(['Software Developer', 'Frontend Developer', 'Backend Developer', 'Full Stack Developer', 'Data Analyst', 'UI/UX Designer']);
+            setJobTitles([]);
         }
     };
 
