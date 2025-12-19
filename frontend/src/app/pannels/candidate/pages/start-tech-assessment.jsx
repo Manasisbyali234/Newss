@@ -763,10 +763,10 @@ const StartAssessment = () => {
 
 	return (
 		<>
-			{/* Hidden webcam elements for capture */}
+			{/* Webcam elements for capture - temporarily visible for debugging */}
 			<video 
 				ref={videoRef} 
-				style={{position: 'fixed', bottom: '10px', right: '10px', width: '1px', height: '1px', opacity: '0.01', zIndex: '-1'}} 
+				style={{position: 'fixed', bottom: '10px', right: '10px', width: '320px', height: '240px', border: '2px solid red', zIndex: '9999'}} 
 				autoPlay 
 				playsInline 
 				muted
