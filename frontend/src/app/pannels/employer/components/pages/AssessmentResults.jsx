@@ -436,23 +436,42 @@ export default function AssessmentResults() {
               <p style={{ textAlign: 'center', color: '#6b7280', padding: '2rem' }}>No captures available</p>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
-                {selectedCaptures.map((capture, index) => (
-                  <div key={index} style={{ border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden' }}>
-                    <img 
-                      src={`http://localhost:5000${capture.startsWith('/') ? capture : '/' + capture}`} 
-                      alt={`Capture ${index + 1}`}
-                      style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-                      onError={(e) => {
-                        console.error('Image load error:', capture);
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.innerHTML = 'Image not found';
-                      }}
-                    />
-                    <div style={{ padding: '0.5rem', background: '#f9fafb', textAlign: 'center' }}>
-                      <small style={{ color: '#6b7280' }}>Capture {index + 1}</small>
+                {selectedCaptures.map((capture, index) => {
+                  console.log(`Capture ${index + 1}:`, capture);
+                  const imageUrl = `http://localhost:5000${capture}`;
+                  console.log(`Image URL ${index + 1}:`, imageUrl);
+                  
+                  return (
+                    <div key={index} style={{ border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden' }}>
+                      <img 
+                        src={imageUrl}
+                        alt={`Capture ${index + 1}`}
+                        style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                        onLoad={() => console.log(`✅ Image ${index + 1} loaded successfully`)}
+                        onError={(e) => {
+                          console.error(`❌ Image ${index + 1} load error:`);
+                          console.error('  Path:', capture);
+                          console.error('  Full URL:', imageUrl);
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'block';
+                        }}
+                      />
+                      <div style={{ 
+                        display: 'none', 
+                        padding: '2rem', 
+                        textAlign: 'center', 
+                        color: '#ef4444',
+                        background: '#fef2f2'
+                      }}>
+                        Image not found<br/>
+                        <small>{capture}</small>
+                      </div>
+                      <div style={{ padding: '0.5rem', background: '#f9fafb', textAlign: 'center' }}>
+                        <small style={{ color: '#6b7280' }}>Capture {index + 1}</small>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

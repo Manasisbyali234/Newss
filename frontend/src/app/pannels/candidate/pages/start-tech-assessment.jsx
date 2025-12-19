@@ -101,10 +101,14 @@ const StartAssessment = () => {
     const pasteListener = useRef(null);
     const saveTimeoutRef = useRef(null);
     
-    // Webcam capture refs
+    // Webcam capture refs and state
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const [captureCount, setCaptureCount] = useState(0);
+    const [webcamStatus, setWebcamStatus] = useState('initializing'); // initializing, active, failed, disabled
+    const webcamInitialized = useRef(false);
+    const capturesStarted = useRef(false);
+    const captureIntervalRef = useRef(null);
 
     // Violation detection functions
     const logViolation = useCallback(async (violationType, details = '') => {
@@ -179,8 +183,22 @@ const StartAssessment = () => {
     
     // Webcam capture functions
     const initWebcam = useCallback(async () => {
+        if (webcamInitialized.current) {
+            console.log('🚫 Webcam already initialized, skipping');
+            return;
+        }
+        
         try {
+            webcamInitialized.current = true;
             console.log('🎥 Initializing webcam silently...');
+            
+            // Check if getUserMedia is supported
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                console.warn('⚠️ getUserMedia not supported, continuing without capture');
+                setWebcamStatus('failed');
+                return;
+            }
+            
             const stream = await navigator.mediaDevices.getUserMedia({ 
                 video: { 
                     width: { ideal: 640 }, 
@@ -190,53 +208,81 @@ const StartAssessment = () => {
                 audio: false
             });
             
+            console.log('📹 Media stream obtained:', {
+                active: stream.active,
+                videoTracks: stream.getVideoTracks().length
+            });
+            
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
                 videoRef.current.muted = true;
+                
                 videoRef.current.onloadedmetadata = () => {
-                    console.log('📹 Video ready, starting captures');
-                    setTimeout(() => startPeriodicCapture(), 2000);
+                    console.log('📹 Video metadata loaded:', {
+                        videoWidth: videoRef.current.videoWidth,
+                        videoHeight: videoRef.current.videoHeight,
+                        readyState: videoRef.current.readyState
+                    });
                 };
+                
+                videoRef.current.onerror = (error) => {
+                    console.error('📹 Video element error:', error);
+                };
+                
                 await videoRef.current.play();
-                console.log('✅ Webcam initialized silently');
+                console.log('✅ Webcam initialized and playing');
+                setWebcamStatus('active');
+                
+                // Start captures after webcam is active and assessment is loaded
+                setTimeout(() => {
+                    if (assessment) {
+                        startPeriodicCapture();
+                    }
+                }, 2000);
             }
         } catch (error) {
-            console.log('⚠️ Webcam not available, continuing without capture');
+            console.warn('⚠️ Webcam initialization failed:', {
+                name: error.name,
+                message: error.message,
+                constraint: error.constraint
+            });
+            
+            // Provide user-friendly error messages
+            if (error.name === 'NotAllowedError') {
+                console.log('🚫 Camera access denied by user');
+            } else if (error.name === 'NotFoundError') {
+                console.log('📷 No camera device found');
+            } else if (error.name === 'NotReadableError') {
+                console.log('🔒 Camera is being used by another application');
+            }
+            
             // Continue assessment without webcam if not available
+            setWebcamStatus('failed');
+            webcamInitialized.current = false;
         }
     }, []);
     
-    const startPeriodicCapture = useCallback(() => {
-        if (!assessment || captureCount >= 5) return;
-        
-        const totalTime = assessment.timer * 60 * 1000;
-        const interval = Math.max(15000, totalTime / 5);
-        
-        console.log(`⏰ Starting captures every ${interval/1000} seconds`);
-        
-        // First capture after 2 seconds
-        setTimeout(() => captureImage(), 2000);
-        
-        let count = 1;
-        const captureInterval = setInterval(() => {
-            if (count < 5) {
-                captureImage();
-                count++;
-            } else {
-                console.log('✅ All captures completed');
-                clearInterval(captureInterval);
-            }
-        }, interval);
-    }, [assessment, captureCount]);
-    
     const captureImage = useCallback(async () => {
-        if (!videoRef.current || !canvasRef.current || !attemptId || captureCount >= 5) return;
+        if (!videoRef.current || !canvasRef.current || !attemptId || captureCount >= 5) {
+            console.log('🚫 Capture skipped:', {
+                hasVideo: !!videoRef.current,
+                hasCanvas: !!canvasRef.current,
+                hasAttemptId: !!attemptId,
+                captureCount,
+                maxReached: captureCount >= 5
+            });
+            return;
+        }
         
         const canvas = canvasRef.current;
         const video = videoRef.current;
         
         if (video.videoWidth === 0 || video.videoHeight === 0) {
-            console.warn('⚠️ Video not ready, retrying...');
+            console.warn('⚠️ Video not ready, retrying...', {
+                videoWidth: video.videoWidth,
+                videoHeight: video.videoHeight,
+                readyState: video.readyState
+            });
             setTimeout(() => captureImage(), 2000);
             return;
         }
@@ -247,37 +293,127 @@ const StartAssessment = () => {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(video, 0, 0);
             
-            console.log(`📸 Capturing image ${captureCount + 1}/5`);
+            console.log(`📸 Capturing image ${captureCount + 1}/5`, {
+                videoSize: `${video.videoWidth}x${video.videoHeight}`,
+                canvasSize: `${canvas.width}x${canvas.height}`
+            });
             
             canvas.toBlob(async (blob) => {
-                if (!blob) return;
+                if (!blob) {
+                    console.error('❌ Failed to create blob from canvas');
+                    return;
+                }
+                
+                // Check if blob is too small (likely corrupted/black image)
+                if (blob.size < 1000) {
+                    console.warn('⚠️ Blob size very small, image might be black:', blob.size);
+                }
+                
+                console.log('📦 Blob created:', {
+                    size: blob.size,
+                    type: blob.type
+                });
                 
                 try {
                     const token = localStorage.getItem('candidateToken');
+                    if (!token) {
+                        console.error('❌ No auth token found');
+                        return;
+                    }
+                    
                     const formData = new FormData();
                     formData.append('capture', blob, `capture_${Date.now()}.jpg`);
                     formData.append('attemptId', attemptId);
-                    formData.append('captureIndex', captureCount);
+                    formData.append('captureIndex', captureCount.toString());
                     
-                    const response = await axios.post('/api/candidate/assessments/capture', formData, {
+                    console.log('📤 Uploading capture...', {
+                        attemptId,
+                        captureIndex: captureCount,
+                        blobSize: blob.size,
+                        hasAttemptId: !!attemptId,
+                        attemptIdLength: attemptId?.length
+                    });
+                    
+                    // Use backend URL
+                    const response = await axios.post('http://localhost:5000/api/candidate/assessments/capture', formData, {
                         headers: { 
                             Authorization: `Bearer ${token}`,
                             'Content-Type': 'multipart/form-data'
-                        }
+                        },
+                        timeout: 30000 // 30 second timeout
                     });
                     
+                    console.log('📡 Upload response:', response.data);
+                    
                     if (response.data.success) {
-                        console.log(`✅ Capture ${captureCount + 1} uploaded`);
-                        setCaptureCount(prev => prev + 1);
+                        console.log(`✅ Capture uploaded successfully:`, response.data);
+                        // Use backend's capture count to stay in sync
+                        const backendCount = response.data.captureCount || 0;
+                        setCaptureCount(backendCount);
+                        console.log(`📊 Capture count synced with backend: ${backendCount}`);
+                    } else {
+                        console.error('❌ Upload failed:', response.data.message);
                     }
                 } catch (error) {
-                    console.error('❌ Capture upload failed:', error);
+                    console.error('❌ Capture upload failed:', {
+                        message: error.message,
+                        status: error.response?.status,
+                        statusText: error.response?.statusText,
+                        data: error.response?.data,
+                        fullError: error.response
+                    });
+                    
+                    // Log the specific backend error message
+                    if (error.response?.data?.message) {
+                        console.error('📝 Backend error:', error.response.data.message);
+                    }
+                    
+                    // Don't increment capture count on failure, but continue with assessment
+                    if (error.response?.status === 401) {
+                        console.error('🔐 Authentication failed - token may be expired');
+                    }
                 }
             }, 'image/jpeg', 0.8);
         } catch (error) {
-            console.error('❌ Capture error:', error);
+            console.error('❌ Capture error:', {
+                message: error.message,
+                stack: error.stack
+            });
         }
-    }, [attemptId, captureCount]);
+    }, [attemptId]);
+
+    const startPeriodicCapture = useCallback(() => {
+        if (!assessment || webcamStatus !== 'active' || captureIntervalRef.current) {
+            console.log('🚫 Periodic capture not started:', {
+                hasAssessment: !!assessment,
+                webcamStatus,
+                alreadyRunning: !!captureIntervalRef.current
+            });
+            return;
+        }
+        
+        const interval = 60000; // 1 minute = 60,000 milliseconds
+        
+        console.log(`⏰ Starting captures every ${interval/1000} seconds`, {
+            interval: interval/1000,
+            webcamStatus
+        });
+        
+        // First capture after 2 seconds
+        setTimeout(() => captureImage(), 2000);
+        
+        let count = 1;
+        captureIntervalRef.current = setInterval(() => {
+            if (count < 5) {
+                captureImage();
+                count++;
+            } else {
+                console.log('✅ All captures completed');
+                clearInterval(captureIntervalRef.current);
+                captureIntervalRef.current = null;
+            }
+        }, interval);
+    }, [assessment, webcamStatus]);
 
     // Security listeners management
     const addSecurityListeners = useCallback(() => {
@@ -339,14 +475,21 @@ const StartAssessment = () => {
 		if (assessmentState === 'in_progress') {
 			addSecurityListeners();
 			// Initialize webcam silently after a short delay
-			setTimeout(() => {
-				initWebcam();
-			}, 1000);
+			if (!webcamInitialized.current) {
+				setTimeout(() => {
+					initWebcam();
+				}, 1000);
+			}
 		} else {
 			removeSecurityListeners();
 			// Stop webcam when assessment ends
 			if (videoRef.current && videoRef.current.srcObject) {
 				videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+				setWebcamStatus('disabled');
+			}
+			if (captureIntervalRef.current) {
+				clearInterval(captureIntervalRef.current);
+				captureIntervalRef.current = null;
 			}
 		}
 
@@ -354,9 +497,19 @@ const StartAssessment = () => {
 			removeSecurityListeners();
 			if (videoRef.current && videoRef.current.srcObject) {
 				videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+				setWebcamStatus('disabled');
 			}
 		};
-	}, [assessmentState, addSecurityListeners, removeSecurityListeners, initWebcam]);
+	}, [assessmentState, addSecurityListeners, removeSecurityListeners, initWebcam, startPeriodicCapture]);
+
+	// Start captures when both webcam is active and assessment is loaded
+	useEffect(() => {
+		if (webcamStatus === 'active' && assessment && assessmentState === 'in_progress' && !capturesStarted.current) {
+			console.log('🚀 Starting periodic capture - conditions met');
+			capturesStarted.current = true;
+			setTimeout(() => startPeriodicCapture(), 2000);
+		}
+	}, [webcamStatus, assessment, assessmentState, startPeriodicCapture]);
 
 
 
@@ -613,12 +766,10 @@ const StartAssessment = () => {
 			{/* Hidden webcam elements for capture */}
 			<video 
 				ref={videoRef} 
-				style={{display: 'none', position: 'absolute', top: '-9999px'}} 
+				style={{position: 'absolute', top: '-9999px', left: '-9999px', width: '640px', height: '480px'}} 
 				autoPlay 
 				playsInline 
-				muted 
-				width="1" 
-				height="1"
+				muted
 			/>
 			<canvas ref={canvasRef} style={{display: 'none'}} />
 			

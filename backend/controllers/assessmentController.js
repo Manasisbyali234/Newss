@@ -582,8 +582,23 @@ exports.uploadCapture = async (req, res) => {
   try {
     const { attemptId, captureIndex } = req.body;
     
+    console.log('📸 Upload capture request:', {
+      attemptId,
+      captureIndex,
+      hasFile: !!req.file,
+      fileSize: req.file?.size,
+      fileName: req.file?.filename,
+      candidateId: req.user._id
+    });
+    
     if (!req.file) {
+      console.error('❌ No file in upload capture request');
       return res.status(400).json({ success: false, message: 'No capture uploaded' });
+    }
+    
+    if (!attemptId) {
+      console.error('❌ No attemptId in upload capture request');
+      return res.status(400).json({ success: false, message: 'Attempt ID is required' });
     }
     
     const attempt = await AssessmentAttempt.findOne({
@@ -592,7 +607,19 @@ exports.uploadCapture = async (req, res) => {
     });
     
     if (!attempt) {
-      return res.status(404).json({ success: false, message: 'Attempt not found' });
+      console.error('❌ Assessment attempt not found:', {
+        attemptId,
+        candidateId: req.user._id
+      });
+      return res.status(404).json({ success: false, message: 'Assessment attempt not found' });
+    }
+    
+    if (attempt.status !== 'in_progress') {
+      console.error('❌ Assessment not in progress:', {
+        attemptId,
+        status: attempt.status
+      });
+      return res.status(400).json({ success: false, message: 'Assessment is not in progress' });
     }
     
     const capturePath = `/uploads/${req.file.filename}`;
@@ -601,13 +628,43 @@ exports.uploadCapture = async (req, res) => {
       attempt.captures = [];
     }
     
+    // Check if we already have 5 captures
+    if (attempt.captures.length >= 5) {
+      console.warn('⚠️ Maximum captures reached:', {
+        attemptId,
+        currentCount: attempt.captures.length
+      });
+      return res.status(400).json({ success: false, message: 'Maximum captures reached' });
+    }
+    
     attempt.captures.push(capturePath);
     await attempt.save();
     
-    res.json({ success: true, capturePath });
+    console.log('✅ Capture uploaded successfully:', {
+      attemptId,
+      capturePath,
+      totalCaptures: attempt.captures.length,
+      fileSize: req.file.size
+    });
+    
+    res.json({ 
+      success: true, 
+      capturePath,
+      captureCount: attempt.captures.length,
+      message: `Capture ${attempt.captures.length}/5 uploaded successfully`
+    });
   } catch (error) {
-    console.error('Upload capture error:', error);
-    res.status(500).json({ success: false, message: error.message });
+    console.error('❌ Upload capture error:', {
+      message: error.message,
+      stack: error.stack,
+      attemptId: req.body?.attemptId,
+      candidateId: req.user?._id
+    });
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to upload capture. Please try again.',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 

@@ -596,6 +596,14 @@ export const api = {
     }).then(handleApiResponse);
   },
 
+  logAssessmentViolation: (violationData) => {
+    return fetch(`${API_BASE_URL}/candidate/assessments/violation`, {
+      method: 'POST',
+      headers: getAuthHeaders('candidate'),
+      body: JSON.stringify(violationData),
+    }).then(handleApiResponse);
+  },
+
   // Interview Process APIs
   getInterviewProcessDetails: (applicationId) => {
     return fetch(`${API_BASE_URL}/candidate/applications/${applicationId}/interview-process`, {

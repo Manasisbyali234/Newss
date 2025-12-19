@@ -411,6 +411,8 @@ function CanStatusPage() {
 	};
 
 	const handleStartAssessment = (application) => {
+		window.alert('Start Assessment button clicked!');
+		console.log('=== HANDLE START ASSESSMENT CALLED ===');
 		const job = application.jobId;
 		const windowInfo = getAssessmentWindowInfo(job);
 		if (!windowInfo.isWithinWindow) {
@@ -779,7 +781,7 @@ function CanStatusPage() {
 
 			{/* All Interview Details Modal */}
 			{showAllDetails && selectedApplication && (
-				<div className="modal fade show" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)'}} onClick={() => setShowAllDetails(false)}>
+				<div className="modal fade show" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)'}} onClick={(e) => { if (e.target === e.currentTarget) setShowAllDetails(false); }}>
 					<div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" onClick={(e) => e.stopPropagation()}>
 						<div className="modal-content" style={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 40px rgba(0,0,0,0.2)'}}>
 							<div className="modal-header" style={{backgroundColor: '#f5f5f5', color: '#000', borderRadius: '12px 12px 0 0'}}>
