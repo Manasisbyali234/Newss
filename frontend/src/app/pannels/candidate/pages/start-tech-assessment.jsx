@@ -221,8 +221,21 @@ const StartAssessment = () => {
                     console.log('📹 Video metadata loaded:', {
                         videoWidth: videoRef.current.videoWidth,
                         videoHeight: videoRef.current.videoHeight,
-                        readyState: videoRef.current.readyState
+                        readyState: videoRef.current.readyState,
+                        srcObject: !!videoRef.current.srcObject,
+                        streamActive: videoRef.current.srcObject?.active,
+                        videoTracks: videoRef.current.srcObject?.getVideoTracks().length
                     });
+                    
+                    // Check if video tracks are enabled
+                    const videoTracks = videoRef.current.srcObject?.getVideoTracks();
+                    if (videoTracks && videoTracks.length > 0) {
+                        console.log('📹 Video track status:', {
+                            enabled: videoTracks[0].enabled,
+                            readyState: videoTracks[0].readyState,
+                            muted: videoTracks[0].muted
+                        });
+                    }
                 };
                 
                 videoRef.current.onerror = (error) => {
@@ -231,6 +244,20 @@ const StartAssessment = () => {
                 
                 await videoRef.current.play();
                 console.log('✅ Webcam initialized and playing');
+                
+                // Double-check stream after play
+                setTimeout(() => {
+                    if (videoRef.current) {
+                        console.log('🔍 Stream check after play:', {
+                            videoWidth: videoRef.current.videoWidth,
+                            videoHeight: videoRef.current.videoHeight,
+                            paused: videoRef.current.paused,
+                            ended: videoRef.current.ended,
+                            streamActive: videoRef.current.srcObject?.active
+                        });
+                    }
+                }, 1000);
+                
                 setWebcamStatus('active');
                 
                 // Start captures after webcam is active and assessment is loaded
