@@ -140,7 +140,8 @@ export const placement = {
     DASHBOARD: "/dashboard",
     PROFILE: "/profile",
     STUDENTS: "/students",
-    UPLOAD: "/upload-data"
+    UPLOAD: "/upload-data",
+    BATCH_UPLOAD: "/batch-upload"
 };
 
 export function placementRoute(_route) {

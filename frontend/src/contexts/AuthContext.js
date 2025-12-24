@@ -26,14 +26,14 @@ export const AuthProvider = ({ children }) => {
     
     window.addEventListener('employerProfileUpdated', handleProfileUpdate);
     window.addEventListener('candidateProfileUpdated', handleProfileUpdate);
-    window.addEventListener('placementProfileUpdated', handleProfileUpdate);
+    window.addEventListener('PlacementfileUpdated', handleProfileUpdate);
     window.addEventListener('adminProfileUpdated', handleProfileUpdate);
     
     return () => {
       clearTimeout(timeoutId);
       window.removeEventListener('employerProfileUpdated', handleProfileUpdate);
       window.removeEventListener('candidateProfileUpdated', handleProfileUpdate);
-      window.removeEventListener('placementProfileUpdated', handleProfileUpdate);
+      window.removeEventListener('PlacementfileUpdated', handleProfileUpdate);
       window.removeEventListener('adminProfileUpdated', handleProfileUpdate);
     };
   }, []);

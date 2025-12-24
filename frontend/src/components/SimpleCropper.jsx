@@ -1,6 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { ZoomIn, ZoomOut, RotateCw, Crop, X } from 'lucide-react';
-import './SimpleCropper.css';
+import React, { useState, useRef } from 'react';
 
 const SimpleCropper = ({ 
   image, 
@@ -11,203 +9,277 @@ const SimpleCropper = ({
   targetHeight = 300,
   title = 'Crop Image'
 }) => {
-  const [zoom, setZoom] = useState(1);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [isProcessing, setIsProcessing] = useState(false);
+  const canvasRef = useRef(null);
   const imageRef = useRef(null);
-  const containerRef = useRef(null);
 
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    setDragStart({
-      x: e.clientX - position.x,
-      y: e.clientY - position.y
-    });
-  };
-
-  const handleMouseMove = useCallback((e) => {
-    if (!isDragging) return;
-    
-    setPosition({
-      x: e.clientX - dragStart.x,
-      y: e.clientY - dragStart.y
-    });
-  }, [isDragging, dragStart]);
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  React.useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
-    }
-  }, [isDragging, handleMouseMove]);
-
-  const handleZoomIn = () => {
-    setZoom(prev => Math.min(prev + 0.2, 3));
-  };
-
-  const handleZoomOut = () => {
-    setZoom(prev => Math.max(prev - 0.2, 0.5));
-  };
-
-  const getCroppedImage = async () => {
-    if (!imageRef.current || !containerRef.current) return null;
-
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    
-    canvas.width = targetWidth;
-    canvas.height = targetHeight;
-
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    
-    return new Promise((resolve) => {
-      img.onload = () => {
-        const container = containerRef.current.getBoundingClientRect();
-        const cropArea = {
-          width: container.width * 0.8,
-          height: container.width * 0.8 / aspectRatio
-        };
-        
-        const scaleX = img.naturalWidth / (container.width * zoom);
-        const scaleY = img.naturalHeight / (container.height * zoom);
-        
-        const sourceX = Math.max(0, (container.width / 2 - cropArea.width / 2 - position.x) * scaleX);
-        const sourceY = Math.max(0, (container.height / 2 - cropArea.height / 2 - position.y) * scaleY);
-        const sourceWidth = cropArea.width * scaleX;
-        const sourceHeight = cropArea.height * scaleY;
-
-        ctx.drawImage(
-          img,
-          sourceX, sourceY, sourceWidth, sourceHeight,
-          0, 0, targetWidth, targetHeight
-        );
-
-        canvas.toBlob((blob) => {
-          resolve({
-            file: blob,
-            url: canvas.toDataURL('image/jpeg', 0.9)
-          });
-        }, 'image/jpeg', 0.9);
-      };
-      img.src = image;
-    });
-  };
-
-  const handleCropSave = async () => {
+  const handleCrop = async () => {
     setIsProcessing(true);
+    
     try {
-      const croppedImage = await getCroppedImage();
-      if (croppedImage) {
-        onCropComplete(croppedImage);
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      const img = imageRef.current;
+      
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      
+      // Calculate center crop
+      const imgAspect = img.naturalWidth / img.naturalHeight;
+      const cropAspect = aspectRatio;
+      
+      let cropWidth, cropHeight, cropX, cropY;
+      
+      if (imgAspect > cropAspect) {
+        cropHeight = img.naturalHeight;
+        cropWidth = cropHeight * cropAspect;
+        cropX = (img.naturalWidth - cropWidth) / 2;
+        cropY = 0;
+      } else {
+        cropWidth = img.naturalWidth;
+        cropHeight = cropWidth / cropAspect;
+        cropX = 0;
+        cropY = (img.naturalHeight - cropHeight) / 2;
       }
+      
+      ctx.drawImage(
+        img,
+        cropX, cropY, cropWidth, cropHeight,
+        0, 0, targetWidth, targetHeight
+      );
+      
+      canvas.toBlob((blob) => {
+        const file = new File([blob], 'cropped-image.jpg', { type: 'image/jpeg' });
+        onCropComplete({
+          file: file,
+          url: canvas.toDataURL('image/jpeg', 0.9)
+        });
+      }, 'image/jpeg', 0.9);
+      
     } catch (error) {
-      console.error('Error cropping image:', error);
+      console.error('Crop error:', error);
     } finally {
       setIsProcessing(false);
     }
   };
 
   return (
-    <div className="simple-cropper-overlay">
-      <div className="simple-cropper-modal">
-        <div className="simple-cropper-header">
-          <h3>{title}</h3>
-          <button className="close-btn" onClick={onCancel}>
-            <X size={20} />
+    <div style={{
+      position: 'fixed',
+      top: '0px',
+      left: '0px',
+      right: '0px',
+      bottom: '0px',
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: '9999',
+      padding: '20px',
+      fontFamily: 'Arial, sans-serif'
+    }}>
+      <div style={{
+        backgroundColor: 'white',
+        borderRadius: '12px',
+        width: '100%',
+        maxWidth: '600px',
+        maxHeight: '90vh',
+        overflow: 'hidden',
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
+      }}>
+        {/* Header */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '20px 24px',
+          borderBottom: '1px solid #e5e7eb',
+          backgroundColor: '#f9fafb'
+        }}>
+          <h3 style={{ 
+            margin: '0px', 
+            fontSize: '20px', 
+            fontWeight: '600', 
+            color: '#111827',
+            fontFamily: 'Arial, sans-serif'
+          }}>
+            {title}
+          </h3>
+          <button 
+            onClick={onCancel}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: '8px',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              color: '#6b7280',
+              fontSize: '18px'
+            }}
+          >
+            ✕
           </button>
         </div>
 
-        <div className="simple-cropper-content">
-          <div className="crop-instructions">
-            <p><strong>How to crop:</strong> Drag the image to position it, use zoom controls to resize</p>
+        {/* Content */}
+        <div style={{ padding: '24px' }}>
+          <div style={{
+            textAlign: 'center',
+            marginBottom: '20px',
+            padding: '12px',
+            backgroundColor: '#fef3c7',
+            border: '1px solid #fde68a',
+            borderRadius: '8px',
+            color: '#92400e'
+          }}>
+            <p style={{ margin: '0px', fontSize: '14px' }}>
+              <strong>Preview:</strong> Image will be cropped to {targetWidth} × {targetHeight} pixels
+            </p>
           </div>
 
-          <div 
-            ref={containerRef}
-            className="simple-crop-container"
-            onMouseDown={handleMouseDown}
-          >
+          {/* Image Preview */}
+          <div style={{
+            width: '100%',
+            height: '300px',
+            backgroundColor: '#f3f4f6',
+            borderRadius: '8px',
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '2px solid #e5e7eb',
+            marginBottom: '20px'
+          }}>
             <img
               ref={imageRef}
               src={image}
-              alt="Crop preview"
-              className="crop-image"
+              alt="Preview"
               style={{
-                transform: `translate(${position.x}px, ${position.y}px) scale(${zoom})`,
-                cursor: isDragging ? 'grabbing' : 'grab'
+                maxWidth: '100%',
+                maxHeight: '100%',
+                objectFit: 'contain',
+                display: 'block'
               }}
-              draggable={false}
             />
-            
-            {/* Crop Frame */}
-            <div className="crop-frame" style={{ aspectRatio }}>
-              <div className="crop-corner top-left"></div>
-              <div className="crop-corner top-right"></div>
-              <div className="crop-corner bottom-left"></div>
-              <div className="crop-corner bottom-right"></div>
-              <div className="crop-label">CROP AREA</div>
-            </div>
-
-            {/* Overlay */}
-            <div className="crop-overlay">
-              <div className="overlay-top"></div>
-              <div className="overlay-middle">
-                <div className="overlay-left"></div>
-                <div className="overlay-center"></div>
-                <div className="overlay-right"></div>
-              </div>
-              <div className="overlay-bottom"></div>
-            </div>
           </div>
 
-          <div className="simple-crop-controls">
-            <div className="zoom-controls">
-              <button onClick={handleZoomOut} disabled={zoom <= 0.5}>
-                <ZoomOut size={16} />
-              </button>
-              <span className="zoom-display">Zoom: {zoom.toFixed(1)}x</span>
-              <button onClick={handleZoomIn} disabled={zoom >= 3}>
-                <ZoomIn size={16} />
-              </button>
+          {/* Profile Preview */}
+          <div style={{
+            textAlign: 'center',
+            marginBottom: '20px',
+            padding: '16px',
+            backgroundColor: '#f8fafc',
+            borderRadius: '8px',
+            border: '1px solid #e2e8f0'
+          }}>
+            <h4 style={{ 
+              margin: '0px 0px 12px 0px', 
+              color: '#374151', 
+              fontSize: '14px', 
+              fontWeight: '600',
+              fontFamily: 'Arial, sans-serif'
+            }}>
+              How it will appear on profile:
+            </h4>
+            <div style={{
+              display: 'inline-block',
+              position: 'relative',
+              width: aspectRatio === 1 ? '80px' : '160px',
+              height: aspectRatio === 1 ? '80px' : '90px',
+              borderRadius: aspectRatio === 1 ? '50%' : '8px',
+              overflow: 'hidden',
+              border: '3px solid #fff',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              backgroundColor: '#f3f4f6'
+            }}>
+              <img
+                src={image}
+                alt="Profile preview"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block'
+                }}
+              />
             </div>
-            
-            <div className="position-controls">
-              <button onClick={() => setPosition({ x: 0, y: 0 })}>
-                Center Image
-              </button>
-            </div>
+            <p style={{ 
+              margin: '8px 0px 0px 0px', 
+              fontSize: '12px', 
+              color: '#6b7280',
+              fontFamily: 'Arial, sans-serif'
+            }}>
+              {aspectRatio === 1 ? 'Company Logo (Circular)' : 'Cover Image'}
+            </p>
           </div>
 
-          <div className="output-info">
-            <p>Output: {targetWidth} × {targetHeight} pixels</p>
+          {/* Info */}
+          <div style={{
+            textAlign: 'center',
+            padding: '12px',
+            backgroundColor: '#f0f9ff',
+            border: '1px solid #bae6fd',
+            borderRadius: '8px',
+            color: '#0369a1',
+            fontWeight: '500'
+          }}>
+            <p style={{ margin: '0px', fontSize: '14px' }}>
+              Output: {targetWidth} × {targetHeight} pixels | 
+              Aspect Ratio: {aspectRatio === 1 ? '1:1 (Square)' : aspectRatio === 16/9 ? '16:9 (Widescreen)' : `${aspectRatio}:1`}
+            </p>
           </div>
         </div>
 
-        <div className="simple-cropper-footer">
-          <button className="btn-cancel" onClick={onCancel}>
+        {/* Footer */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          gap: '12px',
+          padding: '20px 24px',
+          borderTop: '1px solid #e5e7eb',
+          backgroundColor: '#f9fafb'
+        }}>
+          <button 
+            onClick={onCancel}
+            style={{
+              padding: '10px 20px',
+              borderRadius: '6px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              fontSize: '14px',
+              background: 'white',
+              border: '1px solid #d1d5db',
+              color: '#374151',
+              fontFamily: 'Arial, sans-serif'
+            }}
+          >
             Cancel
           </button>
           <button 
-            className="btn-save" 
-            onClick={handleCropSave}
+            onClick={handleCrop}
             disabled={isProcessing}
+            style={{
+              padding: '10px 20px',
+              borderRadius: '6px',
+              fontWeight: '500',
+              cursor: isProcessing ? 'not-allowed' : 'pointer',
+              fontSize: '14px',
+              background: isProcessing ? '#9ca3af' : '#f97316',
+              border: '1px solid ' + (isProcessing ? '#9ca3af' : '#f97316'),
+              color: 'white',
+              fontFamily: 'Arial, sans-serif'
+            }}
           >
-            {isProcessing ? 'Processing...' : 'Crop & Save'}
-            <Crop size={16} />
+            {isProcessing ? 'Processing...' : 'Crop & Save ✂️'}
           </button>
         </div>
       </div>
+
+      {/* Hidden canvas */}
+      <canvas 
+        ref={canvasRef} 
+        style={{ display: 'none' }}
+      />
     </div>
   );
 };

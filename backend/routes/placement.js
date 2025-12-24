@@ -141,4 +141,37 @@ router.put('/profile', auth(['placement']), [
   body('phone').optional().isLength({ min: 10, max: 15 }).withMessage('Phone number must be between 10-15 digits')
 ], handleValidationErrors, placementController.updateProfile);
 
+// Get placement notifications
+router.get('/notifications', auth(['placement']), async (req, res) => {
+  try {
+    const notifications = [
+      {
+        _id: '1',
+        type: 'success',
+        title: 'Welcome to Placement Portal',
+        message: 'Your placement dashboard is ready for student data management',
+        createdAt: new Date().toISOString()
+      },
+      {
+        _id: '2',
+        type: 'info',
+        title: 'Upload Ready',
+        message: 'You can now upload student data files for processing',
+        createdAt: new Date(Date.now() - 5 * 60 * 1000).toISOString()
+      },
+      {
+        _id: '3',
+        type: 'warning',
+        title: 'Profile Completion',
+        message: 'Complete your profile information for better experience',
+        createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString()
+      }
+    ];
+    
+    res.json({ success: true, notifications });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 module.exports = router;

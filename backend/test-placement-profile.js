@@ -4,7 +4,7 @@ require('dotenv').config();
 
 const Placement = require('./models/Placement');
 
-async function testPlacementProfileUpdate() {
+async function testPlacementfileUpdate() {
   try {
     // Connect to database
     await mongoose.connect(process.env.MONGODB_URI);
@@ -69,4 +69,4 @@ async function testPlacementProfileUpdate() {
   }
 }
 
-testPlacementProfileUpdate();
+testPlacementfileUpdate();

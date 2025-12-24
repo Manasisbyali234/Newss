@@ -202,9 +202,9 @@ function SignInPopup() {
 								/>
 							</div>
 
-							<div className="modal-body" style={{paddingTop: '10px', paddingBottom: '10px'}}>
+							<div className="modal-body">
 								<div className="twm-tabs-style-2">
-									<ul className="nav nav-tabs mt-n2" id="myTab2" role="tablist">
+									<ul className="nav nav-tabs" id="myTab2" role="tablist">
 										{/*Login Candidate*/}
 										<li className="nav-item">
 											<button
@@ -297,7 +297,7 @@ function SignInPopup() {
 															style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', userSelect: 'none', background: '#f8f9fa', padding: '5px 8px', borderRadius: '4px' }}
 															onClick={() => setShowCanPassword(!showCanPassword)}
 														>
-															<i className={showCanPassword ? "fas fa-eye-slash" : "fas fa-eye"} />
+															<i className={showCanPassword ? "fas fa-eye-slash" : "fas fa-eye"} style={{ color: '#fd7e14' }} />
 														</span>
 													</div>
 												</div>
@@ -379,7 +379,7 @@ function SignInPopup() {
 															style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', userSelect: 'none', background: '#f8f9fa', padding: '5px 8px', borderRadius: '4px' }}
 															onClick={() => setShowEmpPassword(!showEmpPassword)}
 														>
-															<i className={showEmpPassword ? "fas fa-eye-slash" : "fas fa-eye"} />
+															<i className={showEmpPassword ? "fas fa-eye-slash" : "fas fa-eye"} style={{ color: '#fd7e14' }} />
 														</span>
 													</div>
 												</div>
@@ -461,7 +461,7 @@ function SignInPopup() {
 															style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', userSelect: 'none', background: '#f8f9fa', padding: '5px 8px', borderRadius: '4px' }}
 															onClick={() => setShowPlacementPassword(!showPlacementPassword)}
 														>
-															<i className={showPlacementPassword ? "fas fa-eye-slash" : "fas fa-eye"} />
+															<i className={showPlacementPassword ? "fas fa-eye-slash" : "fas fa-eye"} style={{ color: '#fd7e14' }} />
 														</span>
 													</div>
 												</div>

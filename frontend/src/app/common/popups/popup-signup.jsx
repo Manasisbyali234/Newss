@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { pubRoute, publicUser } from '../../../globals/route-names';
 import { validatePhoneNumber, handlePhoneInputChange, validatePhoneOnBlur } from '../../../utils/phoneValidation';
 import TermsModal from '../../../components/TermsModal';
-import '../../../popup-nav-buttons.css';
-import '../../../signup-modal-mobile-fix.css';
 
 function SignUpPopup() {
     const [candidateData, setCandidateData] = useState({
@@ -474,7 +472,7 @@ function SignUpPopup() {
 								/>
 							</div>
 
-							<div className="modal-body" style={{paddingTop: '10px', paddingBottom: '10px'}}>
+							<div className="modal-body">
 								<div className="twm-tabs-style-2">
 									<ul className="nav nav-tabs" id="myTab" role="tablist">
 										<li className="nav-item" role="presentation">

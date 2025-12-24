@@ -317,7 +317,7 @@ export const api = {
     }).then((res) => res.json());
   },
 
-  getPlacementProfile: () => {
+  getPlacementfile: () => {
     console.log('API: Getting placement profile');
     const headers = getAuthHeaders('placement');
     console.log('API: Request headers for profile fetch:', headers);
@@ -504,7 +504,7 @@ export const api = {
     }).then(handleApiResponse);
   },
 
-  updatePlacementProfile: (data) => {
+  updatePlacementfile: (data) => {
     console.log('API: Updating placement profile with data:', data);
     const headers = getAuthHeaders('placement');
     console.log('API: Request headers:', headers);
