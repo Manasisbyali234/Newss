@@ -905,14 +905,7 @@ function EmpCompanyProfilePage() {
             });
 
             if (data.success) {
-                let successMessage = 'Profile updated successfully!';
-                
-                // Check if whyJoinUs and googleMapsEmbed were saved
-                if (profileData.whyJoinUs || profileData.googleMapsEmbed) {
-                    successMessage += ' Google Maps and Why Join Us sections have been saved.';
-                }
-                
-                showSuccess(successMessage);
+                showSuccess('Profile updated successfully!');
                 // Refresh profile data to get latest state
                 fetchProfile();
                 // Trigger event to update header
