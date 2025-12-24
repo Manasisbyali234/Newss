@@ -148,8 +148,8 @@ function EmpDashboardPage() {
                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '1rem' : '0' }}>
                         <div style={{ display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', gap: '1rem', width: isMobile ? '100%' : 'auto' }}>
                             <div style={{
-                                width: isMobile ? '50px' : '60px',
-                                height: isMobile ? '50px' : '60px',
+                                width: isMobile ? '60px' : '80px',
+                                height: isMobile ? '60px' : '80px',
                                 borderRadius: '50%',
                                 background: employer.logo ? `url("${employer.logo}") center/cover` : '#f97316',
                                 backgroundSize: 'cover',
@@ -160,7 +160,9 @@ function EmpDashboardPage() {
                                 color: 'white',
                                 fontSize: isMobile ? '1.25rem' : '1.5rem',
                                 fontWeight: 'bold',
-                                flexShrink: 0
+                                flexShrink: 0,
+                                border: '3px solid #fff',
+                                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                             }}>
                                 {!employer.logo && (employer.companyName ? employer.companyName.charAt(0).toUpperCase() : 'C')}
                             </div>
@@ -410,32 +412,103 @@ function EmpDashboardPage() {
                                 <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#111827', marginBottom: '1rem' }}>Notifications</h3>
                                 
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flex: '1' }}>
-                                    {notifications.length > 0 ? notifications.slice(0, 5).map((notification, index) => (
-                                        <div key={index} onMouseEnter={() => setHoveredId(notification._id)} onMouseLeave={() => setHoveredId(null)} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem', background: notification.isRead ? '#f9fafb' : '#fef3c7', borderRadius: '0.5rem', position: 'relative' }}>
-                                            <div style={{ width: '2rem', height: '2rem', background: (notification.type === 'profile_approved' || notification.title?.includes('Approved')) ? '#dcfce7' : '#fecaca', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                                                <span style={{ fontSize: '1rem' }}>{(notification.type === 'profile_approved' || notification.title?.includes('Approved')) ? '✅' : '❌'}</span>
+                                    {notifications.length > 0 ? notifications.slice(0, 5).map((notification, index) => {
+                                        const isDocumentNotification = notification.type === 'document_approved' || notification.type === 'document_rejected';
+                                        const isApproved = notification.type === 'document_approved' || notification.title?.includes('Approved');
+                                        const isRejected = notification.type === 'document_rejected' || notification.title?.includes('Rejected');
+                                        
+                                        return (
+                                            <div key={index} onMouseEnter={() => setHoveredId(notification._id)} onMouseLeave={() => setHoveredId(null)} style={{ 
+                                                display: 'flex', 
+                                                alignItems: 'flex-start', 
+                                                gap: '0.75rem', 
+                                                padding: '0.75rem', 
+                                                background: notification.isRead ? '#f9fafb' : (isRejected ? '#fef2f2' : (isApproved ? '#f0fdf4' : '#fef3c7')), 
+                                                borderRadius: '0.5rem', 
+                                                position: 'relative',
+                                                borderLeft: `3px solid ${isRejected ? '#ef4444' : (isApproved ? '#22c55e' : '#f59e0b')}`
+                                            }}>
+                                                <div style={{ 
+                                                    width: '2rem', 
+                                                    height: '2rem', 
+                                                    background: isApproved ? '#dcfce7' : (isRejected ? '#fecaca' : '#fef3c7'), 
+                                                    borderRadius: '50%', 
+                                                    display: 'flex', 
+                                                    alignItems: 'center', 
+                                                    justifyContent: 'center', 
+                                                    flexShrink: 0 
+                                                }}>
+                                                    <span style={{ fontSize: '1rem' }}>
+                                                        {isApproved ? '✅' : (isRejected ? '❌' : '📄')}
+                                                    </span>
+                                                </div>
+                                                <div style={{ flex: '1', minWidth: 0 }}>
+                                                    <p style={{ 
+                                                        fontSize: '0.875rem', 
+                                                        fontWeight: '600', 
+                                                        color: '#111827', 
+                                                        margin: '0 0 0.25rem 0',
+                                                        lineHeight: '1.3'
+                                                    }}>
+                                                        {notification.title}
+                                                    </p>
+                                                    <p style={{ 
+                                                        fontSize: '0.75rem', 
+                                                        color: '#6b7280', 
+                                                        margin: '0 0 0.25rem 0',
+                                                        lineHeight: '1.4',
+                                                        wordBreak: 'break-word'
+                                                    }}>
+                                                        {notification.message.length > 100 ? 
+                                                            `${notification.message.substring(0, 100)}...` : 
+                                                            notification.message
+                                                        }
+                                                    </p>
+                                                    <p style={{ 
+                                                        fontSize: '0.75rem', 
+                                                        color: '#9ca3af', 
+                                                        margin: 0,
+                                                        fontStyle: 'italic'
+                                                    }}>
+                                                        {new Date(notification.createdAt).toLocaleDateString('en-US', {
+                                                            month: 'short',
+                                                            day: 'numeric',
+                                                            hour: '2-digit',
+                                                            minute: '2-digit'
+                                                        })}
+                                                    </p>
+                                                </div>
+                                                {hoveredId === notification._id && (
+                                                    <button onClick={async () => {
+                                                        try {
+                                                            const token = localStorage.getItem('employerToken');
+                                                            await fetch(`http://localhost:5000/api/notifications/${notification._id}/dismiss`, {
+                                                                method: 'PUT',
+                                                                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                                                            });
+                                                            setNotifications(prev => prev.filter(n => n._id !== notification._id));
+                                                        } catch (error) {}
+                                                    }} style={{ 
+                                                        background: '#fed7aa', 
+                                                        border: 'none', 
+                                                        color: 'black', 
+                                                        fontSize: '10px', 
+                                                        cursor: 'pointer', 
+                                                        borderRadius: '2px', 
+                                                        padding: '2px', 
+                                                        width: '18px', 
+                                                        height: '18px', 
+                                                        display: 'flex', 
+                                                        alignItems: 'center', 
+                                                        justifyContent: 'center', 
+                                                        flexShrink: 0 
+                                                    }}>
+                                                        <i className="fa fa-times"></i>
+                                                    </button>
+                                                )}
                                             </div>
-                                            <div style={{ flex: '1', minWidth: 0 }}>
-                                                <p style={{ fontSize: '0.875rem', fontWeight: '500', color: '#111827', margin: 0 }}>{notification.title}</p>
-                                                <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>{notification.message}</p>
-                                                <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>{new Date(notification.createdAt).toLocaleDateString()}</p>
-                                            </div>
-                                            {hoveredId === notification._id && (
-                                                <button onClick={async () => {
-                                                    try {
-                                                        const token = localStorage.getItem('employerToken');
-                                                        await fetch(`http://localhost:5000/api/notifications/${notification._id}/dismiss`, {
-                                                            method: 'PUT',
-                                                            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
-                                                        });
-                                                        setNotifications(prev => prev.filter(n => n._id !== notification._id));
-                                                    } catch (error) {}
-                                                }} style={{ background: '#fed7aa', border: 'none', color: 'black', fontSize: '10px', cursor: 'pointer', borderRadius: '2px', padding: '2px', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                                                    <i className="fa fa-times"></i>
-                                                </button>
-                                            )}
-                                        </div>
-                                    )) : (
+                                        );
+                                    }) : (
                                         <div style={{ textAlign: 'center', padding: '2rem', color: '#6b7280' }}>
                                             <p>No notifications</p>
                                         </div>

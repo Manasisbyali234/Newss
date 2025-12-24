@@ -9,7 +9,7 @@ function AdminDashboardPage() {
     const navigate = useNavigate();
     const [stats, setStats] = useState({
         completedProfileCandidates: 0,
-        totalEmployers: 0,
+        approvedEmployers: 0,
         activeJobs: 0,
         totalPlacements: 0
     });
@@ -202,11 +202,11 @@ function AdminDashboardPage() {
                                     </div>
 
                                     <div className="wt-card-right wt-total-listing-view counter">
-                                        {loading ? <div className="loading-spinner"></div> : <CountUp end={stats.totalEmployers} duration={2} />}
+                                        {loading ? <div className="loading-spinner"></div> : <CountUp end={stats.approvedEmployers} duration={2} />}
                                     </div>
 
                                     <div className="wt-card-bottom">
-                                        <h4 className="m-b0">Total Employers</h4>
+                                        <h4 className="m-b0">Approved Employers</h4>
                                     </div>
                                 </div>
                             </div>

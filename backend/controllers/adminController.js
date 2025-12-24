@@ -78,7 +78,7 @@ exports.getDashboardStats = async (req, res) => {
   try {
     const totalCandidates = await Candidate.countDocuments();
     const candidatesWithProfile = await CandidateProfile.countDocuments();
-    const totalEmployers = await Employer.countDocuments();
+    const approvedEmployers = await Employer.countDocuments({ isApproved: true });
     const totalJobs = await Job.countDocuments();
     const totalApplications = await Application.countDocuments();
     const activeJobs = await Job.countDocuments({ status: 'active' });
@@ -89,7 +89,7 @@ exports.getDashboardStats = async (req, res) => {
     const stats = {
       totalCandidates,
       completedProfileCandidates: candidatesWithProfile,
-      totalEmployers,
+      approvedEmployers,
       totalJobs,
       totalApplications,
       activeJobs,
@@ -550,10 +550,11 @@ exports.updateEmployerProfile = async (req, res) => {
 
       for (const [field, documentName] of Object.entries(verificationFields)) {
         if (req.body[field] && (req.body[field] === 'approved' || req.body[field] === 'rejected')) {
+          const isApproved = req.body[field] === 'approved';
           const notificationData = {
-            title: `Document ${req.body[field] === 'approved' ? 'Approved' : 'Rejected'}`,
-            message: `Your ${documentName} has been ${req.body[field]} by admin.`,
-            type: req.body[field] === 'approved' ? 'profile_approved' : 'profile_rejected',
+            title: `${documentName} ${isApproved ? 'Approved' : 'Rejected'}`,
+            message: `Your ${documentName} document has been ${req.body[field]} by admin. ${isApproved ? 'You can now proceed with the next steps.' : 'Please resubmit the document with correct information.'}`,
+            type: isApproved ? 'document_approved' : 'document_rejected',
             role: 'employer',
             relatedId: new mongoose.Types.ObjectId(req.params.id),
             createdBy: new mongoose.Types.ObjectId(req.user.id)
@@ -1615,7 +1616,7 @@ exports.approveAuthorizationLetter = async (req, res) => {
     try {
       const notificationData = {
         title: 'Authorization Letter Approved',
-        message: `Your authorization letter "${profile.authorizationLetters[letterIndex].fileName}" has been approved by admin.`,
+        message: `Your authorization letter "${profile.authorizationLetters[letterIndex].fileName}" has been approved by admin. You can now proceed with the next steps.`,
         type: 'document_approved',
         role: 'employer',
         relatedId: new mongoose.Types.ObjectId(employerId),
@@ -1660,7 +1661,7 @@ exports.rejectAuthorizationLetter = async (req, res) => {
     try {
       const notificationData = {
         title: 'Authorization Letter Rejected',
-        message: `Your authorization letter "${profile.authorizationLetters[letterIndex].fileName}" has been rejected by admin.`,
+        message: `Your authorization letter "${profile.authorizationLetters[letterIndex].fileName}" has been rejected by admin. Please resubmit the document with correct information or contact support for assistance.`,
         type: 'document_rejected',
         role: 'employer',
         relatedId: new mongoose.Types.ObjectId(employerId),

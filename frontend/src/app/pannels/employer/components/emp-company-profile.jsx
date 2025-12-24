@@ -6,6 +6,7 @@ import { ErrorDisplay, GlobalErrorDisplay } from "../../../../components/ErrorDi
 import { validateField, validateForm, displayError, safeApiCall, getErrorMessage } from "../../../../utils/errorHandler";
 import RichTextEditor from "../../../../components/RichTextEditor";
 import TermsModal from '../../../../components/TermsModal';
+import ImageUploadWithCrop from '../../../../components/ImageUploadWithCrop';
 import './emp-company-profile.css';
 import '../../../../components/ErrorDisplay.css';
 import '../../../../remove-profile-hover-effects.css';
@@ -433,107 +434,6 @@ function EmpCompanyProfilePage() {
                 resolve({ ok: false, message: 'Validation failed. Please try again.' });
             }
         });
-    };
-
-    const handleLogoUpload = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        // Validate logo: <=5MB, jpg/png, min 136x136
-        const result = await validateImageFile(file, {
-            maxSizeMB: 5,
-            minWidth: 136,
-            minHeight: 136,
-            allowedTypes: ['image/jpeg', 'image/png']
-        });
-        if (!result.ok) {
-            showError(`Logo upload failed: ${result.message}`);
-            e.target.value = ''; // Clear the file input
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('logo', file);
-        
-        try {
-            const token = localStorage.getItem('employerToken');
-            if (!token) {
-                showWarning('Please login again to upload files.');
-                return;
-            }
-            
-            const response = await fetch('http://localhost:5000/api/employer/profile/logo', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                    // Don't set Content-Type header - let browser set it with boundary for multipart/form-data
-                },
-                body: formData
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                handleInputChange('logo', data.logo);
-                showSuccess('Logo uploaded successfully!');
-                window.dispatchEvent(new Event('employerProfileUpdated'));
-            } else {
-                showError(data.message || 'Logo upload failed');
-            }
-        } catch (error) {
-            console.error('Logo upload error:', error);
-            showError('Logo upload failed. Please try again.');
-        }
-    };
-
-    const handleCoverUpload = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        // Validate cover: <=5MB, jpg/png, no minimum size restriction
-        const result = await validateImageFile(file, {
-            maxSizeMB: 5,
-            minWidth: 1,
-            minHeight: 1,
-            allowedTypes: ['image/jpeg', 'image/png']
-        });
-        if (!result.ok) {
-            showError(`Cover image upload failed: ${result.message}`);
-            e.target.value = ''; // Clear the file input
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('cover', file);
-        
-        try {
-            const token = localStorage.getItem('employerToken');
-            if (!token) {
-                showWarning('Please login again to upload files.');
-                return;
-            }
-            
-            const response = await fetch('http://localhost:5000/api/employer/profile/cover', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                    // Don't set Content-Type header - let browser set it with boundary for multipart/form-data
-                },
-                body: formData
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                handleInputChange('coverImage', data.coverImage);
-                showSuccess('Cover image uploaded successfully!');
-            } else {
-                showError(data.message || 'Cover image upload failed');
-            }
-        } catch (error) {
-            console.error('Cover upload error:', error);
-            showError('Cover upload failed. Please try again.');
-        }
     };
 
     const handleDocumentUpload = async (e, fieldName) => {
@@ -1067,59 +967,41 @@ function EmpCompanyProfilePage() {
                     <div className="row">
                         <div className="col-lg-6 col-md-12">
                             <div className="form-group">
-                                <label><ImageIcon size={16} className="me-2" /> Company Logo</label>
-                                <input
-                                    type="file"
-                                    className="form-control"
-                                    accept=".jpg,.jpeg,.png"
-                                    onChange={handleLogoUpload}
+                                <ImageUploadWithCrop
+                                    label="Company Logo"
+                                    currentImage={formData.logo}
+                                    onImageUpdate={(logoUrl) => handleInputChange('logo', logoUrl)}
+                                    aspectRatio={1}
+                                    targetWidth={300}
+                                    targetHeight={300}
+                                    cropShape="rect"
+                                    acceptedFormats=".jpg,.jpeg,.png"
+                                    maxFileSize={5}
+                                    minDimensions={{ width: 136, height: 136 }}
+                                    uploadEndpoint="http://localhost:5000/api/employer/profile/logo"
+                                    fieldName="logo"
+                                    description="Square logo for your company profile. Will be displayed at 300x300 pixels."
                                 />
-                                {formData.logo && (
-                                    <div className="mt-2">
-                                        <img 
-                                            src={formData.logo} 
-                                            alt="Logo" 
-                                            style={{maxWidth: '150px', maxHeight: '150px', objectFit: 'contain', border: '1px solid #ddd'}} 
-                                            onError={(e) => {
-                                                 
-                                                e.target.style.display = 'none';
-                                            }}
-                                        />
-                                        <p className="text-muted text-success">✓ Logo uploaded successfully</p>
-                                    </div>
-                                )}
-                                <p className="text-muted mt-2">
-                                    <b>Company Logo:</b> Max file size is 5MB, Minimum dimension: 136 x 136. Suitable files are .jpg & .png
-                                </p>
                             </div>
                         </div>
 
                         <div className="col-lg-6 col-md-12">
                             <div className="form-group">
-                                <label><ImageIcon size={16} className="me-2" /> Background Banner Image</label>
-                                <input
-                                    type="file"
-                                    className="form-control"
-                                    accept=".jpg,.jpeg,.png"
-                                    onChange={handleCoverUpload}
+                                <ImageUploadWithCrop
+                                    label="Background Banner Image"
+                                    currentImage={formData.coverImage}
+                                    onImageUpdate={(coverUrl) => handleInputChange('coverImage', coverUrl)}
+                                    aspectRatio={16/9}
+                                    targetWidth={1200}
+                                    targetHeight={675}
+                                    cropShape="rect"
+                                    acceptedFormats=".jpg,.jpeg,.png"
+                                    maxFileSize={5}
+                                    minDimensions={{ width: 800, height: 450 }}
+                                    uploadEndpoint="http://localhost:5000/api/employer/profile/cover"
+                                    fieldName="cover"
+                                    description="Widescreen banner for your company profile. Will be displayed at 1200x675 pixels."
                                 />
-                                {formData.coverImage && (
-                                    <div className="mt-2">
-                                        <img 
-                                            src={formData.coverImage} 
-                                            alt="Cover" 
-                                            style={{width: '100%', maxWidth: '400px', height: 'auto', maxHeight: '200px', objectFit: 'contain', border: '1px solid #ddd', borderRadius: '4px'}} 
-                                            onError={(e) => {
-                                                 
-                                                e.target.style.display = 'none';
-                                            }}
-                                        />
-                                        <p className="text-muted text-success">✓ Cover image uploaded successfully</p>
-                                    </div>
-                                )}
-                                <p className="text-muted mt-2">
-                                    <b>Background Banner Image:</b> Max file size is 5MB. Any image size is supported. Suitable files are .jpg & .png
-                                </p>
                             </div>
                         </div>
                     </div>
