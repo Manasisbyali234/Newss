@@ -5,6 +5,7 @@ import { debugAuth, testAPIConnection, testPlacementAuth } from '../../../utils/
 import PlacementNotificationsRedesigned from './sections/PlacementNotificationsRedesigned';
 import './placement-dashboard-redesigned.css';
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../utils/popupNotification';
+import NotificationBell from '../../../components/NotificationBell';
 
 function PlacementDashboardRedesigned() {
     const { user, userType, isAuthenticated, loading: authLoading } = useAuth();
@@ -324,16 +325,8 @@ function PlacementDashboardRedesigned() {
             <div className="main-content">
                 {/* Top Header */}
                 <div className="top-header">
-                    <div className="search-container">
-                        <div className="search-bar">
-                            <i className="fa fa-search"></i>
-                            <input type="text" placeholder="Search students, batches..." />
-                        </div>
-                    </div>
                     <div className="header-actions">
-                        <div className="notification-icon">
-                            <i className="fa fa-bell"></i>
-                        </div>
+                        <NotificationBell userRole="placement" />
                         <div className="user-profile">
                             <span>Placement Officer</span>
                         </div>

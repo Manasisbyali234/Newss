@@ -144,6 +144,9 @@ router.put('/profile', auth(['placement']), [
 // Get placement notifications
 router.get('/notifications', auth(['placement']), async (req, res) => {
   try {
+    console.log('=== PLACEMENT NOTIFICATIONS REQUEST ===');
+    console.log('User:', req.user);
+    
     const notifications = [
       {
         _id: '1',
@@ -168,8 +171,10 @@ router.get('/notifications', auth(['placement']), async (req, res) => {
       }
     ];
     
+    console.log('Sending notifications:', notifications.length);
     res.json({ success: true, notifications });
   } catch (error) {
+    console.error('Notifications error:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 });

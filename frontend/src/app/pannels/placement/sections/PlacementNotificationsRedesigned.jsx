@@ -25,6 +25,11 @@ function PlacementNotificationsRedesigned() {
                 const data = await response.json();
                 if (data.success) {
                     setNotifications(data.notifications || []);
+                    // Dispatch event to update bell
+                    const event = new CustomEvent('notificationsUpdated', { 
+                        detail: { count: (data.notifications || []).length } 
+                    });
+                    window.dispatchEvent(event);
                 }
             }
         } catch (error) {

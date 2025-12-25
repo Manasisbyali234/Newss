@@ -17,16 +17,14 @@
     --border-radius-lg: 16px;
 }
 
-/* Reset and Base Styles */
-* {
-    margin: 0;
-    padding: 0;
+/* Dashboard-scoped base styles - NO global resets */
+.dashboard-container,
+.dashboard-container * {
     box-sizing: border-box;
 }
 
-body {
+.dashboard-container {
     font-family: 'Inter', 'Poppins', 'Roboto', sans-serif;
-    background-color: var(--light-grey);
     color: var(--text-primary);
     line-height: 1.6;
 }
@@ -36,6 +34,7 @@ body {
     display: flex;
     min-height: 100vh;
     background-color: var(--light-grey);
+    position: relative;
 }
 
 /* Sidebar Styles */
@@ -126,7 +125,7 @@ body {
     padding: 16px 24px;
     border-bottom: 1px solid var(--border-light);
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     position: sticky;
     top: 0;
@@ -134,32 +133,19 @@ body {
 }
 
 .search-container {
-    flex: 1;
-    max-width: 400px;
+    display: none;
 }
 
 .search-bar {
-    position: relative;
-    display: flex;
-    align-items: center;
+    display: none;
 }
 
 .search-bar i {
-    position: absolute;
-    left: 16px;
-    color: var(--text-muted);
-    z-index: 1;
+    display: none;
 }
 
 .search-bar input {
-    width: 100%;
-    padding: 12px 16px 12px 44px;
-    border: 1px solid var(--border-light);
-    border-radius: var(--border-radius-lg);
-    background-color: var(--light-grey);
-    font-size: 14px;
-    outline: none;
-    transition: all 0.2s ease;
+    display: none;
 }
 
 .search-bar input:focus {
@@ -1097,8 +1083,8 @@ body {
     opacity: 0.5;
 }
 
-/* Modal Styles */
-.modal-overlay {
+/* Modal Styles - Scoped to dashboard only */
+.dashboard-container .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -1108,10 +1094,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 2000;
+    z-index: 1500;
 }
 
-.modal-content {
+.dashboard-container .modal-content {
     background-color: var(--primary-white);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-medium);

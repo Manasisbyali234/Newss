@@ -118,12 +118,13 @@ body::-webkit-scrollbar {
 
 /* Fix body modifications by Bootstrap modals */
 body.modal-open {
-  overflow: auto !important;
+  overflow: hidden !important;
   padding-right: 0 !important;
 }
 
-body.modal-open * {
-  overflow: visible !important;
+body.modal-open .modal {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
 }
 
 body.modal-open .terms-modal-body {

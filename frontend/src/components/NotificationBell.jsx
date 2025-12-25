@@ -64,7 +64,12 @@ const NotificationBell = ({ userRole }) => {
         return;
       }
       
-      const response = await fetch(`http://localhost:5000/api/notifications/${userRole}`, {
+      // Use different endpoint for placement users
+      const endpoint = userRole === 'placement' 
+        ? `http://localhost:5000/api/placement/notifications`
+        : `http://localhost:5000/api/notifications/${userRole}`;
+      
+      const response = await fetch(endpoint, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -74,7 +79,7 @@ const NotificationBell = ({ userRole }) => {
       
       if (data.success) {
         setNotifications(data.notifications);
-        setUnreadCount(data.unreadCount);
+        setUnreadCount(data.unreadCount || data.notifications.length);
       }
     } catch (error) {
     }
