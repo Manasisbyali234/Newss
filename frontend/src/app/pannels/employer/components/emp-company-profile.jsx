@@ -1,4 +1,4 @@
-import { Briefcase, Building, Calendar, FileText, Globe, Hash, IdCard, Image as ImageIcon, Mail, MapPin, Phone, Upload, User as UserIcon, Users as UsersIcon, Images } from "lucide-react";
+import { Briefcase, Building, Calendar, FileText, Globe, Hash, IdCard, Image as ImageIcon, Mail, MapPin, Phone, Upload, User as UserIcon, Users as UsersIcon, Images, Edit3 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { loadScript } from "../../../../globals/constants";
 import CountryCodeSelector from "../../../../components/CountryCodeSelector";
@@ -6,7 +6,9 @@ import { ErrorDisplay, GlobalErrorDisplay } from "../../../../components/ErrorDi
 import { validateField, validateForm, displayError, safeApiCall, getErrorMessage } from "../../../../utils/errorHandler";
 import RichTextEditor from "../../../../components/RichTextEditor";
 import TermsModal from '../../../../components/TermsModal';
-import ImageUploadWithCrop from '../../../../components/ImageUploadWithCrop';
+import ImageResizer from '../../../../components/ImageResizer';
+import { useImageResizer } from '../../../../hooks/useImageResizer';
+
 import './emp-company-profile.css';
 import '../../../../components/ErrorDisplay.css';
 import '../../../../remove-profile-hover-effects.css';
@@ -14,6 +16,19 @@ import '../../../../remove-profile-hover-effects.css';
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
 import ConfirmationDialog from '../../../../components/ConfirmationDialog';
 function EmpCompanyProfilePage() {
+    const {
+        isResizerOpen,
+        currentImage,
+        resizeConfig,
+        closeResizer,
+        handleSave: handleResizerSave,
+        openLogoResizer,
+        openBannerResizer,
+        openProfileResizer,
+        openGalleryResizer,
+        handleFileWithResize
+    } = useImageResizer();
+    
     const [formData, setFormData] = useState({
         // Basic Information
         employerCategory: '',
@@ -440,7 +455,23 @@ function EmpCompanyProfilePage() {
         const file = e.target.files[0];
         if (!file) return;
 
-        // Validate documents: <=5MB, allow images (jpg/png/jpeg) and PDF
+        // Only use resizer for logo and coverImage
+        const resizerFields = ['logo', 'coverImage'];
+        const useResizer = resizerFields.includes(fieldName) && file.type.startsWith('image/');
+
+        if (useResizer) {
+            try {
+                const resizerType = fieldName === 'logo' ? 'logo' : 'banner';
+                await handleFileWithResize(file, resizerType, (processedImage) => {
+                    uploadProcessedImage(processedImage, fieldName);
+                });
+            } catch (error) {
+                showError(error.message);
+            }
+            return;
+        }
+
+        // Handle all other files normally
         const maxBytes = 5 * 1024 * 1024;
         const allowed = ['image/jpeg', 'image/png', 'application/pdf'];
         if (file.size > maxBytes) {
@@ -467,7 +498,6 @@ function EmpCompanyProfilePage() {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
-                    // Don't set Content-Type header - let browser set it with boundary for multipart/form-data
                 },
                 body: formData
             });
@@ -476,7 +506,6 @@ function EmpCompanyProfilePage() {
             
             if (data.success) {
                 handleInputChange(fieldName, data.filePath);
-                // Clear validation error for this field
                 setErrors(prev => {
                     const newErrors = { ...prev };
                     delete newErrors[fieldName];
@@ -489,6 +518,49 @@ function EmpCompanyProfilePage() {
         } catch (error) {
             console.error('Document upload error:', error);
             showError('Document upload failed. Please try again.');
+        }
+    };
+
+    const uploadProcessedImage = async (processedImageDataURL, fieldName) => {
+        try {
+            // Convert data URL to blob
+            const response = await fetch(processedImageDataURL);
+            const blob = await response.blob();
+            
+            const formData = new FormData();
+            formData.append('document', blob, `${fieldName}.jpg`);
+            formData.append('fieldName', fieldName);
+            
+            const token = localStorage.getItem('employerToken');
+            if (!token) {
+                showWarning('Please login again to upload files.');
+                return;
+            }
+            
+            const uploadResponse = await fetch('http://localhost:5000/api/employer/profile/document', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+            
+            const data = await uploadResponse.json();
+            
+            if (data.success) {
+                handleInputChange(fieldName, data.filePath);
+                setErrors(prev => {
+                    const newErrors = { ...prev };
+                    delete newErrors[fieldName];
+                    return newErrors;
+                });
+                showSuccess('Image processed and uploaded successfully!');
+            } else {
+                showError(data.message || 'Image upload failed');
+            }
+        } catch (error) {
+            console.error('Processed image upload error:', error);
+            showError('Image upload failed. Please try again.');
         }
     };
 
@@ -653,13 +725,13 @@ function EmpCompanyProfilePage() {
         }
 
         // Validate each file before upload
-        const maxSize = 10 * 1024 * 1024; // 10MB
+        const maxSize = 10 * 1024 * 1024;
         const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml'];
         
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
             if (file.size > maxSize) {
-                showError(`File "${file.name}" is too large. Maximum size is 10MB. Please compress the image.`);
+                showError(`File "${file.name}" is too large. Maximum size is 10MB.`);
                 return;
             }
             if (!allowedTypes.includes(file.type)) {
@@ -668,85 +740,57 @@ function EmpCompanyProfilePage() {
             }
         }
 
-        // Upload files in smaller batches to avoid request size limits
-        const batchSize = 3; // Upload max 3 files at a time for better reliability
-        const batches = [];
-        for (let i = 0; i < files.length; i += batchSize) {
-            batches.push(files.slice(i, i + batchSize));
-        }
-
-        let totalUploaded = 0;
-        let hasError = false;
-
         try {
             const token = localStorage.getItem('employerToken');
+            const formDataObj = new FormData();
+            files.forEach(file => formDataObj.append('gallery', file));
+
+            const response = await fetch('http://localhost:5000/api/employer/profile/gallery', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formDataObj
+            });
             
-            for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
-                const batch = batches[batchIndex];
-                const formDataObj = new FormData();
-                batch.forEach(file => formDataObj.append('gallery', file));
-
-                showInfo(`Uploading batch ${batchIndex + 1} of ${batches.length}...`);
-
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
-
-                    const response = await fetch('http://localhost:5000/api/employer/profile/gallery', {
-                        method: 'POST',
-                        headers: { 'Authorization': `Bearer ${token}` },
-                        body: formDataObj,
-                        signal: controller.signal
-                    });
-                    
-                    clearTimeout(timeoutId);
-                    
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        let errorData;
-                        try {
-                            errorData = JSON.parse(errorText);
-                        } catch {
-                            errorData = { message: `HTTP ${response.status}: ${response.statusText}` };
-                        }
-                        throw new Error(errorData.message || `Upload failed with status ${response.status}`);
-                    }
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        setFormData(prev => ({ ...prev, gallery: data.gallery }));
-                        totalUploaded += batch.length;
-                    } else {
-                        showError(data.message || `Batch ${batchIndex + 1} upload failed`);
-                        hasError = true;
-                        break;
-                    }
-                } catch (fetchError) {
-                    console.error(`Batch ${batchIndex + 1} upload error:`, fetchError);
-                    
-                    if (fetchError.name === 'AbortError') {
-                        showError(`Upload timed out. Please try with smaller files or check your connection.`);
-                    } else if (fetchError.message.includes('413') || fetchError.message.toLowerCase().includes('too large')) {
-                        showError(`Files too large. Please use smaller images (under 10MB each).`);
-                    } else if (fetchError.message.toLowerCase().includes('network') || fetchError.message.toLowerCase().includes('fetch')) {
-                        showError(`Network error. Please check your connection and try again.`);
-                    } else {
-                        showError(`Upload failed: ${fetchError.message}`);
-                    }
-                    
-                    hasError = true;
-                    break;
-                }
-            }
+            const data = await response.json();
             
-            if (!hasError) {
-                showSuccess(`Successfully uploaded ${totalUploaded} images!`);
+            if (data.success) {
+                setFormData(prev => ({ ...prev, gallery: data.gallery }));
+                showSuccess(`Successfully uploaded ${files.length} images!`);
                 e.target.value = '';
+            } else {
+                showError(data.message || 'Upload failed');
             }
         } catch (error) {
             console.error('Gallery upload error:', error);
             showError('Upload failed. Please try again.');
+        }
+    };
+
+    const uploadGalleryImage = async (processedImageDataURL, originalFileName) => {
+        try {
+            const response = await fetch(processedImageDataURL);
+            const blob = await response.blob();
+            
+            const formDataObj = new FormData();
+            formDataObj.append('gallery', blob, originalFileName);
+
+            const token = localStorage.getItem('employerToken');
+            const uploadResponse = await fetch('http://localhost:5000/api/employer/profile/gallery', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formDataObj
+            });
+            
+            const data = await uploadResponse.json();
+            
+            if (data.success) {
+                setFormData(prev => ({ ...prev, gallery: data.gallery }));
+            } else {
+                throw new Error(data.message || 'Upload failed');
+            }
+        } catch (error) {
+            console.error('Gallery image upload error:', error);
+            throw error;
         }
     };
 
@@ -960,41 +1004,105 @@ function EmpCompanyProfilePage() {
                     <div className="row">
                         <div className="col-lg-6 col-md-12">
                             <div className="form-group">
-                                <ImageUploadWithCrop
-                                    label="Company Logo"
-                                    currentImage={formData.logo}
-                                    onImageUpdate={(logoUrl) => handleInputChange('logo', logoUrl)}
-                                    aspectRatio={1}
-                                    targetWidth={300}
-                                    targetHeight={300}
-                                    cropShape="rect"
-                                    acceptedFormats=".jpg,.jpeg,.png"
-                                    maxFileSize={5}
-                                    minDimensions={{ width: 136, height: 136 }}
-                                    uploadEndpoint="http://localhost:5000/api/employer/profile/logo"
-                                    fieldName="logo"
-                                    description="Square logo for your company profile. Will be displayed at 300x300 pixels."
+                                <label><ImageIcon size={16} className="me-2" /> Company Logo</label>
+                                <input
+                                    className="form-control"
+                                    type="file"
+                                    accept=".jpg,.jpeg,.png"
+                                    onChange={(e) => handleDocumentUpload(e, 'logo')}
                                 />
+                                {formData.logo && (
+                                    <div className="mt-2 position-relative d-inline-block">
+                                        <img 
+                                            src={formData.logo.startsWith('data:') ? formData.logo : `data:image/jpeg;base64,${formData.logo}`} 
+                                            alt="Company Logo" 
+                                            style={{
+                                                width: '150px', 
+                                                height: '150px', 
+                                                objectFit: 'cover', 
+                                                objectPosition: 'center',
+                                                border: '1px solid #ddd',
+                                                borderRadius: '8px'
+                                            }} 
+                                        />
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm position-absolute"
+                                            style={{
+                                                top: '5px',
+                                                right: '5px',
+                                                background: 'rgba(255, 107, 53, 0.9)',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '4px',
+                                                padding: '4px 8px'
+                                            }}
+                                            onClick={() => {
+                                                const imgSrc = formData.logo.startsWith('data:') ? formData.logo : `data:image/jpeg;base64,${formData.logo}`;
+                                                openLogoResizer(imgSrc, (processedImage) => {
+                                                    uploadProcessedImage(processedImage, 'logo');
+                                                });
+                                            }}
+                                            title="Edit Image"
+                                        >
+                                            <Edit3 size={12} />
+                                        </button>
+                                        <p className="text-success mt-1">✓ Company Logo uploaded</p>
+                                    </div>
+                                )}
+                                <small className="text-muted">Square logo for your company profile (JPG, PNG, max 5MB)</small>
                             </div>
                         </div>
 
                         <div className="col-lg-6 col-md-12">
                             <div className="form-group">
-                                <ImageUploadWithCrop
-                                    label="Background Banner Image"
-                                    currentImage={formData.coverImage}
-                                    onImageUpdate={(coverUrl) => handleInputChange('coverImage', coverUrl)}
-                                    aspectRatio={16/9}
-                                    targetWidth={1200}
-                                    targetHeight={675}
-                                    cropShape="rect"
-                                    acceptedFormats=".jpg,.jpeg,.png"
-                                    maxFileSize={5}
-                                    minDimensions={{ width: 800, height: 450 }}
-                                    uploadEndpoint="http://localhost:5000/api/employer/profile/cover"
-                                    fieldName="cover"
-                                    description="Widescreen banner for your company profile. Will be displayed at 1200x675 pixels."
+                                <label><ImageIcon size={16} className="me-2" /> Background Banner Image</label>
+                                <input
+                                    className="form-control"
+                                    type="file"
+                                    accept=".jpg,.jpeg,.png"
+                                    onChange={(e) => handleDocumentUpload(e, 'coverImage')}
                                 />
+                                {formData.coverImage && (
+                                    <div className="mt-2 position-relative d-inline-block">
+                                        <img 
+                                            src={formData.coverImage.startsWith('data:') ? formData.coverImage : `data:image/jpeg;base64,${formData.coverImage}`} 
+                                            alt="Background Banner" 
+                                            style={{
+                                                width: '200px', 
+                                                height: '120px', 
+                                                objectFit: 'cover', 
+                                                objectPosition: 'center',
+                                                border: '1px solid #ddd',
+                                                borderRadius: '8px'
+                                            }} 
+                                        />
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm position-absolute"
+                                            style={{
+                                                top: '5px',
+                                                right: '5px',
+                                                background: 'rgba(255, 107, 53, 0.9)',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '4px',
+                                                padding: '4px 8px'
+                                            }}
+                                            onClick={() => {
+                                                const imgSrc = formData.coverImage.startsWith('data:') ? formData.coverImage : `data:image/jpeg;base64,${formData.coverImage}`;
+                                                openBannerResizer(imgSrc, (processedImage) => {
+                                                    uploadProcessedImage(processedImage, 'coverImage');
+                                                });
+                                            }}
+                                            title="Edit Image"
+                                        >
+                                            <Edit3 size={12} />
+                                        </button>
+                                        <p className="text-success mt-1">✓ Background Banner uploaded</p>
+                                    </div>
+                                )}
+                                <small className="text-muted">Widescreen banner for your company profile (JPG, PNG, max 5MB)</small>
                             </div>
                         </div>
                     </div>
@@ -1751,9 +1859,15 @@ function EmpCompanyProfilePage() {
                                             <img 
                                                 src={formData.companyIdCardPicture.startsWith('data:') ? formData.companyIdCardPicture : `data:image/jpeg;base64,${formData.companyIdCardPicture}`} 
                                                 alt="Company ID Card" 
-                                                style={{maxWidth: '200px', maxHeight: '120px', objectFit: 'contain', border: '1px solid #ddd'}} 
+                                                style={{
+                                                    width: '200px', 
+                                                    height: '120px', 
+                                                    objectFit: 'cover', 
+                                                    objectPosition: 'center',
+                                                    border: '1px solid #ddd',
+                                                    borderRadius: '8px'
+                                                }} 
                                                 onError={(e) => {
-                                                     
                                                     e.target.style.display = 'none';
                                                 }}
                                             />
@@ -1940,6 +2054,17 @@ function EmpCompanyProfilePage() {
                     type="warning"
                 />
             )}
+            
+            <ImageResizer
+                src={currentImage}
+                isOpen={isResizerOpen}
+                onClose={closeResizer}
+                onSave={handleResizerSave}
+                aspectRatio={resizeConfig.aspectRatio}
+                maxWidth={resizeConfig.maxWidth}
+                maxHeight={resizeConfig.maxHeight}
+                quality={resizeConfig.quality}
+            />
         </div>
     );
 }
