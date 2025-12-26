@@ -6,6 +6,7 @@ import { showSuccess, showError } from '../../../../utils/popupNotification';
 import './employer-details-styles.css';
 
 function EmployerDetails() {
+    const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
     const navigate = useNavigate();
     const { id } = useParams();
     const [profile, setProfile] = useState(null);
@@ -30,7 +31,7 @@ function EmployerDetails() {
     const fetchEmployerProfile = async () => {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch(`http://localhost:5000/api/admin/employers/${id}/profile`, {
+            const response = await fetch(`${API_BASE_URL}/admin/employers/${id}/profile`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
@@ -63,7 +64,7 @@ function EmployerDetails() {
     const downloadDocument = async (employerId, documentType) => {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch(`http://localhost:5000/api/admin/download-document/${employerId}/${documentType}`, {
+            const response = await fetch(`${API_BASE_URL}/admin/download-document/${employerId}/${documentType}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             
@@ -88,7 +89,7 @@ function EmployerDetails() {
     const viewDocumentImage = async (employerId, documentType) => {
         try {
             const token = localStorage.getItem('adminToken');
-            const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+            // API_BASE_URL is defined at component level
             const response = await fetch(`${API_BASE_URL}/admin/employers/${employerId}/view-document/${documentType}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -110,7 +111,7 @@ function EmployerDetails() {
         try {
             setJobsLoading(true);
             const token = localStorage.getItem('adminToken');
-            const response = await fetch(`http://localhost:5000/api/admin/employers/${id}/jobs`, {
+            const response = await fetch(`${API_BASE_URL}/admin/employers/${id}/jobs`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
@@ -133,7 +134,7 @@ function EmployerDetails() {
     const updateDocumentStatus = async (employerId, field, status) => {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch(`http://localhost:5000/api/admin/employers/${employerId}/profile`, {
+            const response = await fetch(`${API_BASE_URL}/admin/employers/${employerId}/profile`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -156,7 +157,7 @@ function EmployerDetails() {
     const handleApproveAuthorizationLetter = async (letterId) => {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch(`http://localhost:5000/api/admin/employers/${id}/authorization-letters/${letterId}/approve`, {
+            const response = await fetch(`${API_BASE_URL}/admin/employers/${id}/authorization-letters/${letterId}/approve`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -187,7 +188,7 @@ function EmployerDetails() {
     const handleRejectAuthorizationLetter = async (letterId) => {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch(`http://localhost:5000/api/admin/employers/${id}/authorization-letters/${letterId}/reject`, {
+            const response = await fetch(`${API_BASE_URL}/admin/employers/${id}/authorization-letters/${letterId}/reject`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
