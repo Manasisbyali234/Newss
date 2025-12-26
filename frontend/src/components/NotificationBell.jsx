@@ -79,7 +79,7 @@ const NotificationBell = ({ userRole }) => {
       
       if (data.success) {
         setNotifications(data.notifications);
-        setUnreadCount(data.unreadCount || data.notifications.length);
+        setUnreadCount(data.unreadCount !== undefined ? data.unreadCount : data.notifications.filter(n => !n.isRead).length);
       }
     } catch (error) {
     }
@@ -90,7 +90,11 @@ const NotificationBell = ({ userRole }) => {
       const token = localStorage.getItem(`${userRole}Token`);
       if (!token) return;
       
-      await fetch(`http://localhost:5000/api/notifications/${notificationId}/read`, {
+      const endpoint = userRole === 'placement'
+        ? `http://localhost:5000/api/placement/notifications/${notificationId}/read`
+        : `http://localhost:5000/api/notifications/${notificationId}/read`;
+      
+      await fetch(endpoint, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -107,7 +111,11 @@ const NotificationBell = ({ userRole }) => {
       const token = localStorage.getItem(`${userRole}Token`);
       if (!token) return;
       
-      await fetch(`http://localhost:5000/api/notifications/${userRole}/read-all`, {
+      const endpoint = userRole === 'placement'
+        ? `http://localhost:5000/api/placement/notifications/read-all`
+        : `http://localhost:5000/api/notifications/${userRole}/read-all`;
+      
+      await fetch(endpoint, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -125,7 +133,11 @@ const NotificationBell = ({ userRole }) => {
       const token = localStorage.getItem(`${userRole}Token`);
       if (!token) return;
       
-      await fetch(`http://localhost:5000/api/notifications/${notificationId}/dismiss`, {
+      const endpoint = userRole === 'placement'
+        ? `http://localhost:5000/api/placement/notifications/${notificationId}/dismiss`
+        : `http://localhost:5000/api/notifications/${notificationId}/dismiss`;
+      
+      await fetch(endpoint, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -254,8 +266,8 @@ const NotificationBell = ({ userRole }) => {
           </div>
           
           <div className="notification-dropdown-content" style={{ maxHeight: '300px', overflowY: 'auto' }}>
-            {notifications.length > 0 ? (
-              notifications.map((notification) => (
+            {notifications.filter(n => !n.isRead).length > 0 ? (
+              notifications.filter(n => !n.isRead).map((notification) => (
                 <div
                   key={notification._id}
                   onMouseEnter={() => setHoveredId(notification._id)}

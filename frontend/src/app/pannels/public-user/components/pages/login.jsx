@@ -164,15 +164,15 @@ function LoginPage() {
                                         </div>
                                     )}
                                             <div className="mb-4">
-                                                <ul className="nav nav-pills nav-fill" id="myTab2" role="tablist" style={{borderRadius: '12px', padding: '6px', marginBottom: '24px', gap: '8px'}}>
+                                                <ul className="nav nav-tabs" id="myTab2" role="tablist">
                                                     <li className="nav-item">
-                                                        <button className="nav-link active" data-bs-toggle="tab" data-bs-target="#twm-login-candidate" type="button" style={{borderRadius: '10px', fontWeight: '500', padding: '10px 16px', fontSize: '14px'}}><i className="fas fa-user-tie me-2" style={{color: '#FF6A00'}} />Candidate</button>
+                                                        <button className="nav-link active" data-bs-toggle="tab" data-bs-target="#twm-login-candidate" type="button"><i className="fas fa-user-tie me-1" /><span>Candidate</span></button>
                                                     </li>
                                                     <li className="nav-item">
-                                                        <button className="nav-link" data-bs-toggle="tab" data-bs-target="#twm-login-Employer" type="button" style={{borderRadius: '10px', fontWeight: '500', padding: '10px 16px', fontSize: '14px'}}><i className="fas fa-building me-2" style={{color: '#FF6A00'}} />Employer</button>
+                                                        <button className="nav-link" data-bs-toggle="tab" data-bs-target="#twm-login-Employer" type="button"><i className="fas fa-building me-1" /><span>Employer</span></button>
                                                     </li>
                                                     <li className="nav-item">
-                                                        <button className="nav-link" data-bs-toggle="tab" data-bs-target="#twm-login-Placement" type="button" style={{borderRadius: '10px', fontWeight: '500', padding: '10px 16px', fontSize: '14px'}}><i className="fas fa-graduation-cap me-2" style={{color: '#FF6A00'}} />Placement Officer</button>
+                                                        <button className="nav-link" data-bs-toggle="tab" data-bs-target="#twm-login-Placement" type="button"><i className="fas fa-graduation-cap me-1" /><span>Placement</span></button>
                                                     </li>
                                                 </ul>
                                                 <div className="tab-content" id="myTab2Content">

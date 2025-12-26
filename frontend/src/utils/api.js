@@ -317,7 +317,7 @@ export const api = {
     }).then((res) => res.json());
   },
 
-  getPlacementfile: () => {
+  getPlacementProfile: () => {
     console.log('API: Getting placement profile');
     const headers = getAuthHeaders('placement');
     console.log('API: Request headers for profile fetch:', headers);
@@ -504,7 +504,7 @@ export const api = {
     }).then(handleApiResponse);
   },
 
-  updatePlacementfile: (data) => {
+  updatePlacementProfile: (data) => {
     console.log('API: Updating placement profile with data:', data);
     const headers = getAuthHeaders('placement');
     console.log('API: Request headers:', headers);
@@ -535,6 +535,38 @@ export const api = {
     }).catch(error => {
       console.error('API: Profile update fetch error:', error);
       throw error;
+    });
+  },
+
+  uploadLogo: (logoBase64) => {
+    console.log('API: Uploading logo');
+    const headers = getAuthHeaders('placement');
+    return fetch(`${API_BASE_URL}/placement/upload-logo`, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({ logo: logoBase64 }),
+    }).then(async (response) => {
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Upload failed' }));
+        throw new Error(errorData.message || 'Logo upload failed');
+      }
+      return response.json();
+    });
+  },
+
+  uploadIdCard: (idCardBase64) => {
+    console.log('API: Uploading ID card');
+    const headers = getAuthHeaders('placement');
+    return fetch(`${API_BASE_URL}/placement/upload-id-card`, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({ idCard: idCardBase64 }),
+    }).then(async (response) => {
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Upload failed' }));
+        throw new Error(errorData.message || 'ID card upload failed');
+      }
+      return response.json();
     });
   },
 

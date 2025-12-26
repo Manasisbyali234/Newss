@@ -139,12 +139,10 @@ function AdminSubAdmin() {
                 errors.password = 'Password is required';
             } else if (formData.password.length < 6) {
                 errors.password = 'Password must be at least 6 characters';
-            } else if (!/(?=.*[a-z])/.test(formData.password)) {
-                errors.password = 'Password must contain at least one lowercase letter';
             } else if (!/(?=.*[A-Z])/.test(formData.password)) {
                 errors.password = 'Password must contain at least one uppercase letter';
-            } else if (!/(?=.*[0-9])/.test(formData.password)) {
-                errors.password = 'Password must contain at least one number';
+            } else if (!/[@#!%$*?]/.test(formData.password)) {
+                errors.password = 'Password must contain at least one special character (@#!%$*?)';
             }
             
             // Confirm Password validation

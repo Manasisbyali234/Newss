@@ -12,8 +12,6 @@ function AdminAddCandidate() {
     const [passwordValidation, setPasswordValidation] = useState({
         length: false,
         uppercase: false,
-        lowercase: false,
-        number: false,
         specialChars: false
     });
     const [formData, setFormData] = useState({
@@ -30,8 +28,6 @@ function AdminAddCandidate() {
         setPasswordValidation({
             length: pwd.length >= 6,
             uppercase: /[A-Z]/.test(pwd),
-            lowercase: /[a-z]/.test(pwd),
-            number: /[0-9]/.test(pwd),
             specialChars: specialChars.length >= 1
         });
     };
@@ -88,10 +84,6 @@ function AdminAddCandidate() {
             newErrors.password = 'Password must be at least 6 characters';
         } else if (!passwordValidation.uppercase) {
             newErrors.password = 'Password must contain at least one uppercase letter';
-        } else if (!passwordValidation.lowercase) {
-            newErrors.password = 'Password must contain at least one lowercase letter';
-        } else if (!passwordValidation.number) {
-            newErrors.password = 'Password must contain at least one number';
         } else if (!passwordValidation.specialChars) {
             newErrors.password = 'Password must contain at least one special character (@#!%$*?)';
         }
@@ -240,14 +232,6 @@ function AdminAddCandidate() {
                                             <li style={{ padding: '3px 0', fontSize: '12px', color: passwordValidation.uppercase ? '#28a745' : '#dc3545' }}>
                                                 <i className={`fa ${passwordValidation.uppercase ? 'fa-check-circle' : 'fa-times-circle'}`} style={{ marginRight: '6px' }}></i>
                                                 One uppercase letter
-                                            </li>
-                                            <li style={{ padding: '3px 0', fontSize: '12px', color: passwordValidation.lowercase ? '#28a745' : '#dc3545' }}>
-                                                <i className={`fa ${passwordValidation.lowercase ? 'fa-check-circle' : 'fa-times-circle'}`} style={{ marginRight: '6px' }}></i>
-                                                One lowercase letter
-                                            </li>
-                                            <li style={{ padding: '3px 0', fontSize: '12px', color: passwordValidation.number ? '#28a745' : '#dc3545' }}>
-                                                <i className={`fa ${passwordValidation.number ? 'fa-check-circle' : 'fa-times-circle'}`} style={{ marginRight: '6px' }}></i>
-                                                One number
                                             </li>
                                             <li style={{ padding: '3px 0', fontSize: '12px', color: passwordValidation.specialChars ? '#28a745' : '#dc3545' }}>
                                                 <i className={`fa ${passwordValidation.specialChars ? 'fa-check-circle' : 'fa-times-circle'}`} style={{ marginRight: '6px' }}></i>

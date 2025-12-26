@@ -4,13 +4,14 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: transparent;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 99999;
+  z-index: 9999999;
   animation: fadeIn 0.2s ease-in;
   padding: 20px;
+  pointer-events: none;
 }
 
 @keyframes fadeIn {
@@ -33,7 +34,8 @@
   max-height: 80vh;
   overflow-y: auto;
   position: relative;
-  z-index: 100000;
+  z-index: 9999999;
+  pointer-events: auto;
 }
 
 @keyframes slideIn {

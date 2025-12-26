@@ -489,7 +489,7 @@
     max-height: 90vh;
     position: relative;
     animation: zoomIn 0.3s ease;
-    overflow: visible;
+    overflow: auto;
     display: flex;
     flex-direction: column;
     transition: all 0.3s ease;
@@ -587,6 +587,14 @@
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     display: block;
     margin: 0 auto;
+}
+
+.image-modal-content .text-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    overflow: auto;
 }
 
 .loading-container {

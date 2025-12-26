@@ -602,6 +602,40 @@ exports.downloadDocument = async (req, res) => {
   }
 };
 
+// View Base64 document (for displaying images without downloading)
+exports.viewDocument = async (req, res) => {
+  try {
+    const { employerId, documentType } = req.params;
+    
+    const profile = await EmployerProfile.findOne({ employerId });
+    if (!profile) {
+      return res.status(404).json({ success: false, message: 'Profile not found' });
+    }
+
+    let base64Data = profile[documentType];
+    if (!base64Data) {
+      return res.status(404).json({ success: false, message: 'Document not found' });
+    }
+
+    let buffer, mimeType;
+    
+    if (base64Data.startsWith('data:')) {
+      const result = base64ToBuffer(base64Data);
+      buffer = result.buffer;
+      mimeType = result.mimeType;
+    } else {
+      buffer = Buffer.from(base64Data, 'base64');
+      mimeType = 'image/jpeg';
+    }
+
+    res.setHeader('Content-Type', mimeType);
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.send(buffer);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // Content Management Controllers
 exports.createContent = async (req, res) => {
   try {

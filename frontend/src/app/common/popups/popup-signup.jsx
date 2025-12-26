@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { pubRoute, publicUser } from '../../../globals/route-names';
 import { validatePhoneNumber, handlePhoneInputChange, validatePhoneOnBlur } from '../../../utils/phoneValidation';
+import { showSuccess, showError } from '../../../utils/popupNotification';
 import TermsModal from '../../../components/TermsModal';
+import '../../../popup-nav-buttons.css';
 
 function SignUpPopup() {
     const [candidateData, setCandidateData] = useState({
@@ -62,6 +64,7 @@ function SignUpPopup() {
             document.body.style.overflow = '';
             document.body.style.position = '';
             document.body.style.width = '';
+            setTermsAccepted({ candidate: false, employer: false, placement: false });
         };
 
         // Clear messages when tabs change
@@ -69,6 +72,7 @@ function SignUpPopup() {
             setError('');
             setSuccess('');
             setFieldErrors({});
+            setTermsAccepted({ candidate: false, employer: false, placement: false });
         };
 
         if (modal) {
@@ -273,7 +277,7 @@ function SignUpPopup() {
         const isFormValid = validateForm(candidateData, 'candidate');
 
         if (!isFormValid) {
-            setError('Please correct the errors below and try again.');
+            showError('Please correct the errors below and try again.');
             return;
         }
 
@@ -305,16 +309,24 @@ function SignUpPopup() {
                 setCandidateData({ username: '', email: '', mobile: '', countryCode: '+91' });
                 setFieldErrors({});
                 setError('');
-                setSuccess('Registration successful! Please check your email to create your password.');
+                setSuccess('');
+                const modal = document.getElementById('sign_up_popup');
+                if (modal) {
+                    const modalInstance = window.bootstrap.Modal.getInstance(modal) || new window.bootstrap.Modal(modal);
+                    modalInstance.hide();
+                }
+                setTimeout(() => {
+                    showSuccess('You have successfully signed up! Please check your registered email inbox to create your password.');
+                }, 500);
             } else {
-                if (data.message && data.message.includes('email')) {
-                    setError('This email address is already registered. Please try logging in instead.');
+                if (data.message && data.message.toLowerCase().includes('already registered')) {
+                    showError('This email address is already registered. Please try logging in instead.');
                 } else {
-                    setError(data.message || 'Registration failed. Please try again.');
+                    showError(data.message || 'Registration failed. Please try again.');
                 }
             }
         } catch (error) {
-            setError('Network error. Please check your connection and try again.');
+            showError('Network error. Please check your connection and try again.');
         } finally {
             setLoading(false);
         }
@@ -326,7 +338,7 @@ function SignUpPopup() {
         const isFormValid = validateForm(employerData, 'employer');
 
         if (!isFormValid) {
-            setError('Please correct the errors below and try again.');
+            showError('Please correct the errors below and try again.');
             return;
         }
 
@@ -361,16 +373,24 @@ function SignUpPopup() {
                 setEmployerData({ name: '', email: '', mobile: '', employerCategory: '', countryCode: '+91' });
                 setFieldErrors({});
                 setError('');
-                setSuccess('Registration successful! Please check your email to create your password.');
+                setSuccess('');
+                const modal = document.getElementById('sign_up_popup');
+                if (modal) {
+                    const modalInstance = window.bootstrap.Modal.getInstance(modal) || new window.bootstrap.Modal(modal);
+                    modalInstance.hide();
+                }
+                setTimeout(() => {
+                    showSuccess('You have successfully signed up! Please check your registered email inbox to create your password.');
+                }, 500);
             } else {
-                if (data.message && data.message.includes('email')) {
-                    setError('This email address is already registered. Please try logging in instead.');
+                if (data.message && data.message.toLowerCase().includes('already registered')) {
+                    showError('This email address is already registered. Please try logging in instead.');
                 } else {
-                    setError(data.message || 'Registration failed. Please try again.');
+                    showError(data.message || 'Registration failed. Please try again.');
                 }
             }
         } catch (error) {
-            setError('Network error. Please check your connection and try again.');
+            showError('Network error. Please check your connection and try again.');
         } finally {
             setLoading(false);
         }
@@ -382,7 +402,7 @@ function SignUpPopup() {
         const isFormValid = validateForm(placementData, 'placement');
 
         if (!isFormValid) {
-            setError('Please correct the errors below and try again.');
+            showError('Please correct the errors below and try again.');
             return;
         }
 
@@ -415,16 +435,24 @@ function SignUpPopup() {
                 setPlacementData({ name: '', email: '', phone: '', collegeName: '', countryCode: '+91' });
                 setFieldErrors({});
                 setError('');
-                setSuccess('Registration successful! Please check your email to create your password.');
+                setSuccess('');
+                const modal = document.getElementById('sign_up_popup');
+                if (modal) {
+                    const modalInstance = window.bootstrap.Modal.getInstance(modal) || new window.bootstrap.Modal(modal);
+                    modalInstance.hide();
+                }
+                setTimeout(() => {
+                    showSuccess('You have successfully signed up! Please check your registered email inbox to create your password.');
+                }, 500);
             } else {
-                if (data.message && data.message.includes('email')) {
-                    setError('This email address is already registered. Please try logging in instead.');
+                if (data.message && data.message.toLowerCase().includes('already registered')) {
+                    showError('This email address is already registered. Please try logging in instead.');
                 } else {
-                    setError(data.message || 'Registration failed. Please try again.');
+                    showError(data.message || 'Registration failed. Please try again.');
                 }
             }
         } catch (error) {
-            setError('Network error. Please check your connection and try again.');
+            showError('Network error. Please check your connection and try again.');
         } finally {
             setLoading(false);
         }
@@ -611,8 +639,8 @@ function SignUpPopup() {
 														Already registered? <a href="#sign_up_popup2" data-bs-target="#sign_up_popup2" data-bs-toggle="modal" data-bs-dismiss="modal" onClick={() => { setError(''); setSuccess(''); setFieldErrors({}); }} style={{textDecoration: "underline", cursor: "pointer", color: "#fd7e14"}}>Sign in</a>
 													</p>
 												</div>
-												<div className="col-md-12">
-													<button id="candidate-submit-btn" type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%" }} disabled={loading}>
+												<div className="col-12">
+													<button id="candidate-submit-btn" type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%", boxShadow: "none" }} disabled={loading}>
 														{loading ? 'Signing Up...' : 'Sign Up'}
 													</button>
 												</div>
@@ -733,8 +761,8 @@ function SignUpPopup() {
 													</p>
 												</div>
 
-												<div className="col-md-12">
-													<button id="employer-submit-btn" type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%" }} disabled={loading}>
+												<div className="col-12">
+													<button id="employer-submit-btn" type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%", boxShadow: "none" }} disabled={loading}>
 														{loading ? 'Signing Up...' : 'Sign Up'}
 													</button>
 												</div>
@@ -854,8 +882,8 @@ function SignUpPopup() {
 													</p>
 												</div>
 
-												<div className="col-md-12">
-													<button id="placement-submit-btn" type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%" }} disabled={loading}>
+												<div className="col-12">
+													<button id="placement-submit-btn" type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%", boxShadow: "none" }} disabled={loading}>
 														{loading ? 'Signing Up...' : 'Sign Up'}
 													</button>
 												</div>

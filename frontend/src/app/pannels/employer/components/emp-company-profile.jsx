@@ -102,7 +102,7 @@ function EmpCompanyProfilePage() {
         phone: { required: true, phone: true },
         email: { required: true, email: true },
         website: { required: true, url: true },
-        establishedSince: { required: true, year: true },
+        establishedSince: { year: true },
         teamSize: { required: true },
         description: { required: true, minLength: 10 },
         location: { required: true, minLength: 2 },
@@ -1012,42 +1012,47 @@ function EmpCompanyProfilePage() {
                                     onChange={(e) => handleDocumentUpload(e, 'logo')}
                                 />
                                 {formData.logo && (
-                                    <div className="mt-2 position-relative d-inline-block">
-                                        <img 
-                                            src={formData.logo.startsWith('data:') ? formData.logo : `data:image/jpeg;base64,${formData.logo}`} 
-                                            alt="Company Logo" 
-                                            style={{
-                                                width: '150px', 
-                                                height: '150px', 
-                                                objectFit: 'cover', 
-                                                objectPosition: 'center',
-                                                border: '1px solid #ddd',
-                                                borderRadius: '8px'
-                                            }} 
-                                        />
-                                        <button
-                                            type="button"
-                                            className="btn btn-sm position-absolute"
-                                            style={{
-                                                top: '5px',
-                                                right: '5px',
-                                                background: 'rgba(255, 107, 53, 0.9)',
-                                                color: 'white',
-                                                border: 'none',
-                                                borderRadius: '4px',
-                                                padding: '4px 8px'
-                                            }}
-                                            onClick={() => {
-                                                const imgSrc = formData.logo.startsWith('data:') ? formData.logo : `data:image/jpeg;base64,${formData.logo}`;
-                                                openLogoResizer(imgSrc, (processedImage) => {
-                                                    uploadProcessedImage(processedImage, 'logo');
-                                                });
-                                            }}
-                                            title="Edit Image"
-                                        >
-                                            <Edit3 size={12} />
-                                        </button>
-                                        <p className="text-success mt-1">✓ Company Logo uploaded</p>
+                                    <div className="mt-2">
+                                        <div className="d-inline-block">
+                                            <img 
+                                                src={formData.logo.startsWith('data:') ? formData.logo : `data:image/jpeg;base64,${formData.logo}`} 
+                                                alt="Company Logo" 
+                                                style={{
+                                                    width: '150px', 
+                                                    height: '150px', 
+                                                    objectFit: 'cover', 
+                                                    objectPosition: 'center',
+                                                    border: '1px solid #ddd',
+                                                    borderRadius: '8px',
+                                                    display: 'block'
+                                                }} 
+                                            />
+                                        </div>
+                                        <div className="mt-2">
+                                            <button
+                                                type="button"
+                                                className="btn btn-sm"
+                                                style={{
+                                                    background: 'rgba(255, 107, 53, 0.9)',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '4px',
+                                                    padding: '6px 12px',
+                                                    marginRight: '8px',
+                                                    fontSize: '12px'
+                                                }}
+                                                onClick={() => {
+                                                    const imgSrc = formData.logo.startsWith('data:') ? formData.logo : `data:image/jpeg;base64,${formData.logo}`;
+                                                    openLogoResizer(imgSrc, (processedImage) => {
+                                                        uploadProcessedImage(processedImage, 'logo');
+                                                    });
+                                                }}
+                                                title="Resize & Crop Image"
+                                            >
+                                                <Edit3 size={12} className="me-1" /> Resize & Crop
+                                            </button>
+                                        </div>
+                                        <p className="text-success mt-2">✓ Company Logo uploaded</p>
                                     </div>
                                 )}
                                 <small className="text-muted">Square logo for your company profile (JPG, PNG, max 5MB)</small>
@@ -1064,42 +1069,47 @@ function EmpCompanyProfilePage() {
                                     onChange={(e) => handleDocumentUpload(e, 'coverImage')}
                                 />
                                 {formData.coverImage && (
-                                    <div className="mt-2 position-relative d-inline-block">
-                                        <img 
-                                            src={formData.coverImage.startsWith('data:') ? formData.coverImage : `data:image/jpeg;base64,${formData.coverImage}`} 
-                                            alt="Background Banner" 
-                                            style={{
-                                                width: '200px', 
-                                                height: '120px', 
-                                                objectFit: 'cover', 
-                                                objectPosition: 'center',
-                                                border: '1px solid #ddd',
-                                                borderRadius: '8px'
-                                            }} 
-                                        />
-                                        <button
-                                            type="button"
-                                            className="btn btn-sm position-absolute"
-                                            style={{
-                                                top: '5px',
-                                                right: '5px',
-                                                background: 'rgba(255, 107, 53, 0.9)',
-                                                color: 'white',
-                                                border: 'none',
-                                                borderRadius: '4px',
-                                                padding: '4px 8px'
-                                            }}
-                                            onClick={() => {
-                                                const imgSrc = formData.coverImage.startsWith('data:') ? formData.coverImage : `data:image/jpeg;base64,${formData.coverImage}`;
-                                                openBannerResizer(imgSrc, (processedImage) => {
-                                                    uploadProcessedImage(processedImage, 'coverImage');
-                                                });
-                                            }}
-                                            title="Edit Image"
-                                        >
-                                            <Edit3 size={12} />
-                                        </button>
-                                        <p className="text-success mt-1">✓ Background Banner uploaded</p>
+                                    <div className="mt-2">
+                                        <div className="d-inline-block">
+                                            <img 
+                                                src={formData.coverImage.startsWith('data:') ? formData.coverImage : `data:image/jpeg;base64,${formData.coverImage}`} 
+                                                alt="Background Banner" 
+                                                style={{
+                                                    width: '200px', 
+                                                    height: '120px', 
+                                                    objectFit: 'cover', 
+                                                    objectPosition: 'center',
+                                                    border: '1px solid #ddd',
+                                                    borderRadius: '8px',
+                                                    display: 'block'
+                                                }} 
+                                            />
+                                        </div>
+                                        <div className="mt-2">
+                                            <button
+                                                type="button"
+                                                className="btn btn-sm"
+                                                style={{
+                                                    background: 'rgba(255, 107, 53, 0.9)',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '4px',
+                                                    padding: '6px 12px',
+                                                    marginRight: '8px',
+                                                    fontSize: '12px'
+                                                }}
+                                                onClick={() => {
+                                                    const imgSrc = formData.coverImage.startsWith('data:') ? formData.coverImage : `data:image/jpeg;base64,${formData.coverImage}`;
+                                                    openBannerResizer(imgSrc, (processedImage) => {
+                                                        uploadProcessedImage(processedImage, 'coverImage');
+                                                    });
+                                                }}
+                                                title="Resize & Crop Image"
+                                            >
+                                                <Edit3 size={12} className="me-1" /> Resize & Crop
+                                            </button>
+                                        </div>
+                                        <p className="text-success mt-2">✓ Background Banner uploaded</p>
                                     </div>
                                 )}
                                 <small className="text-muted">Widescreen banner for your company profile (JPG, PNG, max 5MB)</small>
@@ -1198,7 +1208,7 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-xl-4 col-lg-12 col-md-12">
                                 <div className="form-group">
-                                    <label className="required-field"><Calendar size={16} className="me-2" /> Est. Since</label>
+                                    <label><Calendar size={16} className="me-2" /> Est. Since</label>
                                     <input
                                         className={`form-control ${errors.establishedSince ? 'is-invalid' : ''}`}
                                         type="text"

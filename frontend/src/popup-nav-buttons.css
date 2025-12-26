@@ -15,13 +15,14 @@
     padding: 10px 16px !important;
     white-space: nowrap !important;
     border-radius: 10px !important;
-    margin-right: 8px !important;
-    margin-bottom: 8px !important;
+    margin-right: 0 !important; /* Removed margin */
+    margin-bottom: 0 !important; /* Removed margin */
     overflow: visible !important;
     text-overflow: clip !important;
     margin-top: 0 !important;
     min-height: 40px !important;
-    flex: 0 1 auto !important;
+    flex: 1 1 auto !important; /* Changed to grow */
+    width: 100% !important; /* Full width */
 }
 
 .modal.twm-sign-up .nav-tabs .nav-link i,
@@ -44,14 +45,30 @@
 .twm-sign-up .nav-tabs {
     border: none !important;
     display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 8px !important;
-    justify-content: flex-start !important;
+    flex-wrap: nowrap !important; /* No wrap */
+    gap: 5px !important; /* Consistent gap */
+    justify-content: center !important; /* Center align */
+    width: 100% !important;
 }
 
+/* Override global .nav-item styles causing conflicts */
 .twm-sign-up .nav-tabs .nav-item {
-    flex: 0 1 auto !important;
+    flex: 1 1 auto !important;
     margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    transition: none !important;
+    border-radius: 0 !important;
+}
+
+.twm-sign-up .nav-tabs .nav-item:hover {
+    background: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    color: inherit !important;
 }
 
 .twm-sign-up .btn-close {
@@ -74,6 +91,7 @@
 }
 
 @media (max-width: 991px) {
+    .modal.twm-sign-up .nav-tabs .nav-item .nav-link,
     .modal.twm-sign-up .nav-tabs .nav-link,
     .twm-sign-up .modal-body .nav-tabs .nav-link {
         padding: 10px 16px !important;
@@ -83,14 +101,37 @@
 }
 
 @media (max-width: 767px) {
+    .twm-sign-up .nav-tabs {
+        gap: 3px !important; /* Smaller gap for mobile */
+        flex-wrap: nowrap !important;
+        width: 100% !important;
+        padding: 0 !important;
+    }
+
+    .twm-sign-up .nav-tabs .nav-item {
+        flex: 1 1 auto !important;
+        width: 33.33% !important;
+        min-width: 0 !important;
+    }
+
+    .modal.twm-sign-up .nav-tabs .nav-item .nav-link,
     .modal.twm-sign-up .nav-tabs .nav-link,
     .twm-sign-up .modal-body .nav-tabs .nav-link,
+    .twm-sign-up .twm-tabs-style-2 .nav-tabs .nav-item .nav-link,
     .twm-sign-up .twm-tabs-style-2 .nav-tabs .nav-link {
-        padding: 10px 14px !important;
+        padding: 8px 4px !important;
         font-size: 13px !important;
-        margin-right: 6px !important;
-        margin-bottom: 6px !important;
+        margin-right: 0 !important;
+        margin-bottom: 0 !important;
         min-height: 40px !important;
+        white-space: nowrap !important;
+        line-height: 1.1 !important;
+        width: 100% !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
     }
     .modal.twm-sign-up .nav-tabs .nav-link i,
     .twm-sign-up .nav-tabs .nav-link i {
@@ -102,14 +143,14 @@
 @media (max-width: 576px) {
     .modal.twm-sign-up .nav-tabs,
     .twm-sign-up .twm-tabs-style-2 .nav-tabs {
-        gap: 6px !important;
+        gap: 2px !important;
     }
     .modal.twm-sign-up .nav-tabs .nav-item .nav-link,
     .modal.twm-sign-up .nav-tabs .nav-link,
     .twm-sign-up .modal-body .nav-tabs .nav-link,
     .twm-sign-up .twm-tabs-style-2 .nav-tabs .nav-item .nav-link,
     .twm-sign-up .twm-tabs-style-2 .nav-tabs .nav-link {
-        padding: 10px 12px !important;
+        padding: 6px 2px !important;
         font-size: 12px !important;
         margin-right: 0 !important;
         margin-bottom: 0 !important;
@@ -125,13 +166,27 @@
 @media (max-width: 400px) {
     .modal.twm-sign-up .nav-tabs .nav-item .nav-link,
     .modal.twm-sign-up .nav-tabs .nav-link,
+    .twm-sign-up .twm-tabs-style-2 .nav-tabs .nav-item .nav-link,
     .twm-sign-up .twm-tabs-style-2 .nav-tabs .nav-link {
-        padding: 10px 10px !important;
-        font-size: 11px !important;
+        padding: 6px 1px !important;
+        font-size: 10px !important;
     }
     .modal.twm-sign-up .nav-tabs .nav-link i,
     .twm-sign-up .nav-tabs .nav-link i {
         font-size: 10px !important;
-        margin-right: 3px !important;
+        margin-right: 2px !important;
     }
+}
+
+/* Force full width for submit buttons in signup/signin popups to override global styles */
+.modal.twm-sign-up button[type="submit"],
+.twm-sign-up button[type="submit"],
+#candidate-submit-btn,
+#employer-submit-btn,
+#placement-submit-btn {
+    max-width: 100% !important;
+    width: 100% !important;
+    display: block !important;
+    min-width: 100% !important;
+    flex: 1 1 100% !important;
 }

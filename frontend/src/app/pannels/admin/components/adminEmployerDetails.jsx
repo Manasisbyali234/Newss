@@ -85,6 +85,26 @@ function EmployerDetails() {
         }
     };
 
+    const viewDocumentImage = async (employerId, documentType) => {
+        try {
+            const token = localStorage.getItem('adminToken');
+            const response = await fetch(`http://localhost:5000/api/admin/employers/${employerId}/view-document/${documentType}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            if (response.ok) {
+                const blob = await response.blob();
+                const imageUrl = window.URL.createObjectURL(blob);
+                setCurrentImage(imageUrl);
+                setShowImageModal(true);
+            } else {
+                showError('Failed to load document image');
+            }
+        } catch (error) {
+            showError('Error loading document image');
+        }
+    };
+
     const fetchEmployerJobs = async () => {
         try {
             setJobsLoading(true);
@@ -250,11 +270,7 @@ function EmployerDetails() {
                                 <div>
                                     <button 
                                         className="btn btn-outline-primary btn-sm"
-                                        onClick={() => {
-                                            const imageUrl = profile.logo.startsWith('data:') ? profile.logo : `data:image/jpeg;base64,${profile.logo}`;
-                                            setCurrentImage(imageUrl);
-                                            setShowImageModal(true);
-                                        }}
+                                        onClick={() => viewDocumentImage(id, 'logo')}
                                         style={{ backgroundColor: 'transparent', borderColor: '#ff6b35', color: '#ff6b35' }}
                                     >
                                         <i className="fa fa-eye"></i>
@@ -275,11 +291,7 @@ function EmployerDetails() {
                                 <div>
                                     <button 
                                         className="btn btn-outline-primary btn-sm"
-                                        onClick={() => {
-                                            const imageUrl = profile.coverImage.startsWith('data:') ? profile.coverImage : `data:image/jpeg;base64,${profile.coverImage}`;
-                                            setCurrentImage(imageUrl);
-                                            setShowImageModal(true);
-                                        }}
+                                        onClick={() => viewDocumentImage(id, 'coverImage')}
                                         style={{ backgroundColor: 'transparent', borderColor: '#ff6b35', color: '#ff6b35' }}
                                     >
                                         <i className="fa fa-eye"></i>
@@ -511,11 +523,7 @@ function EmployerDetails() {
                                 <div>
                                     <button 
                                         className="btn btn-outline-primary btn-sm"
-                                        onClick={() => {
-                                            const imageUrl = profile.companyIdCardPicture.startsWith('data:') ? profile.companyIdCardPicture : `data:image/jpeg;base64,${profile.companyIdCardPicture}`;
-                                            setCurrentImage(imageUrl);
-                                            setShowImageModal(true);
-                                        }}
+                                        onClick={() => viewDocumentImage(id, 'companyIdCardPicture')}
                                         style={{ backgroundColor: 'transparent', borderColor: '#ff6b35', color: '#ff6b35' }}
                                     >
                                         <i className="fa fa-eye"></i>
@@ -570,13 +578,7 @@ function EmployerDetails() {
                                 <td style={{textAlign: 'center'}}>
                                     <button 
                                         className="btn btn-outline-primary btn-sm"
-                                        onClick={() => {
-                                            if (profile.panCardImage) {
-                                                const imageUrl = profile.panCardImage.startsWith('data:') ? profile.panCardImage : `data:image/jpeg;base64,${profile.panCardImage}`;
-                                                setCurrentImage(imageUrl);
-                                                setShowImageModal(true);
-                                            }
-                                        }}
+                                        onClick={() => viewDocumentImage(id, 'panCardImage')}
                                         disabled={!profile.panCardImage}
                                         style={{ borderColor: '#ff6b35', color: '#ff6b35' }}
                                     >
@@ -634,13 +636,7 @@ function EmployerDetails() {
                                 <td style={{textAlign: 'center'}}>
                                     <button 
                                         className="btn btn-outline-primary btn-sm"
-                                        onClick={() => {
-                                            if (profile.cinImage) {
-                                                const imageUrl = profile.cinImage.startsWith('data:') ? profile.cinImage : `data:image/jpeg;base64,${profile.cinImage}`;
-                                                setCurrentImage(imageUrl);
-                                                setShowImageModal(true);
-                                            }
-                                        }}
+                                        onClick={() => viewDocumentImage(id, 'cinImage')}
                                         disabled={!profile.cinImage}
                                         style={{ borderColor: '#ff6b35', color: '#ff6b35' }}
                                     >
@@ -698,13 +694,7 @@ function EmployerDetails() {
                                 <td style={{textAlign: 'center'}}>
                                     <button 
                                         className="btn btn-outline-primary btn-sm"
-                                        onClick={() => {
-                                            if (profile.gstImage) {
-                                                const imageUrl = profile.gstImage.startsWith('data:') ? profile.gstImage : `data:image/jpeg;base64,${profile.gstImage}`;
-                                                setCurrentImage(imageUrl);
-                                                setShowImageModal(true);
-                                            }
-                                        }}
+                                        onClick={() => viewDocumentImage(id, 'gstImage')}
                                         disabled={!profile.gstImage}
                                         style={{ borderColor: '#ff6b35', color: '#ff6b35' }}
                                     >
@@ -762,13 +752,7 @@ function EmployerDetails() {
                                 <td style={{textAlign: 'center'}}>
                                     <button 
                                         className="btn btn-outline-primary btn-sm"
-                                        onClick={() => {
-                                            if (profile.certificateOfIncorporation) {
-                                                const imageUrl = profile.certificateOfIncorporation.startsWith('data:') ? profile.certificateOfIncorporation : `data:image/jpeg;base64,${profile.certificateOfIncorporation}`;
-                                                setCurrentImage(imageUrl);
-                                                setShowImageModal(true);
-                                            }
-                                        }}
+                                        onClick={() => viewDocumentImage(id, 'certificateOfIncorporation')}
                                         disabled={!profile.certificateOfIncorporation}
                                         style={{ borderColor: '#ff6b35', color: '#ff6b35' }}
                                     >

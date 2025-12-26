@@ -162,13 +162,15 @@ function SignInPopup() {
         minWidth: '100%',
         display: 'block',
         boxSizing: 'border-box',
-        flex: '1 1 100%'
+        flex: '1 1 100%',
+        boxShadow: 'none'
     };
 
     const handleButtonEnter = (event) => {
         event.currentTarget.style.backgroundColor = '#165bbf';
         event.currentTarget.style.borderColor = '#165bbf';
         event.currentTarget.style.color = '#f0f6fe';
+        event.currentTarget.style.boxShadow = 'none';
     };
 
     const handleButtonLeave = (event) => {
@@ -310,7 +312,7 @@ function SignInPopup() {
 													</div>
 												</div>
 
-												<div className="col-md-12">
+												<div className="col-12">
 													<button
 														type="submit"
 														style={buttonStyle}
@@ -392,7 +394,7 @@ function SignInPopup() {
 													</div>
 												</div>
 
-												<div className="col-md-12">
+												<div className="col-12">
 													<button
 														type="submit"
 														style={buttonStyle}
@@ -474,7 +476,7 @@ function SignInPopup() {
 													</div>
 												</div>
 
-												<div className="col-md-12">
+												<div className="col-12">
 													<button
 														type="submit"
 														style={buttonStyle}

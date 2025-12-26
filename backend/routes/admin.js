@@ -31,6 +31,7 @@ router.put('/employers/:id/profile', adminController.updateEmployerProfile);
 router.put('/employers/:id/status', adminController.updateEmployerStatus);
 router.delete('/employers/:id', adminController.deleteEmployer);
 router.get('/employers/:employerId/documents/:documentType', adminController.downloadDocument);
+router.get('/employers/:employerId/view-document/:documentType', adminController.viewDocument);
 router.put('/employers/:employerId/authorization-letters/:letterId/approve', adminController.approveAuthorizationLetter);
 router.put('/employers/:employerId/authorization-letters/:letterId/reject', adminController.rejectAuthorizationLetter);
 
