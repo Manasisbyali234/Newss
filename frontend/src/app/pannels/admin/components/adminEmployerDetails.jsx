@@ -13,6 +13,7 @@ function EmployerDetails() {
     const [loading, setLoading] = useState(true);
     const [showImageModal, setShowImageModal] = useState(false);
     const [currentImage, setCurrentImage] = useState('');
+    const [currentImageType, setCurrentImageType] = useState('');
     const [isMinimized, setIsMinimized] = useState(false);
     const [isMaximized, setIsMaximized] = useState(false);
     const [jobCount, setJobCount] = useState(0);
@@ -98,6 +99,7 @@ function EmployerDetails() {
                 const blob = await response.blob();
                 const imageUrl = window.URL.createObjectURL(blob);
                 setCurrentImage(imageUrl);
+                setCurrentImageType(blob.type);
                 setShowImageModal(true);
             } else {
                 showError('Failed to load document image');
@@ -836,6 +838,7 @@ function EmployerDetails() {
                                         className="gallery-image"
                                         onClick={() => {
                                             setCurrentImage(image.url);
+                                            setCurrentImageType('image');
                                             setShowImageModal(true);
                                         }}
                                     />
@@ -897,6 +900,7 @@ function EmployerDetails() {
                                                     onClick={() => {
                                                         if (doc.fileData.startsWith('data:image')) {
                                                             setCurrentImage(doc.fileData);
+                                                            setCurrentImageType('image');
                                                             setShowImageModal(true);
                                                         } else {
                                                             const link = document.createElement('a');
