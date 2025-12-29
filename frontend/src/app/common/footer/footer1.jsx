@@ -32,7 +32,7 @@ function Footer1() {
 											A smarter way to search, apply, and succeed. Explore
 											thousands of opportunities tailored to your goals.
 										</p>
-										<ul className="ftr-list" style={{marginLeft: '50px'}}>
+										<ul className="ftr-list" style={{marginLeft: '28px'}}>
 											<li>
 												<p>
 													<span>Address :</span> Bangalore, 560092{" "}
