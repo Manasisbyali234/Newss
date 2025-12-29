@@ -75,6 +75,12 @@ function Footer1() {
 													</li>
 
 													<li>
+														<NavLink to={publicUser.pages.ABOUT}>
+															About Us
+														</NavLink>
+													</li>
+
+													<li>
 														<NavLink to={publicUser.pages.CONTACT}>
 															Contact Us
 														</NavLink>
