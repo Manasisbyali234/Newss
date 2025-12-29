@@ -1491,3 +1491,64 @@
     border-color: #007bff;
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
+/* Header profile avatar styles */
+.header-actions .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.header-actions .user-profile:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.header-actions .profile-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.header-actions .profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.header-actions .profile-avatar i {
+    color: #666;
+    font-size: 16px;
+}
+
+.header-actions .user-profile span {
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+}
+/* Move header actions to the right corner */
+.header-actions {
+    margin-left: auto;
+    padding-right: 0;
+}
+/* Ensure top header has proper positioning and no extra space */
+.top-header {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.header-actions .user-profile {
+    margin-right: 0;
+    padding-right: 0;
+}

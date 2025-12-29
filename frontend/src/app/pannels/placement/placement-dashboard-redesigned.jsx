@@ -15,6 +15,10 @@ function PlacementDashboardRedesigned() {
     const [activeTab, setActiveTab] = useState('overview');
     const [uploadingFile, setUploadingFile] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedFileName, setSelectedFileName] = useState('');
+    const [courseName, setCourseName] = useState('');
+    const [university, setUniversity] = useState('');
+    const [batch, setBatch] = useState('');
     const [viewingFileId, setViewingFileId] = useState(null);
     const [viewingFileName, setViewingFileName] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
@@ -157,20 +161,33 @@ function PlacementDashboardRedesigned() {
         const file = e.target.files[0];
         if (!file) return;
         
+        console.log('File selected:', file.name, file.type, file.size);
+        
         setUploadingFile(true);
         try {
             const formData = new FormData();
             formData.append('studentData', file);
-
+            formData.append('customFileName', courseName);
+            formData.append('university', university);
+            formData.append('batch', batch);
+            
+            console.log('Uploading file...');
             const data = await api.uploadStudentData(formData);
+            console.log('Upload response:', data);
             
             if (data.success) {
                 showSuccess('Student data uploaded successfully! Waiting for admin approval.');
-                fetchPlacementDetails();
+                setSelectedFile(null);
+                setSelectedFileName('');
+                setCourseName('');
+                setUniversity('');
+                setBatch('');
+                await fetchPlacementDetails(); // Refresh placement data to show new file
             } else {
                 showError(data.message || 'Upload failed');
             }
         } catch (error) {
+            console.error('Upload error:', error);
             showError(error.message || 'Upload failed. Please try again.');
         } finally {
             setUploadingFile(false);
@@ -370,7 +387,7 @@ function PlacementDashboardRedesigned() {
             <div className="sidebar">
                 <div className="sidebar-header">
                     <div className="logo">
-                        <h3>Placement</h3>
+                        <img src="/assets/images/skins-logo/logo-skin-8.png" alt="Logo" style={{height: '40px', width: 'auto'}} />
                     </div>
                 </div>
                 
@@ -400,9 +417,6 @@ function PlacementDashboardRedesigned() {
                         <i className="fa fa-upload"></i>
                         <span>Batch Upload</span>
                     </div>
-                </nav>
-
-                <div className="sidebar-footer">
                     <div 
                         className="nav-item logout"
                         onClick={() => {
@@ -413,7 +427,8 @@ function PlacementDashboardRedesigned() {
                         <i className="fa fa-sign-out"></i>
                         <span>Logout</span>
                     </div>
-                </div>
+                </nav>
+
             </div>
 
             {/* Main Content */}
@@ -423,7 +438,17 @@ function PlacementDashboardRedesigned() {
                     <div className="header-actions">
                         <NotificationBell userRole="placement" />
                         <div className="user-profile">
-                            <span>Placement Officer</span>
+                            <div className="profile-avatar">
+                                {placementData?.logo ? (
+                                    <img 
+                                        src={placementData.logo.startsWith('data:') ? placementData.logo : `data:image/jpeg;base64,${placementData.logo}`} 
+                                        alt="Profile" 
+                                    />
+                                ) : (
+                                    <i className="fa fa-user"></i>
+                                )}
+                            </div>
+                            <span>{placementData?.name || 'Profile'}</span>
                         </div>
                     </div>
                 </div>
@@ -630,7 +655,9 @@ function PlacementDashboardRedesigned() {
                                             >
                                                 <i className="fa fa-file-excel-o upload-icon"></i>
                                                 <span className="upload-text">
-                                                    {uploadingFile ? 'Uploading...' : 'Click to select student data file (CSV, XLSX)'}
+                                                    {uploadingFile ? 'Uploading...' : 
+                                                     selectedFileName ? selectedFileName : 
+                                                     'Click to select student data file (CSV, XLSX)'}
                                                 </span>
                                                 {uploadingFile && <div className="upload-spinner"></div>}
                                             </div>
@@ -639,18 +666,27 @@ function PlacementDashboardRedesigned() {
                                                 type="file" 
                                                 accept=".xlsx,.xls,.csv"
                                                 style={{display: 'none'}}
-                                                onChange={handleFileUpload}
+                                                onChange={(e) => {
+                                                    const file = e.target.files[0];
+                                                    if (file) {
+                                                        setSelectedFile(file);
+                                                        setSelectedFileName(file.name);
+                                                        console.log('File selected:', file.name);
+                                                    }
+                                                }}
                                             />
                                         </div>
 
                                         {/* Form Fields */}
                                         <div className="form-fields">
                                             <div className="field-group">
-                                                <label className="field-label">Custom Display Name</label>
+                                                <label className="field-label">Course Name</label>
                                                 <input 
                                                     type="text" 
                                                     className="form-input"
-                                                    placeholder="Enter a custom name for this batch (optional)"
+                                                    placeholder="Enter course name for this batch (optional)"
+                                                    value={courseName}
+                                                    onChange={(e) => setCourseName(e.target.value)}
                                                 />
                                             </div>
                                             
@@ -660,6 +696,8 @@ function PlacementDashboardRedesigned() {
                                                     type="text" 
                                                     className="form-input"
                                                     placeholder="Enter university name"
+                                                    value={university}
+                                                    onChange={(e) => setUniversity(e.target.value)}
                                                 />
                                             </div>
                                             
@@ -669,6 +707,8 @@ function PlacementDashboardRedesigned() {
                                                     type="text" 
                                                     className="form-input"
                                                     placeholder="Enter batch information (e.g., 2024, Spring 2024)"
+                                                    value={batch}
+                                                    onChange={(e) => setBatch(e.target.value)}
                                                 />
                                             </div>
                                         </div>
@@ -697,7 +737,15 @@ function PlacementDashboardRedesigned() {
                                     {/* Action Buttons */}
                                     <div className="form-actions">
                                         <button className="btn-cancel">Cancel</button>
-                                        <button className="btn-upload" disabled={uploadingFile}>
+                                        <button className="btn-upload" onClick={() => {
+                                            if (selectedFile) {
+                                                console.log('Manual upload triggered for:', selectedFileName);
+                                                handleFileUpload({ target: { files: [selectedFile] } });
+                                            } else {
+                                                console.log('No file selected for upload');
+                                                showWarning('Please select a file first');
+                                            }
+                                        }} disabled={uploadingFile || !selectedFile}>
                                             <i className="fa fa-upload"></i>
                                             Upload Dataset
                                         </button>
@@ -712,11 +760,12 @@ function PlacementDashboardRedesigned() {
                                     <div className="history-count">{placementData?.fileHistory?.length || 0} Files</div>
                                 </div>
                                 <div className="upload-history-table">
+                                    {console.log('File history data:', placementData?.fileHistory)}
                                     <table>
                                         <thead>
                                             <tr>
                                                 <th>File Name</th>
-                                                <th>Custom Name</th>
+                                                <th>Course Name</th>
                                                 <th>University</th>
                                                 <th>Batch</th>
                                                 <th>Upload Date</th>
@@ -726,12 +775,14 @@ function PlacementDashboardRedesigned() {
                                         </thead>
                                         <tbody>
                                             {placementData?.fileHistory && placementData.fileHistory.length > 0 ? (
-                                                placementData.fileHistory.map((file, index) => (
+                                                placementData.fileHistory.map((file, index) => {
+                                                    console.log('Rendering file:', file);
+                                                    return (
                                                     <tr key={file._id || index}>
                                                         <td>{file.fileName}</td>
                                                         <td>{file.customName || '-'}</td>
-                                                        <td>{file.university || 'University Name'}</td>
-                                                        <td>{file.batch || '2024'}</td>
+                                                        <td>{file.university || '-'}</td>
+                                                        <td>{file.batch || '-'}</td>
                                                         <td>{new Date(file.uploadedAt).toLocaleDateString()}</td>
                                                         <td>
                                                             <span className={`status-badge ${
@@ -751,7 +802,8 @@ function PlacementDashboardRedesigned() {
                                                             </button>
                                                         </td>
                                                     </tr>
-                                                ))
+                                                    );
+                                                })
                                             ) : (
                                                 <tr>
                                                     <td colSpan="7" style={{textAlign: 'center', padding: '40px'}}>

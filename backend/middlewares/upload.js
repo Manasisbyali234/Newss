@@ -241,7 +241,6 @@ const validateExcelContent = (buffer, mimetype) => {
       const missing = [];
       if (!name || String(name).trim() === '') missing.push('Candidate Name');
       if (!email || String(email).trim() === '') missing.push('Email');
-      if (!password || String(password).trim() === '') missing.push('Password');
       if (!phone || String(phone).trim() === '') missing.push('Phone');
       if (!collegeName || String(collegeName).trim() === '') missing.push('College Name');
       if (!course || String(course).trim() === '') missing.push('Course');
@@ -267,7 +266,6 @@ ${displayRows.map(row => `• ${row}`).join('\n')}${moreMsg ? '\n• ' + moreMsg
 📋 Required fields for ALL rows:
 • Candidate Name
 • Email
-• Password
 • Phone
 • College Name
 • Course

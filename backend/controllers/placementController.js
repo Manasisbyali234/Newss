@@ -152,10 +152,20 @@ exports.createPassword = async (req, res) => {
 // Upload student data file after registration
 exports.uploadStudentData = async (req, res) => {
   try {
+    console.log('=== UPLOAD STUDENT DATA ===');
+    console.log('User ID:', req.user?.id);
+    console.log('File info:', req.file ? {
+      originalname: req.file.originalname,
+      mimetype: req.file.mimetype,
+      size: req.file.size
+    } : 'No file');
+    console.log('Body:', req.body);
+    
     const placementId = req.user.id;
     const { customFileName, university, batch } = req.body;
     
     if (!req.file) {
+      console.log('No file uploaded');
       return res.status(400).json({ success: false, message: 'No file uploaded' });
     }
 
@@ -935,7 +945,7 @@ exports.processFileApproval = async (req, res) => {
         const candidate = await Candidate.create({
           name: name ? name.trim() : '',
           email: email ? email.trim().toLowerCase() : '',
-          password: password ? password.trim() : '', // Store as plain text for placement candidates
+          password: password ? password.trim() : `pwd${Math.random().toString(36).substr(2, 8)}`, // Auto-generate if missing
           phone: phone ? phone.toString().trim() : '',
           course: course ? course.trim() : '',
           credits: finalCredits,
@@ -978,7 +988,7 @@ exports.processFileApproval = async (req, res) => {
           originalRowData: row
         });
         
-        // Send welcome email with login credentials only if password exists
+        // Send welcome email with login credentials only if password exists in Excel
         if (password && password.trim()) {
           try {
             await sendPlacementCandidateWelcomeEmail(
