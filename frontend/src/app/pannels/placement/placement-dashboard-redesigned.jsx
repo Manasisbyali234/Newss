@@ -540,6 +540,40 @@ function PlacementDashboardRedesigned() {
                                 </div>
                             </div>
 
+                            {/* Stats Cards */}
+                            <div className="stats-overview-section">
+                                <h3 className="section-title">Overview & Performance</h3>
+                                <div className="stats-cards-container">
+                                    <div className="stats-card">
+                                        <div className="stat-icon">
+                                            <i className="fa fa-users"></i>
+                                        </div>
+                                        <div className="stat-content">
+                                            <p className="stat-label">Total Students</p>
+                                            <h3 className="stat-value">{stats.totalStudents}</h3>
+                                        </div>
+                                    </div>
+                                    <div className="stats-card">
+                                        <div className="stat-icon">
+                                            <i className="fa fa-graduation-cap"></i>
+                                        </div>
+                                        <div className="stat-content">
+                                            <p className="stat-label">Active Batches</p>
+                                            <h3 className="stat-value">{stats.activeBatches}</h3>
+                                        </div>
+                                    </div>
+                                    <div className="stats-card">
+                                        <div className="stat-icon">
+                                            <i className="fa fa-book"></i>
+                                        </div>
+                                        <div className="stat-content">
+                                            <p className="stat-label">Courses Covered</p>
+                                            <h3 className="stat-value">{stats.coursesCovered}</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             {/* Recent Batch Activity */}
                             <div className="activity-section">
                                 <div className="activity-header">
