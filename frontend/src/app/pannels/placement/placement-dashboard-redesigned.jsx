@@ -91,7 +91,7 @@ function PlacementDashboardRedesigned() {
             }
             
             console.log('Fetching placement profile...');
-            const profileData = await api.getPlacementfile();
+            const profileData = await api.getPlacementProfile();
             console.log('Profile data received:', profileData);
             
             if (profileData && profileData.success) {
@@ -199,14 +199,14 @@ function PlacementDashboardRedesigned() {
     };
 
     const handleUpdateProfile = async () => {
-        if (!editFormData.firstName.trim() || !editFormData.lastName.trim() || !editFormData.phone.trim() || !editFormData.collegeName.trim()) {
+        if (!editFormData.firstName.trim() || !editFormData.lastName.trim() || !editFormData.phone.trim() || !editFormData.collegeName.trim() || !editFormData.collegeAddress.trim() || !editFormData.collegeOfficialEmail.trim() || !editFormData.collegeOfficialPhone.trim()) {
             showWarning('All fields are required');
             return;
         }
 
         setUpdating(true);
         try {
-            const response = await api.updatePlacementfile(editFormData);
+            const response = await api.updatePlacementProfile(editFormData);
             
             if (response && response.success) {
                 showSuccess('Profile updated successfully!');
@@ -812,6 +812,33 @@ function PlacementDashboardRedesigned() {
                                     value={editFormData.collegeName || ''}
                                     onChange={(e) => setEditFormData({...editFormData, collegeName: e.target.value})}
                                     placeholder="Enter your college name"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>College Address *</label>
+                                <textarea
+                                    value={editFormData.collegeAddress || ''}
+                                    onChange={(e) => setEditFormData({...editFormData, collegeAddress: e.target.value})}
+                                    placeholder="Enter your college address"
+                                    rows="3"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>College Official Email *</label>
+                                <input
+                                    type="email"
+                                    value={editFormData.collegeOfficialEmail || ''}
+                                    onChange={(e) => setEditFormData({...editFormData, collegeOfficialEmail: e.target.value})}
+                                    placeholder="Enter college official email"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>College Official Phone *</label>
+                                <input
+                                    type="tel"
+                                    value={editFormData.collegeOfficialPhone || ''}
+                                    onChange={(e) => setEditFormData({...editFormData, collegeOfficialPhone: e.target.value})}
+                                    placeholder="Enter college official phone number"
                                 />
                             </div>
 

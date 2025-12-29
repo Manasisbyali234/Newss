@@ -57,7 +57,7 @@ router.get('/profile', auth(['placement']), async (req, res) => {
     console.log('User object:', req.user);
     
     const placement = await Placement.findById(placementId)
-      .select('name firstName lastName email phone collegeName status logo idCard fileHistory credits')
+      .select('name firstName lastName email phone collegeName collegeAddress collegeOfficialEmail collegeOfficialPhone status logo idCard fileHistory credits')
       .lean();
     
     if (!placement) {
@@ -206,11 +206,13 @@ router.post('/upload-id-card', auth(['placement']), placementController.uploadId
 
 // Update placement profile
 router.put('/profile', auth(['placement']), [
-  body('name').optional().notEmpty().withMessage('Name cannot be empty'),
-  body('firstName').optional().notEmpty().withMessage('First name cannot be empty'),
-  body('lastName').optional().notEmpty().withMessage('Last name cannot be empty'),
-  body('collegeName').optional().notEmpty().withMessage('College name cannot be empty'),
-  body('phone').optional().isLength({ min: 10, max: 15 }).withMessage('Phone number must be between 10-15 digits')
+  body('firstName').notEmpty().withMessage('First name is required'),
+  body('lastName').notEmpty().withMessage('Last name is required'),
+  body('phone').isLength({ min: 10, max: 15 }).withMessage('Phone number must be between 10-15 digits'),
+  body('collegeName').notEmpty().withMessage('College name is required'),
+  body('collegeAddress').notEmpty().withMessage('College address is required'),
+  body('collegeOfficialEmail').isEmail().withMessage('Valid college official email is required'),
+  body('collegeOfficialPhone').isLength({ min: 10, max: 15 }).withMessage('College official phone must be between 10-15 digits')
 ], handleValidationErrors, placementController.updateProfile);
 
 // Get placement notifications
