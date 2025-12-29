@@ -100,10 +100,13 @@ function Footer2() {
                                 <span className="copyrights-text">Copyright © 2025 by thewebmax All Rights Reserved.</span>
                             </div>
                             <ul className="social-icons">
-                                <li><a href="https://www.facebook.com/" className="fab fa-facebook-f" /></li>
-                                <li><a href="https://www.twitter.com/" className="fab fa-twitter" /></li>
-                                <li><a href="https://www.instagram.com/" className="fab fa-instagram" /></li>
-                                <li><a href="https://www.youtube.com/" className="fab fa-youtube" /></li>
+                                <li><a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" className="fab fa-facebook-f" /></li>
+                                <li><a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" className="fab fa-instagram" /></li>
+                                <li><a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer" className="fab fa-linkedin-in" /></li>
+                                <li><a href="https://www.pinterest.com/" target="_blank" rel="noopener noreferrer" className="fab fa-pinterest-p" /></li>
+                                <li><a href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" className="fab fa-tiktok" /></li>
+                                <li><a href="https://www.twitter.com/" target="_blank" rel="noopener noreferrer" className="fab fa-twitter" /></li>
+                                <li><a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" className="fab fa-youtube" /></li>
                             </ul>
                         </div>
                     </div>
