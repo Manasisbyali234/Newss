@@ -16,12 +16,14 @@ function InnerPageBanner({_data}) {
                         </div>
 
                         {/* BREADCRUMB ROW */}
-                        <div>
-                            <ul className="wt-breadcrumb breadcrumb-style-2">
-                                <li><NavLink to="/">Home</NavLink></li>
-                                <li>{_data.crumb}</li>
-                            </ul>
-                        </div>
+                        {_data.crumb && (
+                            <div>
+                                <ul className="wt-breadcrumb breadcrumb-style-2">
+                                    <li><NavLink to="/">Home</NavLink></li>
+                                    <li>{_data.crumb}</li>
+                                </ul>
+                            </div>
+                        )}
                         {/* BREADCRUMB ROW END */}
                     </div>
             </div>

@@ -1004,7 +1004,7 @@ function EmpCompanyProfilePage() {
                     <div className="row">
                         <div className="col-lg-6 col-md-12">
                             <div className="form-group">
-                                <label><ImageIcon size={16} className="me-2" /> Company Logo</label>
+                                <label><ImageIcon size={16} className="me-2" /> Company Logo (300x300px)</label>
                                 <input
                                     className="form-control"
                                     type="file"
@@ -1055,13 +1055,13 @@ function EmpCompanyProfilePage() {
                                         <p className="text-success mt-2">✓ Company Logo uploaded</p>
                                     </div>
                                 )}
-                                <small className="text-muted">Square logo for your company profile (JPG, PNG, max 5MB)</small>
+                                <small className="text-muted">Square logo for your company profile (300x300px, JPG, PNG, max 5MB)</small>
                             </div>
                         </div>
 
                         <div className="col-lg-6 col-md-12">
                             <div className="form-group">
-                                <label><ImageIcon size={16} className="me-2" /> Background Banner Image</label>
+                                <label><ImageIcon size={16} className="me-2" /> Background Banner Image (1200x675px)</label>
                                 <input
                                     className="form-control"
                                     type="file"
@@ -1112,7 +1112,7 @@ function EmpCompanyProfilePage() {
                                         <p className="text-success mt-2">✓ Background Banner uploaded</p>
                                     </div>
                                 )}
-                                <small className="text-muted">Widescreen banner for your company profile (JPG, PNG, max 5MB)</small>
+                                <small className="text-muted">Widescreen banner for your company profile (1200x675px, JPG, PNG, max 5MB)</small>
                             </div>
                         </div>
                     </div>

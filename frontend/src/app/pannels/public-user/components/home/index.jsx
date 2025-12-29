@@ -9,6 +9,7 @@ import HomeJobCard from "../../../../../components/HomeJobCard";
 import { formatDate } from "../../../../../utils/dateFormatter";
 // CSS is now in public/assets/css/home-job-cards.css
 import "../../../../../categories-mobile-grid-fix.css";
+import "../../../../../remove-carousel-hover-effects.css";
 
 function TopRecruitersSection() {
     const [jobs, setJobs] = useState([]);

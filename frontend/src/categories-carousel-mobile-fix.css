@@ -32,8 +32,7 @@
 }
 
 .mobile-categories-grid .category-card:hover {
-    box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important;
-    transform: translateY(-2px) !important;
+    /* Hover effects removed */
 }
 
 .mobile-categories-grid .plus-badge {

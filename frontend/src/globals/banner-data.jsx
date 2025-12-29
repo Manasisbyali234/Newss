@@ -6,7 +6,7 @@ export const banner = {
         jobs: {
             grid: {
                 title: "Search. Apply. Get Hired.",
-                crumb: "Jobs"
+                crumb: ""
             },
             list: {
                 title: "Search. Apply. Get Hired.",
@@ -24,7 +24,7 @@ export const banner = {
         employer: {
             grid: {
                 title: "Top Companies Hiring Now",
-                crumb: "Companies"
+                crumb: ""
             },
             list: {
                 title: "Top Companies Hiring Now",
