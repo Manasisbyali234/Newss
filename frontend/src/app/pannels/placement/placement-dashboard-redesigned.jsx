@@ -467,10 +467,10 @@ function PlacementDashboardRedesigned() {
                                                 {placementData?.logo ? (
                                                     <img 
                                                         src={placementData.logo.startsWith('data:') ? placementData.logo : `data:image/jpeg;base64,${placementData.logo}`} 
-                                                        alt="Profile" 
+                                                        alt="College Logo" 
                                                     />
                                                 ) : (
-                                                    <i className="fa fa-user"></i>
+                                                    <i className="fa fa-university"></i>
                                                 )}
                                             </div>
                                             <small className="image-label">College Logo</small>
@@ -833,6 +833,7 @@ function PlacementDashboardRedesigned() {
                             </button>
                         </div>
                         <div className="modal-body">
+                            <h4 className="modal-section-title">Personal Information</h4>
                             <div className="form-group">
                                 <label>First Name *</label>
                                 <input
@@ -860,6 +861,8 @@ function PlacementDashboardRedesigned() {
                                     placeholder="Enter your phone number"
                                 />
                             </div>
+                            
+                            <h4 className="modal-section-title">Placement Information</h4>
                             <div className="form-group">
                                 <label>College Name *</label>
                                 <input

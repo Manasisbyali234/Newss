@@ -191,6 +191,176 @@
     overflow-y: auto;
 }
 
+/* Profile Sections - Personal Details and Placement Details */
+.profile-section {
+    background-color: var(--primary-white);
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    padding: 24px;
+    flex: 1;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-section .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.profile-section .section-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.profile-section .edit-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--light-grey);
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.profile-section .edit-btn:hover {
+    background-color: var(--soft-grey);
+    color: var(--text-primary);
+}
+
+.profile-section .section-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+}
+
+/* Personal Details Section */
+.personal-details .id-card-container {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.personal-details .id-card-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    background-color: var(--light-grey);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.personal-details .id-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.personal-details .id-card-image i {
+    font-size: 32px;
+    color: var(--text-muted);
+}
+
+.personal-details .personal-info {
+    flex: 1;
+}
+
+.personal-details .role-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.personal-details .officer-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    line-height: 1.2;
+}
+
+/* Placement Details Section */
+.placement-details .college-logo-container {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.placement-details .college-logo {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    background-color: var(--light-grey);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.placement-details .college-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.placement-details .college-logo i {
+    font-size: 32px;
+    color: var(--text-muted);
+}
+
+.placement-details .college-info {
+    flex: 1;
+}
+
+.image-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: center;
+    font-weight: 500;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.contact-item i {
+    color: var(--text-muted);
+    width: 16px;
+    font-size: 13px;
+    text-align: center;
+}
+
 /* Profile and Notifications Container */
 .profile-notifications-container {
     display: flex;
@@ -1322,6 +1492,20 @@
 .btn-secondary:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+/* Modal Section Titles */
+.modal-section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #ff8c00 !important;
+    margin: 20px 0 16px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.modal-section-title:first-child {
+    margin-top: 0;
 }
 
 /* Responsive Design */
