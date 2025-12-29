@@ -19,7 +19,7 @@ function Footer1() {
 							<div className="row">
 								<div className="col-lg-4 col-md-12">
 									<div className="widget widget_about">
-										<div className="logo-footer clearfix" style={{marginBottom: '20px', paddingLeft: '15px'}}>
+										<div className="logo-footer clearfix" style={{marginBottom: '20px', marginLeft: '50px'}}>
 											<NavLink to={publicUser.INITIAL}>
 												<JobZImage
 													id="skin_footer_light_logo"
@@ -28,11 +28,11 @@ function Footer1() {
 												/>
 											</NavLink>
 										</div>
-										<p style={{paddingLeft: '30px', backgroundColor: 'transparent !important'}}>
+										<p style={{marginLeft: '50px', backgroundColor: 'transparent !important'}}>
 											A smarter way to search, apply, and succeed. Explore
 											thousands of opportunities tailored to your goals.
 										</p>
-										<ul className="ftr-list" style={{paddingLeft: '30px'}}>
+										<ul className="ftr-list" style={{marginLeft: '50px'}}>
 											<li>
 												<p>
 													<span>Address :</span> Bangalore, 560092{" "}
