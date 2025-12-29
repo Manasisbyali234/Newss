@@ -157,28 +157,10 @@ function Footer3 () {
 
 									<li>
 										<a
-											href="https://www.pinterest.com/"
+											href="https://x.com/"
 											target="_blank"
 											rel="noopener noreferrer"
-											className="fab fa-pinterest-p"
-										/>
-									</li>
-
-									<li>
-										<a
-											href="https://www.tiktok.com/"
-											target="_blank"
-											rel="noopener noreferrer"
-											className="fab fa-tiktok"
-										/>
-									</li>
-
-									<li>
-										<a
-											href="https://www.twitter.com/"
-											target="_blank"
-											rel="noopener noreferrer"
-											className="fab fa-twitter"
+											className="fab fa-x-twitter"
 										/>
 									</li>
 

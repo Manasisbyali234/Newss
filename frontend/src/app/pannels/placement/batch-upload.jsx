@@ -175,7 +175,7 @@ function BatchUpload() {
             {/* Left Sidebar */}
             <div className="sidebar">
                 <div className="sidebar-header">
-                    <h4 className="logo">Placement</h4>
+                    <h4 className="logo" onClick={() => window.location.href = '/'} style={{cursor: 'pointer'}}>Placement</h4>
                 </div>
                 <nav className="sidebar-nav">
                     <div className={`nav-item ${location.pathname === '/placement/dashboard' ? 'active' : ''}`} onClick={() => navigate('/placement/dashboard')}>

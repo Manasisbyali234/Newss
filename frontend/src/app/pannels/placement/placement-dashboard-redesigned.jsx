@@ -387,7 +387,7 @@ function PlacementDashboardRedesigned() {
             {/* Left Sidebar */}
             <div className="sidebar">
                 <div className="sidebar-header">
-                    <div className="logo">
+                    <div className="logo" onClick={() => window.location.href = '/'} style={{cursor: 'pointer'}}>
                         <JobZImage id="skin_header_logo" src="images/skins-logo/logo-skin-8.png" alt="Logo" style={{height: '40px', width: 'auto'}} />
                     </div>
                 </div>
@@ -639,6 +639,17 @@ function PlacementDashboardRedesigned() {
                     {activeTab === 'upload' && (
                         <div className="upload-page">
                             <div className="upload-container">
+                                <div className="upload-tips">
+                                    <h5>Upload Tips:</h5>
+                                    <ul>
+                                        <li>Ensure your file contains columns: Name, Email, Phone, Course, Credits</li>
+                                        <li>Use CSV or Excel format (.csv, .xlsx, .xls)</li>
+                                        <li>Maximum file size: 10MB</li>
+                                        <li>Remove empty rows and special characters</li>
+                                        <li>Verify all email addresses are valid</li>
+                                    </ul>
+                                </div>
+                                
                                 {/* Configuration & Details Form */}
                                 <div className="config-form-card">
                                     <div className="form-header">
