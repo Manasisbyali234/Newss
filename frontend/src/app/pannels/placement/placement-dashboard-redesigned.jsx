@@ -6,6 +6,7 @@ import PlacementNotificationsRedesigned from './sections/PlacementNotificationsR
 import './placement-dashboard-redesigned.css';
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../utils/popupNotification';
 import NotificationBell from '../../../components/NotificationBell';
+import JobZImage from '../../common/jobz-img';
 
 function PlacementDashboardRedesigned() {
     const { user, userType, isAuthenticated, loading: authLoading } = useAuth();
@@ -387,7 +388,7 @@ function PlacementDashboardRedesigned() {
             <div className="sidebar">
                 <div className="sidebar-header">
                     <div className="logo">
-                        <img src="/assets/images/skins-logo/logo-skin-8.png" alt="Logo" style={{height: '40px', width: 'auto'}} />
+                        <JobZImage id="skin_header_logo" src="images/skins-logo/logo-skin-8.png" alt="Logo" style={{height: '40px', width: 'auto'}} />
                     </div>
                 </div>
                 

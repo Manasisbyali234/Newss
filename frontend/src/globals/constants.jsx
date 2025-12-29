@@ -1,5 +1,5 @@
 const baseUrl = process.env.PUBLIC_URL
-export const default_skin = "6"
+export const default_skin = "8"
 
 export const popupType = {
     DELETE: "DELETE",
