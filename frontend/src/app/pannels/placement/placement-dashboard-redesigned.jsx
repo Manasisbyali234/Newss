@@ -91,6 +91,8 @@ function PlacementDashboardRedesigned() {
             }
             
             console.log('Fetching placement profile...');
+            console.log('API object:', api);
+            console.log('getPlacementProfile method:', api.getPlacementProfile);
             const profileData = await api.getPlacementProfile();
             console.log('Profile data received:', profileData);
             
