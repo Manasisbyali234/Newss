@@ -176,7 +176,7 @@ function EmployersDetail1Page() {
 
     return (
 			<>
-				<div className="section-full  p-t120 p-b90 bg-white">
+				<div className="section-full p-t120 p-b90 bg-white">
 					<div className="container">
 						<div className="section-content">
 							<div className="row d-flex justify-content-center">
@@ -186,70 +186,31 @@ function EmployersDetail1Page() {
 										<div className="twm-job-self-wrap">
 											<div className="twm-job-self-info">
 												<div className="twm-job-self-top">
-													<div className="twm-media-bg" style={{
-														width: '100%',
-														height: '300px',
-														borderRadius: '12px',
-														overflow: 'hidden',
-														position: 'relative'
-													}}>
+													<div className="twm-media-bg">
 														{employer.coverImage ? (
 															<img 
 																src={employer.coverImage} 
 																alt="Company Cover" 
-																style={{
-																	width: '100%',
-																	height: '100%',
-																	objectFit: 'cover',
-																	objectPosition: 'center'
-																}}
 															/>
 														) : (
 															<JobZImage 
 																src="images/employer-bg.jpg" 
 																alt="#" 
-																style={{
-																	width: '100%',
-																	height: '100%',
-																	objectFit: 'cover',
-																	objectPosition: 'center'
-																}}
 															/>
 														)}
 													</div>
 
 													<div className="twm-mid-content">
-														<div className="twm-media" style={{
-														width: '120px',
-														height: '120px',
-														borderRadius: '12px',
-														overflow: 'hidden',
-														border: '4px solid #fff',
-														boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-														position: 'relative',
-														zIndex: 2
-													}}>
+														<div className="twm-media">
 															{employer.logo ? (
 																<img 
 																	src={employer.logo} 
 																	alt="Company Logo" 
-																	style={{
-																		width: '100%',
-																		height: '100%',
-																		objectFit: 'cover',
-																		objectPosition: 'center'
-																	}}
 																/>
 															) : (
 																<JobZImage 
 																	src="images/jobs-company/pic1.jpg" 
 																	alt="#" 
-																	style={{
-																		width: '100%',
-																		height: '100%',
-																		objectFit: 'cover',
-																		objectPosition: 'center'
-																	}}
 																/>
 															)}
 														</div>

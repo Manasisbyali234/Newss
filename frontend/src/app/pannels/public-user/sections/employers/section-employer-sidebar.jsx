@@ -83,17 +83,28 @@ function SectionEmployerSidebar({ onFilterChange }) {
         <div className="side-bar">
             <div className="sidebar-elements search-bx">
                 <form>
-                    <div className="form-group mb-4">
+                    <div className="form-group mb-4 position-relative">
                         <h4 className="section-head-small mb-4">Company Name</h4>
-                        <div className="input-group">
+                        <div className="position-relative">
+                            <i className="feather-search" style={{
+                                position: 'absolute',
+                                left: '15px',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                zIndex: 10,
+                                color: '#666'
+                            }} />
                             <input 
                                 type="text" 
                                 className="form-control" 
                                 placeholder="Search company" 
                                 value={filters.keyword}
                                 onChange={(e) => setFilters({...filters, keyword: e.target.value})}
+                                style={{
+                                    paddingLeft: '40px',
+                                    borderRadius: '8px'
+                                }}
                             />
-                            <button className="btn" type="button"><i className="feather-search" /></button>
                         </div>
                     </div>
 

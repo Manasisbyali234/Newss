@@ -231,7 +231,15 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                     <form>
                         <div className="form-group mb-4 position-relative">
                             <h4 className="section-head-small mb-4">Designation ({jobTitles.length} available)</h4>
-                            <div className="input-group" style={{background: 'transparent', border: 'none', boxShadow: 'none'}}>
+                            <div className="position-relative">
+                                <i className="feather-search" style={{
+                                    position: 'absolute',
+                                    left: '15px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    zIndex: 10,
+                                    color: '#666'
+                                }} />
                                 <input 
                                     type="text" 
                                     className="form-control" 
@@ -243,9 +251,13 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                                     }}
                                     onFocus={() => setShowJobTitleSuggestions(filters.keyword.length > 0)}
                                     onBlur={() => setTimeout(() => setShowJobTitleSuggestions(false), 200)}
-                                    style={{background: 'transparent', border: '1px solid #ddd'}}
+                                    style={{
+                                        background: 'transparent', 
+                                        border: '1px solid #ddd',
+                                        paddingLeft: '40px',
+                                        borderRadius: '8px'
+                                    }}
                                 />
-                                <button className="btn" type="button" style={{background: 'transparent', border: '1px solid #ddd', borderLeft: 'none'}}><i className="feather-search" /></button>
                             </div>
                             {showJobTitleSuggestions && jobTitles.length > 0 && (
                                 <div className="position-absolute w-100 bg-white border rounded shadow-sm" style={{zIndex: 1000, maxHeight: '200px', overflowY: 'auto'}}>
@@ -274,7 +286,15 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
 
                         <div className="form-group mb-4 position-relative">
                             <h4 className="section-head-small mb-4">Location ({locations.length} available)</h4>
-                            <div className="input-group" style={{background: 'transparent', border: 'none', boxShadow: 'none'}}>
+                            <div className="position-relative">
+                                <i className="feather-map-pin" style={{
+                                    position: 'absolute',
+                                    left: '15px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    zIndex: 10,
+                                    color: '#666'
+                                }} />
                                 <input 
                                     type="text" 
                                     className="form-control" 
@@ -283,9 +303,13 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                                     onChange={handleLocationChange}
                                     onFocus={() => setShowLocationSuggestions(filters.location.length > 0)}
                                     onBlur={() => setTimeout(() => setShowLocationSuggestions(false), 200)}
-                                    style={{background: 'transparent', border: '1px solid #ddd'}}
+                                    style={{
+                                        background: 'transparent', 
+                                        border: '1px solid #ddd',
+                                        paddingLeft: '40px',
+                                        borderRadius: '8px'
+                                    }}
                                 />
-                                <button className="btn" type="button" style={{background: 'transparent', border: '1px solid #ddd', borderLeft: 'none'}}><i className="feather-map-pin" /></button>
                             </div>
                             {showLocationSuggestions && (
                                 <div className="position-absolute w-100 bg-white border rounded shadow-sm" style={{zIndex: 1000, maxHeight: '200px', overflowY: 'auto'}}>
