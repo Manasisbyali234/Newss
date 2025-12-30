@@ -931,7 +931,7 @@ exports.processFileApproval = async (req, res) => {
 
         
         // Check if candidate already exists
-        const existingCandidate = await Candidate.findOne({ email: email.trim().toLowerCase() });
+        const existingCandidate = await Candidate.findByEmail(email.trim());
         if (existingCandidate) {
           skippedCount++;
           continue;
@@ -1466,13 +1466,9 @@ exports.verifyOTPAndResetPassword = async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body;
     
-    const placement = await Placement.findOne({
-      email,
-      resetPasswordOTP: otp,
-      resetPasswordOTPExpires: { $gt: Date.now() }
-    });
+    const placement = await Placement.findByEmail(email.trim());
 
-    if (!placement) {
+    if (!placement || placement.resetPasswordOTP !== otp || (placement.resetPasswordOTPExpires && placement.resetPasswordOTPExpires < Date.now())) {
       return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
     }
 
@@ -1490,7 +1486,7 @@ exports.verifyOTPAndResetPassword = async (req, res) => {
 exports.checkEmail = async (req, res) => {
   try {
     const { email } = req.body;
-    const placement = await Placement.findOne({ email: email.toLowerCase().trim() });
+    const placement = await Placement.findByEmail(email.trim());
     
     res.json({ 
       success: true, 
@@ -1509,7 +1505,7 @@ exports.updatePasswordReset = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Email and new password are required' });
     }
 
-    const placement = await Placement.findOne({ email: email.toLowerCase().trim() });
+    const placement = await Placement.findByEmail(email.trim());
     if (!placement) {
       return res.status(404).json({ success: false, message: 'Placement officer not found' });
     }

@@ -38,6 +38,7 @@ employerSchema.index({ email: 1 }, {
 
 // Static method for case-insensitive email lookup
 employerSchema.statics.findByEmail = function(email) {
+  if (!email || typeof email !== 'string') return null;
   return this.findOne({ 
     email: new RegExp(`^${email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') 
   });
@@ -52,8 +53,18 @@ employerSchema.pre('save', async function(next) {
 employerSchema.methods.comparePassword = async function(password) {
   try {
     if (!this.password) return false;
-    return await bcrypt.compare(password, this.password);
+    
+    // Check if the stored password is a bcrypt hash
+    const isHashed = this.password.startsWith('$2a$') || this.password.startsWith('$2b$');
+    
+    if (isHashed) {
+      return await bcrypt.compare(password, this.password);
+    } else {
+      // If it's not a hash, it must be plain text
+      return password === this.password;
+    }
   } catch (error) {
+    console.error('Password comparison error:', error);
     return false;
   }
 };

@@ -36,6 +36,7 @@ candidateSchema.index({ email: 1 }, {
 
 // Static method for case-insensitive email lookup
 candidateSchema.statics.findByEmail = function(email) {
+  if (!email || typeof email !== 'string') return null;
   return this.findOne({ 
     email: new RegExp(`^${email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') 
   });

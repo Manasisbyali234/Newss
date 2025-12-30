@@ -36,12 +36,12 @@ exports.loginAdmin = async (req, res) => {
     const { email, password } = req.body;
 
     // First check if it's a regular admin
-    let user = await Admin.findOne({ email });
+    let user = await Admin.findByEmail(email.trim());
     let userType = 'admin';
     
     // If not found in Admin, check SubAdmin
     if (!user) {
-      user = await SubAdmin.findOne({ email });
+      user = await SubAdmin.findByEmail(email.trim());
       userType = 'sub-admin';
     }
     
@@ -1409,7 +1409,7 @@ exports.createCandidate = async (req, res) => {
       });
     }
     
-    const existingCandidate = await Candidate.findOne({ email: email.toLowerCase().trim() });
+    const existingCandidate = await Candidate.findByEmail(email.trim());
     if (existingCandidate) {
       return res.status(400).json({ success: false, message: 'Email already registered' });
     }
@@ -1467,7 +1467,10 @@ exports.createSubAdmin = async (req, res) => {
     
     // Check if username or email already exists
     const existingSubAdmin = await SubAdmin.findOne({ 
-      $or: [{ email }, { username }] 
+      $or: [
+        { email: new RegExp(`^${email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }, 
+        { username }
+      ] 
     });
     
     if (existingSubAdmin) {
@@ -1826,7 +1829,7 @@ exports.approveIndividualFile = async (req, res) => {
           }
           
           // Check if candidate already exists
-          const existingCandidate = await Candidate.findOne({ email: email.trim().toLowerCase() });
+          const existingCandidate = await Candidate.findByEmail(email.trim());
           if (existingCandidate) {
             skippedCount++;
             skippedCandidates.push({
@@ -2995,10 +2998,10 @@ exports.updateSupportTicketStatus = async (req, res) => {
           const Candidate = require('../models/Candidate');
           
           if (ticket.userType === 'employer') {
-            const employer = await Employer.findOne({ email: ticket.email }).select('_id');
+            const employer = await Employer.findByEmail(ticket.email);
             targetUserId = employer?._id;
           } else if (ticket.userType === 'candidate') {
-            const candidate = await Candidate.findOne({ email: ticket.email }).select('_id');
+            const candidate = await Candidate.findByEmail(ticket.email);
             targetUserId = candidate?._id;
           }
         }
@@ -3228,7 +3231,7 @@ exports.approveAllStudentsInPlacement = async (req, res) => {
                 }
                 
                 // Check if candidate already exists
-                const existingCandidate = await Candidate.findOne({ email: email.trim().toLowerCase() });
+                const existingCandidate = await Candidate.findByEmail(email.trim());
                 if (existingCandidate) {
                   continue;
                 }

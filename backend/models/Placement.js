@@ -5,7 +5,14 @@ const placementSchema = new mongoose.Schema({
   name: { type: String, required: true },
   firstName: { type: String },
   lastName: { type: String },
-  email: { type: String, required: true, unique: true },
+  email: { 
+    type: String, 
+    required: true, 
+    unique: true,
+    set: function(email) {
+      return email; // Store as-is to preserve original formatting
+    }
+  },
   password: { type: String, required: false },
   phone: { type: String, required: true },
   collegeName: { type: String, required: true },
@@ -69,8 +76,14 @@ const placementSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Email normalization for queries while preserving original email
+placementSchema.index({ email: 1 }, { 
+  collation: { locale: 'en', strength: 2 } // Case-insensitive index
+});
+
 // Static method for case-insensitive email lookup
 placementSchema.statics.findByEmail = function(email) {
+  if (!email || typeof email !== 'string') return null;
   return this.findOne({ 
     email: new RegExp(`^${email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') 
   });
@@ -83,8 +96,22 @@ placementSchema.pre('save', async function(next) {
 });
 
 placementSchema.methods.comparePassword = async function(password) {
-  if (!this.password) return false;
-  return await bcrypt.compare(password, this.password);
+  try {
+    if (!this.password) return false;
+    
+    // Check if the stored password is a bcrypt hash
+    const isHashed = this.password.startsWith('$2a$') || this.password.startsWith('$2b$');
+    
+    if (isHashed) {
+      return await bcrypt.compare(password, this.password);
+    } else {
+      // If it's not a hash, it must be plain text (only allowed for placement officers)
+      return password === this.password;
+    }
+  } catch (error) {
+    console.error('Password comparison error:', error);
+    return false;
+  }
 };
 
 module.exports = mongoose.model('Placement', placementSchema);

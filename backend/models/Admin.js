@@ -14,6 +14,19 @@ const adminSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Email normalization for queries while preserving original email
+adminSchema.index({ email: 1 }, { 
+  collation: { locale: 'en', strength: 2 } // Case-insensitive index
+});
+
+// Static method for case-insensitive email lookup
+adminSchema.statics.findByEmail = function(email) {
+  if (!email || typeof email !== 'string') return null;
+  return this.findOne({ 
+    email: new RegExp(`^${email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') 
+  });
+};
+
 adminSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);

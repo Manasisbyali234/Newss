@@ -24,6 +24,19 @@ const subAdminSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Email normalization for queries while preserving original email
+subAdminSchema.index({ email: 1 }, { 
+  collation: { locale: 'en', strength: 2 } // Case-insensitive index
+});
+
+// Static method for case-insensitive email lookup
+subAdminSchema.statics.findByEmail = function(email) {
+  if (!email || typeof email !== 'string') return null;
+  return this.findOne({ 
+    email: new RegExp(`^${email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') 
+  });
+};
+
 subAdminSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
