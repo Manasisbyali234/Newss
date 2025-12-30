@@ -13,66 +13,169 @@ const createTransport = () => {
   });
 };
 
-const sendWelcomeEmail = async (email, name, userType) => {
+const sendWelcomeEmail = async (email, name, userType, collegeName = null) => {
   const transporter = createTransport();
-  const userTypeParam = encodeURIComponent(userType || 'candidate');
+  const normalizedUserType = (userType || 'candidate').toLowerCase();
+  const userTypeParam = encodeURIComponent(normalizedUserType);
   const createPasswordUrl = `${process.env.FRONTEND_URL}/create-password?email=${encodeURIComponent(email)}&type=${userTypeParam}`;
+  const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/`;
   
-  const welcomeTemplate = `
-    <div style="font-family: 'Poppins', sans-serif;
-;max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa;">
-      <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-        <h1 style="color: #333; text-align: center; margin-bottom: 30px;">Welcome to TaleGlobal!</h1>
-        
-        <p style="color: #666; font-size: 16px; line-height: 1.6;">Dear ${name},</p>
-        
-        <p style="color: #666; font-size: 16px; line-height: 1.6;">
-          Thank you for signing up with TaleGlobal! We're excited to have you join our community of ${userType === 'employer' ? 'employers' : userType === 'placement' ? 'placement officers' : 'job seekers'}.
-        </p>
-        
-        <p style="color: #666; font-size: 16px; line-height: 1.6;">
-          To complete your registration, please create your password by clicking the button below:
-        </p>
-        
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${createPasswordUrl}" style="background-color: #fd7e14; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">Create Your Password</a>
+  let template;
+  let subject;
+
+  if (normalizedUserType === 'placement') {
+    subject = 'Welcome to TaleGlobal - Placement Access Enabled';
+    template = `
+      <div style="font-family: 'Poppins', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa; color: #333;">
+        <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+          <p>Dear <strong>${name}</strong>,</p>
+          
+          <p>Greetings from <strong>TaleGlobal</strong>.</p>
+          
+          <p>As discussed and agreed, we are pleased to confirm the collaboration between <strong>TaleGlobal and ${collegeName || 'your institution'}</strong> to support final-year students in their career and placement readiness journey.</p>
+          
+          <p>Placement Officer access has been <strong>successfully enabled</strong> on the TaleGlobal platform, allowing you to upload and update <strong>final-year student data</strong> directly.</p>
+          
+          <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #2c3e50;">🔹 Scope of Collaboration:</h3>
+            <ul style="line-height: 1.6;">
+              <li>TaleGlobal will support students by providing access to:
+                <ul>
+                  <li>Career opportunities</li>
+                  <li>Placement-related resources</li>
+                </ul>
+              </li>
+              <li>TaleGlobal <strong>does not provide any assurance or guarantee of 100% placement</strong></li>
+              <li>The platform is intended to <strong>support and enhance employability</strong>, not to promise job outcomes</li>
+            </ul>
+          </div>
+
+          <div style="background-color: #e7f5ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #1971c2;">🔹 Financial Clarification:</h3>
+            <ul style="line-height: 1.6; margin-bottom: 0;">
+              <li><strong>No fees or payments are collected from ${collegeName || 'your institution'}</strong></li>
+              <li>Credits provided to students are <strong>offered as part of platform support</strong></li>
+              <li>Credits are <strong>not linked to any monetary transaction</strong> with the institution</li>
+            </ul>
+          </div>
+
+          <div style="background-color: #fff4e6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #d9480f;">🔹 Student Account Process:</h3>
+            <ul style="line-height: 1.6; margin-bottom: 0;">
+              <li>Student data submitted by the Placement Officer will be <strong>reviewed and approved by the TaleGlobal Admin</strong></li>
+              <li>Upon approval, students will receive:
+                <ul>
+                  <li>Platform access</li>
+                  <li>Credits for platform usage</li>
+                  <li>Login credentials via email</li>
+                </ul>
+              </li>
+              <li>Students may <strong>change their passwords</strong> after first login for security purposes</li>
+            </ul>
+          </div>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${createPasswordUrl}" style="background-color: #fd7e14; color: white; padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block; margin-right: 10px;">🔐 Create Password</a>
+            <a href="${loginUrl}" style="background-color: #2c3e50; color: white; padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">🔗 Platform Login</a>
+          </div>
+
+          <p>We look forward to working closely with <strong>${collegeName || 'your institution'}</strong> to support students in exploring suitable career and placement opportunities.</p>
+          
+          <p>Please feel free to reach out if you require any assistance with onboarding or platform usage.</p>
+          
+          <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+            <p style="margin: 0;">Warm regards,</p>
+            <p style="margin: 5px 0; font-weight: bold; color: #fd7e14;">Team TaleGlobal</p>
+            <p style="margin: 0; font-size: 14px;">📧 <a href="mailto:support@taleglobal.net" style="color: #fd7e14; text-decoration: none;">support@taleglobal.net</a></p>
+            <p style="margin: 0; font-size: 14px;">🌐 <a href="http://www.taleglobal.net" style="color: #fd7e14; text-decoration: none;">www.taleglobal.net</a></p>
+          </div>
         </div>
-        
-        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: #333; margin-top: 0;">What's Next?</h3>
-          <ul style="color: #666; line-height: 1.8;">
-            ${userType === 'employer' ? `
-              <li>Create your password</li>
+      </div>
+    `;
+  } else if (normalizedUserType === 'employer') {
+    subject = 'Welcome to TaleGlobal - Complete Your Registration';
+    template = `
+      <div style="font-family: 'Poppins', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa; color: #333;">
+        <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+          <h1 style="color: #333; text-align: center; margin-bottom: 30px;">Welcome to TaleGlobal!</h1>
+          
+          <p>Dear <strong>${name}</strong>,</p>
+          
+          <p>Thank you for signing up with <strong>TaleGlobal</strong>! We're excited to have you join our community of employers.</p>
+          
+          <p>To complete your registration and start posting jobs, please create your password by clicking the button below:</p>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${createPasswordUrl}" style="background-color: #fd7e14; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">🔐 Create Your Password</a>
+          </div>
+          
+          <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="color: #333; margin-top: 0;">🚀 What's Next?</h3>
+            <ul style="color: #666; line-height: 1.8;">
+              <li>Create your secure password</li>
+              <li>Complete your company profile</li>
               <li>Post unlimited job openings</li>
               <li>Access to qualified candidates</li>
               <li>Advanced application management</li>
-            ` : userType === 'placement' ? `
-              <li>Create your password</li>
-              <li>Upload student data files</li>
-              <li>Manage student registrations</li>
-              <li>Track placement activities</li>
-            ` : `
+            </ul>
+          </div>
+          
+          <p>If you face any issues during the registration process, feel free to contact us.</p>
+          
+          <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+            <p style="margin: 0;">Warm regards,</p>
+            <p style="margin: 5px 0; font-weight: bold; color: #fd7e14;">Team TaleGlobal</p>
+            <p style="margin: 0; font-size: 14px;">📧 <a href="mailto:support@taleglobal.net" style="color: #fd7e14; text-decoration: none;">support@taleglobal.net</a></p>
+            <p style="margin: 0; font-size: 14px;">🌐 <a href="https://www.taleglobal.net" style="color: #fd7e14; text-decoration: none;">www.taleglobal.net</a></p>
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    subject = 'Welcome to TaleGlobal - Create Your Password';
+    template = `
+      <div style="font-family: 'Poppins', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa;">
+        <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+          <h1 style="color: #333; text-align: center; margin-bottom: 30px;">Welcome to TaleGlobal!</h1>
+          
+          <p style="color: #666; font-size: 16px; line-height: 1.6;">Dear ${name},</p>
+          
+          <p style="color: #666; font-size: 16px; line-height: 1.6;">
+            Thank you for signing up with TaleGlobal! We're excited to have you join our community of job seekers.
+          </p>
+          
+          <p style="color: #666; font-size: 16px; line-height: 1.6;">
+            To complete your registration, please create your password by clicking the button below:
+          </p>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${createPasswordUrl}" style="background-color: #fd7e14; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">Create Your Password</a>
+          </div>
+          
+          <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="color: #333; margin-top: 0;">What's Next?</h3>
+            <ul style="color: #666; line-height: 1.8;">
               <li>Create your password</li>
               <li>Complete your profile</li>
               <li>Browse thousands of job opportunities</li>
               <li>Apply to jobs with one click</li>
-            `}
-          </ul>
+            </ul>
+          </div>
+          
+          <p style="color: #999; font-size: 14px; text-align: center; margin-top: 30px;">
+            Best regards,<br>
+            The TaleGlobal Team
+          </p>
         </div>
-        
-        <p style="color: #999; font-size: 14px; text-align: center; margin-top: 30px;">
-          Best regards,<br>
-          The TaleGlobal Team
-        </p>
       </div>
-    </div>
-  `;
+    `;
+  }
 
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: `"TaleGlobal Team" <${process.env.EMAIL_USER}>`,
     to: email,
-    subject: 'Welcome to TaleGlobal - Create Your Password',
-    html: welcomeTemplate
+    subject,
+    html: template
   };
 
   await transporter.sendMail(mailOptions);

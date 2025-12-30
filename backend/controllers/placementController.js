@@ -56,7 +56,7 @@ exports.registerPlacement = async (req, res) => {
 
       // Send welcome email with password creation link
       try {
-        await sendWelcomeEmail(placement.email, placement.name, 'placement');
+        await sendWelcomeEmail(placement.email, placement.name, 'placement', placement.collegeName);
       } catch (emailError) {
         console.error('Welcome email failed for placement officer:', emailError);
         return res.status(500).json({ success: false, message: 'Failed to send welcome email' });
@@ -101,7 +101,7 @@ exports.registerPlacement = async (req, res) => {
 
     // Send welcome email
     try {
-      await sendWelcomeEmail(placement.email, placement.name, 'placement');
+      await sendWelcomeEmail(placement.email, placement.name, 'placement', placement.collegeName);
     } catch (emailError) {
       console.error('Welcome email failed for placement officer:', emailError);
     }
