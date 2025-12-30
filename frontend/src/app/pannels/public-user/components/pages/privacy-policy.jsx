@@ -181,7 +181,6 @@ function PrivacyPolicyPage() {
                             <h3 className="section-title">9. Contact Us</h3>
                             <p>If you have any questions about this Privacy Policy, please contact us at:</p>
                             <p>Email: info@taleglobal.net<br/>
-                            Phone: (+91) 9876543210<br/>
                             Address: Bangalore, 560092</p>
                         </div>
                     </div>
