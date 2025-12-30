@@ -52,12 +52,24 @@ candidateSchema.pre('save', async function(next) {
 });
 
 candidateSchema.methods.comparePassword = async function(password) {
-  // For placement candidates, compare plain text passwords
-  if (this.registrationMethod === 'placement') {
-    return password === this.password;
+  try {
+    if (!this.password) return false;
+
+    // Check if the stored password is a bcrypt hash
+    const isHashed = this.password.startsWith('$2a$') || this.password.startsWith('$2b$');
+
+    if (isHashed) {
+      return await bcrypt.compare(password, this.password);
+    } else {
+      // If it's not a hash, it must be plain text (only allowed for placement candidates)
+      if (this.registrationMethod === 'placement') {
+        return password === this.password;
+      }
+      return false;
+    }
+  } catch (error) {
+    return false;
   }
-  // For other candidates, use bcrypt
-  return await bcrypt.compare(password, this.password);
 };
 
 module.exports = mongoose.model('Candidate', candidateSchema);

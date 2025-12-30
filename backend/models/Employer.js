@@ -50,8 +50,12 @@ employerSchema.pre('save', async function(next) {
 });
 
 employerSchema.methods.comparePassword = async function(password) {
-  if (!this.password) return false;
-  return await bcrypt.compare(password, this.password);
+  try {
+    if (!this.password) return false;
+    return await bcrypt.compare(password, this.password);
+  } catch (error) {
+    return false;
+  }
 };
 
 // Optimized indexes for employer queries

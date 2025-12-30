@@ -78,13 +78,12 @@ exports.loginEmployer = async (req, res) => {
 
     const employer = await Employer.findByEmail(email.trim());
     if (!employer) {
-      // Removed console debug line for security
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
     const isPasswordValid = await employer.comparePassword(password);
+    
     if (!isPasswordValid) {
-      // Removed console debug line for security;
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 

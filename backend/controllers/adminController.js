@@ -313,17 +313,18 @@ exports.getAllEmployers = async (req, res) => {
       .populate('approvedBy', 'name username email role firstName lastName')
       .sort({ createdAt: -1 })
       .limit(limit * 1)
-      .skip((page - 1) * limit);
+      .skip((page - 1) * limit)
+      .lean();
 
     // Enrich with profile completion status
     const employersWithProfile = await Promise.all(
       employers.map(async (employer) => {
-        const profile = await EmployerProfile.findOne({ employerId: employer._id });
+        const profile = await EmployerProfile.findOne({ employerId: employer._id }).lean();
         const requiredFields = ['companyName', 'description', 'location', 'phone', 'email'];
         const isProfileComplete = profile && requiredFields.every(field => profile[field]);
         
         return {
-          ...employer.toObject(),
+          ...employer,
           hasProfile: !!profile,
           isProfileComplete,
           profileCompletionPercentage: profile 
@@ -419,7 +420,7 @@ exports.updateEmployerStatus = async (req, res) => {
       updateData.isApproved = !!isApproved;
       if (isApproved) {
         updateData.approvedBy = new mongoose.Types.ObjectId(req.user.id);
-        updateData.approvedByModel = req.user.role === 'admin' ? 'Admin' : 'SubAdmin';
+        updateData.approvedByModel = (req.user.role === 'admin' || req.user.role === 'super-admin') ? 'Admin' : 'SubAdmin';
       }
     }
 
@@ -985,7 +986,8 @@ exports.getAllPlacements = async (req, res) => {
       .populate('approvedBy', 'name username email role firstName lastName')
       .sort({ createdAt: -1 })
       .limit(limit * 1)
-      .skip((page - 1) * limit);
+      .skip((page - 1) * limit)
+      .lean();
 
     res.json({ success: true, data: placements });
   } catch (error) {
@@ -1011,7 +1013,7 @@ exports.updatePlacementStatus = async (req, res) => {
       updateData.isApproved = !!isApproved;
       if (isApproved) {
         updateData.approvedBy = new mongoose.Types.ObjectId(req.user.id);
-        updateData.approvedByModel = req.user.role === 'admin' ? 'Admin' : 'SubAdmin';
+        updateData.approvedByModel = (req.user.role === 'admin' || req.user.role === 'super-admin') ? 'Admin' : 'SubAdmin';
       }
     }
     if (updateData.isApproved === true && updateData.status === undefined) {

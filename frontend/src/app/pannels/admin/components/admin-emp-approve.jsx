@@ -145,21 +145,21 @@ function AdminEmployersApproved() {
                                                 <td style={{textAlign: 'center', fontSize: '0.85rem'}}>{formatDate(employer.updatedAt || employer.createdAt)}</td>
                                                 <td style={{textAlign: 'center'}}>
                                                     {(() => {
+                                                        const approver = employer.approvedBy;
+                                                        const model = employer.approvedByModel;
                                                         let displayText = 'Not Available';
-                                                        
-                                                        if (employer.approvedBy) {
-                                                            if (employer.approvedByModel === 'Admin') {
-                                                                displayText = employer.approvedBy.name || 'Admin';
-                                                            } else if (employer.approvedByModel === 'SubAdmin') {
-                                                                displayText = employer.approvedBy.name || 
-                                                                            (employer.approvedBy.firstName && employer.approvedBy.lastName 
-                                                                                ? `${employer.approvedBy.firstName} ${employer.approvedBy.lastName}` 
-                                                                                : employer.approvedBy.username) || 'SubAdmin';
-                                                            }
-                                                        } else if (employer.isApproved) {
-                                                            displayText = employer.approvedByModel === 'Admin' ? 'Admin' : 'SubAdmin';
+
+                                                        if (approver && typeof approver === 'object') {
+                                                            displayText = approver.name || 
+                                                                        (approver.firstName && approver.lastName ? `${approver.firstName} ${approver.lastName}` : null) ||
+                                                                        approver.firstName || 
+                                                                        approver.username || 
+                                                                        (model === 'Admin' ? 'System Admin' : model === 'SubAdmin' ? 'Sub-Admin' : 'Default Admin');
+                                                        } else if (employer.isApproved || employer.status === 'active' || employer.status === 'approved') {
+                                                            displayText = model === 'Admin' ? 'System Admin' : model === 'SubAdmin' ? 'Sub-Admin' : 'Default Admin';
                                                         }
-                                                        const approverType = employer.approvedByModel || 'Admin';
+                                                        
+                                                        const approverType = model || 'Admin';
                                                         
                                                         return (
                                                             <span style={{

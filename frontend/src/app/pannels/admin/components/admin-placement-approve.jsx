@@ -133,9 +133,21 @@ function AdminPlacementOfficersApproved() {
                                             </td>
                                             <td style={{textAlign: 'center'}}>
                                                 {(() => {
-                                                    console.log('Placement approvedBy:', placement.approvedBy, 'Model:', placement.approvedByModel);
-                                                    const displayText = placement.approvedBy?.name || placement.approvedBy?.username || placement.approvedBy?.firstName || (placement.approvedByModel === 'Admin' ? 'Admin' : 'Not Available');
-                                                    const approverType = placement.approvedByModel || 'Admin';
+                                                    const approver = placement.approvedBy;
+                                                    const model = placement.approvedByModel;
+                                                    let displayText = 'Not Available';
+
+                                                    if (approver && typeof approver === 'object') {
+                                                        displayText = approver.name || 
+                                                                    (approver.firstName && approver.lastName ? `${approver.firstName} ${approver.lastName}` : null) ||
+                                                                    approver.firstName || 
+                                                                    approver.username || 
+                                                                    (model === 'Admin' ? 'System Admin' : model === 'SubAdmin' ? 'Sub-Admin' : 'Default Admin');
+                                                    } else if (placement.isApproved || placement.status === 'active' || placement.status === 'approved') {
+                                                        displayText = model === 'Admin' ? 'System Admin' : model === 'SubAdmin' ? 'Sub-Admin' : 'Default Admin';
+                                                    }
+                                                    
+                                                    const approverType = model || 'Admin';
                                                     
                                                     return (
                                                         <span style={{

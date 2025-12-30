@@ -69,6 +69,13 @@ const placementSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Static method for case-insensitive email lookup
+placementSchema.statics.findByEmail = function(email) {
+  return this.findOne({ 
+    email: new RegExp(`^${email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') 
+  });
+};
+
 placementSchema.pre('save', async function(next) {
   if (!this.isModified('password') || !this.password) return next();
   this.password = await bcrypt.hash(this.password, 12);

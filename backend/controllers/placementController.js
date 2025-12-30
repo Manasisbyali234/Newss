@@ -125,7 +125,7 @@ exports.createPassword = async (req, res) => {
   try {
     const { email, password } = req.body;
     const normalizedEmail = email.toLowerCase().trim();
-    const placement = await Placement.findOne({ email: normalizedEmail });
+    const placement = await Placement.findByEmail(normalizedEmail);
 
     if (!placement) {
       return res.status(404).json({ success: false, message: 'Placement officer not found' });
@@ -321,7 +321,7 @@ exports.loginPlacement = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Email and password required' });
     }
 
-    const placement = await Placement.findOne({ email: email.toLowerCase() });
+    const placement = await Placement.findByEmail(email.trim());
     console.log('Found placement:', !!placement);
     
     if (!placement) {

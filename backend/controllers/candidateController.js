@@ -64,7 +64,6 @@ exports.loginCandidate = async (req, res) => {
 
     const candidate = await Candidate.findByEmail(email.trim());
     if (!candidate) {
-      // Removed console debug line for security;
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
@@ -1054,7 +1053,7 @@ exports.verifyOTPAndResetPassword = async (req, res) => {
     const { email, otp, newPassword } = req.body;
     
     const candidate = await Candidate.findOne({
-      email,
+      email: new RegExp(`^${email.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'),
       resetPasswordOTP: otp,
       resetPasswordOTPExpires: { $gt: Date.now() }
     });

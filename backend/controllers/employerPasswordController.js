@@ -3,7 +3,7 @@ const Employer = require('../models/Employer');
 exports.createPassword = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const employer = await Employer.findOne({ email });
+    const employer = await Employer.findByEmail(email.trim());
 
     if (!employer) {
       return res.status(404).json({ success: false, message: 'Employer not found' });
@@ -27,7 +27,7 @@ exports.createPassword = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   try {
     const { email } = req.body;
-    const employer = await Employer.findOne({ email });
+    const employer = await Employer.findByEmail(email.trim());
     
     if (!employer) {
       return res.status(404).json({ success: false, message: 'Employer not found' });
@@ -75,7 +75,7 @@ exports.confirmResetPassword = async (req, res) => {
 exports.sendOTP = async (req, res) => {
   try {
     const { email } = req.body;
-    const employer = await Employer.findOne({ email });
+    const employer = await Employer.findByEmail(email.trim());
     
     if (!employer) {
       return res.status(404).json({ success: false, message: 'Employer not found' });
@@ -100,7 +100,7 @@ exports.verifyOTPAndResetPassword = async (req, res) => {
     const { email, otp, newPassword } = req.body;
     
     const employer = await Employer.findOne({
-      email,
+      email: new RegExp(`^${email.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'),
       resetPasswordOTP: otp,
       resetPasswordOTPExpires: { $gt: Date.now() }
     });
@@ -123,7 +123,7 @@ exports.verifyOTPAndResetPassword = async (req, res) => {
 exports.checkEmail = async (req, res) => {
   try {
     const { email } = req.body;
-    const employer = await Employer.findOne({ email: email.toLowerCase().trim() });
+    const employer = await Employer.findByEmail(email.trim());
     
     res.json({ 
       success: true, 
@@ -142,7 +142,7 @@ exports.updatePasswordReset = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Email and new password are required' });
     }
 
-    const employer = await Employer.findOne({ email: email.toLowerCase().trim() });
+    const employer = await Employer.findByEmail(email.trim());
     if (!employer) {
       return res.status(404).json({ success: false, message: 'Employer not found' });
     }
