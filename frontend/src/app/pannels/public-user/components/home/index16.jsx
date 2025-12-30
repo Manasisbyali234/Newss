@@ -1192,70 +1192,64 @@ function Home16Page() {
 
                     <div className="twm-how-it-work-section3">
                         <Row style={{marginLeft: '0px', marginRight: '0px', marginBottom: '0'}}>
-                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4" style={{padding: '0.5rem'}}>
-                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '30px 25px', borderRadius: '16px', height: '160px', background: '#fff', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', border: '1px solid #f0f0f0', transition: 'all 0.3s ease'}}>
-                                    <div className="twm-media" style={{marginRight: '20px', flexShrink: 0}}>
-                                        <div style={{width: '65px', height: '65px', background: 'linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(255, 106, 0, 0.3)'}}>
-                                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                                <circle cx="12" cy="7" r="4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                            </svg>
-                                        </div>
+                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-3" style={{padding: '0.4rem'}}>
+                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '6px 6px', borderRadius: '10px', height: '35px', background: '#fff', border: '1px solid #f0f0f0', transition: 'all 0.3s ease', overflow: 'hidden'}}>
+                                    <div className="twm-media" style={{marginRight: '6px', flexShrink: 0}}>
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle cx="12" cy="8" r="5" stroke="#FF6A00" strokeWidth="2"/>
+                                            <path d="M20 21a8 8 0 1 0-16 0" stroke="#FF6A00" strokeWidth="2"/>
+                                        </svg>
                                     </div>
-                                    <div style={{flex: 1}}>
-                                        <h4 className="twm-title" style={{marginBottom: '10px', fontSize: '17px', fontWeight: '600', color: '#333'}}>1. Register Account</h4>
-                                        <p style={{marginBottom: '0', fontSize: '14px', lineHeight: '1.5', color: '#666'}}>Create profile and upload resume to get started.</p>
+                                    <div style={{flex: 1, minWidth: 0}}>
+                                        <h4 className="twm-title" style={{marginBottom: '0px', fontSize: '11px', fontWeight: '600', color: '#333', lineHeight: '1.1'}}>Register Account</h4>
+                                        <p style={{marginBottom: '0', fontSize: '8px', lineHeight: '1.1', color: '#666'}}>Create profile & upload resume</p>
                                     </div>
                                 </div>
                             </Col>
 
-                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4" style={{padding: '0.5rem'}}>
-                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '30px 25px', borderRadius: '16px', height: '160px', background: '#fff', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', border: '1px solid #f0f0f0', transition: 'all 0.3s ease'}}>
-                                    <div className="twm-media" style={{marginRight: '20px', flexShrink: 0}}>
-                                        <div style={{width: '65px', height: '65px', background: 'linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(255, 106, 0, 0.3)'}}>
-                                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <circle cx="11" cy="11" r="8" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                                <path d="M21 21L16.65 16.65" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                            </svg>
-                                        </div>
+                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-3" style={{padding: '0.4rem'}}>
+                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '6px 6px', borderRadius: '10px', height: '35px', background: '#fff', border: '1px solid #f0f0f0', transition: 'all 0.3s ease', overflow: 'hidden'}}>
+                                    <div className="twm-media" style={{marginRight: '6px', flexShrink: 0}}>
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle cx="11" cy="11" r="8" stroke="#FF6A00" strokeWidth="2"/>
+                                            <path d="m21 21-4.35-4.35" stroke="#FF6A00" strokeWidth="2"/>
+                                        </svg>
                                     </div>
-                                    <div style={{flex: 1}}>
-                                        <h4 className="twm-title" style={{marginBottom: '10px', fontSize: '17px', fontWeight: '600', color: '#333'}}>2. Search & Apply</h4>
-                                        <p style={{marginBottom: '0', fontSize: '14px', lineHeight: '1.5', color: '#666'}}>Browse jobs and apply to matching positions.</p>
+                                    <div style={{flex: 1, minWidth: 0}}>
+                                        <h4 className="twm-title" style={{marginBottom: '0px', fontSize: '11px', fontWeight: '600', color: '#333', lineHeight: '1.1'}}>Search & Apply</h4>
+                                        <p style={{marginBottom: '0', fontSize: '8px', lineHeight: '1.1', color: '#666'}}>Browse jobs & apply instantly</p>
                                     </div>
                                 </div>
                             </Col>
 
-                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4" style={{padding: '0.5rem'}}>
-                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '30px 25px', borderRadius: '16px', height: '160px', background: '#fff', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', border: '1px solid #f0f0f0', transition: 'all 0.3s ease'}}>
-                                    <div className="twm-media" style={{marginRight: '20px', flexShrink: 0}}>
-                                        <div style={{width: '65px', height: '65px', background: 'linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(255, 106, 0, 0.3)'}}>
-                                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M9 12L11 14L15 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                                <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                            </svg>
-                                        </div>
+                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-3" style={{padding: '0.4rem'}}>
+                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '6px 6px', borderRadius: '10px', height: '35px', background: '#fff', border: '1px solid #f0f0f0', transition: 'all 0.3s ease', overflow: 'hidden'}}>
+                                    <div className="twm-media" style={{marginRight: '6px', flexShrink: 0}}>
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 12l2 2 4-4" stroke="#FF6A00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                            <circle cx="12" cy="12" r="10" stroke="#FF6A00" strokeWidth="2"/>
+                                        </svg>
                                     </div>
-                                    <div style={{flex: 1}}>
-                                        <h4 className="twm-title" style={{marginBottom: '10px', fontSize: '17px', fontWeight: '600', color: '#333'}}>3. Take Assessment</h4>
-                                        <p style={{marginBottom: '0', fontSize: '14px', lineHeight: '1.5', color: '#666'}}>Complete skill tests for your job profile.</p>
+                                    <div style={{flex: 1, minWidth: 0}}>
+                                        <h4 className="twm-title" style={{marginBottom: '0px', fontSize: '11px', fontWeight: '600', color: '#333', lineHeight: '1.1'}}>Take Assessment</h4>
+                                        <p style={{marginBottom: '0', fontSize: '8px', lineHeight: '1.1', color: '#666'}}>Complete skill tests</p>
                                     </div>
                                 </div>
                             </Col>
 
-                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4" style={{padding: '0.5rem'}}>
-                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '30px 25px', borderRadius: '16px', height: '160px', background: '#fff', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', border: '1px solid #f0f0f0', transition: 'all 0.3s ease'}}>
-                                    <div className="twm-media" style={{marginRight: '20px', flexShrink: 0}}>
-                                        <div style={{width: '65px', height: '65px', background: 'linear-gradient(135deg, #FF6A00 0%, #FF8A00 100%)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(255, 106, 0, 0.3)'}}>
-                                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M22 11.08V12C21.9988 14.1564 21.3005 16.2547 20.0093 17.9818C18.7182 19.7088 16.9033 20.9725 14.8354 21.5839C12.7674 22.1953 10.5573 22.1219 8.53447 21.3746C6.51168 20.6273 4.78465 19.2461 3.61096 17.4371C2.43727 15.628 1.87979 13.4905 2.02168 11.3363C2.16356 9.18218 2.99721 7.13677 4.39828 5.49707C5.79935 3.85736 7.69279 2.71548 9.79619 2.24015C11.8996 1.76482 14.1003 1.98186 16.07 2.86" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                                <path d="M22 4L12 14.01L9 11.01" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                            </svg>
-                                        </div>
+                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-3" style={{padding: '0.4rem'}}>
+                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '6px 6px', borderRadius: '10px', height: '35px', background: '#fff', border: '1px solid #f0f0f0', transition: 'all 0.3s ease', overflow: 'hidden'}}>
+                                    <div className="twm-media" style={{marginRight: '6px', flexShrink: 0}}>
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="#FF6A00" strokeWidth="2"/>
+                                            <circle cx="9" cy="7" r="4" stroke="#FF6A00" strokeWidth="2"/>
+                                            <path d="m22 2-5 5" stroke="#FF6A00" strokeWidth="2"/>
+                                            <path d="m17 7 5-5" stroke="#FF6A00" strokeWidth="2"/>
+                                        </svg>
                                     </div>
-                                    <div style={{flex: 1}}>
-                                        <h4 className="twm-title" style={{marginBottom: '10px', fontSize: '17px', fontWeight: '600', color: '#333'}}>4. Get Hired</h4>
-                                        <p style={{marginBottom: '0', fontSize: '14px', lineHeight: '1.5', color: '#666'}}>Attend interviews and land your dream job.</p>
+                                    <div style={{flex: 1, minWidth: 0}}>
+                                        <h4 className="twm-title" style={{marginBottom: '0px', fontSize: '11px', fontWeight: '600', color: '#333', lineHeight: '1.1'}}>Get Hired</h4>
+                                        <p style={{marginBottom: '0', fontSize: '8px', lineHeight: '1.1', color: '#666'}}>Attend interviews & get job</p>
                                     </div>
                                 </div>
                             </Col>

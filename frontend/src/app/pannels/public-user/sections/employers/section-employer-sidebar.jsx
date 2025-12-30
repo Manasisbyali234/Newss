@@ -5,6 +5,7 @@ function SectionEmployerSidebar({ onFilterChange }) {
     const [locations, setLocations] = useState([]);
     const [companyTypes, setCompanyTypes] = useState([]);
     const [establishedYears, setEstablishedYears] = useState([]);
+    const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
     const [filters, setFilters] = useState({
         keyword: '',
         location: '',
@@ -81,6 +82,15 @@ function SectionEmployerSidebar({ onFilterChange }) {
 
     return (
         <div className="side-bar">
+            <style>{`
+                .search-bx .form-control {
+                    padding-left: 65px !important;
+                }
+                .search-bx i[class^="feather-"] {
+                    left: 20px !important;
+                    font-size: 18px !important;
+                }
+            `}</style>
             <div className="sidebar-elements search-bx">
                 <form>
                     <div className="form-group mb-4 position-relative">
@@ -88,7 +98,6 @@ function SectionEmployerSidebar({ onFilterChange }) {
                         <div className="position-relative">
                             <i className="feather-search" style={{
                                 position: 'absolute',
-                                left: '15px',
                                 top: '50%',
                                 transform: 'translateY(-50%)',
                                 zIndex: 10,
@@ -101,25 +110,61 @@ function SectionEmployerSidebar({ onFilterChange }) {
                                 value={filters.keyword}
                                 onChange={(e) => setFilters({...filters, keyword: e.target.value})}
                                 style={{
-                                    paddingLeft: '40px',
                                     borderRadius: '8px'
                                 }}
                             />
                         </div>
                     </div>
 
-                    <div className="form-group mb-4">
-                        <h4 className="section-head-small mb-4">Location</h4>
-                        <select 
-                            className="form-control"
-                            value={filters.location}
-                            onChange={(e) => setFilters({...filters, location: e.target.value})}
-                        >
-                            <option value="">All Locations</option>
-                            {locations.map(loc => (
-                                <option key={loc} value={loc}>{loc}</option>
-                            ))}
-                        </select>
+                    <div className="form-group mb-4 position-relative">
+                        <h4 className="section-head-small mb-4">Location ({locations.length} available)</h4>
+                        <div className="position-relative">
+                            <i className="feather-map-pin" style={{
+                                position: 'absolute',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                zIndex: 10,
+                                color: '#666'
+                            }} />
+                            <input 
+                                type="text" 
+                                className="form-control" 
+                                placeholder="Search location" 
+                                value={filters.location}
+                                onChange={(e) => {
+                                    setFilters({...filters, location: e.target.value});
+                                    setShowLocationSuggestions(e.target.value.length > 0);
+                                }}
+                                onFocus={() => setShowLocationSuggestions(filters.location.length > 0)}
+                                onBlur={() => setTimeout(() => setShowLocationSuggestions(false), 200)}
+                                style={{
+                                    borderRadius: '8px'
+                                }}
+                            />
+                        </div>
+                        {showLocationSuggestions && (
+                            <div className="position-absolute w-100 bg-white border rounded shadow-sm" style={{zIndex: 1000, maxHeight: '200px', overflowY: 'auto'}}>
+                                {locations
+                                    .filter(location => location.toLowerCase().includes(filters.location.toLowerCase()))
+                                    .slice(0, 10)
+                                    .map((location, index) => (
+                                        <div 
+                                            key={index} 
+                                            className="p-2 border-bottom cursor-pointer hover-bg-light"
+                                            onClick={() => {
+                                                setFilters({...filters, location});
+                                                setShowLocationSuggestions(false);
+                                            }}
+                                            style={{cursor: 'pointer'}}
+                                            onMouseEnter={(e) => e.target.style.backgroundColor = '#f8f9fa'}
+                                            onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
+                                        >
+                                            <i className="feather-map-pin me-2"></i>{location}
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                        )}
                     </div>
 
                     <div className="twm-sidebar-ele-filter">

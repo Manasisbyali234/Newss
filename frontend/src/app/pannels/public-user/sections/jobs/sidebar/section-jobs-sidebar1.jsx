@@ -227,6 +227,15 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
     return (
         <>
             <div className="side-bar">
+                <style>{`
+                    .search-bx .form-control {
+                        padding-left: 65px !important;
+                    }
+                    .search-bx i[class^="feather-"] {
+                        left: 20px !important;
+                        font-size: 18px !important;
+                    }
+                `}</style>
                 <div className="sidebar-elements search-bx">
                     <form>
                         <div className="form-group mb-4 position-relative">
@@ -234,7 +243,6 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                             <div className="position-relative">
                                 <i className="feather-search" style={{
                                     position: 'absolute',
-                                    left: '15px',
                                     top: '50%',
                                     transform: 'translateY(-50%)',
                                     zIndex: 10,
@@ -254,7 +262,6 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                                     style={{
                                         background: 'transparent', 
                                         border: '1px solid #ddd',
-                                        paddingLeft: '40px',
                                         borderRadius: '8px'
                                     }}
                                 />
@@ -289,7 +296,6 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                             <div className="position-relative">
                                 <i className="feather-map-pin" style={{
                                     position: 'absolute',
-                                    left: '15px',
                                     top: '50%',
                                     transform: 'translateY(-50%)',
                                     zIndex: 10,
@@ -306,7 +312,6 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                                     style={{
                                         background: 'transparent', 
                                         border: '1px solid #ddd',
-                                        paddingLeft: '40px',
                                         borderRadius: '8px'
                                     }}
                                 />

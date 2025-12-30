@@ -97,7 +97,7 @@ const Header2 = memo(function Header2({ _config }) {
                                                     className="btn btn-outline-primary" 
                                                     to={getDashboardRoute()}
                                                 >
-                                                    <i className="feather-user" /> {getUserDisplayName()}
+                                                    <i className="feather-user" /> <span className="user-name-text">{getUserDisplayName()}</span>
                                                 </NavLink>
                                             </div>
                                         </div>

@@ -117,6 +117,15 @@
     gap: 6px !important;
     line-height: normal !important;
     margin: 0 !important;
+    max-width: 100% !important;
+  }
+  
+  .user-name-text {
+    max-width: 150px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    display: inline-block !important;
   }
   
   .dashboard-link .btn i {
@@ -135,6 +144,19 @@
     height: 36px !important;
     line-height: normal !important;
     margin: 0 !important;
+  }
+
+  .user-name-text {
+    max-width: 80px !important;
+  }
+  
+  .logo-header {
+    max-width: 120px !important;
+  }
+
+  .logo-header img {
+    max-height: 30px !important;
+    width: auto !important;
   }
   
   .dashboard-link .btn i {
