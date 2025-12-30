@@ -48,10 +48,11 @@ function ForgotPassword() {
     }
 
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || '';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const endpoints = [
         `${apiUrl}/api/candidate/password/send-otp`,
         `${apiUrl}/api/employer/password/send-otp`,
+        `${apiUrl}/api/admin/password/send-otp`,
         `${apiUrl}/api/placement/password/send-otp`
       ];
       
@@ -89,10 +90,11 @@ function ForgotPassword() {
     setSuccess('');
 
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || '';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const endpoints = [
         `${apiUrl}/api/candidate/password/send-otp`,
         `${apiUrl}/api/employer/password/send-otp`,
+        `${apiUrl}/api/admin/password/send-otp`,
         `${apiUrl}/api/placement/password/send-otp`
       ];
       
@@ -136,10 +138,11 @@ function ForgotPassword() {
     }
 
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || '';
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const endpoints = [
         `${apiUrl}/api/candidate/password/verify-otp`,
         `${apiUrl}/api/employer/password/verify-otp`,
+        `${apiUrl}/api/admin/password/verify-otp`,
         `${apiUrl}/api/placement/password/verify-otp`
       ];
       

@@ -1034,7 +1034,7 @@ exports.updatePlacementStatus = async (req, res) => {
     if (updateData.status === 'active') {
       try {
         const { sendApprovalEmail } = require('../utils/emailService');
-        await sendApprovalEmail(placement.email, placement.name, 'placement');
+        await sendApprovalEmail(placement.email, placement.name, 'placement', placement.collegeName);
         
         await createNotification({
           title: 'Account Approved',
@@ -1468,8 +1468,8 @@ exports.createSubAdmin = async (req, res) => {
     // Check if username or email already exists
     const existingSubAdmin = await SubAdmin.findOne({ 
       $or: [
-        { email: new RegExp(`^${email.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }, 
-        { username }
+        { email: new RegExp(`^${email.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }, 
+        { username: username.trim() }
       ] 
     });
     
@@ -1521,7 +1521,10 @@ exports.updateSubAdmin = async (req, res) => {
     
     // Check if username or email already exists for other sub-admins
     const existingSubAdmin = await SubAdmin.findOne({ 
-      $or: [{ email }, { username }],
+      $or: [
+        { email: new RegExp(`^${email.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }, 
+        { username: username.trim() }
+      ],
       _id: { $ne: req.params.id }
     });
     
@@ -3415,11 +3418,11 @@ exports.getSubAdminProfile = async (req, res) => {
 exports.sendOTP = async (req, res) => {
   try {
     const { email } = req.body;
-    let user = await Admin.findOne({ email });
+    let user = await Admin.findByEmail(email.trim());
     let userType = 'Admin';
     
     if (!user) {
-      user = await SubAdmin.findOne({ email });
+      user = await SubAdmin.findByEmail(email.trim());
       userType = 'SubAdmin';
     }
     
@@ -3445,21 +3448,13 @@ exports.verifyOTPAndResetPassword = async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body;
     
-    let user = await Admin.findOne({
-      email,
-      resetPasswordOTP: otp,
-      resetPasswordOTPExpires: { $gt: Date.now() }
-    });
+    let user = await Admin.findByEmail(email.trim());
     
-    if (!user) {
-      user = await SubAdmin.findOne({
-        email,
-        resetPasswordOTP: otp,
-        resetPasswordOTPExpires: { $gt: Date.now() }
-      });
+    if (!user || user.resetPasswordOTP !== otp || (user.resetPasswordOTPExpires && user.resetPasswordOTPExpires < Date.now())) {
+      user = await SubAdmin.findByEmail(email.trim());
     }
 
-    if (!user) {
+    if (!user || user.resetPasswordOTP !== otp || (user.resetPasswordOTPExpires && user.resetPasswordOTPExpires < Date.now())) {
       return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
     }
 

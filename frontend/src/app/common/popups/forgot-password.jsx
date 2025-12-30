@@ -43,11 +43,12 @@ function ForgotPassword() {
     }
 
     try {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const endpoints = [
-        'http://localhost:5000/api/candidate/password/send-otp',
-        'http://localhost:5000/api/employer/password/send-otp',
-        'http://localhost:5000/api/admin/password/send-otp',
-        'http://localhost:5000/api/placement/password/send-otp'
+        `${apiUrl}/api/candidate/password/send-otp`,
+        `${apiUrl}/api/employer/password/send-otp`,
+        `${apiUrl}/api/admin/password/send-otp`,
+        `${apiUrl}/api/placement/password/send-otp`
       ];
       
       let success = false;
@@ -83,11 +84,12 @@ function ForgotPassword() {
     setMessage('');
 
     try {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const endpoints = [
-        'http://localhost:5000/api/candidate/password/send-otp',
-        'http://localhost:5000/api/employer/password/send-otp',
-        'http://localhost:5000/api/admin/password/send-otp',
-        'http://localhost:5000/api/placement/password/send-otp'
+        `${apiUrl}/api/candidate/password/send-otp`,
+        `${apiUrl}/api/employer/password/send-otp`,
+        `${apiUrl}/api/admin/password/send-otp`,
+        `${apiUrl}/api/placement/password/send-otp`
       ];
       
       let success = false;
@@ -129,11 +131,12 @@ function ForgotPassword() {
     }
 
     try {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const endpoints = [
-        'http://localhost:5000/api/candidate/password/verify-otp',
-        'http://localhost:5000/api/employer/password/verify-otp',
-        'http://localhost:5000/api/admin/password/verify-otp',
-        'http://localhost:5000/api/placement/password/verify-otp'
+        `${apiUrl}/api/candidate/password/verify-otp`,
+        `${apiUrl}/api/employer/password/verify-otp`,
+        `${apiUrl}/api/admin/password/verify-otp`,
+        `${apiUrl}/api/placement/password/verify-otp`
       ];
       
       let success = false;

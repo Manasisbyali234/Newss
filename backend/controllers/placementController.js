@@ -1442,7 +1442,7 @@ exports.updateProfile = async (req, res) => {
 exports.sendOTP = async (req, res) => {
   try {
     const { email } = req.body;
-    const placement = await Placement.findOne({ email });
+    const placement = await Placement.findByEmail(email.trim());
     
     if (!placement) {
       return res.status(404).json({ success: false, message: 'Placement officer not found' });

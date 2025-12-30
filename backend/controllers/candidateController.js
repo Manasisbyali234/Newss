@@ -1052,13 +1052,9 @@ exports.verifyOTPAndResetPassword = async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body;
     
-    const candidate = await Candidate.findOne({
-      email: new RegExp(`^${email.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'),
-      resetPasswordOTP: otp,
-      resetPasswordOTPExpires: { $gt: Date.now() }
-    });
+    const candidate = await Candidate.findByEmail(email.trim());
 
-    if (!candidate) {
+    if (!candidate || candidate.resetPasswordOTP !== otp || (candidate.resetPasswordOTPExpires && candidate.resetPasswordOTPExpires < Date.now())) {
       return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
     }
 

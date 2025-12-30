@@ -19,10 +19,11 @@ function CreatePassword() {
     });
     const email = searchParams.get('email');
     const rawType = (searchParams.get('type') || 'candidate').toLowerCase();
+    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
     const endpointMap = {
-        candidate: 'http://localhost:5000/api/candidate/create-password',
-        employer: 'http://localhost:5000/api/employer/create-password',
-        placement: 'http://localhost:5000/api/placement/create-password'
+        candidate: `${apiUrl}/api/candidate/create-password`,
+        employer: `${apiUrl}/api/employer/create-password`,
+        placement: `${apiUrl}/api/placement/create-password`
     };
     const hasTypeParam = !!searchParams.get('type');
     const userType = endpointMap[rawType] ? rawType : 'candidate';

@@ -99,13 +99,9 @@ exports.verifyOTPAndResetPassword = async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body;
     
-    const employer = await Employer.findOne({
-      email: new RegExp(`^${email.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'),
-      resetPasswordOTP: otp,
-      resetPasswordOTPExpires: { $gt: Date.now() }
-    });
+    const employer = await Employer.findByEmail(email.trim());
 
-    if (!employer) {
+    if (!employer || employer.resetPasswordOTP !== otp || (employer.resetPasswordOTPExpires && employer.resetPasswordOTPExpires < Date.now())) {
       return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
     }
 
