@@ -441,7 +441,7 @@ function Home16Page() {
             {/* JOBS CATEGORIES SECTION START */}
             <div className="section-full p-t20 p-b20 twm-job-categories-hpage-6-area animate-on-scroll" style={{background: 'transparent !important', backgroundColor: 'transparent !important', paddingTop: 'clamp(10px, 2vw, 20px)', paddingBottom: 'clamp(10px, 2vw, 20px)'}}>
                 <Container style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
-                <div className="section-head center wt-small-separator-outer mb-3">
+                <div className="section-head center wt-small-separator-outer mb-3" style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                     <div className="wt-small-separator site-text-primary">
                         <div>Jobs by Categories</div>
                     </div>
@@ -856,39 +856,40 @@ function Home16Page() {
                     <Container style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
                     <div className="wt-separator-two-part" style={{background: 'transparent'}}>
                         <Row className="wt-separator-two-part-row" style={{alignItems: 'center'}}>
-                            <Col xs={12} className="mb-4" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem'}}>
-                                <div style={{flex: 1}}></div>
-                                <div className="section-head center wt-small-separator-outer" style={{margin: 0}}>
-                                    <div className="wt-small-separator site-text-primary">
-                                        <div>Top Jobs</div>
+                            <Col xs={12} className="mb-4">
+                                <div className="section-header-with-btn">
+                                    <div className="section-head center wt-small-separator-outer" style={{margin: 0}}>
+                                        <div className="wt-small-separator site-text-primary">
+                                            <div>Top Jobs</div>
+                                        </div>
+                                        <h2 className="wt-title">Discover your next career move</h2>
                                     </div>
-                                    <h2 className="wt-title">Discover your next career move</h2>
-                                </div>
-                                <div style={{flex: 1, display: 'flex', justifyContent: 'flex-end'}}>
-                                    {isFiltered && (
-                                        <button
-                                            className="site-button site-button-sm me-3"
-                                            onClick={() => {
-                                                setJobs(allJobs.slice(0, 6));
-                                                setFilteredJobs([]);
-                                                setIsFiltered(false);
-                                                setShowingCount(6);
-                                                // Reset search form
-                                                const searchForm =
-                                                    document.querySelector(".search-container");
-                                                if (searchForm) {
-                                                    const selects = searchForm.querySelectorAll("select");
-                                                    selects.forEach((select) => (select.value = ""));
-                                                }
-                                            }}
-                                            style={{ marginRight: "10px" }}
-                                        >
-                                            Clear Filters
-                                        </button>
-                                    )}
-                                    <NavLink to="/job-grid" className="site-button" style={{padding: '0.5rem 1rem', fontSize: '14px', display: 'inline-flex', width: 'auto', whiteSpace: 'nowrap'}}>
-                                        Browse All Jobs
-                                    </NavLink>
+                                    <div className="header-btn-container">
+                                        {isFiltered && (
+                                            <button
+                                                className="site-button site-button-sm me-3"
+                                                onClick={() => {
+                                                    setJobs(allJobs.slice(0, 6));
+                                                    setFilteredJobs([]);
+                                                    setIsFiltered(false);
+                                                    setShowingCount(6);
+                                                    // Reset search form
+                                                    const searchForm =
+                                                        document.querySelector(".search-container");
+                                                    if (searchForm) {
+                                                        const selects = searchForm.querySelectorAll("select");
+                                                        selects.forEach((select) => (select.value = ""));
+                                                    }
+                                                }}
+                                                style={{ marginRight: "10px" }}
+                                            >
+                                                Clear Filters
+                                            </button>
+                                        )}
+                                        <NavLink to="/job-grid" className="site-button" style={{padding: '0.5rem 1rem', fontSize: '14px', display: 'inline-flex', width: 'auto', whiteSpace: 'nowrap'}}>
+                                            Browse All Jobs
+                                        </NavLink>
+                                    </div>
                                 </div>
                             </Col>
                         </Row>
@@ -1045,15 +1046,14 @@ function Home16Page() {
                 <div style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
                     <Container style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
                     {/* title="" START*/}
-                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', flexWrap: 'wrap', gap: '1rem'}}>
-                        <div style={{flex: 1}}></div>
+                    <div className="section-header-with-btn" style={{marginBottom: '30px'}}>
                         <div className="section-head center wt-small-separator-outer" style={{margin: 0}}>
                             <div className="wt-small-separator site-text-primary">
                                 <div>Top Recruiters</div>
                             </div>
                             <h2 className="wt-title">Discover your next career move</h2>
                         </div>
-                        <div style={{flex: 1, display: 'flex', justifyContent: 'flex-end'}}>
+                        <div className="header-btn-container">
                             <NavLink to="/emp-grid" className="site-button" style={{padding: '0.5rem 1rem', fontSize: '14px', whiteSpace: 'nowrap'}}>
                                 View All
                             </NavLink>
@@ -1181,7 +1181,7 @@ function Home16Page() {
                 <div>
                     <Container style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
                     {/* title="" START*/}
-                    <div className="section-head center wt-small-separator-outer mb-3">
+                    <div className="section-head center wt-small-separator-outer mb-3" style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                         <div className="wt-small-separator site-text-primary">
                             <div>for candidates</div>
                         </div>
@@ -1271,7 +1271,7 @@ function Home16Page() {
                 <div>
                     <Container style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
                     {/* title START */}
-                    <div className="section-head center wt-small-separator-outer mb-3">
+                    <div className="section-head center wt-small-separator-outer mb-3" style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                         <div className="wt-small-separator">
                             <div>For Employers</div>
                         </div>

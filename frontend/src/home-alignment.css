@@ -15,33 +15,43 @@
     width: 100% !important;
 }
 
-/* Align section headers */
+/* Align section headings to the middle */
 .home-page-alignment .section-head {
-    text-align: left !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
     width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
 }
 
 .home-page-alignment .section-head.center {
-    text-align: left !important;
+    text-align: center !important;
 }
 
-.home-page-alignment .section-head.center .wt-title,
-.home-page-alignment .section-head.center .wt-small-separator {
-    margin-left: 0 !important;
+.home-page-alignment .section-head .wt-title,
+.home-page-alignment .section-head .wt-small-separator {
+    margin-left: auto !important;
     margin-right: auto !important;
+    text-align: center !important;
 }
 
 .home-page-alignment .wt-small-separator-outer {
-    text-align: left !important;
-    justify-content: flex-start !important;
+    text-align: center !important;
+    justify-content: center !important;
+    display: flex !important;
 }
 
 .home-page-alignment .wt-small-separator-outer.center {
     display: flex !important;
-    justify-content: flex-start !important;
+    justify-content: center !important;
 }
+
+.home-page-alignment .wt-small-separator site-text-primary {
+    margin: 0 auto !important;
+}
+
 
 .home-page-alignment .category-cards-container {
     margin-left: 0 !important;
@@ -94,25 +104,59 @@
 }
 
 /* Specific fix for the flex containers that have title and browse button */
-.home-page-alignment .wt-separator-two-part-row > .col-12 {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
+.home-page-alignment .section-header-with-btn {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    position: relative !important;
+    width: 100% !important;
+    min-height: 80px;
+}
+
+.home-page-alignment .header-btn-container {
+    position: absolute !important;
+    right: 0 !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    display: flex !important;
+    align-items: center !important;
+    z-index: 10;
 }
 
 /* Align the browse button area if it has a spacer */
-.home-page-alignment .wt-separator-two-part-row div[style*="flex: 1"] {
+.home-page-alignment .wt-separator-two-part-row div[style*="flex: 1"],
+.home-page-alignment div[style*="display: flex"] div[style*="flex: 1"] {
     display: none !important;
 }
 
-.home-page-alignment .wt-separator-two-part-row .section-head {
-    flex: 1 !important;
+.home-page-alignment .wt-separator-two-part-row .section-head,
+.home-page-alignment div[style*="display: flex"] .section-head {
+    flex: none !important;
+    width: auto !important;
+    max-width: 80% !important;
 }
 
+/* Ensure the "View All" buttons or similar that were on the right are now below or handled */
+.home-page-alignment .header-btn-container .site-button {
+    margin-top: 0 !important;
+}
+
+
 /* Mobile adjustments */
-@media (max-width: 767px) {
-    .home-page-alignment .container,
-    .home-page-alignment .container-fluid {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
+@media (max-width: 991px) {
+    .home-page-alignment .section-header-with-btn {
+        flex-direction: column !important;
+        min-height: auto !important;
+    }
+    .home-page-alignment .header-btn-container {
+        position: static !important;
+        transform: none !important;
+        margin-top: 15px !important;
+        justify-content: center !important;
+        width: 100% !important;
+    }
+    .home-page-alignment .wt-separator-two-part-row .section-head,
+    .home-page-alignment div[style*="display: flex"] .section-head {
+        max-width: 100% !important;
     }
 }
