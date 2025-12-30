@@ -10,20 +10,38 @@ function Footer3 () {
 					className="footer-light ftr-light-with-bg site-bg-cover"
 					style={{
 						backgroundImage: `url(${publicUrlFor("images/ftr-bg.jpg")})`,
-						fontFamily: '"Plus Jakarta Sans", sans-serif'
+						fontFamily: '"Plus Jakarta Sans", sans-serif',
+						fontWeight: 'bold'
 					}}
 				>
 
 						{/* FOOTER BLOCKES START */}
 						<div className="footer-top" style={{padding: '40px 0'}}>
-							<div className="row" style={{margin: '0'}}>
+							<style>{`
+								.footer-light p, 
+								.footer-light a, 
+								.footer-light span:not(.logo-footer *), 
+								.footer-light li,
+								.footer-light h3 {
+									font-weight: 600 !important;
+								}
+								.logo-footer, .logo-footer * {
+									font-weight: normal !important;
+								}
+								.ftr-list {
+									padding-left: 0 !important;
+									margin-left: 0 !important;
+								}
+							`}</style>
+							<div className="container">
+								<div className="row" style={{margin: '0'}}>
 								<div className="col-lg-4 col-md-12" style={{padding: '0 15px'}}>
 									<div className="widget widget_about">
 										<div className="logo-footer clearfix">
 											<NavLink to={publicUser.INITIAL}>
 												<JobZImage
 													id="skin_footer_light_logo"
-													src="images/logo-light-2.png"
+													src="images/skins-logo/logo-skin-8.png"
 													alt=""
 												/>
 											</NavLink>
@@ -35,17 +53,17 @@ function Footer3 () {
 										<ul className="ftr-list">
 											<li>
 												<p>
-													<span>Address :</span> Bangalore, 560092{" "}
+													<span>Address:</span> Bangalore, 560092
 												</p>
 											</li>
 											<li>
 												<p>
-													<span>Email :</span> <a href="mailto:info@taleglobal.net" style={{color: '#f97316', textDecoration: 'underline', cursor: 'pointer'}}>info@taleglobal.net</a>
+													<span>Email:</span> <a href="mailto:info@taleglobal.net" style={{color: '#f97316', textDecoration: 'underline', cursor: 'pointer'}}>info@taleglobal.net</a>
 												</p>
 											</li>
 											<li style={{display: 'none'}}>
 												<p>
-													<span>Call :</span> <a href="tel:+919876543210" style={{color: '#f97316', textDecoration: 'underline', cursor: 'pointer'}}>(+91) 9876543210</a>
+													<span>Call:</span> <a href="tel:+919876543210" style={{color: '#f97316', textDecoration: 'underline', cursor: 'pointer'}}>(+91) 9876543210</a>
 												</p>
 											</li>
 										</ul>
@@ -117,10 +135,12 @@ function Footer3 () {
 								</div>
 							</div>
 						</div>
+					</div>
 
 						{/* FOOTER COPYRIGHT */}
 						<div className="footer-bottom" style={{padding: '20px 0'}}>
-							<div className="footer-bottom-info" style={{margin: '0 15px'}}>
+							<div className="container">
+								<div className="footer-bottom-info" style={{margin: '0'}}>
 								<div className="footer-copy-right">
 									<span className="copyrights-text">
 										Copyright © 2025 by Tale Global. All Rights Reserved.
@@ -175,6 +195,7 @@ function Footer3 () {
 								</ul>
 							</div>
 						</div>
+					</div>
 				</footer>
 			</>
 		);

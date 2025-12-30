@@ -5,11 +5,12 @@ import { publicUser } from "../../../globals/route-names";
 function Footer4() {
     return (
         <>
-            <footer className="footer-light" style={{fontFamily: '"Plus Jakarta Sans", sans-serif'}}>
+            <footer className="footer-light" style={{fontFamily: '"Plus Jakarta Sans", sans-serif', fontWeight: 'bold'}}>
 
                     {/* NEWS LETTER SECTION START */}
                     <div className="ftr-nw-content">
-                        <div className="row">
+                        <div className="container">
+                            <div className="row">
                             <div className="col-md-5">
                                 <div className="ftr-nw-title">
                                     Join our email subscription now to get updates
@@ -26,14 +27,33 @@ function Footer4() {
                             </div>
                         </div>
                     </div>
+                </div>
                     {/* NEWS LETTER SECTION END */}
                     {/* FOOTER BLOCKES START */}
                     <div className="footer-top">
-                        <div className="row">
+                        <style>{`
+                            .footer-light p, 
+                            .footer-light a, 
+                            .footer-light span:not(.logo-footer *), 
+                            .footer-light li,
+                            .footer-light h3,
+                            .footer-light .ftr-nw-title {
+                                font-weight: 600 !important;
+                            }
+                            .logo-footer, .logo-footer * {
+                                font-weight: normal !important;
+                            }
+                            .ftr-list {
+                                padding-left: 0 !important;
+                                margin-left: 0 !important;
+                            }
+                        `}</style>
+                        <div className="container">
+                            <div className="row">
                             <div className="col-lg-3 col-md-12">
                                 <div className="widget widget_about">
                                     <div className="logo-footer clearfix">
-                                        <NavLink to={publicUser.HOME1}><JobZImage id="skin_footer_light_logo" src="images/logo-light.png" alt="" /></NavLink>
+                                        <NavLink to={publicUser.HOME1}><JobZImage id="skin_footer_light_logo" src="images/skins-logo/logo-skin-8.png" alt="" /></NavLink>
                                     </div>
                                     <p>Many desktop publishing packages and web page editors now.</p>
                                     <ul className="ftr-list">
@@ -93,9 +113,11 @@ function Footer4() {
                             </div>
                         </div>
                     </div>
+                </div>
                     {/* FOOTER COPYRIGHT */}
                     <div className="footer-bottom">
-                        <div className="footer-bottom-info">
+                        <div className="container">
+                            <div className="footer-bottom-info">
                             <div className="footer-copy-right">
                                 <span className="copyrights-text">Copyright © 2023 by thewebmax All Rights Reserved.</span>
                             </div>
@@ -108,6 +130,7 @@ function Footer4() {
                             </ul>
                         </div>
                     </div>
+                </div>
             </footer>
 
         </>
