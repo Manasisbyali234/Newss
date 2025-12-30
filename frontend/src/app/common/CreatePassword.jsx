@@ -15,7 +15,7 @@ function CreatePassword() {
     const [passwordValidation, setPasswordValidation] = useState({
         length: false,
         uppercase: false,
-        lowercase: false
+        specialChars: false
     });
     const email = searchParams.get('email');
     const rawType = (searchParams.get('type') || 'candidate').toLowerCase();
@@ -35,7 +35,7 @@ function CreatePassword() {
         setPasswordValidation({
             length: pwd.length >= 8,
             uppercase: /[A-Z]/.test(pwd),
-            lowercase: /[a-z]/.test(pwd)
+            specialChars: /[@#!%$*?]/.test(pwd)
         });
     };
 
@@ -154,9 +154,9 @@ function CreatePassword() {
                                                 <i className={`fa ${passwordValidation.uppercase ? 'fa-check-circle' : 'fa-times-circle'}`} style={{ marginRight: '8px' }}></i>
                                                 One uppercase letter
                                             </li>
-                                            <li style={{ padding: '6px 0', fontSize: '13px', color: passwordValidation.lowercase ? '#28a745' : '#dc3545' }}>
-                                                <i className={`fa ${passwordValidation.lowercase ? 'fa-check-circle' : 'fa-times-circle'}`} style={{ marginRight: '8px' }}></i>
-                                                One lowercase letter
+                                            <li style={{ padding: '6px 0', fontSize: '13px', color: passwordValidation.specialChars ? '#28a745' : '#dc3545' }}>
+                                                <i className={`fa ${passwordValidation.specialChars ? 'fa-check-circle' : 'fa-times-circle'}`} style={{ marginRight: '8px' }}></i>
+                                                One special character (@#!%$*?)
                                             </li>
                                         </ul>
                                     </div>
