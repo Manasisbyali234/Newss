@@ -123,9 +123,8 @@
     z-index: 10;
 }
 
-/* Align the browse button area if it has a spacer */
-.home-page-alignment .wt-separator-two-part-row div[style*="flex: 1"],
-.home-page-alignment div[style*="display: flex"] div[style*="flex: 1"] {
+/* Align the browse button area if it has a spacer - only target the header row to avoid hiding content in other flex containers */
+.home-page-alignment .wt-separator-two-part-row div[style*="flex: 1"] {
     display: none !important;
 }
 
