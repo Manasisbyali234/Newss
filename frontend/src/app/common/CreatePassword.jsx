@@ -35,7 +35,7 @@ function CreatePassword() {
         setPasswordValidation({
             length: pwd.length >= 8,
             uppercase: /[A-Z]/.test(pwd),
-            specialChars: /[@#!%$*?]/.test(pwd)
+            specialChars: (pwd.match(/[@#!%$*?]/g) || []).length >= 1
         });
     };
 
