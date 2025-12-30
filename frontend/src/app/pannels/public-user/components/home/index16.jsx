@@ -20,6 +20,7 @@ import "../../../../../container-fixes.css";
 import "../../../../../how-it-works-improvements.css";
 import "../../../../../mobile-section-spacing.css";
 import "./naukri-preview.css";
+import "../../../../../home-alignment.css";
 
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
 function Home16Page() {
@@ -410,7 +411,7 @@ function Home16Page() {
     }, [showingCount, isFiltered, filteredJobs, allJobs]);
 
     return (
-        <>
+        <div className="home-page-alignment">
             {/* Error Alert */}
             {error && (
                 <div className="error-alert-container">
@@ -447,7 +448,7 @@ function Home16Page() {
                     <h2 className="wt-title">Choose a Relevant Category</h2>
                 </div>
                 <div style={{background: 'transparent', backgroundColor: 'transparent'}}>
-                    <div className="category-cards-container" style={{marginLeft: '10px', marginRight: '10px'}}>
+                    <div className="category-cards-container">
                         <NavLink to="/job-grid?category=IT" style={{textDecoration: 'none'}}>
                             <div className="category-card" style={{
                                 background: '#ffffff',
@@ -667,7 +668,7 @@ function Home16Page() {
                     </div>
                     
                     {/* Second Row */}
-                    <div className="category-cards-container category-cards-second-row" style={{marginLeft: '10px', marginRight: '10px', marginTop: '20px', paddingLeft: '130px'}}>
+                    <div className="category-cards-container category-cards-second-row">
                         <NavLink to="/job-grid?category=Finance" style={{textDecoration: 'none'}}>
                             <div className="category-card" style={{
                                 background: '#ffffff',
@@ -895,7 +896,7 @@ function Home16Page() {
 
                     <div className="section-content">
                         <div className="twm-jobs-grid-wrap" data-section="top-jobs">
-                            <div style={{padding: '0 15px', background: 'transparent', width: '100%', maxWidth: '1800px', margin: '0 auto'}}>
+                            <div style={{background: 'transparent', width: '100%', margin: '0'}}>
                                 <Row style={{'--bs-gutter-x': '20px', marginLeft: '0', marginRight: '0'}}>
                                 {jobs.length > 0 ? (
                                     jobs.map((job) => (
@@ -1061,7 +1062,7 @@ function Home16Page() {
                     {/* title="" END*/}
 
                     <div className="section-content">
-                        <div className="twm-recruiters5-wrap" style={{marginLeft: '15px', marginRight: '15px', maxWidth: '1600px', margin: '0 auto', padding: '0 15px'}}>
+                        <div className="twm-recruiters5-wrap">
                             <div
                                 className="twm-column-5 m-b30"
                                 style={{
@@ -1189,7 +1190,7 @@ function Home16Page() {
                     </div>
                     {/* title="" END*/}
 
-                    <div className="twm-how-it-work-section3" style={{maxWidth: '1800px', margin: '0 auto'}}>
+                    <div className="twm-how-it-work-section3">
                         <Row style={{marginLeft: '0px', marginRight: '0px', marginBottom: '0'}}>
                             <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-4" style={{padding: '0.5rem'}}>
                                 <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '30px 25px', borderRadius: '16px', height: '160px', background: '#fff', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', border: '1px solid #f0f0f0', transition: 'all 0.3s ease'}}>
@@ -1278,7 +1279,7 @@ function Home16Page() {
                     </div>
                     {/* title END */}
 
-                    <div className="twm-how-it-work-section3" style={{maxWidth: '2400px', margin: '0 auto'}}>
+                    <div className="twm-how-it-work-section3">
                         <Row style={{marginLeft: '0px', marginRight: '0px', marginBottom: '0'}}>
                             {/* Card 1: Post Your Job */}
                             <Col xl={4} lg={4} md={6} sm={12} xs={12} style={{padding: '0.5rem'}}>
@@ -1342,7 +1343,7 @@ function Home16Page() {
                 </div>
             </div>
             {/* HOW IT WORK FOR EMPLOYERS SECTION END */}
-        </>
+        </div>
     );
 }
 

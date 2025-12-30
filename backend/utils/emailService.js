@@ -690,6 +690,176 @@ const sendJobApplicationConfirmationEmail = async (candidateEmail, candidateName
   await transporter.sendMail(mailOptions);
 };
 
+const sendCandidateActiveProfileEmail = async (email, name, password) => {
+  const transporter = createTransport();
+  const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/`;
+  const createPasswordUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/create-password?email=${encodeURIComponent(email)}&type=candidate`;
+  
+  const template = `
+    <div style="font-family: 'Poppins', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa; color: #333;">
+      <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h2 style="color: #2c3e50; text-align: center; margin-bottom: 20px;">Your TaleGlobal Account Is Active</h2>
+        
+        <p>Dear <strong>${name}</strong>,</p>
+        
+        <p>Greetings from <strong>TaleGlobal</strong>.</p>
+        
+        <p>We would like to inform you that your basic details have been updated by your Placement Officer on the TaleGlobal platform and approved by the TaleGlobal Admin.</p>
+        
+        <p>Your TaleGlobal account is now active.</p>
+
+        <h3 style="color: #2c3e50;">🔹 Important: Profile Completion Required</h3>
+        <p>To proceed further and apply for job opportunities, you are required to log in and complete your full profile on the TaleGlobal platform.</p>
+
+        <h3 style="color: #2c3e50;">✅ Steps to Follow After Login:</h3>
+        <ul style="line-height: 1.6;">
+          <li>Reset your password (mandatory for security reasons)</li>
+          <li>Update your basic profile details (personal information, address, etc.)</li>
+          <li>Update your complete education details</li>
+          <li>Review and ensure your profile is accurate and complete</li>
+        </ul>
+        
+        <p><em>Only candidates with a completed profile will be able to apply for job opportunities using the credits available in their account.</em></p>
+
+        <h3 style="color: #2c3e50;">🔹 Account Information:</h3>
+        <ul style="line-height: 1.6;">
+          <li>Your profile has been approved</li>
+          <li>Credits have been added to your account for applying to jobs</li>
+          <li>You can access job opportunities, assessments, and placement-support resources</li>
+        </ul>
+
+        <div style="background-color: #e7f5ff; padding: 15px; border-radius: 8px; margin: 20px 0;">
+          <h4 style="margin-top: 0; color: #1971c2;">ℹ️ Important Information:</h4>
+          <ul style="margin-bottom: 0; padding-left: 20px;">
+            <li>No payment or fees have been collected from your college or Placement Officer</li>
+            <li>TaleGlobal does not assure or guarantee 100% placement</li>
+            <li>Placement opportunities depend on your skills, eligibility, and performance</li>
+          </ul>
+        </div>
+
+        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #2c3e50; text-align: center;">🔐 Login Information:</h3>
+          <p style="margin: 5px 0;"><strong>Username:</strong> ${email}</p>
+          <p style="margin: 5px 0;"><strong>Temporary Password:</strong> ${password}</p>
+          <p style="font-size: 14px; color: #666; margin-top: 10px;">Please log in and change your password immediately. Passwords can be updated anytime from your account settings.</p>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${loginUrl}" style="background-color: #fd7e14; color: white; padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block; margin-right: 10px;">🔗 Login Here</a>
+          <a href="${createPasswordUrl}" style="background-color: #2c3e50; color: white; padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">🔐 Create Password</a>
+        </div>
+
+        <p>TaleGlobal works in collaboration with your college placement team to support your career journey.</p>
+        
+        <p>If you face any issues while logging in or updating your profile, feel free to contact us.</p>
+        
+        <p>Wishing you success in your job search and career journey 🚀</p>
+        
+        <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+          <p style="margin: 0;">Warm regards,</p>
+          <p style="margin: 5px 0; font-weight: bold; color: #fd7e14;">Team TaleGlobal</p>
+          <p style="margin: 0; font-size: 14px;">📧 <a href="mailto:support@taleglobal.net" style="color: #fd7e14; text-decoration: none;">support@taleglobal.net</a></p>
+          <p style="margin: 0; font-size: 14px;">🌐 <a href="https://www.taleglobal.net" style="color: #fd7e14; text-decoration: none;">www.taleglobal.net</a></p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const mailOptions = {
+    from: `"TaleGlobal Team" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: 'Your TaleGlobal Account Is Active – Please Update Your Profile',
+    html: template
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+const sendPlacementAccessEnabledEmail = async (email, name, collegeName) => {
+  const transporter = createTransport();
+  const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/`;
+  const createPasswordUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/create-password?email=${encodeURIComponent(email)}&type=placement`;
+  
+  const template = `
+    <div style="font-family: 'Poppins', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa; color: #333;">
+      <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h2 style="color: #2c3e50; text-align: center; margin-bottom: 20px;">Placement Access Enabled</h2>
+        
+        <p>Dear <strong>${name}</strong>,</p>
+        
+        <p>Greetings from <strong>TaleGlobal</strong>.</p>
+        
+        <p>As discussed and agreed, we are pleased to confirm the collaboration between <strong>TaleGlobal and ${collegeName}</strong> to support final-year students in their career and placement readiness journey.</p>
+        
+        <p>Placement Officer access has been <strong>successfully enabled</strong> on the TaleGlobal platform, allowing you to upload and update <strong>final-year student data</strong> directly.</p>
+        
+        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #2c3e50;">🔹 Scope of Collaboration:</h3>
+          <ul style="line-height: 1.6;">
+            <li>TaleGlobal will support students by providing access to:
+              <ul>
+                <li>Career opportunities</li>
+                <li>Placement-related resources</li>
+              </ul>
+            </li>
+            <li>TaleGlobal <strong>does not provide any assurance or guarantee of 100% placement</strong></li>
+            <li>The platform is intended to <strong>support and enhance employability</strong>, not to promise job outcomes</li>
+          </ul>
+        </div>
+
+        <div style="background-color: #e7f5ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #1971c2;">🔹 Financial Clarification:</h3>
+          <ul style="line-height: 1.6; margin-bottom: 0;">
+            <li><strong>No fees or payments are collected from ${collegeName}</strong></li>
+            <li>Credits provided to students are <strong>offered as part of platform support</strong></li>
+            <li>Credits are <strong>not linked to any monetary transaction</strong> with the institution</li>
+          </ul>
+        </div>
+
+        <div style="background-color: #fff4e6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #d9480f;">🔹 Student Account Process:</h3>
+          <ul style="line-height: 1.6; margin-bottom: 0;">
+            <li>Student data submitted by the Placement Officer will be <strong>reviewed and approved by the TaleGlobal Admin</strong></li>
+            <li>Upon approval, students will receive:
+              <ul>
+                <li>Platform access</li>
+                <li>Credits for platform usage</li>
+                <li>Login credentials via email</li>
+              </ul>
+            </li>
+            <li>Students may <strong>change their passwords</strong> after first login for security purposes</li>
+          </ul>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${loginUrl}" style="background-color: #fd7e14; color: white; padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block; margin-right: 10px;">🔗 Platform Login</a>
+          <a href="${createPasswordUrl}" style="background-color: #2c3e50; color: white; padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">🔐 Create Password</a>
+        </div>
+
+        <p>We look forward to working closely with <strong>${collegeName}</strong> to support students in exploring suitable career and placement opportunities.</p>
+        
+        <p>Please feel free to reach out if you require any assistance with onboarding or platform usage.</p>
+        
+        <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+          <p style="margin: 0;">Warm regards,</p>
+          <p style="margin: 5px 0; font-weight: bold; color: #fd7e14;">Team TaleGlobal</p>
+          <p style="margin: 0; font-size: 14px;">📧 <a href="mailto:support@taleglobal.net" style="color: #fd7e14; text-decoration: none;">support@taleglobal.net</a></p>
+          <p style="margin: 0; font-size: 14px;">🌐 <a href="http://www.taleglobal.net" style="color: #fd7e14; text-decoration: none;">www.taleglobal.net</a></p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const mailOptions = {
+    from: `"TaleGlobal Team" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: 'Welcome to TaleGlobal - Placement Access Enabled',
+    html: template
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
 module.exports = { 
   sendWelcomeEmail, 
   sendResetEmail, 
@@ -699,5 +869,7 @@ module.exports = {
   sendPlacementCandidateWelcomeEmail,
   retryFailedEmail,
   sendApprovalEmail,
-  sendJobApplicationConfirmationEmail
+  sendJobApplicationConfirmationEmail,
+  sendCandidateActiveProfileEmail,
+  sendPlacementAccessEnabledEmail
 };
