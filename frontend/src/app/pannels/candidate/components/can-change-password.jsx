@@ -93,7 +93,7 @@ function CanChangePasswordPage() {
                 // Optionally redirect to login
                 setTimeout(() => {
                     localStorage.removeItem('candidateToken');
-                    window.location.href = '/candidate-login';
+                    window.location.href = '/login';
                 }, 2000);
             }
             

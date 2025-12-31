@@ -9,13 +9,13 @@ html, body {
 }
 
 .hero-body {
-  min-height: calc(100vh - var(--navbar-height, 72px));
+  min-height: 500px;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-top: var(--navbar-height, 72px);
+  padding-top: 80px;
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden;

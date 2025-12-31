@@ -1,4 +1,3 @@
-import JobZImage from "../../../../common/jobz-img";
 import { NavLink } from "react-router-dom";
 import { publicUser } from "../../../../../globals/route-names";
 import CountUp from "react-countup";
@@ -1042,302 +1041,218 @@ function Home16Page() {
             </div>
             {/* JOB POST END */}
 
-            {/* Recruiters START */}
-            <div className="section-full p-t20 p-b20 animate-on-scroll" style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
-                <div style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
-                    <Container style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
-                    {/* title="" START*/}
-                    <div className="section-header-with-btn" style={{marginBottom: '30px'}}>
-                        <div className="section-head center wt-small-separator-outer" style={{margin: 0}}>
-                            <div className="wt-small-separator site-text-primary">
-                                <div>Top Recruiters</div>
-                            </div>
-                            <h2 className="wt-title">Discover your next career move</h2>
+            {/* SECTION 1: Top Recruiters Hiring Now */}
+            <div className="section-full redesign-section bg-peach animate-on-scroll">
+                <Container>
+                    <div className="d-flex justify-content-between align-items-end mb-5 flex-wrap gap-3">
+                        <div className="text-left">
+                            <span className="badge-orange">Hiring now</span>
+                            <h2 className="section-title-large">
+                                Top Recruiters <span className="text-orange">Hiring Now</span>
+                            </h2>
+                            <p className="section-subtitle mb-0">Discover your next career move with these industry leaders</p>
                         </div>
-                        <div className="header-btn-container">
-                            <NavLink to="/emp-grid" className="site-button" style={{padding: '0.5rem 1rem', fontSize: '14px', whiteSpace: 'nowrap'}}>
-                                View All
-                            </NavLink>
-                        </div>
+                        <NavLink to="/emp-grid" className="view-all-companies-btn">
+                            View all companies
+                        </NavLink>
                     </div>
-                    {/* title="" END*/}
 
-                    <div className="section-content">
-                        <div className="twm-recruiters5-wrap">
-                            <div
-                                className="twm-column-5 m-b30"
-                                style={{
-                                    "--cards-per-row": "6",
-                                    padding: "10px 0"
-                                }}
-                            >
-                                <ul>
-                                    {loading ? (
-                                        <li>
-                                            <div className="text-center py-4">
-                                                <div className="spinner-border" role="status">
-                                                    <span className="sr-only">Loading...</span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    ) : recruiters.length > 0 ? (
-                                        recruiters.slice(0, 8).map((recruiter, index) => {
-                                            const generateCompanyLogo = (companyName) => {
-                                                const colors = [
-                                                    "#007bff",
-                                                    "#28a745",
-                                                    "#dc3545",
-                                                    "#ffc107",
-                                                    "#17a2b8",
-                                                    "#6f42c1",
-                                                ];
-                                                const color =
-                                                    colors[companyName.length % colors.length];
-                                                const initials = companyName
-                                                    .split(" ")
-                                                    .map((word) => word[0])
-                                                    .join("")
-                                                    .substring(0, 2)
-                                                    .toUpperCase();
-
-                                                return (
-                                                    <div
-                                                        style={{
-                                                            width: "60px",
-                                                            height: "60px",
-                                                            backgroundColor: color,
-                                                            color: "white",
-                                                            display: "flex",
-                                                            alignItems: "center",
-                                                            justifyContent: "center",
-                                                            fontSize: "18px",
-                                                            fontWeight: "bold",
-                                                            borderRadius: "8px",
-                                                        }}
-                                                    >
-                                                        {initials}
+                    <Row className="g-4 justify-content-center">
+                        {loading ? (
+                            <Col xs={12}><RecruiterSkeleton count={6} /></Col>
+                        ) : recruiters.length > 0 ? (
+                            recruiters.slice(0, 6).map((recruiter) => (
+                                <Col xl={2} lg={3} md={4} sm={6} xs={12} key={recruiter._id}>
+                                    <NavLink to={`/emp-detail/${recruiter._id}`} className="text-decoration-none">
+                                        <div className="recruiter-card">
+                                            <div className="recruiter-logo-circle">
+                                                {recruiter.logo ? (
+                                                    <img src={recruiter.logo} alt={recruiter.companyName} />
+                                                ) : (
+                                                    <div style={{fontSize: '24px', fontWeight: 'bold', color: '#FF6A3D'}}>
+                                                        {(recruiter.companyName || 'C').charAt(0)}
                                                     </div>
-                                                );
-                                            };
-
-                                            return (
-                                                <li key={recruiter._id} style={{marginBottom: '15px'}}>
-                                                    <NavLink to={`/emp-detail/${recruiter._id}`} style={{textDecoration: 'none', color: 'inherit', display: 'block'}}>
-                                                        <div className="twm-recruiters5-box">
-                                                            <div className="twm-rec-top">
-                                                                <div className="twm-rec-media">
-                                                                    {recruiter.logo ? (
-                                                                        <img
-                                                                            src={recruiter.logo}
-                                                                            alt={recruiter.companyName}
-                                                                            style={{
-                                                                                width: "60px",
-                                                                                height: "60px",
-                                                                                objectFit: "cover",
-                                                                                borderRadius: "8px"
-                                                                            }}
-                                                                        />
-                                                                    ) : (
-                                                                        generateCompanyLogo(recruiter.companyName)
-                                                                    )}
-                                                                </div>
-                                                                <div className="twm-rec-jobs">
-                                                                    {recruiter.jobCount} {recruiter.jobCount === 1 ? 'Job' : 'Jobs'}
-                                                                </div>
-                                                            </div>
-                                                            <div className="twm-rec-content">
-                                                                <h4 className="twm-title">
-                                                                    {recruiter.companyName}
-                                                                </h4>
-                                                                <div className="twm-job-address" style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxHeight: '20px'}}>
-                                                                    <i className="feather-map-pin" />
-                                                                    {recruiter.location || "Multiple Locations"}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </NavLink>
-                                                </li>
-                                            );
-                                        })
-                                    ) : (
-                                        <li style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-                                            <div className="text-center py-4" style={{width: '100%', textAlign: 'center'}}>
-                                                <p className="text-muted" style={{margin: '0 auto', textAlign: 'center'}}>No recruiters available at the moment.</p>
+                                                )}
                                             </div>
-                                        </li>
-                                    )}
-                                </ul>
+                                            <h4 className="recruiter-name text-truncate w-100">{recruiter.companyName}</h4>
+                                            <p className="hiring-text mb-0">Hiring in 2 days</p>
+                                        </div>
+                                    </NavLink>
+                                </Col>
+                            ))
+                        ) : (
+                            <Col xs={12} className="text-center py-5">
+                                <p className="text-muted">No recruiters available at the moment.</p>
+                            </Col>
+                        )}
+                    </Row>
+                </Container>
+            </div>
+
+            {/* SECTION 2: How It Works for Candidates */}
+            <div className="section-full redesign-section animate-on-scroll" style={{background: '#fff'}}>
+                <Container>
+                    <div className="section-head center wt-small-separator-outer mb-5 text-center">
+                        <span className="badge-orange">Process</span>
+                        <h2 className="section-title-large">How It Works for Candidates</h2>
+                        <p className="section-subtitle">Follow these simple steps to land your dream job</p>
+                    </div>
+
+                    <Row className="g-4">
+                        <Col lg={3} md={6}>
+                            <div className="process-card-light">
+                                <div className="process-icon-circle" style={{background: 'rgba(255, 106, 61, 0.1)'}}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF6A3D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                </div>
+                                <h4>Register Account</h4>
+                                <p>Create your profile and upload your resume to get started with your job search.</p>
                             </div>
-
-
-                        </div>
-                    </div>
-                    </Container>
-                </div>
+                        </Col>
+                        <Col lg={3} md={6}>
+                            <div className="process-card-light">
+                                <div className="process-icon-circle" style={{background: 'rgba(59, 130, 246, 0.1)'}}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                </div>
+                                <h4>Search & Apply</h4>
+                                <p>Browse through thousands of jobs and apply to the ones that match your skills.</p>
+                            </div>
+                        </Col>
+                        <Col lg={3} md={6}>
+                            <div className="process-card-light">
+                                <div className="process-icon-circle" style={{background: 'rgba(139, 92, 246, 0.1)'}}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                </div>
+                                <h4>Take Assessment</h4>
+                                <p>Complete skill assessments to stand out from other candidates and show your expertise.</p>
+                            </div>
+                        </Col>
+                        <Col lg={3} md={6}>
+                            <div className="process-card-light">
+                                <div className="process-icon-circle" style={{background: 'rgba(16, 185, 129, 0.1)'}}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                                </div>
+                                <h4>Get Hired</h4>
+                                <p>Attend interviews and get hired by top companies in your preferred industry.</p>
+                            </div>
+                        </Col>
+                    </Row>
+                </Container>
             </div>
-            {/* Recruiters END */}
 
-            {/* HOW IT WORK SECTION START */}
-            <div className="section-full p-t20 p-b20 twm-how-it-work-area animate-on-scroll" style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
-                <div>
-                    <Container style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
-                    {/* title="" START*/}
-                    <div className="section-head center wt-small-separator-outer mb-3" style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                        <div className="wt-small-separator site-text-primary">
-                            <div>for candidates</div>
-                        </div>
-
-                        <h2 className="wt-title">How It Works for Candidates</h2>
+            {/* SECTION 3 & 4: Recruit Smarter & Workflow Illustrations */}
+            <div className="section-full redesign-section workflow-section animate-on-scroll">
+                <Container>
+                    <div className="row align-items-center mb-5">
+                        <Col lg={8}>
+                            <div className="text-left">
+                                <span className="badge-orange">For Employers</span>
+                                <h2 className="section-title-large mb-4">
+                                    Recruit smarter with our <span className="text-orange">streamlined workflow</span>
+                                </h2>
+                                <p className="section-subtitle mb-4" style={{maxWidth: '600px'}}>
+                                    Our platform provides a seamless experience for employers to find, assess, and hire the best talent in the industry.
+                                </p>
+                                <NavLink to="/login?tab=employer" className="btn-dark-pill">
+                                    Start recruiting now
+                                </NavLink>
+                            </div>
+                        </Col>
                     </div>
-                    {/* title="" END*/}
 
-                    <div className="twm-how-it-work-section3">
-                        <Row style={{marginLeft: '0px', marginRight: '0px', marginBottom: '0'}}>
-                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-3" style={{padding: '0.4rem'}}>
-                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '6px 6px', borderRadius: '10px', height: '35px', background: '#fff', border: '1px solid #f0f0f0', transition: 'all 0.3s ease', overflow: 'hidden'}}>
-                                    <div className="twm-media" style={{marginRight: '6px', flexShrink: 0}}>
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <circle cx="12" cy="8" r="5" stroke="#FF6A00" strokeWidth="2"/>
-                                            <path d="M20 21a8 8 0 1 0-16 0" stroke="#FF6A00" strokeWidth="2"/>
-                                        </svg>
-                                    </div>
-                                    <div style={{flex: 1, minWidth: 0}}>
-                                        <h4 className="twm-title" style={{marginBottom: '0px', fontSize: '11px', fontWeight: '600', color: '#333', lineHeight: '1.1'}}>Register Account</h4>
-                                        <p style={{marginBottom: '0', fontSize: '8px', lineHeight: '1.1', color: '#666'}}>Create profile & upload resume</p>
-                                    </div>
+                    <Row className="g-5 mt-4">
+                        <Col lg={4} md={6}>
+                            <div className="workflow-illustration-card">
+                                <div className="illustration-circle" style={{background: '#FFF7F3'}}>
+                                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#FF6A3D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                                 </div>
-                            </Col>
-
-                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-3" style={{padding: '0.4rem'}}>
-                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '6px 6px', borderRadius: '10px', height: '35px', background: '#fff', border: '1px solid #f0f0f0', transition: 'all 0.3s ease', overflow: 'hidden'}}>
-                                    <div className="twm-media" style={{marginRight: '6px', flexShrink: 0}}>
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <circle cx="11" cy="11" r="8" stroke="#FF6A00" strokeWidth="2"/>
-                                            <path d="m21 21-4.35-4.35" stroke="#FF6A00" strokeWidth="2"/>
-                                        </svg>
-                                    </div>
-                                    <div style={{flex: 1, minWidth: 0}}>
-                                        <h4 className="twm-title" style={{marginBottom: '0px', fontSize: '11px', fontWeight: '600', color: '#333', lineHeight: '1.1'}}>Search & Apply</h4>
-                                        <p style={{marginBottom: '0', fontSize: '8px', lineHeight: '1.1', color: '#666'}}>Browse jobs & apply instantly</p>
-                                    </div>
+                                <h5>Find the right talent</h5>
+                                <p>Access a diverse pool of qualified candidates and use advanced filters to find the perfect match for your team.</p>
+                            </div>
+                        </Col>
+                        <Col lg={4} md={6}>
+                            <div className="workflow-illustration-card">
+                                <div className="illustration-circle" style={{background: '#EBF5FF'}}>
+                                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                                 </div>
-                            </Col>
-
-                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-3" style={{padding: '0.4rem'}}>
-                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '6px 6px', borderRadius: '10px', height: '35px', background: '#fff', border: '1px solid #f0f0f0', transition: 'all 0.3s ease', overflow: 'hidden'}}>
-                                    <div className="twm-media" style={{marginRight: '6px', flexShrink: 0}}>
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M9 12l2 2 4-4" stroke="#FF6A00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                            <circle cx="12" cy="12" r="10" stroke="#FF6A00" strokeWidth="2"/>
-                                        </svg>
-                                    </div>
-                                    <div style={{flex: 1, minWidth: 0}}>
-                                        <h4 className="twm-title" style={{marginBottom: '0px', fontSize: '11px', fontWeight: '600', color: '#333', lineHeight: '1.1'}}>Take Assessment</h4>
-                                        <p style={{marginBottom: '0', fontSize: '8px', lineHeight: '1.1', color: '#666'}}>Complete skill tests</p>
-                                    </div>
+                                <h5>Effortless screening</h5>
+                                <p>Streamline your hiring process with our automated screening tools and candidate management system.</p>
+                            </div>
+                        </Col>
+                        <Col lg={4} md={6}>
+                            <div className="workflow-illustration-card">
+                                <div className="illustration-circle" style={{background: '#F0FDF4'}}>
+                                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                                 </div>
-                            </Col>
-
-                            <Col xl={3} lg={6} md={6} sm={12} xs={12} className="mb-3" style={{padding: '0.4rem'}}>
-                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '6px 6px', borderRadius: '10px', height: '35px', background: '#fff', border: '1px solid #f0f0f0', transition: 'all 0.3s ease', overflow: 'hidden'}}>
-                                    <div className="twm-media" style={{marginRight: '6px', flexShrink: 0}}>
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="#FF6A00" strokeWidth="2"/>
-                                            <circle cx="9" cy="7" r="4" stroke="#FF6A00" strokeWidth="2"/>
-                                            <path d="m22 2-5 5" stroke="#FF6A00" strokeWidth="2"/>
-                                            <path d="m17 7 5-5" stroke="#FF6A00" strokeWidth="2"/>
-                                        </svg>
-                                    </div>
-                                    <div style={{flex: 1, minWidth: 0}}>
-                                        <h4 className="twm-title" style={{marginBottom: '0px', fontSize: '11px', fontWeight: '600', color: '#333', lineHeight: '1.1'}}>Get Hired</h4>
-                                        <p style={{marginBottom: '0', fontSize: '8px', lineHeight: '1.1', color: '#666'}}>Attend interviews & get job</p>
-                                    </div>
-                                </div>
-                            </Col>
-                        </Row>
-                    </div>
-                    </Container>
-                </div>
+                                <h5>Hire with confidence</h5>
+                                <p>Make informed decisions with detailed candidate profiles, assessment results, and interview feedback.</p>
+                            </div>
+                        </Col>
+                    </Row>
+                </Container>
             </div>
-            {/* HOW IT WORK SECTION END */}
 
             {/* HOW IT WORK FOR EMPLOYERS SECTION START */}
-            <div className="section-full p-t20 p-b20 twm-how-it-work-area animate-on-scroll" style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
-                <div>
-                    <Container style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
-                    {/* title START */}
-                    <div className="section-head center wt-small-separator-outer mb-3" style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                        <div className="wt-small-separator">
-                            <div>For Employers</div>
-                        </div>
-                        <h2 className="wt-title">How It Works for Employers</h2>
+            <div className="section-full redesign-section animate-on-scroll" style={{background: '#F9FAFB'}}>
+                <Container>
+                    <div className="section-head center wt-small-separator-outer mb-5 text-center">
+                        <span className="badge-orange">For Employers</span>
+                        <h2 className="section-title-large">How It Works for Employers</h2>
+                        <p className="section-subtitle">Streamline your hiring process with these simple steps</p>
                     </div>
-                    {/* title END */}
 
-                    <div className="twm-how-it-work-section3">
-                        <Row style={{marginLeft: '0px', marginRight: '0px', marginBottom: '0'}}>
-                            {/* Card 1: Post Your Job */}
-                            <Col xl={4} lg={4} md={6} sm={12} xs={12} style={{padding: '0.5rem'}}>
-                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '45px 40px', borderRadius: '16px', height: '160px', background: '#fff', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', border: '1px solid #f0f0f0', transition: 'all 0.3s ease'}}>
-                                    <div className="twm-media" style={{marginRight: '30px', flexShrink: 0}}>
-                                        <div style={{width: '65px', height: '65px', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.1)'}}>
-                                            <img 
-                                                src="https://static.vecteezy.com/system/resources/previews/067/381/647/non_2x/job-posting-announcement-recruitment-hiring-application-candidate-employment-vector.jpg" 
-                                                alt="Post Your Job"
-                                                style={{width: '100%', height: '100%', objectFit: 'cover'}}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div style={{flex: 1}}>
-                                        <h4 className="twm-title" style={{marginBottom: '10px', fontSize: '17px', fontWeight: '600', color: '#333'}}>1. Post Your Job</h4>
-                                        <p style={{marginBottom: '0', fontSize: '14px', lineHeight: '1.5', color: '#666'}}>Create account and post job openings with details and requirements.</p>
-                                    </div>
+                    <Row className="g-4">
+                        <Col lg={4} md={6}>
+                            <div className="process-card-light">
+                                <div className="process-icon-circle" style={{background: 'rgba(255, 106, 61, 0.1)'}}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF6A3D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                 </div>
-                            </Col>
-
-                            {/* Card 2: Hire the Best */}
-                            <Col xl={4} lg={4} md={6} sm={12} xs={12} style={{padding: '0.5rem'}}>
-                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '45px 40px', borderRadius: '16px', height: '160px', background: '#fff', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', border: '1px solid #f0f0f0', transition: 'all 0.3s ease'}}>
-                                    <div className="twm-media" style={{marginRight: '30px', flexShrink: 0}}>
-                                        <div style={{width: '65px', height: '65px', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.1)'}}>
-                                            <img 
-                                                src="https://i.pinimg.com/736x/57/2e/14/572e1453e353f60c803bd01c4ea68a05.jpg" 
-                                                alt="Hire the Best"
-                                                style={{width: '100%', height: '100%', objectFit: 'cover'}}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div style={{flex: 1}}>
-                                        <h4 className="twm-title" style={{marginBottom: '10px', fontSize: '17px', fontWeight: '600', color: '#333'}}>2. Hire the Best</h4>
-                                        <p style={{marginBottom: '0', fontSize: '14px', lineHeight: '1.5', color: '#666'}}>Review profiles, shortlist candidates and schedule interviews.</p>
-                                    </div>
+                                <h4>Post Your Job</h4>
+                                <p>Create account and post job openings with details and requirements.</p>
+                            </div>
+                        </Col>
+                        <Col lg={4} md={6}>
+                            <div className="process-card-light">
+                                <div className="process-icon-circle" style={{background: 'rgba(59, 130, 246, 0.1)'}}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                                 </div>
-                            </Col>
-
-                            {/* Card 3: Build Your Team */}
-                            <Col xl={4} lg={4} md={6} sm={12} xs={12} style={{padding: '0.5rem'}}>
-                                <div className="twm-w-process-steps3 hover-card" style={{display: 'flex', alignItems: 'center', padding: '45px 40px', borderRadius: '16px', height: '160px', background: '#fff', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', border: '1px solid #f0f0f0', transition: 'all 0.3s ease'}}>
-                                    <div className="twm-media" style={{marginRight: '30px', flexShrink: 0}}>
-                                        <div style={{width: '65px', height: '65px', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.1)'}}>
-                                            <img 
-                                                src="https://i.pinimg.com/736x/c3/10/17/c31017b46cfd17082e7ab29ba1df4f55.jpg" 
-                                                alt="Build Your Team"
-                                                style={{width: '100%', height: '100%', objectFit: 'cover'}}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div style={{flex: 1}}>
-                                        <h4 className="twm-title" style={{marginBottom: '10px', fontSize: '17px', fontWeight: '600', color: '#333'}}>3. Build Your Team</h4>
-                                        <p style={{marginBottom: '0', fontSize: '14px', lineHeight: '1.5', color: '#666'}}>Onboard new hires and build your dream team successfully.</p>
-                                    </div>
+                                <h4>Hire the Best</h4>
+                                <p>Review profiles, shortlist candidates and schedule interviews.</p>
+                            </div>
+                        </Col>
+                        <Col lg={4} md={6}>
+                            <div className="process-card-light">
+                                <div className="process-icon-circle" style={{background: 'rgba(16, 185, 129, 0.1)'}}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                                 </div>
-                            </Col>
-                        </Row>
-                    </div>
-                    </Container>
-                </div>
+                                <h4>Build Your Team</h4>
+                                <p>Onboard new hires and build your dream team successfully.</p>
+                            </div>
+                        </Col>
+                    </Row>
+                </Container>
             </div>
             {/* HOW IT WORK FOR EMPLOYERS SECTION END */}
+            {/* SECTION 5: Final Call-to-Action (CTA) */}
+            <div className="section-full redesign-section animate-on-scroll">
+                <Container>
+                    <div className="cta-container-box">
+                        <h2 className="cta-heading">Ready to find your next great hire?</h2>
+                        <div className="d-flex justify-content-center gap-3 mb-4 flex-wrap">
+                            <NavLink to="/login?tab=employer" className="btn-orange-pill">
+                                Post a Job for Free
+                            </NavLink>
+                            <NavLink to="/contact-us" className="btn-outline-pill">
+                                Learn More
+                            </NavLink>
+                        </div>
+                        <p className="mb-0" style={{color: '#6B7280', fontSize: '14px'}}>
+                            No credit card required. Start posting today.
+                        </p>
+                    </div>
+                </Container>
+            </div>
+
+            {/* SECTION 6: Footer Section */}
         </div>
     );
 }
@@ -1354,6 +1269,252 @@ navbarStyle.textContent = `
     .navbar-scrolled {
         background: #fff !important;
         background-color: #fff !important;
+    }
+    
+    /* Redesign Styles */
+    .redesign-section {
+        padding: 80px 0 !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+    .bg-peach {
+        background-color: #FFF7F3 !important;
+    }
+    .text-orange {
+        color: #FF6A3D !important;
+    }
+    .badge-orange {
+        background: #FFEBE3 !important;
+        color: #FF6A3D !important;
+        padding: 4px 12px !important;
+        border-radius: 999px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        display: inline-block !important;
+        margin-bottom: 12px !important;
+    }
+    .section-title-large {
+        font-size: clamp(24px, 4vw, 36px) !important;
+        font-weight: 700 !important;
+        color: #000 !important;
+        line-height: 1.2 !important;
+    }
+    .section-subtitle {
+        font-size: 14px !important;
+        color: #6B7280 !important;
+    }
+    .view-all-companies-btn {
+        border: 1px solid #FF6A3D !important;
+        color: #FF6A3D !important;
+        background: #fff !important;
+        padding: 10px 28px !important;
+        border-radius: 999px !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease !important;
+        text-decoration: none !important;
+        display: inline-block !important;
+        white-space: nowrap !important;
+        max-width: none !important;
+        width: auto !important;
+    }
+    .view-all-companies-btn:hover {
+        background: #FF6A3D !important;
+        color: #fff !important;
+    }
+    .recruiter-card {
+        background: #fff !important;
+        border-radius: 12px !important;
+        padding: 24px !important;
+        text-align: center !important;
+        transition: all 0.3s ease !important;
+        border: 1px solid #E5E7EB !important;
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    .recruiter-card:hover {
+        transform: translateY(-5px) !important;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+    }
+    .recruiter-logo-circle {
+        width: 64px !important;
+        height: 64px !important;
+        border-radius: 50% !important;
+        background: #F3F4F6 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin-bottom: 16px !important;
+        overflow: hidden !important;
+    }
+    .recruiter-logo-circle img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain !important;
+    }
+    .recruiter-name {
+        font-weight: 700 !important;
+        font-size: 16px !important;
+        color: #111827 !important;
+        margin-bottom: 4px !important;
+    }
+    .hiring-text {
+        font-size: 12px !important;
+        color: #6B7280 !important;
+    }
+    /* How It Works Dark */
+    .bg-dark-navy {
+        background: linear-gradient(180deg, #0B1220 0%, #0E1A2B 100%) !important;
+        color: #fff !important;
+    }
+    .process-card-dark {
+        background: #111827 !important;
+        border-radius: 16px !important;
+        padding: 32px 24px !important;
+        height: 100% !important;
+        border: 1px solid rgba(255,255,255,0.05) !important;
+        transition: all 0.3s ease !important;
+        text-align: center !important;
+    }
+    .process-icon-circle {
+        width: 56px !important;
+        height: 56px !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 auto 20px !important;
+    }
+    .process-card-dark h4 {
+        color: #fff !important;
+        font-size: 18px !important;
+        font-weight: 600 !important;
+        margin-bottom: 12px !important;
+    }
+    .process-card-dark p {
+        color: #9CA3AF !important;
+        font-size: 14px !important;
+        line-height: 1.6 !important;
+        margin-bottom: 0 !important;
+    }
+    /* How It Works Light */
+    .process-card-light {
+        background: #fff !important;
+        border-radius: 16px !important;
+        padding: 32px 24px !important;
+        height: 100% !important;
+        border: 1px solid #E5E7EB !important;
+        transition: all 0.3s ease !important;
+        text-align: center !important;
+    }
+    .process-card-light:hover {
+        transform: translateY(-5px) !important;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important;
+        border-color: #FF6A3D !important;
+    }
+    .process-card-light h4 {
+        color: #111827 !important;
+        font-size: 18px !important;
+        font-weight: 600 !important;
+        margin-bottom: 12px !important;
+    }
+    .process-card-light p {
+        color: #6B7280 !important;
+        font-size: 14px !important;
+        line-height: 1.6 !important;
+        margin-bottom: 0 !important;
+    }
+    /* Workflow Section */
+    .workflow-section {
+        background: #fff !important;
+    }
+    .btn-dark-pill {
+        background: #0B1220 !important;
+        color: #fff !important;
+        padding: 12px 32px !important;
+        border-radius: 999px !important;
+        font-weight: 600 !important;
+        border: none !important;
+        transition: all 0.3s ease !important;
+        display: inline-block !important;
+        text-decoration: none !important;
+    }
+    .btn-dark-pill:hover {
+        background: #1a253a !important;
+        color: #fff !important;
+    }
+    .workflow-illustration-card {
+        text-align: center !important;
+        padding: 20px !important;
+    }
+    .illustration-circle {
+        width: 120px !important;
+        height: 120px !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 auto 24px !important;
+        transition: all 0.3s ease !important;
+    }
+    .workflow-illustration-card h5 {
+        font-weight: 600 !important;
+        color: #111827 !important;
+        margin-bottom: 12px !important;
+    }
+    .workflow-illustration-card p {
+        color: #6B7280 !important;
+        font-size: 14px !important;
+        line-height: 1.5 !important;
+    }
+    
+    /* Section 5: CTA */
+    .cta-container-box {
+        border: 2px solid #FF6A3D !important;
+        border-radius: 32px !important;
+        background: #FFFFFF !important;
+        padding: 48px 32px !important;
+        text-align: center !important;
+        max-width: 1200px !important;
+        margin: 0 auto !important;
+    }
+    .cta-heading {
+        color: #0B1220 !important;
+        font-weight: 700 !important;
+        font-size: clamp(24px, 4vw, 32px) !important;
+        margin-bottom: 24px !important;
+    }
+    .btn-orange-pill {
+        background: #FF6A3D !important;
+        color: #fff !important;
+        padding: 12px 24px !important;
+        border-radius: 999px !important;
+        font-weight: 600 !important;
+        border: none !important;
+        transition: all 0.3s ease !important;
+        display: inline-block !important;
+        text-decoration: none !important;
+    }
+    .btn-orange-pill:hover {
+        background: #e55a2f !important;
+        color: #fff !important;
+    }
+    .btn-outline-pill {
+        background: #fff !important;
+        color: #0B1220 !important;
+        padding: 12px 24px !important;
+        border-radius: 999px !important;
+        font-weight: 600 !important;
+        border: 1px solid #E5E7EB !important;
+        transition: all 0.3s ease !important;
+        display: inline-block !important;
+        text-decoration: none !important;
+    }
+    .btn-outline-pill:hover {
+        background: #F9FAFB !important;
+        color: #0B1220 !important;
     }
 `;
 document.head.appendChild(navbarStyle);

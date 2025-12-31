@@ -30,6 +30,21 @@ function LoginPage() {
     useEffect(() => {
         loadScript("js/custom.js");
         removePasswordEyeIcons();
+
+        // Handle tab selection via query parameter
+        const queryParams = new URLSearchParams(location.search);
+        const tab = queryParams.get('tab');
+        if (tab === 'employer') {
+            const employerTab = document.querySelector('[data-bs-target="#twm-login-Employer"]');
+            if (employerTab) {
+                employerTab.click();
+            }
+        } else if (tab === 'placement') {
+            const placementTab = document.querySelector('[data-bs-target="#twm-login-Placement"]');
+            if (placementTab) {
+                placementTab.click();
+            }
+        }
         
         // Remove eye icons when tabs change
         const observer = new MutationObserver(() => {

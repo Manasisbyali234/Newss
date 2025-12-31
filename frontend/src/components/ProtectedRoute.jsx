@@ -20,17 +20,17 @@ const ProtectedRoute = ({ children, allowedRoles = [], requiredRole = null }) =>
                 break;
             case 'candidate':
                 if (!candidateToken) {
-                    return <Navigate to="/candidate-login" replace />;
+                    return <Navigate to="/login" replace />;
                 }
                 break;
             case 'employer':
                 if (!employerToken) {
-                    return <Navigate to="/employer-login" replace />;
+                    return <Navigate to="/login?tab=employer" replace />;
                 }
                 break;
             case 'placement':
                 if (!placementToken) {
-                    return <Navigate to="/placement-login" replace />;
+                    return <Navigate to="/login?tab=placement" replace />;
                 }
                 break;
             default:
