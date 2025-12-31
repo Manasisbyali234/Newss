@@ -426,12 +426,11 @@ export const api = {
     }).then((res) => res.json());
   },
 
-  updateEmployerStatus: (employerId, status) => {
-    const isApproved = status === 'approved';
+  updateEmployerStatus: (employerId, statusData) => {
     return fetch(`${API_BASE_URL}/admin/employers/${employerId}/status`, {
       method: 'PUT',
       headers: getAuthHeaders('admin'),
-      body: JSON.stringify({ status, isApproved }),
+      body: JSON.stringify(statusData),
     }).then((res) => res.json());
   },
 
