@@ -3414,6 +3414,26 @@ exports.getSubAdminProfile = async (req, res) => {
   }
 };
 
+// Get Admin Profile
+exports.getAdminProfile = async (req, res) => {
+  try {
+    let admin;
+    if (req.user.role === 'admin' || req.user.role === 'super-admin') {
+      admin = await Admin.findById(req.user.id).select('-password');
+    } else {
+      admin = await SubAdmin.findById(req.user.id).select('-password');
+    }
+    
+    if (!admin) {
+      return res.status(404).json({ success: false, message: 'Admin not found' });
+    }
+
+    res.json({ success: true, profile: admin });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // OTP-based Password Reset for Admin/SubAdmin
 exports.sendOTP = async (req, res) => {
   try {
