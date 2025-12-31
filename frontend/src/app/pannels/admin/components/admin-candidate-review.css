@@ -57,6 +57,7 @@
     align-items: center;
     gap: 20px;
     margin-bottom: 30px;
+    flex-direction: row-reverse;
 }
 
 .back-btn {
@@ -492,6 +493,7 @@
     margin-bottom: 25px;
     padding-bottom: 15px;
     border-bottom: 2px solid #f8f9fa;
+    justify-content: flex-start;
 }
 
 .section-header i {
@@ -820,6 +822,117 @@
 .date-info {
     color: #6c757d;
     font-weight: 500;
+}
+
+.locations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.location-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.location-card:hover {
+    border-color: #ff6600;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.location-card .location-icon {
+    margin-bottom: 15px;
+}
+
+.location-card .location-icon i {
+    font-size: 2.5rem;
+    color: #ff6600;
+}
+
+.location-card .location-info h5 {
+    margin: 0 0 8px;
+    color: #212529;
+    font-weight: 700;
+}
+
+.location-card .location-info p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.employment-timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.employment-timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e9ecef;
+}
+
+.employment-item {
+    position: relative;
+    margin-bottom: 40px;
+}
+
+.employment-icon {
+    position: absolute;
+    left: -37px;
+    top: 0;
+    width: 30px;
+    height: 30px;
+    background: #ff6600;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.employment-content {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 25px;
+    border-left: 4px solid #ff6600;
+}
+
+.employment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.employment-header h4 {
+    margin: 0;
+    color: #212529;
+    font-weight: 700;
+}
+
+.employment-duration {
+    background: #ff6600;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.employment-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .no-applications, .no-documents, .no-personal-info, .no-education, .no-skills {

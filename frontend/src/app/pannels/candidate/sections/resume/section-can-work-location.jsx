@@ -325,10 +325,10 @@ function SectionCanWorkLocation({ profile, onUpdate }) {
                                     <p className="text-muted mb-4" style={{ maxWidth: '400px', margin: '0 auto' }}>
                                         Add your preferred work locations to help employers find you more easily. You can select multiple cities to increase your job opportunities.
                                     </p>
-                                    <div className="d-flex justify-content-center gap-3 text-muted" style={{ fontSize: '0.9em' }}>
-                                        <div><i className="fa fa-star text-warning me-1"></i>Metro Cities</div>
-                                        <div><i className="fa fa-building text-info me-1"></i>Major Cities</div>
-                                        <div><i className="fa fa-plus-circle text-success me-1"></i>Custom Locations</div>
+                                    <div className="d-flex justify-content-center gap-3 text-muted" style={{ fontSize: '0.9em', flexWrap: 'nowrap', alignItems: 'center' }}>
+                                        <div style={{ whiteSpace: 'nowrap' }}><i className="fa fa-star text-warning me-1"></i>Metro Cities</div>
+                                        <div style={{ whiteSpace: 'nowrap' }}><i className="fa fa-building text-info me-1"></i>Major Cities</div>
+                                        <div style={{ whiteSpace: 'nowrap' }}><i className="fa fa-plus-circle text-success me-1"></i>Custom Locations</div>
                                     </div>
                                 </div>
                             )}

@@ -114,24 +114,26 @@ const SearchableSelect = ({ options, value, onChange, placeholder, className, is
                             </div>
                             <span
                                 style={{ 
-                                    fontSize: window.innerWidth <= 768 ? '0.5em' : '0.7em',
-                                    opacity: '0.7',
+                                    fontSize: window.innerWidth <= 768 ? '0.7em' : '0.9em',
+                                    opacity: '1',
                                     cursor: 'pointer',
-                                    width: window.innerWidth <= 768 ? '8px' : '12px',
-                                    height: window.innerWidth <= 768 ? '8px' : '12px',
+                                    width: window.innerWidth <= 768 ? '12px' : '16px',
+                                    height: window.innerWidth <= 768 ? '12px' : '16px',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     borderRadius: '50%',
-                                    backgroundColor: '#FF7A00',
-                                    color: '#fff'
+                                    backgroundColor: '#dc3545',
+                                    color: '#fff',
+                                    fontWeight: 'bold',
+                                    marginLeft: '4px'
                                 }}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     removeValue(val);
                                 }}
-                                onMouseEnter={(e) => e.target.style.opacity = '1'}
-                                onMouseLeave={(e) => e.target.style.opacity = '0.7'}
+                                onMouseEnter={(e) => e.target.style.backgroundColor = '#c82333'}
+                                onMouseLeave={(e) => e.target.style.backgroundColor = '#dc3545'}
                             >×</span>
                         </span>
                     ))}

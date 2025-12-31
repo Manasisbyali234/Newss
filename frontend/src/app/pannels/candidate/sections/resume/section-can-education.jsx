@@ -346,7 +346,8 @@ function SectionCanEducation({ profile, onUpdate }) {
             boardUniversityName: 'Board/University Name is required', 
             registrationNumber: 'Enrollment Number is required',
             state: 'State is required',
-            result: 'Result is required'
+            result: 'Result is required',
+            yearOfPassing: 'Year of Passing is required'
         };
 
         Object.entries(requiredFields).forEach(([field, errorMessage]) => {
@@ -356,7 +357,13 @@ function SectionCanEducation({ profile, onUpdate }) {
             }
         });
 
-        // Percentage or CGPA validation
+        // Document validation
+        if (!formData.document && !formData.documentBase64) {
+            newErrors.document = 'Supporting document is required';
+            isValid = false;
+        }
+
+        // Percentage or CGPA validation - at least one is required
         if (!formData.percentage && !formData.cgpa) {
             newErrors.percentage = 'Either Percentage or CGPA is required';
             newErrors.cgpa = 'Either Percentage or CGPA is required';
@@ -379,14 +386,10 @@ function SectionCanEducation({ profile, onUpdate }) {
             }
         }
 
-
-
-        // Additional fields for higher education levels (all except 10th pass)
-        if (selectedEducationLevel !== '10th_pass' && selectedEducationLevel !== 'sslc' && selectedEducationLevel) {
-            if (!formData.courseName || !formData.courseName.trim()) {
-                newErrors.courseName = 'Course Name is required';
-                isValid = false;
-            }
+        // Course Name is required for all education levels
+        if (selectedEducationLevel && (!formData.courseName || !formData.courseName.trim())) {
+            newErrors.courseName = 'Course Name is required';
+            isValid = false;
         }
 
         // Check for duplicate entries only when adding new entries (not when editing)
@@ -1129,7 +1132,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                                 <div className="row g-3">
                                     {/* Common Fields */}
                                     <div className="col-md-6">
-                                        <label className="form-label">School/College Name</label>
+                                        <label className="form-label">School/College Name <span style={{color: 'red'}}>*</span></label>
                                         <input
                                             type="text"
                                             className={`form-control ${errors.schoolCollegeName ? 'is-invalid' : ''}`}
@@ -1137,12 +1140,13 @@ function SectionCanEducation({ profile, onUpdate }) {
                                             value={formData.schoolCollegeName}
                                             onChange={handleInputChange}
                                             placeholder="Enter school/college name"
+                                            required
                                         />
                                         {errors.schoolCollegeName && <div className="invalid-feedback">{errors.schoolCollegeName}</div>}
                                     </div>
 
                                     <div className="col-md-6">
-                                        <label className="form-label">Name of Board / University</label>
+                                        <label className="form-label">Name of Board / University <span style={{color: 'red'}}>*</span></label>
                                         <input
                                             type="text"
                                             className={`form-control ${errors.boardUniversityName ? 'is-invalid' : ''}`}
@@ -1150,12 +1154,13 @@ function SectionCanEducation({ profile, onUpdate }) {
                                             value={formData.boardUniversityName}
                                             onChange={handleInputChange}
                                             placeholder="Enter board/university name"
+                                            required
                                         />
                                         {errors.boardUniversityName && <div className="invalid-feedback">{errors.boardUniversityName}</div>}
                                     </div>
 
                                     <div className="col-md-4">
-                                        <label className="form-label">Enrollment Number</label>
+                                        <label className="form-label">Enrollment Number <span style={{color: 'red'}}>*</span></label>
                                         <input
                                             type="text"
                                             className={`form-control ${errors.registrationNumber ? 'is-invalid' : ''}`}
@@ -1163,17 +1168,19 @@ function SectionCanEducation({ profile, onUpdate }) {
                                             value={formData.registrationNumber}
                                             onChange={handleInputChange}
                                             placeholder="Enter enrollment number"
+                                            required
                                         />
                                         {errors.registrationNumber && <div className="invalid-feedback">{errors.registrationNumber}</div>}
                                     </div>
 
                                     <div className="col-md-4">
-                                        <label className="form-label">State</label>
+                                        <label className="form-label">State <span style={{color: 'red'}}>*</span></label>
                                         <select
                                             className={`form-select ${errors.state ? 'is-invalid' : ''}`}
                                             name="state"
                                             value={formData.state}
                                             onChange={handleInputChange}
+                                            required
                                         >
                                             <option value="">Select State</option>
                                             {indianStates.map(state => (
@@ -1186,12 +1193,13 @@ function SectionCanEducation({ profile, onUpdate }) {
                                     </div>
 
                                     <div className="col-md-4">
-                                        <label className="form-label">Result</label>
+                                        <label className="form-label">Result <span style={{color: 'red'}}>*</span></label>
                                         <select
                                             className={`form-select ${errors.result ? 'is-invalid' : ''}`}
                                             name="result"
                                             value={formData.result}
                                             onChange={handleInputChange}
+                                            required
                                         >
                                             <option value="">Select Result</option>
                                             <option value="Passed">Passed</option>
@@ -1202,7 +1210,7 @@ function SectionCanEducation({ profile, onUpdate }) {
 
                                     {/* Percentage/CGPA */}
                                     <div className="col-md-6">
-                                        <label className="form-label">Percentage (%)</label>
+                                        <label className="form-label">Percentage (%) <span style={{color: 'red'}}>*</span></label>
                                         <input
                                             type="number"
                                             className={`form-control ${errors.percentage ? 'is-invalid' : ''}`}
@@ -1213,12 +1221,13 @@ function SectionCanEducation({ profile, onUpdate }) {
                                             min="0"
                                             max="100"
                                             step="0.01"
+                                            required
                                         />
                                         {errors.percentage && <div className="invalid-feedback">{errors.percentage}</div>}
                                     </div>
 
                                     <div className="col-md-6">
-                                        <label className="form-label">CGPA</label>
+                                        <label className="form-label">CGPA <span style={{color: 'red'}}>*</span></label>
                                         <input
                                             type="number"
                                             className={`form-control ${errors.cgpa ? 'is-invalid' : ''}`}
@@ -1237,16 +1246,18 @@ function SectionCanEducation({ profile, onUpdate }) {
                                     {/* Year of Passing for basic education levels */}
                                     {(selectedEducationLevel === '10th_pass' || selectedEducationLevel === 'sslc') && (
                                         <div className="col-md-6">
-                                            <label className="form-label">Year of Passing</label>
+                                            <label className="form-label">Year of Passing <span style={{color: 'red'}}>*</span></label>
                                             <input
                                                 type="number"
-                                                className="form-control"
+                                                className={`form-control ${errors.yearOfPassing ? 'is-invalid' : ''}`}
                                                 name="yearOfPassing"
                                                 value={formData.yearOfPassing}
                                                 onChange={handleInputChange}
                                                 placeholder="Enter year of passing (e.g., 2023)"
                                                 title="Enter the year you passed/completed this qualification"
+                                                required
                                             />
+                                            {errors.yearOfPassing && <div className="invalid-feedback">{errors.yearOfPassing}</div>}
                                         </div>
                                     )}
 
@@ -1254,7 +1265,7 @@ function SectionCanEducation({ profile, onUpdate }) {
                                     {(selectedEducationLevel !== '10th_pass' && selectedEducationLevel !== 'sslc' && selectedEducationLevel) && (
                                         <>
                                             <div className="col-md-6">
-                                                <label className="form-label">Course Name / Stream</label>
+                                                <label className="form-label">Course Name / Stream <span style={{color: 'red'}}>*</span></label>
                                                 <input
                                                     type="text"
                                                     className={`form-control ${errors.courseName ? 'is-invalid' : ''}`}
@@ -1262,35 +1273,40 @@ function SectionCanEducation({ profile, onUpdate }) {
                                                     value={formData.courseName}
                                                     onChange={handleInputChange}
                                                     placeholder="Enter course name/stream"
+                                                    required
                                                 />
                                                 {errors.courseName && <div className="invalid-feedback">{errors.courseName}</div>}
                                             </div>
 
                                             <div className="col-md-6">
-                                                <label className="form-label">Year of Passing</label>
+                                                <label className="form-label">Year of Passing <span style={{color: 'red'}}>*</span></label>
                                                 <input
                                                     type="number"
-                                                    className="form-control"
+                                                    className={`form-control ${errors.yearOfPassing ? 'is-invalid' : ''}`}
                                                     name="yearOfPassing"
                                                     value={formData.yearOfPassing}
                                                     onChange={handleInputChange}
                                                     placeholder="Enter year of passing (e.g., 2023)"
                                                     title="Enter the year you passed/completed this qualification"
+                                                    required
                                                 />
+                                                {errors.yearOfPassing && <div className="invalid-feedback">{errors.yearOfPassing}</div>}
                                             </div>
                                         </>
                                     )}
 
                                     {/* Document Upload */}
                                     <div className="col-12">
-                                        <label className="form-label">Upload Supporting Document (PDF only, max 50MB)</label>
+                                        <label className="form-label">Upload Supporting Document (PDF only, max 50MB) <span style={{color: 'red'}}>*</span></label>
                                         <input
                                             type="file"
-                                            className="form-control"
+                                            className={`form-control ${errors.document ? 'is-invalid' : ''}`}
                                             name="document"
                                             accept=".pdf"
                                             onChange={handleInputChange}
+                                            required
                                         />
+                                        {errors.document && <div className="invalid-feedback">{errors.document}</div>}
                                         {formData.documentName && (
                                             <small className="text-success mt-1 d-block">
                                                 <i className="fa fa-check"></i> {formData.documentName}

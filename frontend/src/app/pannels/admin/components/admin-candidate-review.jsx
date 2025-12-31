@@ -196,6 +196,20 @@ function AdminCandidateReviewPage() {
                     <i className="fas fa-building"></i>
                     Company Details
                 </button>
+                <button 
+                    className={`tab-btn ${activeTab === 'locations' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('locations')}
+                >
+                    <i className="fas fa-map-marker-alt"></i>
+                    Work Locations
+                </button>
+                <button 
+                    className={`tab-btn ${activeTab === 'employment' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('employment')}
+                >
+                    <i className="fas fa-briefcase"></i>
+                    Employment
+                </button>
             </div>
 
             {/* Tab Content */}
@@ -577,6 +591,101 @@ function AdminCandidateReviewPage() {
                                     <i className="fas fa-briefcase"></i>
                                     <h5>No Job Applications Found</h5>
                                     <p>This candidate hasn't applied to any jobs yet.</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Work Locations Tab */}
+                {activeTab === 'locations' && (
+                    <div className="tab-panel locations-info">
+                        <div className="section-header">
+                            <i className="fas fa-map-marker-alt"></i>
+                            <h4>Preferred Work Locations</h4>
+                        </div>
+                        
+                        {candidate.jobPreferences?.preferredLocations && candidate.jobPreferences.preferredLocations.length > 0 ? (
+                            <div className="locations-grid">
+                                {candidate.jobPreferences.preferredLocations.map((location, index) => (
+                                    <div key={index} className="location-card">
+                                        <div className="location-icon">
+                                            <i className="fas fa-map-marker-alt"></i>
+                                        </div>
+                                        <div className="location-info">
+                                            <h5>{location}</h5>
+                                            <p>Preferred work location</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="no-applications">
+                                <div className="no-data-content">
+                                    <i className="fas fa-map-marker-alt"></i>
+                                    <h5>No Preferred Locations</h5>
+                                    <p>This candidate hasn't specified their preferred work locations yet.</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Employment Tab */}
+                {activeTab === 'employment' && (
+                    <div className="tab-panel employment-info">
+                        <div className="section-header">
+                            <i className="fas fa-briefcase"></i>
+                            <h4>Employment History</h4>
+                        </div>
+                        
+                        {candidate.employment && candidate.employment.length > 0 ? (
+                            <div className="employment-timeline">
+                                {candidate.employment.map((emp, index) => (
+                                    <div key={index} className="employment-item">
+                                        <div className="employment-icon">
+                                            <i className="fas fa-briefcase"></i>
+                                        </div>
+                                        <div className="employment-content">
+                                            <div className="employment-header">
+                                                <h4>{emp.jobTitle || 'Job Title'}</h4>
+                                                <span className="employment-duration">
+                                                    {emp.startDate ? formatDate(emp.startDate) : 'Start Date'} - 
+                                                    {emp.endDate ? formatDate(emp.endDate) : emp.isCurrentJob ? 'Present' : 'End Date'}
+                                                </span>
+                                            </div>
+                                            <div className="employment-details">
+                                                <div className="detail-item">
+                                                    <label>Company:</label>
+                                                    <span>{emp.companyName || 'Not provided'}</span>
+                                                </div>
+                                                <div className="detail-item">
+                                                    <label>Location:</label>
+                                                    <span>{emp.location || 'Not provided'}</span>
+                                                </div>
+                                                {emp.salary && (
+                                                    <div className="detail-item">
+                                                        <label>Salary:</label>
+                                                        <span>{emp.salary}</span>
+                                                    </div>
+                                                )}
+                                                {emp.description && (
+                                                    <div className="detail-item">
+                                                        <label>Description:</label>
+                                                        <span>{emp.description}</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="no-applications">
+                                <div className="no-data-content">
+                                    <i className="fas fa-briefcase"></i>
+                                    <h5>No Employment History</h5>
+                                    <p>This candidate hasn't provided their employment history yet.</p>
                                 </div>
                             </div>
                         )}
