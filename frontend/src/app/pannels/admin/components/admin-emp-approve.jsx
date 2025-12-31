@@ -84,6 +84,16 @@ function AdminEmployersApproved() {
         <>
             <div className="wt-admin-right-page-header clearfix">
                 <h2>Approved Employers</h2>
+                <button 
+                    className="btn btn-primary" 
+                    onClick={() => {
+                        console.log('Manual refresh clicked');
+                        fetchApprovedEmployers();
+                    }}
+                    style={{float: 'right'}}
+                >
+                    <i className="fa fa-refresh"></i> Refresh
+                </button>
             </div>
 
             <div className="panel panel-default site-bg-white">

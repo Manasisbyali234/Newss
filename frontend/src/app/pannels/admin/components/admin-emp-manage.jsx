@@ -30,7 +30,10 @@ function AdminEmployersAllRequest() {
             setLoading(true);
             const response = await api.getAllEmployers({ approvalStatus: 'pending' });
             if (response.success) {
-                const pendingEmployers = response.data.filter(emp => !emp.isApproved);
+                // Double filter to ensure only non-approved employers show
+                const pendingEmployers = response.data.filter(emp => 
+                    emp.isApproved !== true && emp.status !== 'approved'
+                );
                 
                 const employersWithProfiles = await Promise.all(
                     pendingEmployers.map(async (emp) => {
