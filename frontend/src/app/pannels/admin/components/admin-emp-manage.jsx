@@ -30,9 +30,12 @@ function AdminEmployersAllRequest() {
             setLoading(true);
             const response = await api.getAllEmployers({ approvalStatus: 'pending' });
             if (response.success) {
-                // Double filter to ensure only non-approved employers show
+                // Double filter to ensure only pending employers show
                 const pendingEmployers = response.data.filter(emp => 
-                    emp.isApproved !== true && emp.status !== 'approved'
+                    emp.isApproved !== true && 
+                    emp.status !== 'approved' && 
+                    emp.status !== 'rejected' &&
+                    emp.status !== 'inactive'
                 );
                 
                 const employersWithProfiles = await Promise.all(
@@ -80,7 +83,11 @@ function AdminEmployersAllRequest() {
         
         try {
             setActionLoading(prev => ({ ...prev, [employerId]: true }));
+            console.log('Approving employer:', employerId);
+            
             const response = await api.updateEmployerStatus(employerId, { status: 'approved', isApproved: true });
+            console.log('Approval response:', response);
+            
             if (response.success) {
                 const updatedEmployers = employers.filter(emp => emp._id !== employerId);
                 setEmployers(updatedEmployers);
@@ -91,9 +98,11 @@ function AdminEmployersAllRequest() {
                 
                 showSuccess('Employer approved successfully! Notification sent to employer.');
             } else {
-                showError('Failed to approve employer');
+                console.error('Approval failed:', response.message);
+                showError(response.message || 'Failed to approve employer');
             }
         } catch (error) {
+            console.error('Approval error:', error);
             showError('Error approving employer');
         } finally {
             setActionLoading(prev => ({ ...prev, [employerId]: false }));
