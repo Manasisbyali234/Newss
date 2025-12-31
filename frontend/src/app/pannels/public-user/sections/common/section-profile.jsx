@@ -1,7 +1,7 @@
 function SectionProfile({ employer }) {
     return (
         <>
-            <h4 className="section-head-small mb-4">Profile Info</h4>
+            <h4 className="section-head-small mb-4" style={{fontWeight: 'bold', fontSize: '22px'}}>Profile Info</h4>
             <div className="twm-s-info">
                 <ul>
                     <li>

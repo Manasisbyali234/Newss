@@ -188,7 +188,7 @@ const validateExcelContent = (buffer, mimetype) => {
     
     // Check if file has actual data rows
     if (!jsonData || jsonData.length === 0) {
-      return { valid: false, message: 'Your file appears to be empty. Please make sure it contains student information' };
+      return { valid: false, message: 'The Excel sheet you have provided is empty' };
     }
     
     // Check if all rows are empty

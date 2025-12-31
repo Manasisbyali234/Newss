@@ -121,15 +121,20 @@ export default function AssessmentDashboard() {
 			{/* Header */}
 			<div style={{ padding: '2rem 2rem 2rem 2rem' }}>
 				<div className="wt-admin-right-page-header clearfix" style={{ background: 'white', borderRadius: '12px', padding: '2rem', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)' }}>
-					<div className="d-flex justify-content-between align-items-center">
-						<div>
-							<h2>Assessments</h2>
-							<p className="text-muted mb-0">Manage and create your assessments ({assessments.length})</p>
+						<div className="d-flex justify-content-between align-items-center">
+							<div>
+								<h2>Assessments</h2>
+								<p className="text-muted mb-0">Manage and create your assessments</p>
+							</div>
+							<div className="d-flex align-items-center gap-3">
+								<span className="badge bg-light text-dark px-3 py-2" style={{fontSize: '14px'}}>
+									Number of Cards: {assessments.length}
+								</span>
+								<button className="btn btn-dark" onClick={() => setShowModal(true)}>
+									<i className="fa fa-plus me-2"></i>Create Assessment
+								</button>
+							</div>
 						</div>
-						<button className="btn btn-dark" onClick={() => setShowModal(true)}>
-							<i className="fa fa-plus me-2"></i>Create Assessment
-						</button>
-					</div>
 				</div>
 			</div>
 

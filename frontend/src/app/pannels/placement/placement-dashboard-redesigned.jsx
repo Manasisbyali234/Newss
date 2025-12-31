@@ -250,11 +250,26 @@ function PlacementDashboardRedesigned() {
 
         setUpdating(true);
         try {
+            // Upload images first if any are selected
+            if (logoPreview || idCardPreview) {
+                const uploadPromises = [];
+                if (logoPreview) {
+                    uploadPromises.push(api.uploadLogo(logoPreview));
+                }
+                if (idCardPreview) {
+                    uploadPromises.push(api.uploadIdCard(idCardPreview));
+                }
+                await Promise.all(uploadPromises);
+            }
+            
+            // Then update profile
             const response = await api.updatePlacementProfile(editFormData);
             
             if (response && response.success) {
                 showSuccess('Profile updated successfully!');
                 setShowEditModal(false);
+                setLogoPreview(null);
+                setIdCardPreview(null);
                 await fetchPlacementDetails();
             } else {
                 showError(response?.message || 'Failed to update profile');
@@ -1031,25 +1046,10 @@ function PlacementDashboardRedesigned() {
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button className="btn-secondary" onClick={() => setShowEditModal(false)} disabled={updating || uploadingImages}>
+                            <button className="btn-secondary" onClick={() => setShowEditModal(false)} disabled={updating}>
                                 Cancel
                             </button>
-                            {(logoPreview || idCardPreview) && (
-                                <button className="btn-secondary" onClick={handleUploadImages} disabled={uploadingImages}>
-                                    {uploadingImages ? (
-                                        <>
-                                            <div className="spinner-sm"></div>
-                                            Uploading...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <i className="fa fa-cloud-upload"></i>
-                                            Upload Images
-                                        </>
-                                    )}
-                                </button>
-                            )}
-                            <button className="btn-primary" onClick={handleUpdateProfile} disabled={updating || uploadingImages}>
+                            <button className="btn-primary" onClick={handleUpdateProfile} disabled={updating}>
                                 {updating ? (
                                     <>
                                         <div className="spinner-sm"></div>
