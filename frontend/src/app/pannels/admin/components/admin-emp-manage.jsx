@@ -82,6 +82,10 @@ function AdminEmployersAllRequest() {
                 const updatedEmployers = employers.filter(emp => emp._id !== employerId);
                 setEmployers(updatedEmployers);
                 setFilteredEmployers(updatedEmployers);
+                
+                // Dispatch event to notify other components
+                window.dispatchEvent(new CustomEvent('employerApproved', { detail: { employerId } }));
+                
                 showSuccess('Employer approved successfully! Notification sent to employer.');
             } else {
                 showError('Failed to approve employer');

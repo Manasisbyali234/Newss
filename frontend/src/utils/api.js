@@ -247,7 +247,14 @@ export const api = {
     }).then((res) => res.json());
   },
 
-  getEmployerProfile: () => {
+  getEmployerProfile: (employerId) => {
+    // If employerId is provided, it's an admin request
+    if (employerId) {
+      return fetch(`${API_BASE_URL}/admin/employers/${employerId}/profile`, {
+        headers: getAuthHeaders('admin'),
+      }).then((res) => res.json());
+    }
+    // Otherwise, it's an employer getting their own profile
     return fetch(`${API_BASE_URL}/employer/profile`, {
       headers: getAuthHeaders('employer'),
     }).then((res) => res.json());

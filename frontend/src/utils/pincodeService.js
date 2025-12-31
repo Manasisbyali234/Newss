@@ -6,26 +6,76 @@ export const fetchLocationFromPincode = async (pincode) => {
       throw new Error('Invalid pincode format');
     }
 
-    // Use Indian Postal API
-    const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
-    const data = await response.json();
+    console.log('Fetching location for pincode:', pincode);
 
-    if (data && data.length > 0 && data[0].Status === 'Success') {
-      const postOffice = data[0].PostOffice[0];
-      return {
-        success: true,
-        location: postOffice.Name,
-        district: postOffice.District,
-        state: postOffice.State,
-        stateCode: getStateCode(postOffice.State),
-        country: postOffice.Country
-      };
-    } else {
-      return {
-        success: false,
-        message: 'Invalid pincode or location not found'
-      };
+    // Try primary API first
+    try {
+      const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+      const data = await response.json();
+      console.log('Primary API response:', data);
+
+      if (data && data.length > 0 && data[0].Status === 'Success') {
+        const postOffices = data[0].PostOffice;
+        const mainPostOffice = postOffices[0];
+        
+        const village = mainPostOffice.Name;
+        const taluka = mainPostOffice.Block || mainPostOffice.Taluk || mainPostOffice.SubDistrict || '';
+        const district = mainPostOffice.District;
+        const state = mainPostOffice.State;
+        
+        // Format: Village, Taluka, District
+        let locationName = village;
+        if (taluka && taluka !== district) {
+          locationName += `, ${taluka}`;
+        }
+        locationName += `, ${district}`;
+        
+        const result = {
+          success: true,
+          location: locationName,
+          village: village,
+          taluka: taluka,
+          district: district,
+          state: state,
+          stateCode: getStateCode(state),
+          country: mainPostOffice.Country
+        };
+        console.log('Primary API success:', result);
+        return result;
+      }
+    } catch (primaryError) {
+      console.warn('Primary API failed:', primaryError);
     }
+
+    // Try backup API
+    try {
+      const backupResponse = await fetch(`https://api.zippopotam.us/in/${pincode}`);
+      if (backupResponse.ok) {
+        const backupData = await backupResponse.json();
+        console.log('Backup API response:', backupData);
+        
+        if (backupData && backupData.places && backupData.places.length > 0) {
+          const place = backupData.places[0];
+          const result = {
+            success: true,
+            location: place['place name'],
+            district: place['place name'],
+            state: place.state,
+            stateCode: getStateCode(place.state),
+            country: backupData.country
+          };
+          console.log('Backup API success:', result);
+          return result;
+        }
+      }
+    } catch (backupError) {
+      console.warn('Backup API failed:', backupError);
+    }
+
+    return {
+      success: false,
+      message: 'Invalid pincode or location not found'
+    };
   } catch (error) {
     console.error('Error fetching location from pincode:', error);
     return {

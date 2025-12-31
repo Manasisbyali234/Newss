@@ -264,12 +264,18 @@ function SectionCandicateBasicInfo() {
         
         setFetchingLocation(true);
         try {
+            console.log('Fetching location for pincode:', pincode);
             const locationData = await fetchLocationFromPincode(pincode);
+            console.log('Location data received:', locationData);
             
             if (locationData.success) {
+                // Location already formatted as Village, Taluka, District
+                const locationName = locationData.location;
+                console.log('Setting location to:', locationName);
+                
                 setFormData(prev => ({
                     ...prev,
-                    location: locationData.location,
+                    location: locationName,
                     stateCode: locationData.stateCode
                 }));
                 
@@ -279,7 +285,10 @@ function SectionCandicateBasicInfo() {
                     delete newErrors.location;
                     return newErrors;
                 });
+                
+                showSuccess(`Location found: ${locationName}, ${locationData.state}`);
             } else {
+                console.error('Location fetch failed:', locationData.message);
                 showError(locationData.message || 'Could not fetch location for this pincode');
             }
         } catch (error) {
@@ -613,21 +622,37 @@ function SectionCandicateBasicInfo() {
                                 Pincode *
                                 {fetchingLocation && <i className="fa fa-spinner fa-spin ms-2" style={{color: '#ff6b35'}}></i>}
                             </label>
-                            <input
-                                className={`form-control ${errors.pincode ? 'is-invalid' : ''}`}
-                                type="text"
-                                name="pincode"
-                                value={formData.pincode}
-                                onChange={handleInputChange}
-                                onBlur={handleBlur}
-                                placeholder="Enter 6-digit pincode"
-                                maxLength="6"
-                                disabled={fetchingLocation}
-                                required
-                            />
+                            <div style={{display: 'flex', gap: '8px'}}>
+                                <input
+                                    className={`form-control ${errors.pincode ? 'is-invalid' : ''}`}
+                                    type="text"
+                                    name="pincode"
+                                    value={formData.pincode}
+                                    onChange={handleInputChange}
+                                    onBlur={handleBlur}
+                                    placeholder="Enter 6-digit pincode"
+                                    maxLength="6"
+                                    disabled={fetchingLocation}
+                                    required
+                                    style={{flex: 1}}
+                                />
+                                <button
+                                    type="button"
+                                    className="btn btn-outline-secondary"
+                                    onClick={() => handlePincodeChange(formData.pincode)}
+                                    disabled={fetchingLocation || !formData.pincode || formData.pincode.length !== 6}
+                                    style={{minWidth: '100px'}}
+                                >
+                                    {fetchingLocation ? (
+                                        <i className="fa fa-spinner fa-spin"></i>
+                                    ) : (
+                                        <><i className="fa fa-search me-1"></i>Fetch</>
+                                    )}
+                                </button>
+                            </div>
                             {errors.pincode && <div className="invalid-feedback">{errors.pincode}</div>}
                             <small className="text-muted">
-                                {fetchingLocation ? 'Fetching location...' : 'Enter 6-digit pincode (location will auto-fill)'}
+                                {fetchingLocation ? 'Fetching location...' : 'Enter 6-digit pincode and click Fetch to auto-fill location'}
                             </small>
                         </div>
                         <div className="col-md-4 mb-3" ref={locationDropdownRef}>

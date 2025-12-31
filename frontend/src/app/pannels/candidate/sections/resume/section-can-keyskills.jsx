@@ -135,10 +135,19 @@ function SectionCanKeySkills({ profile }) {
                                         value={searchTerm || selectedSkill}
                                         onChange={(e) => {
                                             setSearchTerm(e.target.value);
+                                            setSelectedSkill('');
                                             setShowDropdown(true);
                                         }}
                                         onFocus={() => setShowDropdown(true)}
-                                        onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                e.preventDefault();
+                                                if (selectedSkill) {
+                                                    handleAddFromDropdown();
+                                                    setShowDropdown(false);
+                                                }
+                                            }
+                                        }}
                                         disabled={loading}
                                     />
                                     {showDropdown && (
@@ -160,7 +169,8 @@ function SectionCanKeySkills({ profile }) {
                                                 .map(skill => (
                                                     <div
                                                         key={skill}
-                                                        onMouseDown={() => {
+                                                        onMouseDown={(e) => {
+                                                            e.preventDefault();
                                                             setSelectedSkill(skill);
                                                             setSearchTerm('');
                                                             setShowDropdown(false);
@@ -282,9 +292,14 @@ function SectionCanKeySkills({ profile }) {
                                             <button 
                                                 className="btn btn-sm ms-2 p-0"
                                                 style={{background: 'none', border: 'none', color: '#dc3545', fontSize: '12px', width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}
-                                                onClick={() => removeSkill(skill)}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    removeSkill(skill);
+                                                }}
                                                 disabled={loading}
                                                 title="Remove skill"
+                                                type="button"
                                             >
                                                 <i className="fa fa-times"></i>
                                             </button>

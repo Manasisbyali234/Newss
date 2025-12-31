@@ -21,16 +21,25 @@ function AdminEmployersApproved() {
             once: true
         });
         fetchApprovedEmployers();
+        
+        // Listen for employer approval events
+        const handleEmployerApproved = () => {
+            fetchApprovedEmployers();
+        };
+        
+        window.addEventListener('employerApproved', handleEmployerApproved);
+        
+        return () => {
+            window.removeEventListener('employerApproved', handleEmployerApproved);
+        };
     }, []);
 
     const fetchApprovedEmployers = async () => {
         try {
             setLoading(true);
-            const response = await api.getAllEmployers();
+            const response = await api.getAllEmployers({ approvalStatus: 'approved' });
             if (response.success) {
-                const approvedEmployers = response.data.filter(emp => 
-                    emp.status === 'approved' || emp.isApproved === true
-                );
+                const approvedEmployers = response.data.filter(emp => emp.isApproved === true);
                 setEmployers(approvedEmployers);
                 setFilteredEmployers(approvedEmployers);
             } else {

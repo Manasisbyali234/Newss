@@ -18,7 +18,7 @@ const sendWelcomeEmail = async (email, name, userType, collegeName = null) => {
   const normalizedUserType = (userType || 'candidate').toLowerCase();
   const userTypeParam = encodeURIComponent(normalizedUserType);
   const createPasswordUrl = `${process.env.FRONTEND_URL}/create-password?email=${encodeURIComponent(email)}&type=${userTypeParam}`;
-  const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/`;
+  const loginUrl = `${process.env.FRONTEND_URL || 'https://taleglobal.net'}/`;
   
   let template;
   let subject;
@@ -69,7 +69,10 @@ const sendWelcomeEmail = async (email, name, userType, collegeName = null) => {
           </ul>
           
           <p><strong>🔗 Platform Login:</strong></p>
-          <p><a href="${loginUrl}" style="color: #fd7e14; text-decoration: none;">${loginUrl}</a></p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${loginUrl}" style="background-color: #fd7e14; color: white; padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block; margin-right: 10px;">🔗 Platform Login</a>
+            <a href="${createPasswordUrl}" style="background-color: #2c3e50; color: white; padding: 12px 25px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">🔐 Create Password</a>
+          </div>
           
           <p>We look forward to working closely with <strong>${collegeName || 'your institution'}</strong> to support students in exploring suitable career and placement opportunities.</p>
           
@@ -78,7 +81,7 @@ const sendWelcomeEmail = async (email, name, userType, collegeName = null) => {
           <p>Warm regards,<br>
           <strong>Team TaleGlobal</strong><br>
           📧 support@taleglobal.net<br>
-          🌐 http://www.taleglobal.net</p>
+          🌐 https://www.taleglobal.net</p>
         </div>
       </div>
     `;
@@ -375,8 +378,8 @@ const sendOTPEmail = async (email, otp, name) => {
 
 const sendPlacementCandidateWelcomeEmail = async (email, name, password, placementOfficerName, collegeName) => {
   const transporter = createTransport();
-  const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/`;
-  const createPasswordUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/create-password?email=${encodeURIComponent(email)}&type=candidate`;
+  const loginUrl = `${process.env.FRONTEND_URL || 'https://taleglobal.net'}/`;
+  const createPasswordUrl = `${process.env.FRONTEND_URL || 'https://taleglobal.net'}/create-password?email=${encodeURIComponent(email)}&type=candidate`;
   
   const template = `
     <div style="font-family: 'Poppins', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa; color: #333;">
@@ -483,8 +486,8 @@ const retryFailedEmail = async (email, name, password, placementOfficerName, col
 
 const sendApprovalEmail = async (email, name, userType, collegeName = null) => {
   const transporter = createTransport();
-  const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/`;
-  const createPasswordUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/create-password?email=${encodeURIComponent(email)}&type=${userType}`;
+  const loginUrl = `${process.env.FRONTEND_URL || 'https://taleglobal.net'}/`;
+  const createPasswordUrl = `${process.env.FRONTEND_URL || 'https://taleglobal.net'}/create-password?email=${encodeURIComponent(email)}&type=${userType}`;
   
   let template;
   let subject;
@@ -829,8 +832,8 @@ const sendJobApplicationConfirmationEmail = async (candidateEmail, candidateName
 
 const sendCandidateActiveProfileEmail = async (email, name, password) => {
   const transporter = createTransport();
-  const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/`;
-  const createPasswordUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/create-password?email=${encodeURIComponent(email)}&type=candidate`;
+  const loginUrl = `${process.env.FRONTEND_URL || 'https://taleglobal.net'}/`;
+  const createPasswordUrl = `${process.env.FRONTEND_URL || 'https://taleglobal.net'}/create-password?email=${encodeURIComponent(email)}&type=candidate`;
   
   const template = `
     <div style="font-family: 'Poppins', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa; color: #333;">
@@ -914,8 +917,8 @@ const sendCandidateActiveProfileEmail = async (email, name, password) => {
 
 const sendPlacementAccessEnabledEmail = async (email, name, collegeName) => {
   const transporter = createTransport();
-  const loginUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/`;
-  const createPasswordUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/create-password?email=${encodeURIComponent(email)}&type=placement`;
+  const loginUrl = `${process.env.FRONTEND_URL || 'https://taleglobal.net'}/`;
+  const createPasswordUrl = `${process.env.FRONTEND_URL || 'https://taleglobal.net'}/create-password?email=${encodeURIComponent(email)}&type=placement`;
   
   const template = `
     <div style="font-family: 'Poppins', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9fa; color: #333;">

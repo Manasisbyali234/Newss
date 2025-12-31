@@ -319,8 +319,8 @@ function AdminCandidateReviewPage() {
                             <div className="no-applications">
                                 <div className="no-data-content">
                                     <i className="fas fa-graduation-cap"></i>
-                                    <h5>No Job Applications Found</h5>
-                                    <p>This candidate hasn't applied to any jobs yet</p>
+                                    <h5>No Education Information</h5>
+                                    <p>This candidate hasn't provided their education details yet</p>
                                 </div>
                             </div>
                         ) : (
@@ -391,8 +391,8 @@ function AdminCandidateReviewPage() {
                             <div className="no-applications">
                                 <div className="no-data-content">
                                     <i className="fas fa-cogs"></i>
-                                    <h5>No Job Applications Found</h5>
-                                    <p>This candidate hasn't applied to any jobs yet</p>
+                                    <h5>No Skills & Summary Information</h5>
+                                    <p>This candidate hasn't provided their skills or profile summary yet</p>
                                 </div>
                             </div>
                         ) : (
@@ -448,8 +448,8 @@ function AdminCandidateReviewPage() {
                             <div className="no-applications">
                                 <div className="no-data-content">
                                     <i className="fas fa-file-alt"></i>
-                                    <h5>No Job Applications Found</h5>
-                                    <p>This candidate hasn't applied to any jobs yet</p>
+                                    <h5>No Documents Available</h5>
+                                    <p>This candidate hasn't uploaded any documents yet</p>
                                 </div>
                             </div>
                         ) : (

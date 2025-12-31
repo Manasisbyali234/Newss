@@ -1067,7 +1067,7 @@ exports.processFileApproval = async (req, res) => {
       createdCandidates: createdCandidates.slice(0, 10), // Show first 10 created candidates
       errors: errors.slice(0, 10),
       loginInstructions: {
-        url: 'http://localhost:3000/',
+        url: process.env.FRONTEND_URL || 'https://taleglobal.net',
         message: 'Candidates can now login using their email and password from the Excel file (Sign In → Candidate tab)'
       }
     });
