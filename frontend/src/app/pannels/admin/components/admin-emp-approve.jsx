@@ -37,15 +37,23 @@ function AdminEmployersApproved() {
     const fetchApprovedEmployers = async () => {
         try {
             setLoading(true);
+            console.log('Fetching approved employers...');
             const response = await api.getAllEmployers({ approvalStatus: 'approved' });
+            console.log('Approved employers response:', response);
+            
             if (response.success) {
+                console.log('All employers from API:', response.data.length);
                 const approvedEmployers = response.data.filter(emp => emp.isApproved === true);
+                console.log('Filtered approved employers:', approvedEmployers.length);
+                console.log('Sample approved employer:', approvedEmployers[0]);
+                
                 setEmployers(approvedEmployers);
                 setFilteredEmployers(approvedEmployers);
             } else {
                 setError(response.message || 'Failed to fetch approved employers');
             }
         } catch (error) {
+            console.error('Error fetching approved employers:', error);
             setError('Error fetching approved employers');
             
         } finally {

@@ -87,11 +87,26 @@ function AdminEmployersAllRequest() {
             
             const response = await api.updateEmployerStatus(employerId, { status: 'approved', isApproved: true });
             console.log('Approval response:', response);
+            console.log('Employer after approval:', response.employer);
             
             if (response.success) {
+                console.log('Employer status after approval:', {
+                    isApproved: response.employer.isApproved,
+                    status: response.employer.status
+                });
+                
+                // Force immediate removal from UI
                 const updatedEmployers = employers.filter(emp => emp._id !== employerId);
+                console.log('Employers before filter:', employers.length);
+                console.log('Employers after filter:', updatedEmployers.length);
+                
                 setEmployers(updatedEmployers);
                 setFilteredEmployers(updatedEmployers);
+                
+                // Also refresh the data to ensure consistency
+                setTimeout(() => {
+                    fetchEmployers();
+                }, 1000);
                 
                 // Dispatch event to notify other components
                 window.dispatchEvent(new CustomEvent('employerApproved', { detail: { employerId } }));
