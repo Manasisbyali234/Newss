@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { usePopupNotification } from '../../../../../hooks/usePopupNotification';
+import PopupNotification from '../../../../../components/PopupNotification';
+import ConfirmationDialog from '../../../../../components/ConfirmationDialog';
 
 function ManageAssessmentPage() {
     const [assessments, setAssessments] = useState([
@@ -28,10 +31,22 @@ function ManageAssessmentPage() {
     ]);
 
     const [applicantCount] = useState(42); // dummy count
+    const { popup, confirmation, showConfirmation, hideConfirmation, hidePopup, showSuccess } = usePopupNotification();
 
-    const handleDelete = (id) => {
+    const handleDeleteClick = (id, title) => {
+        showConfirmation(
+            `Are you sure you want to delete this assessment "${title}"?`,
+            () => handleDeleteConfirm(id),
+            hideConfirmation,
+            'warning'
+        );
+    };
+
+    const handleDeleteConfirm = (id) => {
         const updated = assessments.filter((item) => item._id !== id);
         setAssessments(updated);
+        hideConfirmation();
+        showSuccess('Assessment deleted successfully!');
     };
 
     return (
@@ -64,7 +79,7 @@ function ManageAssessmentPage() {
                                                 <p className="text-muted small">{assessment.description}</p>
                                                 <p className="text-muted"><i className="fa fa-clock text-warning m-r10" />Duration: {assessment.timeLimit} mins</p>
                                             </div>
-                                            <button className="btn btn-link text-danger p-0" onClick={() => handleDelete(assessment._id)}>
+                                            <button className="btn btn-link text-danger p-0" onClick={() => handleDeleteClick(assessment._id, assessment.title)}>
                                                 <i className="fa fa-trash-alt" title="Delete" />
                                             </button>
                                         </div>
@@ -94,6 +109,25 @@ function ManageAssessmentPage() {
                     )}
                 </div>
             </div>
+            
+            {/* Popup Notifications */}
+            {popup.show && (
+                <PopupNotification
+                    message={popup.message}
+                    type={popup.type}
+                    onClose={hidePopup}
+                />
+            )}
+            
+            {/* Confirmation Dialog */}
+            {confirmation.show && (
+                <ConfirmationDialog
+                    message={confirmation.message}
+                    type={confirmation.type}
+                    onConfirm={confirmation.onConfirm}
+                    onCancel={confirmation.onCancel}
+                />
+            )}
         </>
     );
 }

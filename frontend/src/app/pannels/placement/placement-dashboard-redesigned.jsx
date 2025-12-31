@@ -219,8 +219,32 @@ function PlacementDashboardRedesigned() {
     };
 
     const handleUpdateProfile = async () => {
-        if (!editFormData.firstName.trim() || !editFormData.lastName.trim() || !editFormData.phone.trim() || !editFormData.collegeName.trim() || !editFormData.collegeAddress.trim() || !editFormData.collegeOfficialEmail.trim() || !editFormData.collegeOfficialPhone.trim()) {
-            showWarning('All fields are required');
+        if (!editFormData.firstName.trim()) {
+            showWarning('First Name is required');
+            return;
+        }
+        if (!editFormData.lastName.trim()) {
+            showWarning('Last Name is required');
+            return;
+        }
+        if (!editFormData.phone.trim()) {
+            showWarning('Phone Number is required');
+            return;
+        }
+        if (!editFormData.collegeName.trim()) {
+            showWarning('College Name is required');
+            return;
+        }
+        if (!editFormData.collegeAddress.trim()) {
+            showWarning('College Address is required');
+            return;
+        }
+        if (!editFormData.collegeOfficialEmail.trim()) {
+            showWarning('College Official Email is required');
+            return;
+        }
+        if (!editFormData.collegeOfficialPhone.trim()) {
+            showWarning('College Official Phone is required');
             return;
         }
 
@@ -921,10 +945,21 @@ function PlacementDashboardRedesigned() {
                                 <label>College Address *</label>
                                 <textarea
                                     value={editFormData.collegeAddress || ''}
-                                    onChange={(e) => setEditFormData({...editFormData, collegeAddress: e.target.value})}
-                                    placeholder="Enter your college address"
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (value.length > 200) {
+                                            showWarning('College Address cannot exceed 200 characters');
+                                            return;
+                                        }
+                                        setEditFormData({...editFormData, collegeAddress: value});
+                                    }}
+                                    placeholder="Enter your college address (max 200 characters)"
                                     rows="3"
+                                    maxLength="200"
                                 />
+                                <small style={{color: editFormData.collegeAddress?.length > 180 ? '#d97706' : 'var(--text-muted)'}}>
+                                    {editFormData.collegeAddress?.length || 0}/200 characters
+                                </small>
                             </div>
                             <div className="form-group">
                                 <label>College Official Email *</label>

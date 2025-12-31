@@ -28,11 +28,33 @@ function CanHeaderSection(props) {
     const fetchProfile = async () => {
         try {
             const response = await api.getCandidateProfile();
+            console.log('Header profile response:', response);
             if (response.success && response.profile) {
                 setProfileData(response.profile);
+            } else {
+                // Fallback to dashboard stats if profile doesn't exist
+                try {
+                    const statsResponse = await fetch('http://localhost:5000/api/candidate/dashboard/stats', {
+                        headers: { 
+                            'Authorization': `Bearer ${localStorage.getItem('candidateToken')}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    if (statsResponse.ok) {
+                        const statsData = await statsResponse.json();
+                        if (statsData.success && statsData.candidate) {
+                            setProfileData({ 
+                                candidateId: { name: statsData.candidate.name },
+                                profilePicture: null 
+                            });
+                        }
+                    }
+                } catch (fallbackError) {
+                    console.error('Fallback stats fetch failed:', fallbackError);
+                }
             }
         } catch (error) {
-            
+            console.error('Profile fetch error:', error);
         }
     };
     return (

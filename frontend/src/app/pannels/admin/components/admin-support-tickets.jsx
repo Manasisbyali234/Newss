@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Container, Row, Col, Card, Badge, Button, Modal, Form, Alert, Spinner } from 'react-bootstrap';
 import './admin-support-tickets.css';
 import './admin-emp-manage-styles.css';
-import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../utils/popupNotification';
+import { showPopup, showSuccess, showError, showWarning, showInfo, showConfirmation } from '../../../../utils/popupNotification';
 function AdminSupportTickets() {
     const [tickets, setTickets] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -224,39 +224,44 @@ function AdminSupportTickets() {
     };
 
     const handleDeleteTicket = async (ticketId) => {
-        if (!window.confirm('Are you sure you want to delete this support ticket? This action cannot be undone.')) {
-            return;
-        }
-        
-        try {
-            const token = localStorage.getItem('adminToken');
-            
-            if (!token) {
-                showError('Authentication token not found. Please login again.');
-                return;
-            }
-            
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/support-tickets/${ticketId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
+        showConfirmation(
+            'Are you sure you want to delete this support ticket? This action cannot be undone.',
+            async () => {
+                try {
+                    const token = localStorage.getItem('adminToken');
+                    
+                    if (!token) {
+                        showError('Authentication token not found. Please login again.');
+                        return;
+                    }
+                    
+                    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/support-tickets/${ticketId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
 
-            const result = await response.json();
-            
-            if (response.ok && result.success) {
-                await fetchSupportTickets();
-                showSuccess('Support ticket deleted successfully');
-            } else {
-                console.error('Delete failed:', result);
-                showError(result.message || 'Failed to delete support ticket');
-            }
-        } catch (error) {
-            console.error('Error deleting support ticket:', error);
-            showError('Error deleting support ticket. Please try again.');
-        }
+                    const result = await response.json();
+                    
+                    if (response.ok && result.success) {
+                        await fetchSupportTickets();
+                        showSuccess('Support ticket deleted successfully');
+                    } else {
+                        console.error('Delete failed:', result);
+                        showError(result.message || 'Failed to delete support ticket');
+                    }
+                } catch (error) {
+                    console.error('Error deleting support ticket:', error);
+                    showError('Error deleting support ticket. Please try again.');
+                }
+            },
+            () => {
+                // User cancelled - no action needed
+            },
+            'warning'
+        );
     };
 
     const getPriorityBadge = (priority) => {
