@@ -136,6 +136,7 @@
     display: flex;
     align-items: center;
     gap: 25px;
+    padding: 20px;
 }
 
 .profile-avatar {
@@ -291,6 +292,9 @@
     border-radius: 12px;
     padding: 30px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 .personal-info-container {

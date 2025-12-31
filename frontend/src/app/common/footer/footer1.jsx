@@ -6,12 +6,18 @@ import { Container, Row, Col } from "react-bootstrap";
 
 function Footer1() {
     return (
-        <footer className="site-footer-new" style={{
-            background: '#F9FAFB',
-            padding: '64px 0 0',
-            color: '#6B7280',
-            fontFamily: '"Plus Jakarta Sans", sans-serif'
-        }}>
+        <>
+            <div style={{
+                width: '100%',
+                height: '1px',
+                background: '#E5E7EB'
+            }}></div>
+            <footer className="site-footer-new" style={{
+                background: '#F9FAFB',
+                padding: '64px 0 0',
+                color: '#6B7280',
+                fontFamily: '"Plus Jakarta Sans", sans-serif'
+            }}>
             <style>{`
                 .footer-col-title {
                     color: #0B1220;
@@ -189,6 +195,7 @@ function Footer1() {
                 </div>
             </Container>
         </footer>
+        </>
     );
 }
 

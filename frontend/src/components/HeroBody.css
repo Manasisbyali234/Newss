@@ -431,14 +431,32 @@ html, body {
   width: 40px !important;
   height: 40px !important;
   margin-bottom: 0 !important;
-  color: #e68900 !important;
-  background: rgba(255, 156, 0, 0.1) !important;
-  border: 1px solid rgba(255, 156, 0, 0.3) !important;
+  color: inherit !important;
+  background: transparent !important;
+  border: none !important;
   border-radius: 8px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
 }
+
+/* Category-specific icon colors */
+.category-card:nth-child(1) .category-icon.small { color: #2563EB !important; } /* Marketing - Blue */
+.category-card:nth-child(2) .category-icon.small { color: #059669 !important; } /* Finance - Green */
+.category-card:nth-child(3) .category-icon.small { color: #7C3AED !important; } /* HR - Purple */
+.category-card:nth-child(4) .category-icon.small { color: #EA580C !important; } /* Operations - Orange */
+.category-card:nth-child(5) .category-icon.small { color: #DB2777 !important; } /* Design - Pink */
+.category-card:nth-child(6) .category-icon.small { color: #4F46E5 !important; } /* IT - Indigo */
+.category-card:nth-child(7) .category-icon.small { color: #D97706 !important; } /* Sales - Amber */
+
+/* Duplicate set for seamless loop */
+.category-card:nth-child(8) .category-icon.small { color: #2563EB !important; } /* Marketing - Blue */
+.category-card:nth-child(9) .category-icon.small { color: #059669 !important; } /* Finance - Green */
+.category-card:nth-child(10) .category-icon.small { color: #7C3AED !important; } /* HR - Purple */
+.category-card:nth-child(11) .category-icon.small { color: #EA580C !important; } /* Operations - Orange */
+.category-card:nth-child(12) .category-icon.small { color: #DB2777 !important; } /* Design - Pink */
+.category-card:nth-child(13) .category-icon.small { color: #4F46E5 !important; } /* IT - Indigo */
+.category-card:nth-child(14) .category-icon.small { color: #D97706 !important; } /* Sales - Amber */
 
 .category-jobs {
   color: #ff9c00;
@@ -848,15 +866,31 @@ html, body {
     width: 35px !important;
     height: 35px !important;
     font-size: 1.5rem !important;
-    background: rgba(255, 156, 0, 0.1) !important;
-    border: 1px solid rgba(255, 156, 0, 0.3) !important;
-    color: #e68900 !important;
+    background: transparent !important;
+    border: none !important;
+    color: inherit !important;
     border-radius: 8px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     margin: 0 auto 0.5rem auto !important;
   }
+
+  /* Category-specific icon colors for mobile */
+  .category-card:nth-child(1) .category-icon.small { color: #2563EB !important; } /* Marketing - Blue */
+  .category-card:nth-child(2) .category-icon.small { color: #059669 !important; } /* Finance - Green */
+  .category-card:nth-child(3) .category-icon.small { color: #7C3AED !important; } /* HR - Purple */
+  .category-card:nth-child(4) .category-icon.small { color: #EA580C !important; } /* Operations - Orange */
+  .category-card:nth-child(5) .category-icon.small { color: #DB2777 !important; } /* Design - Pink */
+  .category-card:nth-child(6) .category-icon.small { color: #4F46E5 !important; } /* IT - Indigo */
+  .category-card:nth-child(7) .category-icon.small { color: #D97706 !important; } /* Sales - Amber */
+  .category-card:nth-child(8) .category-icon.small { color: #2563EB !important; } /* Marketing - Blue */
+  .category-card:nth-child(9) .category-icon.small { color: #059669 !important; } /* Finance - Green */
+  .category-card:nth-child(10) .category-icon.small { color: #7C3AED !important; } /* HR - Purple */
+  .category-card:nth-child(11) .category-icon.small { color: #EA580C !important; } /* Operations - Orange */
+  .category-card:nth-child(12) .category-icon.small { color: #DB2777 !important; } /* Design - Pink */
+  .category-card:nth-child(13) .category-icon.small { color: #4F46E5 !important; } /* IT - Indigo */
+  .category-card:nth-child(14) .category-icon.small { color: #D97706 !important; } /* Sales - Amber */
 
   .category-jobs {
     font-size: 0.7rem !important;

@@ -1,3 +1,38 @@
+/* Form elements z-index fixes to prevent overflow on header */
+.form-select,
+.form-control,
+select,
+input {
+    position: relative;
+    z-index: 1;
+}
+
+/* Dropdown and select elements should not overflow header */
+.form-select:focus,
+select:focus {
+    z-index: 2;
+}
+
+/* Education section specific z-index fixes */
+.education-section-body .form-select,
+.education-section-body select,
+.education-section-body .form-control {
+    position: relative;
+    z-index: 1;
+}
+
+/* Panel content should have lower z-index than header */
+.panel-body {
+    position: relative;
+    z-index: 1;
+}
+
+/* Panel heading should have higher z-index */
+.panel-heading {
+    position: relative;
+    z-index: 10;
+}
+
 /* Resume Page Custom Styles */
 
 /* Resume page background to match dashboard */

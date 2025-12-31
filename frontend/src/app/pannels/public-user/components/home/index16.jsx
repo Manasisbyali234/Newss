@@ -439,7 +439,7 @@ function Home16Page() {
             <HeroBody className="mt-0 mt-md-4" onSearch={handleSearch} />
 
             {/* JOBS CATEGORIES SECTION START */}
-            <div className="section-full p-t20 p-b20 twm-job-categories-hpage-6-area animate-on-scroll" style={{background: 'transparent !important', backgroundColor: 'transparent !important', paddingTop: 'clamp(10px, 2vw, 20px)', paddingBottom: 'clamp(10px, 2vw, 20px)'}}>
+            <div className="section-full p-t20 p-b20 twm-job-categories-hpage-6-area animate-on-scroll" style={{background: 'transparent !important', backgroundColor: 'transparent !important', paddingTop: 'clamp(5px, 1vw, 10px)', paddingBottom: 'clamp(5px, 1vw, 10px)'}}>
                 <Container style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
                 <div className="section-head center wt-small-separator-outer mb-3" style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                     <div className="wt-small-separator site-text-primary">
@@ -849,7 +849,7 @@ function Home16Page() {
             {/* JOBS CATEGORIES SECTION END */}
 
             {/* JOB POST START */}
-            <div className="section-full p-t20 p-b20 twm-bg-ring-wrap2 animate-on-scroll" style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
+            <div className="section-full p-t20 p-b20 twm-bg-ring-wrap2 animate-on-scroll" style={{background: 'transparent !important', backgroundColor: 'transparent !important', paddingTop: 'clamp(5px, 1vw, 10px)', paddingBottom: 'clamp(5px, 1vw, 10px)'}}>
                 <div className="twm-bg-ring-right" />
                 <div className="twm-bg-ring-left" />
                 <div style={{background: 'transparent !important', backgroundColor: 'transparent !important'}}>
@@ -1152,39 +1152,41 @@ function Home16Page() {
                                 <p className="section-subtitle mb-4" style={{maxWidth: '600px'}}>
                                     Our platform provides a seamless experience for employers to find, assess, and hire the best talent in the industry.
                                 </p>
-                                <NavLink to="/login?tab=employer" className="btn-dark-pill">
-                                    Start recruiting now
-                                </NavLink>
                             </div>
+                        </Col>
+                        <Col lg={4} className="text-end">
+                            <NavLink to="/login?tab=employer" className="btn-dark-pill">
+                                Start recruiting now
+                            </NavLink>
                         </Col>
                     </div>
 
-                    <Row className="g-5 mt-4">
+                    <Row className="g-5 justify-content-center">
                         <Col lg={4} md={6}>
-                            <div className="workflow-illustration-card">
-                                <div className="illustration-circle" style={{background: '#FFF7F3'}}>
+                            <div className="workflow-illustration-card text-center">
+                                <div className="illustration-circle mx-auto mb-4" style={{background: '#FFF7F3'}}>
                                     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#FF6A3D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                                 </div>
-                                <h5>Find the right talent</h5>
-                                <p>Access a diverse pool of qualified candidates and use advanced filters to find the perfect match for your team.</p>
+                                <h5 className="text-center mb-3">Find the right talent</h5>
+                                <p className="text-center">Access a diverse pool of qualified candidates and use advanced filters to find the perfect match for your team.</p>
                             </div>
                         </Col>
                         <Col lg={4} md={6}>
-                            <div className="workflow-illustration-card">
-                                <div className="illustration-circle" style={{background: '#EBF5FF'}}>
+                            <div className="workflow-illustration-card text-center">
+                                <div className="illustration-circle mx-auto mb-4" style={{background: '#EBF5FF'}}>
                                     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                                 </div>
-                                <h5>Effortless screening</h5>
-                                <p>Streamline your hiring process with our automated screening tools and candidate management system.</p>
+                                <h5 className="text-center mb-3">Effortless screening</h5>
+                                <p className="text-center">Streamline your hiring process with our automated screening tools and candidate management system.</p>
                             </div>
                         </Col>
                         <Col lg={4} md={6}>
-                            <div className="workflow-illustration-card">
-                                <div className="illustration-circle" style={{background: '#F0FDF4'}}>
+                            <div className="workflow-illustration-card text-center">
+                                <div className="illustration-circle mx-auto mb-4" style={{background: '#F0FDF4'}}>
                                     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                                 </div>
-                                <h5>Hire with confidence</h5>
-                                <p>Make informed decisions with detailed candidate profiles, assessment results, and interview feedback.</p>
+                                <h5 className="text-center mb-3">Hire with confidence</h5>
+                                <p className="text-center">Make informed decisions with detailed candidate profiles, assessment results, and interview feedback.</p>
                             </div>
                         </Col>
                     </Row>
@@ -1233,11 +1235,12 @@ function Home16Page() {
             </div>
             {/* HOW IT WORK FOR EMPLOYERS SECTION END */}
             {/* SECTION 5: Final Call-to-Action (CTA) */}
-            <div className="section-full redesign-section animate-on-scroll">
+            <div className="section-full redesign-section animate-on-scroll" style={{background: '#F9FAFB'}}>
                 <Container>
-                    <div className="cta-container-box">
-                        <h2 className="cta-heading">Ready to find your next great hire?</h2>
-                        <div className="d-flex justify-content-center gap-3 mb-4 flex-wrap">
+                    <div className="cta-container-box text-center">
+                        <span className="badge-orange mb-3">Get Started</span>
+                        <h2 className="cta-heading text-center mb-4">Ready to find your next great hire?</h2>
+                        <div className="d-flex justify-content-center gap-3 mb-3 flex-wrap">
                             <NavLink to="/login?tab=employer" className="btn-orange-pill">
                                 Post a Job for Free
                             </NavLink>
@@ -1245,7 +1248,7 @@ function Home16Page() {
                                 Learn More
                             </NavLink>
                         </div>
-                        <p className="mb-0" style={{color: '#6B7280', fontSize: '14px'}}>
+                        <p className="mb-0 text-center" style={{color: '#6B7280', fontSize: '14px', maxWidth: '300px', margin: '0 auto'}}>
                             No credit card required. Start posting today.
                         </p>
                     </div>
@@ -1273,7 +1276,7 @@ navbarStyle.textContent = `
     
     /* Redesign Styles */
     .redesign-section {
-        padding: 80px 0 !important;
+        padding: 40px 0 !important;
         position: relative !important;
         overflow: hidden !important;
     }
@@ -1474,7 +1477,7 @@ navbarStyle.textContent = `
     .cta-container-box {
         border: 2px solid #FF6A3D !important;
         border-radius: 32px !important;
-        background: #FFFFFF !important;
+        background: #FFEBE3 !important;
         padding: 48px 32px !important;
         text-align: center !important;
         max-width: 1200px !important;

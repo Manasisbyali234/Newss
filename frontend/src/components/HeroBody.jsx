@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HeroBody.css';
-import { FaBriefcase, FaCalculator, FaCode, FaUsers } from 'react-icons/fa';
+import { Megaphone, Banknote, Users, Settings, Tag, Terminal, TrendingUp } from 'lucide-react';
 
 const HeroBody = ({ onSearch }) => {
   const navigate = useNavigate();
@@ -127,13 +127,13 @@ const HeroBody = ({ onSearch }) => {
   };
 
   const jobCategories = [
-    { icon: FaCode, name: 'IT' },
-    { icon: FaBriefcase, name: 'Sales' },
-    { icon: FaUsers, name: 'Marketing' },
-    { icon: FaCalculator, name: 'Finance' },
-    { icon: FaUsers, name: 'HR' },
-    { icon: FaBriefcase, name: 'Operations' },
-    { icon: FaCode, name: 'Design' }
+    { icon: Megaphone, name: 'Marketing', count: '1.2k', iconColor: '#2563EB', bgColor: '#EEF4FF' },
+    { icon: Banknote, name: 'Finance', count: '850', iconColor: '#059669', bgColor: '#ECFDF5' },
+    { icon: Users, name: 'HR', count: '420', iconColor: '#7C3AED', bgColor: '#F5F3FF' },
+    { icon: Settings, name: 'Operations', count: '1.1k', iconColor: '#EA580C', bgColor: '#FFF7ED' },
+    { icon: Tag, name: 'Design', count: '930', iconColor: '#DB2777', bgColor: '#FDF2F8' },
+    { icon: Terminal, name: 'IT', count: '2.4k', iconColor: '#4F46E5', bgColor: '#EEF2FF' },
+    { icon: TrendingUp, name: 'Sales', count: '1.5k', iconColor: '#D97706', bgColor: '#FFFBEB' }
   ];
 
   const handleSearch = () => {
