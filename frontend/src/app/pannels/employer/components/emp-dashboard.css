@@ -117,6 +117,58 @@
   box-shadow: none !important;
 }
 
+/* Desktop styles - ensure proper sizing */
+@media (min-width: 768px) {
+  .emp-dashboard .dashboard-card-2 {
+    padding: 1.5rem !important;
+  }
+
+  .emp-dashboard .dashboard-card-2 .d-flex {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 1rem !important;
+  }
+
+  .emp-dashboard .dashboard-card-2 .counter {
+    font-size: 2.5rem !important;
+    font-weight: 700 !important;
+    text-align: left !important;
+    display: block !important;
+  }
+
+  .emp-dashboard .dashboard-card-2 h5 {
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    text-align: left !important;
+    display: block !important;
+  }
+
+  .emp-dashboard .wt-card-icon-2 {
+    font-size: 2rem !important;
+    opacity: 0.8;
+    flex-shrink: 0 !important;
+    margin-left: auto !important;
+    position: relative !important;
+    z-index: 1 !important;
+  }
+
+  .emp-dashboard .dashboard-card-2 .d-flex > div:first-child {
+    flex: 1 !important;
+    min-width: 0 !important;
+    margin-right: 1rem !important;
+  }
+
+  /* Override mobile text alignment on desktop */
+  .emp-dashboard .dashboard-card-2 .text-warning,
+  .emp-dashboard .dashboard-card-2 .text-success,
+  .emp-dashboard .dashboard-card-2 .text-info,
+  .emp-dashboard .dashboard-card-2 .fw-bold {
+    text-align: left !important;
+    display: block !important;
+  }
+}
+
 /* Mobile-specific card styles */
 @media (max-width: 767px) {
   .emp-dashboard .panel,
@@ -275,18 +327,18 @@
 
   .emp-dashboard .dashboard-card-2 .d-flex {
     flex-direction: row !important;
-    justify-content: center !important;
+    justify-content: space-between !important;
     align-items: center !important;
     gap: 1rem !important;
   }
 
   .emp-dashboard .dashboard-card-2 .d-flex > div {
-    text-align: center !important;
+    text-align: left !important;
     display: flex !important;
     flex-direction: column !important;
-    align-items: center !important;
+    align-items: flex-start !important;
     justify-content: center !important;
-    width: 100% !important;
+    flex: 1 !important;
   }
 
   /* Center all counter values and text in stats cards */
@@ -296,11 +348,8 @@
   .emp-dashboard .dashboard-card-2 .text-info,
   .emp-dashboard .dashboard-card-2 .text-warning,
   .emp-dashboard .dashboard-card-2 .text-success {
-    width: 100% !important;
-    text-align: center !important;
+    text-align: left !important;
     display: block !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
   }
 
   .emp-dashboard .wt-card-icon-2 {
