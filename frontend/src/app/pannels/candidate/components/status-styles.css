@@ -168,12 +168,13 @@
 }
 
 .interview-round-item .badge {
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 12px;
+    font-size: 10px !important;
+    padding: 3px 6px !important;
+    border-radius: 8px;
     white-space: nowrap;
-    min-width: 60px;
+    min-width: 55px !important;
     text-align: center;
+    font-weight: 500;
 }
 
 /* Date display styling */
@@ -293,19 +294,23 @@
         max-height: 60vh;
         overflow-x: auto !important;
         overflow-y: auto;
-        width: 100vw;
-        margin-left: -0.5rem;
-        margin-right: -0.5rem;
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
+        display: block;
     }
     
     .card-shadow .card-body {
-        min-width: 1500px;
-        overflow-x: auto;
+        width: 100% !important;
+        overflow: hidden !important;
+        padding: 0 !important;
+        margin: 0 !important;
     }
     
     .table {
-        min-width: 1500px;
-        width: auto;
+        min-width: 1000px;
+        width: 100%;
+        margin-bottom: 0;
     }
     
     .table thead th {
@@ -359,6 +364,29 @@
     .table tbody td:nth-child(2) .d-flex {
         align-items: center !important;
         gap: 8px !important;
+    }
+
+    /* Regular positioning for last column on mobile (remove sticky) */
+    .table thead th:last-child {
+        position: static !important;
+        background-color: #f8f9fa !important;
+        border-left: none !important;
+    }
+
+    .table tbody td:last-child {
+        position: static !important;
+        background-color: transparent !important;
+        border-left: none !important;
+    }
+
+    /* Maintain correct background for last cell when row is hovered or highlighted */
+    .table tbody tr:hover td:last-child {
+        background-color: transparent !important;
+    }
+
+    .table tbody tr.highlight-shortlisted td:last-child {
+        background-color: transparent !important;
+        border-left: none !important;
     }
 }
 
@@ -486,4 +514,24 @@
 .company-logo-circle:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+}
+/* Modal Z-index Fix */
+.modal.show {
+    z-index: 99999 !important;
+}
+
+.modal-dialog {
+    z-index: 99999 !important;
+}
+
+.modal-content {
+    z-index: 99999 !important;
+}
+/* Modal Badge Size Fix */
+.modal-dialog .badge {
+    font-size: 10px !important;
+    padding: 3px 6px !important;
+    min-width: 55px !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
 }

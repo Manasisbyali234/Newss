@@ -55,7 +55,7 @@ function Home16Page() {
             const navbars = document.querySelectorAll('header, .site-header, .navbar, .twm-header-style-1, .header-fixed, .main-header');
             navbars.forEach(navbar => {
                 navbar.classList.add('navbar-transparent');
-                navbar.style.cssText = 'background: transparent !important; background-color: transparent !important; box-shadow: none !important; position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 1000 !important; transition: all 0.3s ease !important;';
+                navbar.style.cssText = 'background: transparent !important; background-color: transparent !important; box-shadow: none !important; position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 10000 !important; transition: all 0.3s ease !important;';
             });
         }, 100);
 
@@ -1075,7 +1075,8 @@ function Home16Page() {
                                                 )}
                                             </div>
                                             <h4 className="recruiter-name text-truncate w-100">{recruiter.companyName}</h4>
-                                            <p className="hiring-text mb-0">Hiring in 2 days</p>
+                                            <p className="recruiter-location mb-1">{recruiter.location || 'Location not specified'}</p>
+                                            <p className="job-posts-count mb-0">{recruiter.jobCount || 0} job posts</p>
                                         </div>
                                     </NavLink>
                                 </Col>
@@ -1139,6 +1140,48 @@ function Home16Page() {
                 </Container>
             </div>
 
+            {/* HOW IT WORK FOR EMPLOYERS SECTION START */}
+            <div className="section-full redesign-section animate-on-scroll" style={{background: '#F9FAFB'}}>
+                <Container>
+                    <div className="section-head center wt-small-separator-outer mb-5 text-center">
+                        <span className="badge-orange">For Employers</span>
+                        <h2 className="section-title-large">How It Works for Employers</h2>
+                        <p className="section-subtitle">Streamline your hiring process with these simple steps</p>
+                    </div>
+
+                    <Row className="g-4">
+                        <Col lg={4} md={6}>
+                            <div className="process-card-light">
+                                <div className="process-icon-circle" style={{background: 'rgba(255, 106, 61, 0.1)'}}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF6A3D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                </div>
+                                <h4>Post Your Job</h4>
+                                <p>Create account and post job openings with details and requirements.</p>
+                            </div>
+                        </Col>
+                        <Col lg={4} md={6}>
+                            <div className="process-card-light">
+                                <div className="process-icon-circle" style={{background: 'rgba(59, 130, 246, 0.1)'}}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                </div>
+                                <h4>Hire the Best</h4>
+                                <p>Review profiles, shortlist candidates and schedule interviews.</p>
+                            </div>
+                        </Col>
+                        <Col lg={4} md={6}>
+                            <div className="process-card-light">
+                                <div className="process-icon-circle" style={{background: 'rgba(16, 185, 129, 0.1)'}}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                </div>
+                                <h4>Build Your Team</h4>
+                                <p>Onboard new hires and build your dream team successfully.</p>
+                            </div>
+                        </Col>
+                    </Row>
+                </Container>
+            </div>
+            {/* HOW IT WORK FOR EMPLOYERS SECTION END */}
+
             {/* SECTION 3 & 4: Recruit Smarter & Workflow Illustrations */}
             <div className="section-full redesign-section workflow-section animate-on-scroll">
                 <Container>
@@ -1193,47 +1236,6 @@ function Home16Page() {
                 </Container>
             </div>
 
-            {/* HOW IT WORK FOR EMPLOYERS SECTION START */}
-            <div className="section-full redesign-section animate-on-scroll" style={{background: '#F9FAFB'}}>
-                <Container>
-                    <div className="section-head center wt-small-separator-outer mb-5 text-center">
-                        <span className="badge-orange">For Employers</span>
-                        <h2 className="section-title-large">How It Works for Employers</h2>
-                        <p className="section-subtitle">Streamline your hiring process with these simple steps</p>
-                    </div>
-
-                    <Row className="g-4">
-                        <Col lg={4} md={6}>
-                            <div className="process-card-light">
-                                <div className="process-icon-circle" style={{background: 'rgba(255, 106, 61, 0.1)'}}>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF6A3D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                                </div>
-                                <h4>Post Your Job</h4>
-                                <p>Create account and post job openings with details and requirements.</p>
-                            </div>
-                        </Col>
-                        <Col lg={4} md={6}>
-                            <div className="process-card-light">
-                                <div className="process-icon-circle" style={{background: 'rgba(59, 130, 246, 0.1)'}}>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                                </div>
-                                <h4>Hire the Best</h4>
-                                <p>Review profiles, shortlist candidates and schedule interviews.</p>
-                            </div>
-                        </Col>
-                        <Col lg={4} md={6}>
-                            <div className="process-card-light">
-                                <div className="process-icon-circle" style={{background: 'rgba(16, 185, 129, 0.1)'}}>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                                </div>
-                                <h4>Build Your Team</h4>
-                                <p>Onboard new hires and build your dream team successfully.</p>
-                            </div>
-                        </Col>
-                    </Row>
-                </Container>
-            </div>
-            {/* HOW IT WORK FOR EMPLOYERS SECTION END */}
             {/* SECTION 5: Final Call-to-Action (CTA) */}
             <div className="section-full redesign-section animate-on-scroll" style={{background: '#F9FAFB'}}>
                 <Container>
@@ -1366,6 +1368,16 @@ navbarStyle.textContent = `
     .hiring-text {
         font-size: 12px !important;
         color: #6B7280 !important;
+    }
+    .recruiter-location {
+        font-size: 12px !important;
+        color: #6B7280 !important;
+        margin-bottom: 4px !important;
+    }
+    .job-posts-count {
+        font-size: 12px !important;
+        color: #FF6A3D !important;
+        font-weight: 600 !important;
     }
     /* How It Works Dark */
     .bg-dark-navy {
@@ -1529,11 +1541,11 @@ const handleNavbarScroll = () => {
         if (window.scrollY > 50) {
             navbar.classList.remove('navbar-transparent');
             navbar.classList.add('navbar-scrolled');
-            navbar.style.cssText = 'background: #fff !important; background-color: #fff !important; box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important; position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 1000 !important; transition: all 0.3s ease !important;';
+            navbar.style.cssText = 'background: #fff !important; background-color: #fff !important; box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important; position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 10000 !important; transition: all 0.3s ease !important;';
         } else {
             navbar.classList.remove('navbar-scrolled');
             navbar.classList.add('navbar-transparent');
-            navbar.style.cssText = 'background: transparent !important; background-color: transparent !important; box-shadow: none !important; position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 1000 !important; transition: all 0.3s ease !important;';
+            navbar.style.cssText = 'background: transparent !important; background-color: transparent !important; box-shadow: none !important; position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 10000 !important; transition: all 0.3s ease !important;';
         }
     });
 };

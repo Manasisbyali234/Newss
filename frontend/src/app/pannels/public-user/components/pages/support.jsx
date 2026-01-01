@@ -18,6 +18,7 @@ function SupportPage() {
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isCompressing, setIsCompressing] = useState(false);
 
     const categories = [
         { value: 'general', label: 'General Inquiry' },
@@ -47,18 +48,18 @@ function SupportPage() {
         if (!formData.subject.trim()) newErrors.subject = 'Subject is required';
         if (!formData.message.trim()) newErrors.message = 'Message is required';
         
-        // Validate file size (max 20MB per file)
+        // Validate file size (max 10MB per file)
         for (let file of files) {
-            if (file.size > 20 * 1024 * 1024) {
-                newErrors.files = 'Each file must be less than 20MB';
+            if (file.size > 10 * 1024 * 1024) {
+                newErrors.files = 'Each file must be less than 10MB after compression';
                 break;
             }
         }
         
-        // Check total file size
+        // Check total file size (max 30MB)
         const totalSize = files.reduce((sum, file) => sum + file.size, 0);
-        if (totalSize > 60 * 1024 * 1024) {
-            newErrors.files = 'Total file size exceeds 60MB';
+        if (totalSize > 30 * 1024 * 1024) {
+            newErrors.files = 'Total file size exceeds 30MB';
         }
         
         setErrors(newErrors);
@@ -73,32 +74,107 @@ function SupportPage() {
         }
     };
 
-    const handleFileChange = (e) => {
+    const compressImage = (file) => {
+        return new Promise((resolve) => {
+            // If not an image, return as is
+            if (!file.type.startsWith('image/')) {
+                resolve(file);
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    // Resize if image is too large
+                    const maxDimension = 1920;
+                    if (width > maxDimension || height > maxDimension) {
+                        if (width > height) {
+                            height = (height / width) * maxDimension;
+                            width = maxDimension;
+                        } else {
+                            width = (width / height) * maxDimension;
+                            height = maxDimension;
+                        }
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Convert to blob with compression
+                    canvas.toBlob((blob) => {
+                        if (blob) {
+                            const fileName = file.name || `attachment-${Date.now()}.jpg`;
+                            const compressedFile = new File([blob], fileName, {
+                                type: 'image/jpeg',
+                                lastModified: Date.now()
+                            });
+                            resolve(compressedFile);
+                        } else {
+                            resolve(file);
+                        }
+                    }, 'image/jpeg', 0.8); // 80% quality
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    };
+
+    const handleFileChange = async (e) => {
         const selectedFiles = Array.from(e.target.files);
+        
+        const clearFileInput = () => {
+            if (e.target) e.target.value = '';
+        };
         
         // Check file count
         if (selectedFiles.length > 3) {
             setErrors(prev => ({ ...prev, files: 'Maximum 3 files allowed' }));
+            clearFileInput();
             return;
         }
         
-        // Check individual file sizes
-        const maxSize = 20 * 1024 * 1024; // 20MB
-        const oversizedFiles = selectedFiles.filter(file => file.size > maxSize);
+        // Compress images if they're too large
+        setIsCompressing(true);
+        const processedFiles = [];
+        for (const file of selectedFiles) {
+            if (file.type.startsWith('image/') && file.size > 5 * 1024 * 1024) {
+                // Compress large images (over 5MB)
+                const compressed = await compressImage(file);
+                processedFiles.push(compressed);
+            } else {
+                processedFiles.push(file);
+            }
+        }
+        setIsCompressing(false);
+        
+        // Check individual file sizes (align with backend 10MB limit)
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        const oversizedFiles = processedFiles.filter(file => file.size > maxSize);
         if (oversizedFiles.length > 0) {
-            setErrors(prev => ({ ...prev, files: `File(s) too large: ${oversizedFiles.map(f => f.name).join(', ')}. Max 20MB per file.` }));
+            setErrors(prev => ({ ...prev, files: `File(s) too large: ${oversizedFiles.map(f => f.name).join(', ')}. Max 10MB per file after compression.` }));
+            clearFileInput();
             return;
         }
         
-        // Check total size
-        const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
-        const maxTotalSize = 60 * 1024 * 1024; // 60MB
+        // Check total size (align with backend 30MB limit)
+        const totalSize = processedFiles.reduce((sum, file) => sum + file.size, 0);
+        const maxTotalSize = 30 * 1024 * 1024; // 30MB
         if (totalSize > maxTotalSize) {
-            setErrors(prev => ({ ...prev, files: 'Total file size exceeds 60MB. Please select smaller files.' }));
+            setErrors(prev => ({ ...prev, files: 'Total file size exceeds 30MB. Please select smaller files.' }));
+            clearFileInput();
             return;
         }
         
-        setFiles(selectedFiles);
+        setFiles(processedFiles);
         if (errors.files) {
             setErrors(prev => ({ ...prev, files: '' }));
         }

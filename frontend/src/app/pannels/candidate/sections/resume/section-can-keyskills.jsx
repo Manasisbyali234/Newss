@@ -103,6 +103,8 @@ function SectionCanKeySkills({ profile }) {
     const handleAddFromDropdown = () => {
         if (selectedSkill) {
             addSkill(selectedSkill);
+        } else {
+            showError('Please select a skill from the dropdown first.');
         }
     };
 
@@ -264,34 +266,43 @@ function SectionCanKeySkills({ profile }) {
                             <div className="mt-4">
                                 <label><i className="fa fa-tags me-1"></i> Your Skills</label>
                                 <style>{`
+                                    @media (max-width: 768px) {
+                                        .skill-badge {
+                                            width: auto !important;
+                                            max-width: 100% !important;
+                                            display: inline-flex !important;
+                                            margin-right: 8px !important;
+                                            margin-bottom: 8px !important;
+                                        }
+                                    }
                                     @media (max-width: 576px) {
                                         .skill-badge {
-                                            font-size: 11px !important;
-                                            padding: 5px 8px !important;
-                                            max-width: fit-content !important;
-                                            width: auto !important;
+                                            font-size: 12px !important;
+                                            padding: 6px 10px !important;
                                         }
                                         .skill-badge .skill-text {
-                                            overflow: hidden;
-                                            text-overflow: ellipsis;
-                                            white-space: nowrap;
-                                            max-width: calc(100vw - 120px);
+                                            max-width: calc(100vw - 110px);
                                         }
                                         .skill-badge .btn-sm {
-                                            width: 10px !important;
-                                            height: 10px !important;
-                                            font-size: 7px !important;
+                                            width: 18px !important;
+                                            height: 18px !important;
+                                            font-size: 10px !important;
+                                            margin-left: 10px !important;
+                                            display: flex !important;
+                                            align-items: center;
+                                            justify-content: center;
+                                            flex-shrink: 0 !important;
                                         }
                                     }
                                 `}</style>
                                 <div className="d-flex flex-wrap gap-2 mt-2">
                                     {skills.map((skill, index) => (
-                                        <span key={index} className="badge bg-light skill-badge" style={{fontSize: '13px', padding: '8px 12px', borderRadius: '20px', color: '#333', border: '1px solid #ddd', display: 'inline-flex', alignItems: 'center', flexDirection: 'row'}}>
+                                        <span key={index} className="badge bg-light skill-badge" style={{fontSize: '13px', padding: '8px 12px', borderRadius: '20px', color: '#333', border: '1px solid #ddd', display: 'inline-flex', alignItems: 'center', flexDirection: 'row', maxWidth: '100%'}}>
                                             <i className="fa fa-tag me-2" style={{color: '#0056b3', fontSize: '11px', flexShrink: 0}}></i>
-                                            <span className="skill-text" style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{skill}</span>
+                                            <span className="skill-text" style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: '1 1 auto', minWidth: 0}}>{skill}</span>
                                             <button 
                                                 className="btn btn-sm ms-2 p-0"
-                                                style={{background: 'none', border: 'none', color: '#dc3545', fontSize: '12px', width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}
+                                                style={{background: 'none', border: 'none', color: '#dc3545', fontSize: '12px', width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginLeft: '10px'}}
                                                 onClick={(e) => {
                                                     e.preventDefault();
                                                     e.stopPropagation();

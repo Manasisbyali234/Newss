@@ -9,10 +9,11 @@ import { showHeader, showFooter, setFooterType, setHeaderType } from "../globals
 
 function PublicUserLayout() {
     const currentpath = useLocation().pathname;
+    const pageClass = currentpath === '/contact-us' ? 'contact-page-active' : '';
 
     return (
         <>
-            <div className="page-wraper">
+            <div className={`page-wraper ${pageClass}`}>
                 {/* Header */}
                 {
                     showHeader(currentpath) &&

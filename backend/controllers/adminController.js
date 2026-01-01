@@ -444,7 +444,7 @@ exports.updateEmployerStatus = async (req, res) => {
       try {
         if (isApproved) {
           const { sendApprovalEmail } = require('../utils/emailService');
-          await sendApprovalEmail(employer.email, employer.companyName, 'employer');
+          await sendApprovalEmail(employer.email, employer.name || employer.companyName, 'employer');
         }
         
         const notificationData = {

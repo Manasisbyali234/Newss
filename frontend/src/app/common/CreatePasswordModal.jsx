@@ -35,13 +35,16 @@ function CreatePasswordModal({ modalId = 'createPasswordModal', userType = 'cand
     }, [modalId]);
 
     const validatePassword = (pwd) => {
-        const specialChars = pwd.match(/[@#!%$*?]/g) || [];
+        const requiredSpecialChars = userType === 'candidate' ? 3 : 1;
+        const minLength = userType === 'candidate' ? 10 : 6;
+        const maxLength = userType === 'candidate' ? 25 : 50;
+        
         setPasswordValidation({
-            length: pwd.length >= 6,
+            length: pwd.length >= minLength && pwd.length <= maxLength,
             uppercase: /[A-Z]/.test(pwd),
-            lowercase: /[a-z]/.test(pwd),
-            number: /[0-9]/.test(pwd),
-            specialChars: specialChars.length >= 1
+            lowercase: userType === 'candidate' ? /[a-z]/.test(pwd) : /[a-z]/.test(pwd),
+            number: userType === 'candidate' ? /[0-9]/.test(pwd) : /[0-9]/.test(pwd),
+            specialChars: (pwd.match(/[@#!%$*?]/g) || []).length >= requiredSpecialChars
         });
     };
 
@@ -52,7 +55,19 @@ function CreatePasswordModal({ modalId = 'createPasswordModal', userType = 'cand
     };
 
     const isPasswordValid = () => {
-        return Object.values(passwordValidation).every(v => v === true);
+        if (userType === 'candidate') {
+            return passwordValidation.length && 
+                   passwordValidation.uppercase && 
+                   passwordValidation.lowercase && 
+                   passwordValidation.number && 
+                   passwordValidation.specialChars;
+        } else {
+            return passwordValidation.length && 
+                   passwordValidation.uppercase && 
+                   passwordValidation.lowercase && 
+                   passwordValidation.number && 
+                   passwordValidation.specialChars;
+        }
     };
 
     const resetForm = () => {
@@ -182,7 +197,7 @@ function CreatePasswordModal({ modalId = 'createPasswordModal', userType = 'cand
                                     <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                                         <li style={{ padding: '4px 0', fontSize: '13px', color: passwordValidation.length ? '#28a745' : '#dc3545' }}>
                                             <i className={`fa ${passwordValidation.length ? 'fa-check-circle' : 'fa-times-circle'}`} style={{ marginRight: '8px' }}></i>
-                                            At least 6 characters
+                                            {userType === 'candidate' ? '10-25 characters' : 'At least 6 characters'}
                                         </li>
                                         <li style={{ padding: '4px 0', fontSize: '13px', color: passwordValidation.uppercase ? '#28a745' : '#dc3545' }}>
                                             <i className={`fa ${passwordValidation.uppercase ? 'fa-check-circle' : 'fa-times-circle'}`} style={{ marginRight: '8px' }}></i>
@@ -198,7 +213,7 @@ function CreatePasswordModal({ modalId = 'createPasswordModal', userType = 'cand
                                         </li>
                                         <li style={{ padding: '4px 0', fontSize: '13px', color: passwordValidation.specialChars ? '#28a745' : '#dc3545' }}>
                                             <i className={`fa ${passwordValidation.specialChars ? 'fa-check-circle' : 'fa-times-circle'}`} style={{ marginRight: '8px' }}></i>
-                                            One special character (@#!%$*?)
+                                            {userType === 'candidate' ? 'Three' : 'One'} special character{userType === 'candidate' ? 's' : ''} (@#!%$*?)
                                         </li>
                                     </ul>
                                 </div>

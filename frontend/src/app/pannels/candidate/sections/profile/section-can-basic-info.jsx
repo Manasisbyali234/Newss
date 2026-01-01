@@ -382,28 +382,34 @@ function SectionCandicateBasicInfo() {
             return;
         }
         
+        await performSubmit();
+    };
+
+    const performSubmit = async () => {
         setSaving(true);
+        setNotification(null); // Clear previous notifications
         
-        // Ensure UI doesn't freeze on mobile
+        // Ensure UI doesn't freeze on mobile and scroll is restored
         if (window.innerWidth <= 991) {
             document.body.style.overflow = 'auto';
+            document.body.classList.remove('scroll-locked');
+            document.body.style.top = '';
+            document.body.classList.remove('sidebar-open');
         }
         
         try {
             const submitData = new FormData();
             submitData.append('name', formData.name.trim());
-            submitData.append('middleName', formData.middleName.trim());
+            submitData.append('middleName', (formData.middleName || '').trim());
             submitData.append('lastName', formData.lastName.trim());
             submitData.append('phone', `${formData.phoneCountryCode}${formData.phone.trim()}`);
             submitData.append('email', formData.email.trim());
             submitData.append('location', formData.location.trim());
-            submitData.append('stateCode', formData.stateCode.trim());
+            submitData.append('stateCode', (formData.stateCode || '').trim());
             submitData.append('pincode', formData.pincode.trim());
             if (formData.profilePicture) {
                 submitData.append('profilePicture', formData.profilePicture);
             }
-            
-            
             
             const response = await api.updateCandidateProfile(submitData);
             
@@ -416,6 +422,7 @@ function SectionCandicateBasicInfo() {
                 }
                 
                 showSuccess('Profile updated successfully!');
+                setNotification({ type: 'success', message: 'Profile updated successfully!' });
                 
                 // Scroll to top after a brief delay to ensure content is rendered
                 setTimeout(() => {
@@ -428,21 +435,26 @@ function SectionCandicateBasicInfo() {
             } else {
                 if (response.errors && Array.isArray(response.errors)) {
                     const errorMessages = response.errors.map(err => err.msg).join(', ');
+                    showError(`Validation errors: ${errorMessages}`);
                     setNotification({ type: 'error', message: `Validation errors: ${errorMessages}` });
                 } else {
+                    showError(response.message || 'Failed to update profile');
                     setNotification({ type: 'error', message: `Failed to update profile: ${response.message || 'Unknown error'}` });
                 }
             }
         } catch (error) {
-            
+            console.error('Update profile error:', error);
             if (error.response?.status === 401) {
+                showError('Please log in to update your profile.');
                 setNotification({ type: 'error', message: 'Please log in to update your profile.' });
                 setTimeout(() => window.location.href = '/login', 2000);
                 return;
             } else if (error.response?.data?.errors) {
                 const errorMessages = error.response.data.errors.map(err => err.msg).join(', ');
+                showError(`Validation errors: ${errorMessages}`);
                 setNotification({ type: 'error', message: `Validation errors: ${errorMessages}` });
             } else {
+                showError(error.message || 'Error updating profile');
                 setNotification({ type: 'error', message: `Error updating profile: ${error.message}` });
             }
         } finally {
@@ -451,11 +463,10 @@ function SectionCandicateBasicInfo() {
             // Ensure mobile UI is restored
             if (window.innerWidth <= 991) {
                 document.body.style.overflow = 'auto';
-                document.body.classList.remove('sidebar-open');
+                document.body.classList.remove('scroll-locked');
             }
         }
     };
-
     if (loading) {
         return (
             <div className="panel panel-default">
@@ -470,6 +481,13 @@ function SectionCandicateBasicInfo() {
         <>
         <style>{mobileStyles}</style>
         <form onSubmit={handleSubmit}>
+            {notification && (
+                <div className={`alert alert-${notification.type === 'error' ? 'danger' : 'success'} alert-dismissible fade show mb-4`} role="alert">
+                    <i className={`fa ${notification.type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'} me-2`}></i>
+                    {notification.message}
+                    <button type="button" className="btn-close" onClick={() => setNotification(null)} aria-label="Close" style={{position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', fontSize: '20px'}}>×</button>
+                </div>
+            )}
             <div className="panel panel-default">
                 <div className="panel-heading wt-panel-heading p-a20">
                     <h4 className="panel-tittle m-a0" style={{color: '#232323'}}>
@@ -641,7 +659,7 @@ function SectionCandicateBasicInfo() {
                                     className="btn btn-outline-secondary"
                                     onClick={() => handlePincodeChange(formData.pincode)}
                                     disabled={fetchingLocation || !formData.pincode || formData.pincode.length !== 6}
-                                    style={{minWidth: '100px'}}
+                                    style={{minWidth: window.innerWidth <= 768 ? '50px' : '100px'}}
                                 >
                                     {fetchingLocation ? (
                                         <i className="fa fa-spinner fa-spin"></i>
@@ -785,9 +803,10 @@ function SectionCandicateBasicInfo() {
                 onAccept={() => {
                     setTermsAccepted(true);
                     setShowTermsModal(false);
+                    // Direct call to performSubmit instead of requestSubmit
                     setTimeout(() => {
-                        document.querySelector('form').requestSubmit();
-                    }, 100);
+                        performSubmit();
+                    }, 300); // Give modal more time to close on mobile
                 }}
                 role="candidateProfile"
             />

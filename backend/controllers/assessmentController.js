@@ -744,8 +744,8 @@ exports.submitAssessment = async (req, res) => {
       }
     }
     
-    // Ensure totalMarks is valid
-    const totalMarks = attempt.totalMarks || assessment.questions.reduce((sum, q) => sum + (q.marks || 1), 0);
+    // Ensure totalMarks is valid - calculate from all questions, not just answered ones
+    const totalMarks = assessment.questions.reduce((sum, q) => sum + (q.marks || 1), 0);
     const percentage = totalMarks > 0 ? (score / totalMarks) * 100 : 0;
     const passingPercentage = assessment.passingPercentage || 60; // Default 60%
     const result = percentage >= passingPercentage ? 'pass' : 'fail';

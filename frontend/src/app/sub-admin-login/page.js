@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "../../admin-login-custom.css";
 
 export default function SubAdminLogin() {
     const [formData, setFormData] = useState({

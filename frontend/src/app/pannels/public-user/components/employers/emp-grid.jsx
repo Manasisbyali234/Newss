@@ -10,6 +10,7 @@ import { requestCache } from "../../../../../utils/requestCache";
 import { performanceMonitor } from "../../../../../utils/performanceMonitor";
 import "../../../../../job-grid-optimizations.css";
 import "../../../../../emp-grid-optimizations.css";
+import "../../../../../emp-grid-mobile-fix.css";
 import "../../../../../new-job-card.css";
 
 const EmployersGridPage = memo(() => {

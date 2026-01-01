@@ -5,13 +5,30 @@
 /* Page Background */
 .twm-contact-one {
     background-color: transparent !important;
-    min-height: 100vh !important;
+    min-height: auto !important;
 }
 
 .twm-contact-one .section-content {
     background-color: transparent !important;
     padding: 2rem 0 !important;
     margin-left: 3rem !important;
+}
+
+/* Reduced Banner Height specifically for Contact Page */
+.wt-bnr-inr {
+    height: 300px !important;
+}
+
+.wt-bnr-inr-entry {
+    padding-bottom: 15px !important;
+    vertical-align: middle !important;
+}
+
+.contact-one-inner {
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
+    padding-top: 40px !important;
+    padding-bottom: 40px !important;
 }
 
 /* Container */
@@ -228,12 +245,64 @@
     .contact-form-outer .section-head p {
         text-align: center !important;
     }
+    
+    /* Reduce spacing between header and content on mobile */
+    .twm-contact-one .section-content {
+        padding: 0.5rem 0 !important;
+        margin-left: 1rem !important;
+    }
+
+    .wt-bnr-inr {
+        height: 200px !important;
+    }
+
+    .section-full {
+        padding: 10px 0 !important;
+    }
+
+    .contact-one-inner {
+        padding-top: 25px !important;
+        padding-bottom: 25px !important;
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+    }
+
+    .contact-form-outer .section-head p {
+        margin-bottom: 1rem !important;
+    }
+
+    .c-info-column {
+        padding: 0.75rem 0 !important;
+    }
 }
 
 @media (max-width: 767px) {
     .twm-contact-one .section-content {
-        padding: 1rem 0 !important;
-        margin-left: 1rem !important;
+        padding: 0.25rem 0 !important;
+        margin-left: 0.5rem !important;
+    }
+
+    .wt-bnr-inr {
+        height: 150px !important;
+    }
+
+    .section-full {
+        padding: 5px 0 !important;
+    }
+
+    .contact-one-inner {
+        padding-top: 15px !important;
+        padding-bottom: 15px !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    .contact-form-outer .section-head p {
+        margin-bottom: 0.5rem !important;
+    }
+
+    .c-info-column {
+        padding: 0.5rem 0 !important;
     }
     
     .contact-one-inner .row {
@@ -244,7 +313,7 @@
     .contact-form-outer,
     .contact-info-wrap {
         padding: 0 !important;
-        margin-bottom: 2rem !important;
+        margin-bottom: 1rem !important;
     }
     
     .contact-form-outer .section-head h2.wt-title {
@@ -253,10 +322,6 @@
     
     .contact-form-outer .section-head p {
         font-size: 0.95rem !important;
-    }
-    
-    .c-info-column {
-        padding: 1rem 0 !important;
     }
     
     .c-info-column h3.twm-title {

@@ -199,6 +199,19 @@ label {
         z-index: 1;
         background: #f8f9fa;
     }
+    
+    /* Make Fetch button smaller on mobile with maximum specificity */
+    .panel-body button.btn.btn-outline-secondary {
+        min-width: 60px !important;
+        width: 60px !important;
+        padding: 8px 4px !important;
+        font-size: 10px !important;
+        display: inline-block !important;
+        text-align: center !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
 }
 
 @media (max-width: 576px) {

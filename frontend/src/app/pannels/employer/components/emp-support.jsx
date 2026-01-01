@@ -17,6 +17,7 @@ function EmpSupport() {
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isCompressing, setIsCompressing] = useState(false);
 
     useEffect(() => {
         // Debug: Check all localStorage keys
@@ -105,32 +106,107 @@ function EmpSupport() {
         }
     };
 
-    const handleFileChange = (e) => {
+    const compressImage = (file) => {
+        return new Promise((resolve) => {
+            // If not an image, return as is
+            if (!file.type.startsWith('image/')) {
+                resolve(file);
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    // Resize if image is too large
+                    const maxDimension = 1920;
+                    if (width > maxDimension || height > maxDimension) {
+                        if (width > height) {
+                            height = (height / width) * maxDimension;
+                            width = maxDimension;
+                        } else {
+                            width = (width / height) * maxDimension;
+                            height = maxDimension;
+                        }
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Convert to blob with compression
+                    canvas.toBlob((blob) => {
+                        if (blob) {
+                            const fileName = file.name || `attachment-${Date.now()}.jpg`;
+                            const compressedFile = new File([blob], fileName, {
+                                type: 'image/jpeg',
+                                lastModified: Date.now()
+                            });
+                            resolve(compressedFile);
+                        } else {
+                            resolve(file);
+                        }
+                    }, 'image/jpeg', 0.8); // 80% quality
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    };
+
+    const handleFileChange = async (e) => {
         const selectedFiles = Array.from(e.target.files);
+        
+        const clearFileInput = () => {
+            if (e.target) e.target.value = '';
+        };
         
         // Check file count
         if (selectedFiles.length > 3) {
             setErrors(prev => ({ ...prev, files: 'Maximum 3 files allowed' }));
+            clearFileInput();
             return;
         }
         
+        // Compress images if they're too large
+        setIsCompressing(true);
+        const processedFiles = [];
+        for (const file of selectedFiles) {
+            if (file.type.startsWith('image/') && file.size > 5 * 1024 * 1024) {
+                // Compress large images (over 5MB)
+                const compressed = await compressImage(file);
+                processedFiles.push(compressed);
+            } else {
+                processedFiles.push(file);
+            }
+        }
+        setIsCompressing(false);
+        
         // Check individual file sizes
         const maxSize = 10 * 1024 * 1024; // 10MB per file
-        const oversizedFiles = selectedFiles.filter(file => file.size > maxSize);
+        const oversizedFiles = processedFiles.filter(file => file.size > maxSize);
         if (oversizedFiles.length > 0) {
-            setErrors(prev => ({ ...prev, files: `File(s) too large: ${oversizedFiles.map(f => f.name).join(', ')}. Max 10MB per file.` }));
+            setErrors(prev => ({ ...prev, files: `File(s) too large: ${oversizedFiles.map(f => f.name).join(', ')}. Max 10MB per file after compression.` }));
+            clearFileInput();
             return;
         }
         
         // Check total size
-        const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
+        const totalSize = processedFiles.reduce((sum, file) => sum + file.size, 0);
         const maxTotalSize = 25 * 1024 * 1024; // 25MB total
         if (totalSize > maxTotalSize) {
             setErrors(prev => ({ ...prev, files: 'Total file size exceeds 25MB. Please select smaller files.' }));
+            clearFileInput();
             return;
         }
         
-        setFiles(selectedFiles);
+        setFiles(processedFiles);
         if (errors.files) {
             setErrors(prev => ({ ...prev, files: '' }));
         }

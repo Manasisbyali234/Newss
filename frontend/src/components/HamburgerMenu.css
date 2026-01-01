@@ -8,7 +8,7 @@
   border-radius: 4px;
   cursor: pointer;
   position: relative;
-  z-index: 1000000;
+  z-index: 2147483647 !important;
   opacity: 1 !important;
   pointer-events: auto !important;
   font-size: 18px;
@@ -31,8 +31,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: transparent;
-  z-index: 999998;
+  background: rgba(0,0,0,0.5);
+  z-index: 2147483646 !important;
   pointer-events: auto;
   display: none;
 }
@@ -47,25 +47,28 @@
   right: 0 !important;
   width: 280px !important;
   height: 100vh !important;
+  height: -webkit-fill-available !important;
   max-height: 100vh !important;
   background: #fff !important;
   box-shadow: -2px 0 15px rgba(0,0,0,0.15) !important;
-  z-index: 999999 !important;
+  z-index: 2147483647 !important;
   display: flex !important;
   flex-direction: column !important;
   border-left: 1px solid #e0e0e0 !important;
-  overflow: hidden !important;
-  pointer-events: auto !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
   transform: translateX(100%) !important;
   transition: transform 0.3s ease !important;
   visibility: hidden !important;
   opacity: 0 !important;
+  pointer-events: auto !important;
 }
 
 .hamburger-menu.open { 
   transform: translateX(0) !important;
   visibility: visible !important;
   opacity: 1 !important;
+  display: flex !important;
 }
 
 .hamburger-header {
@@ -216,19 +219,44 @@
   box-shadow: 0 4px 12px rgba(255, 122, 0, 0.2) !important;
 }
 
+/* Ensure hamburger button is visible on all devices, especially iPhone */
 @media (max-width: 1199px) {
   .hamburger-btn { 
     display: flex !important;
     visibility: visible !important;
-  }
-  
-  /* Ensure hamburger button is always visible on mobile */
-  .hamburger-btn,
-  .hamburger-btn.active {
-    display: flex !important;
-    visibility: visible !important;
     opacity: 1 !important;
     pointer-events: auto !important;
+    z-index: 2147483647 !important;
+  }
+  
+  /* Ensure it's not hidden by any other element on iPhone */
+  .site-header .extra-nav .hamburger-btn {
+    display: flex !important;
+    visibility: visible !important;
+  }
+}
+
+/* Specific iPhone Safari fix for the menu list visibility */
+@supports (-webkit-touch-callout: none) {
+  .hamburger-menu.open .hamburger-content {
+    display: flex !important;
+    flex-direction: column !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  .hamburger-menu.open .menu-list {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .hamburger-menu.open .menu-link {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    padding: 18px 20px !important; /* Slightly larger touch targets */
   }
 }
 
@@ -266,9 +294,18 @@
 
 
 body.hamburger-open { 
-  overflow: hidden;
-  position: fixed;
-  width: 100%;
+  overflow: hidden !important;
+  width: 100% !important;
+  height: 100% !important;
+  position: fixed !important;
+}
+
+@supports (-webkit-touch-callout: none) {
+  body.hamburger-open {
+    /* iOS specific fix to prevent background scroll */
+    position: fixed !important;
+    width: 100% !important;
+  }
 }
 
 /* Force visibility overrides for production */

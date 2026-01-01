@@ -101,7 +101,8 @@
   }
 
   .modal.twm-sign-up .nav-tabs .nav-link {
-    white-space: nowrap !important;
+    white-space: normal !important;
+    word-break: break-word !important;
     font-size: 0.875rem !important;
     padding: 0.5rem 0.75rem !important;
   }

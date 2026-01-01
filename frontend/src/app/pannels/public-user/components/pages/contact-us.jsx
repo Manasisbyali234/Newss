@@ -83,10 +83,11 @@ function ContactUsPage() {
         <>
             <div className="section-full twm-contact-one">
                 <div className="section-content">
-                    {/* CONTACT FORM*/}
-                    <div className="contact-one-inner" style={{ paddingLeft: '3rem', paddingRight: '3rem' }}>
+                    <div className="container">
+                        {/* CONTACT FORM*/}
+                        <div className="contact-one-inner">
                             <div className="row">
-                                <div className="col-lg-6 col-md-12">
+                                <div className="col-lg-7 col-md-12">
                                     <div className="contact-form-outer">
                                         {/* title="" START*/}
                                         {isSubmitted ? (
@@ -210,8 +211,8 @@ function ContactUsPage() {
                                         )}
                                     </div>
                                 </div>
-                                <div className="col-lg-6 col-md-12">
-                                    <div className="contact-info-wrap">
+                                <div className="col-lg-5 col-md-12">
+                                    <div className="contact-info-wrap mt-lg-5">
                                         <div className="contact-info">
                                             <div className="contact-info-section">
                                                 <div className="c-info-column" style={{display: 'none'}}>
@@ -221,7 +222,6 @@ function ContactUsPage() {
                                                     <p><a href="tel:+919807623145">+91 9807623145</a></p>
                                                 </div>
                                                 <div className="c-info-column">
-                                                    <div className="c-info-icon"><i className="fas fa-envelope" /></div>
                                                     <h3 className="twm-title">Support</h3>
                                                     <p><a href="mailto:info@taleglobal.net" style={{color: '#1976d2 !important', textDecoration: 'underline !important', cursor: 'pointer !important', pointerEvents: 'auto !important', position: 'relative', zIndex: 999}}>info@taleglobal.net</a></p>
                                                 </div>
@@ -231,6 +231,7 @@ function ContactUsPage() {
                                 </div>
                             </div>
                         </div>
+                    </div>
                 </div>
             </div>
 

@@ -33,9 +33,8 @@
 
 .modal .nav-tabs .nav-link,
 .twm-tabs-style-2 .nav-tabs .nav-link {
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+  white-space: normal !important;
+  word-break: break-word !important;
   padding: 0.5rem !important;
   font-size: 0.95rem !important;
   border: none !important;

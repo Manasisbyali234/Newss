@@ -640,7 +640,7 @@ function SignUpPopup() {
 													</p>
 												</div>
 												<div className="col-12">
-													<button id="candidate-submit-btn" type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%", boxShadow: "none" }} disabled={loading}>
+													<button id="candidate-submit-btn" type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%", boxShadow: "none", whiteSpace: "nowrap" }} disabled={loading}>
 														{loading ? 'Signing Up...' : 'Sign Up'}
 													</button>
 												</div>
@@ -762,7 +762,7 @@ function SignUpPopup() {
 												</div>
 
 												<div className="col-12">
-													<button id="employer-submit-btn" type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%", boxShadow: "none" }} disabled={loading}>
+													<button id="employer-submit-btn" type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%", boxShadow: "none", whiteSpace: "nowrap" }} disabled={loading}>
 														{loading ? 'Signing Up...' : 'Sign Up'}
 													</button>
 												</div>
@@ -883,7 +883,7 @@ function SignUpPopup() {
 												</div>
 
 												<div className="col-12">
-													<button id="placement-submit-btn" type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%", boxShadow: "none" }} disabled={loading}>
+													<button id="placement-submit-btn" type="submit" style={{ width: "100%", maxWidth: "none", minWidth: "100%", padding: "12px", borderRadius: "10px", fontSize: "16px", fontWeight: "700", minHeight: "48px", backgroundColor: "#fd7e14", color: "white", border: "none", cursor: "pointer", display: "block", boxSizing: "border-box", flex: "1 1 100%", boxShadow: "none", whiteSpace: "nowrap" }} disabled={loading}>
 														{loading ? 'Signing Up...' : 'Sign Up'}
 													</button>
 												</div>

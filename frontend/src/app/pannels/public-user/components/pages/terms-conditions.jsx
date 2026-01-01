@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import "../../../../../overlay-mobile-fix.css";
 
 function TermsConditionsPage() {
     const [activeSection, setActiveSection] = useState(null);
@@ -7,10 +8,35 @@ function TermsConditionsPage() {
         setActiveSection(activeSection === section ? null : section);
     };
 
+    useEffect(() => {
+        const handleScroll = () => {
+            const hamburgerMenu = document.querySelector('.navbar-collapse.show');
+            const hamburgerToggler = document.querySelector('.navbar-toggler');
+            if (hamburgerMenu) {
+                hamburgerMenu.classList.remove('show');
+            }
+            if (hamburgerToggler && !hamburgerToggler.classList.contains('collapsed')) {
+                hamburgerToggler.classList.add('collapsed');
+                hamburgerToggler.setAttribute('aria-expanded', 'false');
+            }
+        };
+        
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     return (
-        <div className="page-content" style={{backgroundColor: 'oklch(98.5% 0.002 247.839)', minHeight: '100vh'}}>
+        <div className="page-content" style={{backgroundColor: 'oklch(98.5% 0.002 247.839)', minHeight: '100vh', marginTop: '40px'}}>
             <style>
                 {`
+                    @media (max-width: 991px) {
+                        .section-full { padding-top: 5px !important; padding-bottom: 5px !important; }
+                        .terms-container { margin-top: 0 !important; }
+                        .terms-header { padding: 10px 15px !important; }
+                        .terms-header h1 { font-size: 1.5rem !important; margin: 0 !important; }
+                        .terms-header .subtitle { font-size: 0.9rem !important; }
+                        .terms-content { padding: 15px !important; }
+                    }
                     .terms-container { max-width: 1200px; margin: 0 auto; background: #ffffff; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); border-radius: 12px; overflow: hidden; }
                     .terms-header { background: transparent; color: #2c3e50; padding: 60px 40px; text-align: center; }
                     .terms-header h1 { font-size: 3rem; font-weight: 700; margin: 0 0 10px 0; }
@@ -56,7 +82,7 @@ function TermsConditionsPage() {
             </style>
             
             <div className="container">
-                <div className="section-full p-t120 p-b90">
+                <div className="section-full" style={{paddingTop: '5px', paddingBottom: '5px'}}>
                     <div className="terms-container">
                         <div className="terms-header">
                             <h1>Terms & Conditions</h1>

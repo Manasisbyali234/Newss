@@ -497,28 +497,7 @@ function CanStatusPage() {
 						<div className="col-lg-12 col-md-12 mb-4">
 							<div className="card card-shadow border-0">
 								<div className="card-body p-0">
-									<div className="table-responsive" style={{overflowX: 'auto', WebkitOverflowScrolling: 'touch'}}>
-									<style>{`
-										@media (max-width: 768px) {
-											.table-responsive {
-												overflow-x: scroll !important;
-												-webkit-overflow-scrolling: touch !important;
-											}
-											.table-responsive::-webkit-scrollbar {
-												height: 8px;
-											}
-											.table-responsive::-webkit-scrollbar-track {
-												background: #f1f1f1;
-											}
-											.table-responsive::-webkit-scrollbar-thumb {
-												background: #ff6b35;
-												border-radius: 4px;
-											}
-											.table-responsive::-webkit-scrollbar-thumb:hover {
-												background: #e55a25;
-											}
-										}
-									`}</style>
+									<div className="table-responsive">
 									<table className="table table-hover mb-0">
 										<thead style={{backgroundColor: '#f8f9fa'}}>
 											<tr>
@@ -781,7 +760,7 @@ function CanStatusPage() {
 
 			{/* All Interview Details Modal */}
 			{showAllDetails && selectedApplication && (
-				<div className="modal fade show" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)'}} onClick={(e) => { if (e.target === e.currentTarget) setShowAllDetails(false); }}>
+				<div className="modal fade show" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 9999}} onClick={(e) => { if (e.target === e.currentTarget) setShowAllDetails(false); }}>
 					<div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" onClick={(e) => e.stopPropagation()}>
 						<div className="modal-content" style={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 40px rgba(0,0,0,0.2)'}}>
 							<div className="modal-header" style={{backgroundColor: '#f5f5f5', color: '#000', borderRadius: '12px 12px 0 0'}}>

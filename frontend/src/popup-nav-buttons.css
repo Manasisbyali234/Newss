@@ -155,6 +155,7 @@
         margin-right: 0 !important;
         margin-bottom: 0 !important;
         min-height: 40px !important;
+        white-space: nowrap !important;
     }
     .modal.twm-sign-up .nav-tabs .nav-link i,
     .twm-sign-up .nav-tabs .nav-link i {
@@ -170,6 +171,9 @@
     .twm-sign-up .twm-tabs-style-2 .nav-tabs .nav-link {
         padding: 6px 1px !important;
         font-size: 10px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
     }
     .modal.twm-sign-up .nav-tabs .nav-link i,
     .twm-sign-up .nav-tabs .nav-link i {

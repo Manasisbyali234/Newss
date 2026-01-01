@@ -109,8 +109,10 @@
   .dashboard-link .btn {
     padding: 0 16px !important;
     font-size: 13px !important;
-    white-space: nowrap !important;
-    height: 40px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    height: auto !important;
+    min-height: 40px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;

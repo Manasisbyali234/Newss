@@ -679,7 +679,7 @@ body.modal-open {
         justify-content: space-between !important;
         align-items: center !important;
         flex-wrap: nowrap !important;
-        gap: 8px !important;
+        gap: 20px !important;
     }
 
     /* Header adjustments */
@@ -806,6 +806,112 @@ body.modal-open {
         border-radius: 4px !important;
     }
 
+    /* Skills badges - Mobile responsive with higher specificity */
+    .d-flex.flex-wrap.gap-2.mt-2 .skill-badge,
+    .badge.bg-light.skill-badge,
+    span.badge.bg-light.skill-badge {
+        width: auto !important;
+        max-width: 45% !important;
+        display: inline-flex !important;
+        margin-right: 4px !important;
+        margin-bottom: 4px !important;
+        font-size: 10px !important;
+        padding: 3px 6px !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        border-radius: 12px !important;
+    }
+
+    .d-flex.flex-wrap.gap-2.mt-2 .skill-badge .skill-text,
+    .badge.bg-light.skill-badge .skill-text,
+    span.badge.bg-light.skill-badge .skill-text {
+        max-width: 120px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+    }
+
+    .d-flex.flex-wrap.gap-2.mt-2 .skill-badge .btn-sm,
+    .badge.bg-light.skill-badge .btn-sm,
+    span.badge.bg-light.skill-badge .btn-sm {
+        width: 16px !important;
+        height: 16px !important;
+        font-size: 8px !important;
+        margin-left: 4px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-shrink: 0 !important;
+        padding: 0 !important;
+        min-width: 16px !important;
+        min-height: 16px !important;
+        background: none !important;
+        border: none !important;
+    }
+
+    /* Work location badges - Mobile responsive */
+    .d-flex.flex-wrap.gap-2 span.d-inline-flex.align-items-center {
+        max-width: 45% !important;
+        font-size: 10px !important;
+        padding: 4px 8px !important;
+        margin-right: 4px !important;
+        margin-bottom: 4px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        border-radius: 12px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        line-height: 1 !important;
+    }
+
+    /* SearchableSelect tags - Mobile responsive */
+    .form-select .d-flex.flex-wrap span,
+    .d-flex.flex-wrap span[style*="border"],
+    .d-flex.gap-1 span {
+        max-width: 45% !important;
+        font-size: 9px !important;
+        padding: 2px 4px !important;
+        height: 18px !important;
+        margin-right: 2px !important;
+        margin-bottom: 2px !important;
+        border-radius: 8px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        min-width: 30px !important;
+    }
+
+    /* SearchableSelect close buttons */
+    .form-select .d-flex.flex-wrap span button,
+    .d-flex.flex-wrap span[style*="border"] button,
+    .d-flex.gap-1 span button {
+        width: 12px !important;
+        height: 12px !important;
+        font-size: 8px !important;
+        margin-left: 2px !important;
+        padding: 0 !important;
+        border: none !important;
+        background: none !important;
+        color: #dc3545 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-shrink: 0 !important;
+    }
+
+    .form-select .d-flex.flex-wrap span button:hover,
+    .d-flex.flex-wrap span[style*="border"] button:hover,
+    .d-flex.gap-1 span button:hover {
+        color: #c82333 !important;
+    }
+
     /* File upload areas */
     .file-upload-area {
         padding: 20px !important;
@@ -846,6 +952,25 @@ body.modal-open {
         border-radius: 8px !important;
     }
 
+    /* Modal form labels - Fix icon overlapping on mobile */
+    .modal .form-label,
+    .modal label {
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        margin-bottom: 8px !important;
+        font-size: 14px !important;
+        line-height: 1.2 !important;
+    }
+
+    .modal .form-label i,
+    .modal label i {
+        flex-shrink: 0 !important;
+        font-size: 12px !important;
+        width: 14px !important;
+        text-align: center !important;
+    }
+
     /* Grid system adjustments */
     .row {
         margin-left: -4px !important;
@@ -871,6 +996,39 @@ body.modal-open {
         border-left: 3px solid #dee2e6 !important;
         margin-bottom: 16px !important;
         padding-bottom: 12px !important;
+    }
+
+    /* Employment card content spacing */
+    .employment-card > div[style*="border-bottom"] {
+        padding-right: 120px !important;
+        text-indent: 0 !important;
+        padding-left: 0 !important;
+        margin-left: 0 !important;
+        position: relative !important;
+    }
+
+    .employment-card > div[style*="border-bottom"] * {
+        text-indent: 0 !important;
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+    }
+
+    /* Fix text alignment in employment cards */
+    .employment-card h5,
+    .employment-card h4,
+    .employment-card p,
+    .employment-card .text-muted {
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+        text-indent: 0 !important;
+        display: block !important;
+        line-height: 1.4 !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        white-space: normal !important;
+        text-align: left !important;
+        hanging-punctuation: none !important;
+        text-align-last: left !important;
     }
 
     /* Project cards */

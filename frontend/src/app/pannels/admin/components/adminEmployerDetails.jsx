@@ -955,6 +955,10 @@ function EmployerDetails() {
                                                             setCurrentImage(doc.fileData);
                                                             setCurrentImageType('image');
                                                             setShowImageModal(true);
+                                                        } else if (doc.fileData.startsWith('data:application/pdf')) {
+                                                            setCurrentImage(doc.fileData);
+                                                            setCurrentImageType('application/pdf');
+                                                            setShowImageModal(true);
                                                         } else {
                                                             const link = document.createElement('a');
                                                             link.href = doc.fileData;
@@ -999,8 +1003,8 @@ function EmployerDetails() {
                     <div className={`image-modal-content ${isMaximized ? 'maximized' : ''} ${isMinimized ? 'minimized' : ''}`} onClick={(e) => e.stopPropagation()}>
                         <div className="image-modal-header">
                             <h5 className="image-modal-title">
-                                <i className="fa fa-image me-2"></i>
-                                Image Preview
+                                <i className={`fa ${currentImageType === 'application/pdf' ? 'fa-file-pdf' : 'fa-image'} me-2`}></i>
+                                {currentImageType === 'application/pdf' ? 'Document Preview' : 'Image Preview'}
                             </h5>
                             <div style={{display: 'flex', gap: '5px'}}>
                                 <button className="modal-control-btn minimize-btn" onClick={() => setIsMinimized(!isMinimized)} title={isMinimized ? "Restore" : "Minimize"}>
@@ -1015,8 +1019,12 @@ function EmployerDetails() {
                             </div>
                         </div>
                         {!isMinimized && (
-                            <div className="text-center">
-                                <img src={currentImage} alt="Preview" className="modal-image" />
+                            <div className="text-center" style={{ width: '100%' }}>
+                                {currentImageType === 'application/pdf' ? (
+                                    <iframe src={currentImage} className="pdf-viewer" title="PDF Preview"></iframe>
+                                ) : (
+                                    <img src={currentImage} alt="Preview" className="modal-image" />
+                                )}
                             </div>
                         )}
                     </div>

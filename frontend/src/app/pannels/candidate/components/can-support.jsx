@@ -138,7 +138,8 @@ function CanSupport() {
                     // Convert to blob with compression
                     canvas.toBlob((blob) => {
                         if (blob) {
-                            const compressedFile = new File([blob], file.name, {
+                            const fileName = file.name || `attachment-${Date.now()}.jpg`;
+                            const compressedFile = new File([blob], fileName, {
                                 type: 'image/jpeg',
                                 lastModified: Date.now()
                             });
@@ -243,7 +244,7 @@ function CanSupport() {
                 submitData.append('attachments', file);
             });
 
-            const response = await fetch('http://localhost:5000/api/public/support', {
+            const response = await fetch('/api/public/support', {
                 method: 'POST',
                 body: submitData
             });
@@ -285,7 +286,14 @@ function CanSupport() {
                     // Server returned HTML or other non-JSON response
                     const text = await response.text();
                     console.error('Non-JSON response:', text.substring(0, 200));
-                    setErrors({ submit: 'File upload failed: File size too large. Each file must be under 10MB. Please compress your files before uploading.' });
+                    
+                    if (response.status === 413) {
+                        setErrors({ submit: 'File size too large. Each file must be under 10MB and total size under 30MB. Please compress your files before uploading.' });
+                    } else if (response.status === 502 || response.status === 503 || response.status === 504) {
+                        setErrors({ submit: 'Server is temporarily busy or unavailable. Your attachments might be too large for the server to process. Please try with smaller or fewer files.' });
+                    } else {
+                        setErrors({ submit: `Failed to submit support ticket (Status ${response.status}). Please try again with smaller files or contact support.` });
+                    }
                 }
             }
         } catch (error) {

@@ -589,6 +589,19 @@
     margin: 0 auto;
 }
 
+.pdf-viewer {
+    width: 100%;
+    height: calc(90vh - 150px);
+    min-height: 500px;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.image-modal-content.maximized .pdf-viewer {
+    height: calc(98vh - 100px);
+}
+
 .image-modal-content .text-center {
     display: flex;
     align-items: center;

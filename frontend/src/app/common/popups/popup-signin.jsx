@@ -163,6 +163,7 @@ function SignInPopup() {
         display: 'block',
         boxSizing: 'border-box',
         flex: '1 1 100%',
+        whiteSpace: 'nowrap',
         boxShadow: 'none'
     };
 

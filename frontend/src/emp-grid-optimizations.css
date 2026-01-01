@@ -7,6 +7,31 @@
   padding-left: 20px !important;
 }
 
+/* Mobile height reduction for emp-grid */
+@media (max-width: 991px) {
+  .emp-grid-page .wt-bnr-inr {
+    min-height: 80px !important;
+    height: 10vh !important;
+    padding: 2px 0 !important;
+  }
+  
+  .emp-grid-page .wt-bnr-inr-entry {
+    padding: 5px 0 !important;
+  }
+  
+  .emp-grid-page .banner-title-name .wt-title {
+    font-size: 18px !important;
+    margin: 0 0 2px 0 !important;
+  }
+  
+  .emp-grid-page .overlay-wraper .overlay-main,
+  .emp-grid-page .overlay-main {
+    height: 10vh !important;
+    min-height: 80px !important;
+    max-height: 120px !important;
+  }
+}
+
 /* Sort By alignment for employer grid */
 .emp-grid-page .woocommerce-ordering {
   margin-left: auto !important;
