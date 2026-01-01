@@ -205,11 +205,11 @@ const SectionJobsGrid = memo(({ filters, onTotalChange }) => {
 
         return (
             <Col key={job._id} lg={6} md={12} className="mb-2">
-                <div ref={cardRef} className="new-job-card" data-visible="true" style={{overflow: 'hidden', border: '1px solid #e0e0e0', boxShadow: '0 2px 8px rgba(0,0,0,0.1)'}}>
+                <div ref={cardRef} className="new-job-card" data-visible="true">
                     {/* Top Row */}
-                    <div className="job-card-header" style={{padding: '8px 16px'}}>
-                        <div className="job-card-left" style={{display: 'flex', alignItems: 'center', gap: '15px'}}>
-                            <div className="company-logo" style={{width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0}}>
+                    <div className="job-card-header">
+                        <div className="job-card-left">
+                            <div className="company-logo">
                                 {job.employerProfile?.logo ? (
                                     <img
                                         src={
@@ -219,63 +219,62 @@ const SectionJobsGrid = memo(({ filters, onTotalChange }) => {
                                                 : `data:image/jpeg;base64,${job.employerProfile.logo}`)
                                         }
                                         alt="Company Logo"
-                                        style={{width: '100%', height: '100%', objectFit: 'cover'}}
                                     />
                                 ) : (
-                                    <div className="logo-placeholder" style={{width: '100%', height: '100%', backgroundColor: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 'bold', color: '#666'}}>
+                                    <div className="logo-placeholder">
                                         {(job.employerId?.companyName || job.companyName || "C").charAt(0).toUpperCase()}
                                     </div>
                                 )}
                             </div>
-                            <div className="job-info" style={{flex: 1}}>
-                                <h4 className="job-title" style={{margin: '0 0 4px 0', fontSize: '18px', fontWeight: '600', color: '#333', lineHeight: '1.3'}}>{job.title}</h4>
-                                <div className="job-location" style={{display: 'flex', alignItems: 'center', gap: '5px', color: '#666', fontSize: '14px'}}>
-                                    <i className="feather-map-pin" style={{fontSize: '14px'}} />
+                            <div className="job-info">
+                                <h4 className="job-title">{job.title}</h4>
+                                <div className="job-location">
+                                    <i className="feather-map-pin" />
                                     {job.location || 'Location not specified'}
                                 </div>
                             </div>
                         </div>
-                        <div className="job-type-badge" style={{alignSelf: 'flex-start'}}>
+                        <div className="job-type-badge">
                             <span className={`job-type-pill ${
                                 job.jobType === "full-time" ? "full-time" :
                                 job.jobType === "part-time" ? "part-time" :
                                 job.jobType === "contract" ? "contract" :
                                 job.jobType?.includes("internship") ? "internship" :
                                 job.jobType === "work-from-home" ? "wfh" : "full-time"
-                            }`} style={{padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: '500', backgroundColor: '#e3f2fd', color: '#1976d2'}}>
+                            }`}>
                                 {job.jobType ? job.jobType.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : "Full Time"}
                             </span>
                         </div>
                     </div>
 
                     {/* Middle Row */}
-                    <div className="job-card-middle" style={{padding: '4px 16px'}}>
-                        <div className="ctc-info" style={{marginBottom: '4px'}}>
+                    <div className="job-card-middle">
+                        <div className="ctc-info">
                             {job.ctc && typeof job.ctc === "object" && job.ctc.min > 0 && job.ctc.max > 0 ? (
-                                <span className="ctc-text" style={{fontSize: '14px', fontWeight: '500', color: '#1976d2'}}>
+                                <span className="ctc-text">
                                     Annual CTC: {job.ctc.min === job.ctc.max
                                         ? `₹${(job.ctc.min / 100000).toFixed(1)}LPA`
                                         : `₹${(job.ctc.min / 100000).toFixed(1)} - ${(job.ctc.max / 100000).toFixed(1)} LPA`}
                                 </span>
                             ) : (
-                                <span className="ctc-text" style={{fontSize: '14px', color: '#666'}}>CTC: Not specified</span>
+                                <span className="ctc-text">CTC: Not specified</span>
                             )}
                         </div>
                         <div className="vacancy-info">
-                            <span className="vacancy-text" style={{fontSize: '14px', color: '#666'}}>
+                            <span className="vacancy-text">
                                 Vacancies: {job.vacancies || "Not specified"}
                             </span>
                         </div>
                     </div>
 
                     {/* Bottom Row */}
-                    <div className="job-card-footer" style={{padding: '8px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                        <div className="company-info" style={{flex: 1}}>
-                            <div className="posted-by-label" style={{fontSize: '12px', color: '#999', marginBottom: '4px'}}>Posted by:</div>
-                            <div className="company-name" style={{fontSize: '14px', fontWeight: '600', color: '#333', marginBottom: '2px'}}>
+                    <div className="job-card-footer">
+                        <div className="company-info">
+                            <div className="posted-by-label">Posted by:</div>
+                            <div className="company-name">
                                 {job.employerId?.companyName || job.companyName || "Company"}
                             </div>
-                            <div className="poster-type" style={{fontSize: '12px', color: '#666'}}>
+                            <div className="poster-type">
                                 {job.postedBy || (job.employerId?.employerType === "consultant" ? "Consultancy" : "Company")}
                             </div>
                         </div>
@@ -283,7 +282,7 @@ const SectionJobsGrid = memo(({ filters, onTotalChange }) => {
                             <button
                                 className="apply-now-btn"
                                 disabled
-                                style={{padding: '10px 20px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: '500', cursor: 'not-allowed'}}
+                                style={{backgroundColor: '#6c757d', cursor: 'not-allowed'}}
                             >
                                 Already Applied
                             </button>
@@ -291,9 +290,6 @@ const SectionJobsGrid = memo(({ filters, onTotalChange }) => {
                             <button
                                 className="apply-now-btn"
                                 onClick={handleApplyClick}
-                                style={{padding: '10px 20px', backgroundColor: '#1976d2', color: 'white', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.2s'}}
-                                onMouseEnter={(e) => e.target.style.backgroundColor = '#1565c0'}
-                                onMouseLeave={(e) => e.target.style.backgroundColor = '#1976d2'}
                             >
                                 Apply Now
                             </button>

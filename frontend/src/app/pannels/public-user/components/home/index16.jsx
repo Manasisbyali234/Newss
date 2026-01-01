@@ -902,7 +902,7 @@ function Home16Page() {
                                 {jobs.length > 0 ? (
                                     jobs.map((job) => (
                                         <Col lg={4} md={6} sm={12} xs={12} key={job._id} className="mb-2" style={{padding: '0.3rem'}}>
-                                            <div className="new-job-card" style={{borderRadius: '12px', overflow: 'hidden'}}>
+                                            <div className="new-job-card">
                                                 {/* Top Row */}
                                                 <div className="job-card-header">
                                                     <div className="job-card-left">

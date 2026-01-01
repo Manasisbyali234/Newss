@@ -284,21 +284,23 @@
 }
 
 .status-badge {
-    padding: 4px 10px !important;
-    border-radius: 9999px !important;
-    font-size: 0.65rem !important;
-    font-weight: 700 !important;
+    padding: 3px 8px !important;
+    border-radius: 6px !important;
+    font-size: 0.6rem !important;
+    font-weight: 600 !important;
     text-transform: uppercase !important;
-    letter-spacing: 0.2px !important;
+    letter-spacing: 0.1px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 3px !important;
+    gap: 2px !important;
     border: 1px solid #FF7A00 !important;
     background: rgba(255, 122, 0, 0.08) !important;
     color: #FF7A00 !important;
     transition: all 0.15s ease-in-out !important;
     white-space: nowrap !important;
+    max-width: 100px !important;
+    min-width: 60px !important;
 }
 
 .status-badge:hover {
@@ -310,30 +312,40 @@
     background: rgba(255, 122, 0, 0.08) !important;
     color: #FF7A00 !important;
     border-color: #FF7A00 !important;
+    padding: 3px 8px !important;
+    font-size: 0.6rem !important;
 }
 
 .badge-not-uploaded {
     background: rgba(255, 122, 0, 0.08) !important;
     color: #FF7A00 !important;
     border-color: #FF7A00 !important;
+    padding: 3px 8px !important;
+    font-size: 0.6rem !important;
 }
 
 .badge-approved {
     background: rgba(40, 167, 69, 0.1) !important;
     color: #28a745 !important;
     border-color: #28a745 !important;
+    padding: 3px 8px !important;
+    font-size: 0.6rem !important;
 }
 
 .badge-rejected {
     background: rgba(220, 53, 69, 0.1) !important;
     color: #dc3545 !important;
     border-color: #dc3545 !important;
+    padding: 3px 8px !important;
+    font-size: 0.6rem !important;
 }
 
 .badge-pending {
     background: rgba(255, 193, 7, 0.1) !important;
     color: #ffc107 !important;
     border-color: #ffc107 !important;
+    padding: 3px 8px !important;
+    font-size: 0.6rem !important;
 }
 
 .badge-pending i {
@@ -1055,8 +1067,10 @@
     }
     
     .status-badge {
-        padding: 8px 14px;
-        font-size: 0.7rem;
+        padding: 3px 6px !important;
+        font-size: 0.55rem !important;
+        max-width: 80px !important;
+        min-width: 50px !important;
     }
     
     .profile-field {
@@ -1265,9 +1279,11 @@
     }
     
     .status-badge {
-        padding: 6px 12px;
-        font-size: 0.65rem;
+        padding: 2px 6px !important;
+        font-size: 0.55rem !important;
         display: inline-flex;
+        max-width: 75px !important;
+        min-width: 45px !important;
     }
     
     .action-btn {

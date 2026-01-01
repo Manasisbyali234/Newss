@@ -2720,9 +2720,25 @@ div[class*="container"].transparent-container {
 /* Success Message */
 .text-success {
     color: #28a745 !important;
-    font-size: 2rem !important;
-    font-weight: 700 !important;
-    margin-bottom: 1rem !important;
+}
+
+/* Override text-success for badges and table elements */
+.badge.text-success,
+.interview-round-item .text-success,
+.table .text-success,
+.interview-progress-wrapper .text-success,
+span.text-success.badge,
+td .text-success,
+tr .text-success,
+tbody .text-success {
+    font-size: 8px !important;
+    padding: 1px 3px !important;
+    border-radius: 4px !important;
+    min-width: 35px !important;
+    line-height: 1.1 !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
+    display: inline-block !important;
 }
 
 /* Map Section */

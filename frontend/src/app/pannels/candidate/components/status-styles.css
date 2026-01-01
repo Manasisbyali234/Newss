@@ -6,6 +6,7 @@
   min-height: 100vh !important;
 }
 
+
 /* Complete Table Rewrite */
 .table {
     width: 100%;
@@ -168,13 +169,14 @@
 }
 
 .interview-round-item .badge {
-    font-size: 10px !important;
-    padding: 3px 6px !important;
-    border-radius: 8px;
+    font-size: 8px !important;
+    padding: 1px 3px !important;
+    border-radius: 4px !important;
     white-space: nowrap;
-    min-width: 55px !important;
+    min-width: 35px !important;
     text-align: center;
     font-weight: 500;
+    line-height: 1.1 !important;
 }
 
 /* Date display styling */
@@ -196,11 +198,13 @@
 
 /* Status Column */
 .table tbody td:nth-child(5) .badge {
-    font-size: 12px;
-    padding: 6px 12px;
-    border-radius: 20px;
+    font-size: 8px !important;
+    padding: 1px 3px !important;
+    border-radius: 4px !important;
     font-weight: 500;
     white-space: nowrap;
+    min-width: 35px !important;
+    line-height: 1.1 !important;
 }
 
 /* View Details Column */
@@ -272,6 +276,62 @@
 .table tbody tr:hover h6 {
     color: #ff6b35 !important;
     transition: color 0.2s ease;
+}
+
+/* Success Message Badge Fixes */
+.badge-success {
+    font-size: 8px !important;
+    padding: 1px 3px !important;
+    border-radius: 4px !important;
+    min-width: 35px !important;
+    line-height: 1.1 !important;
+}
+
+/* Override text-success when used as badge */
+.badge.text-success,
+.interview-round-item .text-success,
+.table .text-success.badge,
+.interview-progress-wrapper .text-success,
+.text-success.badge,
+span.text-success,
+p.text-success.badge,
+.interview-round-item span.text-success {
+    font-size: 8px !important;
+    padding: 1px 3px !important;
+    border-radius: 4px !important;
+    min-width: 35px !important;
+    line-height: 1.1 !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
+    display: inline-block !important;
+}
+
+/* Force override for any text-success in this panel to avoid large font issues */
+.twm-right-section-panel .text-success {
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    margin-bottom: 0 !important;
+}
+
+/* Force override for any text-success in table context */
+.table-responsive .text-success,
+.table .text-success,
+tbody .text-success,
+tr .text-success,
+td .text-success {
+    font-size: 8px !important;
+    padding: 1px 3px !important;
+    margin: 0 !important;
+    font-weight: 500 !important;
+}
+
+/* All badge variants smaller */
+.badge {
+    font-size: 8px !important;
+    padding: 1px 3px !important;
+    border-radius: 4px !important;
+    min-width: 35px !important;
+    line-height: 1.1 !important;
 }
 
 /* Mobile Responsive */
@@ -437,29 +497,7 @@
 
 /* Status Header */
 .status-header {
-    background: linear-gradient(135deg, #fff3e0 0%, #ffffff 100%);
-    border-radius: 12px;
-    border: 1px solid #ffe0b3;
-}
-
-/* Refresh Button */
-.refresh-btn {
-    transition: all 0.3s ease;
-}
-
-.refresh-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-/* Stats Cards */
-.stats-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.stats-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+    background: linear-gradient(135deg, #ff6b35, #e55a25);
 }
 
 /* Custom Badge Colors */
@@ -493,28 +531,6 @@
     border: 1px solid #f5c6cb !important;
 }
 
-.bg-secondary.text-white {
-    color: #ff6b35 !important;
-    background-color: #e9ecef !important;
-}
-
-/* Override all badge text colors to orange */
-.badge.bg-secondary,
-.badge.text-white,
-.bg-secondary.text-white,
-.interview-round-item .bg-secondary {
-    color: #ff6b35 !important;
-}
-
-/* Company Logo Circle */
-.company-logo-circle {
-    transition: all 0.3s ease;
-}
-
-.company-logo-circle:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
-}
 /* Modal Z-index Fix */
 .modal.show {
     z-index: 99999 !important;
@@ -527,11 +543,13 @@
 .modal-content {
     z-index: 99999 !important;
 }
+
 /* Modal Badge Size Fix */
 .modal-dialog .badge {
-    font-size: 10px !important;
-    padding: 3px 6px !important;
-    min-width: 55px !important;
-    border-radius: 8px !important;
+    font-size: 8px !important;
+    padding: 1px 3px !important;
+    min-width: 35px !important;
+    border-radius: 4px !important;
     font-weight: 500 !important;
+    line-height: 1.1 !important;
 }

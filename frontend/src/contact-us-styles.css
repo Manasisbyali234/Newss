@@ -155,9 +155,6 @@
 /* Success Message */
 .text-success {
     color: #28a745 !important;
-    font-size: 2rem !important;
-    font-weight: 700 !important;
-    margin-bottom: 1rem !important;
 }
 
 /* Map Section */

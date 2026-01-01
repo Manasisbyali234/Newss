@@ -70,7 +70,7 @@ const HamburgerMenu = ({ isOpen, onToggle, onClose }) => {
                 className={({ isActive }) => `menu-link ${isActive ? 'active' : ''}`} 
                 onClick={onClose}
               >
-                Employers
+                Companies
               </NavLink>
             </li>
           </ul>

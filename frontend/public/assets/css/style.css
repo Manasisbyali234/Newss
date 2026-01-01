@@ -8307,10 +8307,18 @@ ol.comment-list li.comment .comment-respond .comment-form p {
   border-radius: 5px;
   padding: 5px 12px;
   white-space: nowrap;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  max-width: 150px !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+  display: inline-block !important;
 }
 @media (max-width: 767px) {
   .twm-jobs-category span {
     display: inline-block;
+    font-size: 11px !important;
+    padding: 3px 8px !important;
   }
 }
 
@@ -8633,6 +8641,64 @@ ol.comment-list li.comment .comment-respond .comment-form p {
 
 .twm-clr-1-golden {
   color: #b7912a;
+}
+
+/* Fix for Completed Badges appearing too large */
+.badge {
+  font-size: 12px !important;
+  padding: 4px 8px !important;
+  font-weight: 500 !important;
+  border-radius: 4px !important;
+  display: inline-block !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+}
+
+/* Specific fix for employer details page badges */
+.employer-details .badge,
+.twm-employer-detail .badge,
+.completed-badges .badge {
+  font-size: 11px !important;
+  padding: 3px 6px !important;
+  margin: 2px !important;
+  max-width: 120px !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+}
+
+/* Badge variants with proper sizing */
+.badge-success {
+  background-color: #28a745 !important;
+  color: #fff !important;
+}
+
+.badge-primary {
+  background-color: #1967d2 !important;
+  color: #fff !important;
+}
+
+.badge-info {
+  background-color: #17a2b8 !important;
+  color: #fff !important;
+}
+
+.badge-warning {
+  background-color: #ffc107 !important;
+  color: #212529 !important;
+}
+
+.badge-secondary {
+  background-color: #6c757d !important;
+  color: #fff !important;
+}
+
+/* Ensure badges in cards and lists are properly sized */
+.card .badge,
+.list-group-item .badge,
+.table .badge {
+  font-size: 10px !important;
+  padding: 2px 5px !important;
+  vertical-align: middle !important;
 }
 
 .twm-bg-ring-wrap {

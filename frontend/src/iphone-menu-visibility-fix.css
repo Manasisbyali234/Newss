@@ -1,6 +1,0 @@
-/* Simple iPhone hamburger fix */
-@media (max-width: 991px) {
-  .hamburger-btn {
-    display: flex !important;
-  }
-}
