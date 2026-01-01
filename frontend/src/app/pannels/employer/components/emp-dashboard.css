@@ -454,6 +454,13 @@
     margin-bottom: 0.5rem !important;
   }
 
+  /* Except for buttons inside tables */
+  .emp-dashboard table .btn,
+  .emp-dashboard table button {
+    width: auto !important;
+    margin-bottom: 0 !important;
+  }
+
   /* Fix table responsiveness */
   .emp-dashboard table {
     display: block !important;

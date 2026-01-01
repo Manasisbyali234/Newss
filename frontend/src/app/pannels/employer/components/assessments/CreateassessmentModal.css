@@ -1,3 +1,39 @@
+/* Fix for header appearing in create-assessment popup */
+.position-fixed.top-0.start-0.w-100.h-100 {
+  z-index: 10000 !important;
+  isolation: isolate !important;
+}
+
+.position-fixed .bg-white.rounded-3 {
+  z-index: 10001 !important;
+  position: relative !important;
+  isolation: isolate !important;
+}
+
+/* Hide specific admin header that appears in modal */
+.position-fixed .bg-white.rounded-3 #header-admin,
+.position-fixed #header-admin {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Hide any global headers that might appear in modal */
+.position-fixed .bg-white.rounded-3 header,
+.position-fixed .bg-white.rounded-3 .header,
+.position-fixed .bg-white.rounded-3 .twm-header,
+.position-fixed .bg-white.rounded-3 .site-header,
+.position-fixed .bg-white.rounded-3 nav,
+.position-fixed .bg-white.rounded-3 .navbar {
+  display: none !important;
+}
+
+/* Ensure modal content is contained */
+.position-fixed .bg-white.rounded-3 > * {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
 /* React Quill Editor Styles */
 .quill {
   background: white;

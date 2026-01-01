@@ -193,7 +193,8 @@ export default function AssessmentResults() {
                   {results.map((result, index) => (
                     <tr key={result._id} style={{ 
                       borderBottom: index < results.length - 1 ? '1px solid #f3f4f6' : 'none',
-                      transition: 'background-color 0.2s ease'
+                      transition: 'background-color 0.2s ease',
+                      whiteSpace: 'nowrap'
                     }}
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -254,7 +255,8 @@ export default function AssessmentResults() {
                               color: '#6b7280', 
                               fontSize: '0.75rem',
                               lineHeight: '1.2',
-                              wordBreak: 'break-word'
+                              wordBreak: 'break-word',
+                              whiteSpace: 'normal'
                             }}>
                               {result.violations.map(v => {
                                 // Format violation types to be more readable
@@ -446,8 +448,12 @@ export default function AssessmentResults() {
                       <img 
                         src={imageUrl}
                         alt={`Capture ${index + 1}`}
-                        style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-                        onLoad={() => console.log(`✅ Image ${index + 1} loaded successfully`)}
+                        style={{ width: '100%', height: '200px', objectFit: 'cover', display: 'none' }}
+                        onLoad={(e) => {
+                          console.log(`✅ Image ${index + 1} loaded successfully`);
+                          e.target.style.display = 'block';
+                          e.target.nextSibling.style.display = 'none';
+                        }}
                         onError={(e) => {
                           console.error(`❌ Image ${index + 1} load error:`);
                           console.error('  Path:', capture);
@@ -457,14 +463,18 @@ export default function AssessmentResults() {
                         }}
                       />
                       <div style={{ 
-                        display: 'none', 
+                        display: 'block', 
                         padding: '2rem', 
                         textAlign: 'center', 
                         color: '#ef4444',
-                        background: '#fef2f2'
+                        background: '#fef2f2',
+                        border: '2px dashed #fca5a5',
+                        borderRadius: '8px'
                       }}>
-                        Image not found<br/>
-                        <small>{capture}</small>
+                        <i className="fa fa-exclamation-triangle" style={{ fontSize: '2rem', marginBottom: '1rem' }}></i><br/>
+                        <strong>Capture Upload Failed</strong><br/>
+                        <small style={{ color: '#7f1d1d' }}>Image file not found on server</small><br/>
+                        <small style={{ color: '#991b1b', fontFamily: 'monospace' }}>{capture}</small>
                       </div>
                       <div style={{ padding: '0.5rem', background: '#f9fafb', textAlign: 'center' }}>
                         <small style={{ color: '#6b7280' }}>Capture {index + 1}</small>

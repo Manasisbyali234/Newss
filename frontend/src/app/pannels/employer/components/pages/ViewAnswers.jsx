@@ -171,7 +171,9 @@ export default function ViewAnswers() {
                       Question {answer.questionIndex + 1}
                     </span>
                     <span style={{ 
-                      background: question.type === 'mcq' ? '#3b82f6' : '#10b981', 
+                      background: question.type === 'mcq' ? '#3b82f6' : 
+                                 question.type === 'subjective' ? '#10b981' : 
+                                 question.type === 'image' ? '#8b5cf6' : '#f59e0b', 
                       color: 'white', 
                       padding: '0.25rem 0.75rem', 
                       borderRadius: '9999px', 
@@ -179,7 +181,9 @@ export default function ViewAnswers() {
                       fontWeight: '600',
                       textTransform: 'uppercase'
                     }}>
-                      {question.type === 'mcq' ? 'MCQ' : 'Subjective'}
+                      {question.type === 'mcq' ? 'MCQ' : 
+                       question.type === 'subjective' ? 'Subjective' : 
+                       question.type === 'image' ? 'Image Upload' : 'File Upload'}
                     </span>
                     {question.type === 'mcq' && (
                       <span style={{ 
@@ -249,12 +253,11 @@ export default function ViewAnswers() {
                       background: '#f9fafb', 
                       padding: '1.5rem', 
                       borderRadius: '8px',
-                      borderLeft: '4px solid #10b981'
+                      borderLeft: `4px solid ${
+                        question.type === 'image' ? '#8b5cf6' : 
+                        question.type === 'upload' ? '#f59e0b' : '#10b981'
+                      }`
                     }}>
-                      {(() => {
-                        console.log(`Q${answer.questionIndex} textAnswer:`, answer.textAnswer, 'Type:', typeof answer.textAnswer);
-                        return null;
-                      })()}
                       {answer.textAnswer ? (
                         <div>
                           <div style={{ 
@@ -280,17 +283,88 @@ export default function ViewAnswers() {
                         </div>
                       ) : answer.uploadedFile ? (
                         <div style={{ color: '#374151' }}>
-                          <i className="fa fa-file" style={{ marginRight: '0.5rem' }}></i>
-                          <span>File uploaded: {answer.uploadedFile.originalName || 'Uploaded file'}</span>
-                          {answer.uploadedFile.path && (
-                            <a 
-                              href={`http://localhost:5000${answer.uploadedFile.path}`} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              style={{ marginLeft: '1rem', color: '#3b82f6', textDecoration: 'underline' }}
-                            >
-                              View File
-                            </a>
+                          <div style={{ 
+                            color: '#6b7280', 
+                            fontSize: '0.875rem', 
+                            fontWeight: '600',
+                            marginBottom: '0.75rem',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em'
+                          }}>
+                            Uploaded {question.type === 'image' ? 'Image' : 'File'}:
+                          </div>
+                          
+                          {question.type === 'image' ? (
+                            <div style={{ marginTop: '1rem' }}>
+                              <img 
+                                src={answer.uploadedFile.path.startsWith('http') ? answer.uploadedFile.path : `http://localhost:5000${answer.uploadedFile.path}`} 
+                                alt="Candidate's upload" 
+                                style={{
+                                  maxWidth: '100%',
+                                  maxHeight: '500px',
+                                  borderRadius: '8px',
+                                  border: '1px solid #e5e7eb',
+                                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                                }}
+                                onLoad={(e) => {
+                                  e.target.nextSibling.style.display = 'none';
+                                }}
+                                onError={(e) => {
+                                  console.error('Image failed to load:', e.target.src);
+                                  e.target.style.display = 'none';
+                                  e.target.nextSibling.style.display = 'block';
+                                }}
+                              />
+                              <div style={{ display: 'none', padding: '2rem', textAlign: 'center', background: '#fef2f2', borderRadius: '8px', border: '2px dashed #fca5a5' }}>
+                                <i className="fa fa-exclamation-triangle" style={{ fontSize: '3rem', color: '#ef4444', marginBottom: '1rem' }}></i>
+                                <p style={{ color: '#dc2626', margin: 0, fontWeight: '600' }}>Image Upload Failed</p>
+                                <p style={{ color: '#7f1d1d', fontSize: '0.875rem', margin: '0.5rem 0 0 0' }}>The uploaded image could not be found on the server.</p>
+                                <p style={{ color: '#991b1b', fontSize: '0.75rem', margin: '0.5rem 0 0 0', fontFamily: 'monospace' }}>{answer.uploadedFile.path}</p>
+                              </div>
+                              <div style={{ marginTop: '0.5rem' }}>
+                                <a 
+                                  href={answer.uploadedFile.path.startsWith('http') ? answer.uploadedFile.path : `http://localhost:5000${answer.uploadedFile.path}`} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  style={{ color: '#3b82f6', fontSize: '0.875rem', textDecoration: 'underline' }}
+                                >
+                                  View Full Size Image
+                                </a>
+                              </div>
+                            </div>
+                          ) : (
+                            <div style={{ 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              gap: '1rem',
+                              background: 'white',
+                              padding: '1rem',
+                              borderRadius: '8px',
+                              border: '1px solid #e5e7eb'
+                            }}>
+                              <i className="fa fa-file-text" style={{ fontSize: '2rem', color: '#f59e0b' }}></i>
+                              <div>
+                                <div style={{ fontWeight: '600', color: '#374151' }}>{answer.uploadedFile.originalName || 'Uploaded file'}</div>
+                                <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                                  {(answer.uploadedFile.size / 1024).toFixed(1)} KB • {new Date(answer.uploadedFile.uploadedAt).toLocaleString()}
+                                </div>
+                                <a 
+                                  href={answer.uploadedFile.path.startsWith('http') ? answer.uploadedFile.path : `http://localhost:5000${answer.uploadedFile.path}`} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  style={{ 
+                                    display: 'inline-block',
+                                    marginTop: '0.5rem',
+                                    color: '#3b82f6', 
+                                    fontWeight: '600',
+                                    textDecoration: 'none' 
+                                  }}
+                                >
+                                  <i className="fa fa-download" style={{ marginRight: '0.4rem' }}></i>
+                                  Download File
+                                </a>
+                              </div>
+                            </div>
                           )}
                         </div>
                       ) : (
@@ -299,17 +373,10 @@ export default function ViewAnswers() {
                             color: '#9ca3af', 
                             fontSize: '1rem', 
                             fontStyle: 'italic',
-                            margin: 0,
-                            marginBottom: '1rem'
+                            margin: 0
                           }}>
                             No answer provided
                           </p>
-                          <details style={{ fontSize: '0.75rem', color: '#6b7280' }}>
-                            <summary style={{ cursor: 'pointer' }}>Debug: View raw answer data</summary>
-                            <pre style={{ marginTop: '0.5rem', padding: '0.5rem', background: '#f3f4f6', borderRadius: '4px', overflow: 'auto' }}>
-                              {JSON.stringify(answer, null, 2)}
-                            </pre>
-                          </details>
                         </div>
                       )}
                     </div>
