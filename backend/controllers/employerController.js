@@ -243,6 +243,15 @@ exports.updateProfile = async (req, res) => {
           profileSubmittedForReview: true,
           profileSubmittedAt: new Date()
         });
+        
+        // Send profile submission email to employer
+        try {
+          const { sendEmployerProfileSubmissionEmail } = require('../utils/emailService');
+          const employer = await Employer.findById(req.user._id);
+          await sendEmployerProfileSubmissionEmail(employer.email, employer.name || employer.companyName);
+        } catch (emailError) {
+          console.error('Failed to send profile submission email:', emailError);
+        }
       } else {
         // Regular profile update notification
         await createNotification({

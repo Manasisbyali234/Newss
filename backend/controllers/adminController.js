@@ -443,8 +443,8 @@ exports.updateEmployerStatus = async (req, res) => {
     if (isApproved !== undefined) {
       try {
         if (isApproved) {
-          const { sendApprovalEmail } = require('../utils/emailService');
-          await sendApprovalEmail(employer.email, employer.name || employer.companyName, 'employer');
+          const { sendEmployerAccountApprovalEmail } = require('../utils/emailService');
+          await sendEmployerAccountApprovalEmail(employer.email, employer.name || employer.companyName);
         }
         
         const notificationData = {
@@ -1033,8 +1033,8 @@ exports.updatePlacementStatus = async (req, res) => {
     // Send approval email and create notification
     if (updateData.status === 'active') {
       try {
-        const { sendApprovalEmail } = require('../utils/emailService');
-        await sendApprovalEmail(placement.email, placement.name, 'placement', placement.collegeName);
+        const { sendPlacementOfficerApprovalEmail } = require('../utils/emailService');
+        await sendPlacementOfficerApprovalEmail(placement.email, placement.name);
         
         await createNotification({
           title: 'Account Approved',
@@ -1897,13 +1897,11 @@ exports.approveIndividualFile = async (req, res) => {
           
           // Send welcome email with create password link
           try {
-            const { sendPlacementCandidateWelcomeEmail } = require('../utils/emailService');
-            await sendPlacementCandidateWelcomeEmail(
+            const { sendCandidateDetailsUpdatedEmail } = require('../utils/emailService');
+            await sendCandidateDetailsUpdatedEmail(
               email.trim().toLowerCase(),
               name.trim(),
-              password.trim(),
-              placement.name,
-              placement.collegeName
+              finalCredits
             );
             
             // Update placement candidate record to mark email as sent
@@ -3291,13 +3289,11 @@ exports.approveAllStudentsInPlacement = async (req, res) => {
                 
                 // Send welcome email
                 try {
-                  const { sendPlacementCandidateWelcomeEmail } = require('../utils/emailService');
-                  await sendPlacementCandidateWelcomeEmail(
+                  const { sendCandidateDetailsUpdatedEmail } = require('../utils/emailService');
+                  await sendCandidateDetailsUpdatedEmail(
                     email.trim().toLowerCase(),
                     name.trim(),
-                    password.trim(),
-                    placement.name,
-                    placement.collegeName
+                    rowCredits
                   );
                   
                   await PlacementCandidate.findByIdAndUpdate(
