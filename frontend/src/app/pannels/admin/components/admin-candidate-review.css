@@ -3,6 +3,10 @@
     padding: 20px;
     background: #ffffff;
     min-height: 100vh;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .candidate-review-loading {
@@ -61,46 +65,53 @@
 }
 
 .back-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 20px;
-    background: white;
-    border: 2px solid #dee2e6;
-    border-radius: 8px;
-    color: #495057;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    cursor: pointer;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 12px 20px !important;
+    background: rgba(255, 122, 0, 0.08) !important;
+    border: 1px solid #FF7A00 !important;
+    border-radius: 8px !important;
+    color: #FF7A00 !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    height: auto !important;
+    width: auto !important;
+    min-width: 0 !important;
 }
 
 .back-btn:hover {
-    background: #f8f9fa;
-    border-color: #ff6600;
-    color: #ff6600;
+    background: rgba(255, 122, 0, 0.15) !important;
+    box-shadow: 0 2px 8px rgba(255, 122, 0, 0.2) !important;
 }
 
 .refresh-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 20px;
-    background: #ff6600;
-    border: 2px solid #ff6600;
-    border-radius: 8px;
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    margin-left: auto;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 12px 20px !important;
+    background: #FF7A00 !important;
+    border: 1px solid #FF7A00 !important;
+    border-radius: 8px !important;
+    color: white !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    margin-left: auto !important;
+    height: auto !important;
+    width: auto !important;
 }
 
 .refresh-btn:hover:not(:disabled) {
-    background: #e55a00;
-    border-color: #e55a00;
-    transform: translateY(-1px);
+    background: #e55a00 !important;
+    box-shadow: 0 4px 12px rgba(255, 122, 0, 0.3) !important;
+    border-color: #e55a00 !important;
+    transform: translateY(-1px) !important;
 }
 
 .refresh-btn:disabled {
@@ -243,40 +254,102 @@
 
 .tab-navigation {
     display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    max-width: 100%;
     background: white;
     border-radius: 12px;
-    padding: 8px;
+    padding: 6px;
     margin-bottom: 30px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    gap: 12px;
+    gap: 5px;
+    box-sizing: border-box;
 }
 
 .tab-btn {
-    flex: 1 1 0;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 15px 20px;
-    background: transparent;
-    border: none;
-    border-radius: 8px;
-    color: #6c757d;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.tab-btn.active {
-    background: #f8f9fa;
-    color: #000;
-    font-weight: 700;
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    padding: 10px 4px !important;
+    background: rgba(255, 122, 0, 0.08) !important;
+    border: 1px solid rgba(255, 122, 0, 0.2) !important;
+    border-radius: 8px !important;
+    color: #FF7A00 !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    white-space: nowrap !important;
+    font-size: 0.85rem !important;
 }
 
 .tab-btn i {
-    font-size: 1.1rem;
-    color: #ff6600;
+    font-size: 1rem !important;
+    color: #FF7A00 !important;
+}
+
+@media (max-width: 991px) {
+    .tab-navigation {
+        gap: 8px;
+        padding: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .tab-btn {
+        font-size: 0.8rem !important;
+        padding: 10px 8px !important;
+        flex: 1 1 calc(33.33% - 8px) !important;
+        min-width: 100px !important;
+        justify-content: center !important;
+    }
+    .tab-btn i {
+        font-size: 0.9rem !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .tab-navigation {
+        gap: 6px;
+        padding: 6px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .tab-btn {
+        font-size: 0.75rem !important;
+        padding: 12px 4px !important;
+        flex: 1 1 calc(50% - 6px) !important;
+        min-width: 120px !important;
+        justify-content: center !important;
+    }
+    .tab-btn i {
+        display: inline-block !important;
+        font-size: 0.85rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .tab-btn {
+        flex: 1 1 100% !important;
+        flex-direction: row !important;
+        justify-content: center !important;
+        padding: 12px 15px !important;
+        gap: 12px !important;
+        text-align: center !important;
+    }
+}
+
+.tab-btn.active {
+    background: #FF7A00 !important;
+    color: #fff !important;
+    font-weight: 700 !important;
+    border-color: #FF7A00 !important;
+}
+
+.tab-btn.active i {
+    color: #fff !important;
 }
 
 .tab-content {
@@ -972,15 +1045,28 @@
     .candidate-review-header {
         flex-direction: column;
         gap: 15px;
-        align-items: stretch;
+        align-items: center;
+        text-align: center;
     }
     
     .header-title h2 {
         font-size: 1.5rem;
+        text-align: center;
+    }
+
+    .header-title p {
+        text-align: center;
     }
     
     .refresh-btn {
-        margin-left: 0;
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 300px !important;
+    }
+
+    .back-btn {
+        width: 100% !important;
+        max-width: 300px !important;
     }
     
     .profile-card {
@@ -1000,19 +1086,6 @@
     .profile-stats {
         justify-content: center;
         gap: 20px;
-    }
-    
-    .tab-navigation {
-        flex-direction: column;
-        gap: 8px;
-    }
-    
-    .tab-btn {
-        padding: 12px 15px;
-        font-size: 0.9rem;
-        width: 100% !important;
-        max-width: 100% !important;
-        flex: 1 1 100% !important;
     }
     
     .tab-panel {
@@ -1177,13 +1250,6 @@
     .profile-stats {
         flex-direction: column;
         gap: 10px;
-    }
-    
-    .tab-btn {
-        padding: 10px 12px;
-        font-size: 0.85rem;
-        width: 100% !important;
-        max-width: 100% !important;
     }
     
     .tab-panel {

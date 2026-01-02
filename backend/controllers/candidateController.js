@@ -686,6 +686,14 @@ exports.applyForJob = async (req, res) => {
 
     // Send job application confirmation email to candidate with job details
     try {
+      // Check if assessment is actually selected in the interview rounds
+      let includeAssessment = false;
+      if (job.interviewRoundOrder && job.interviewRoundTypes) {
+        includeAssessment = job.interviewRoundOrder.some(roundKey => 
+          job.interviewRoundTypes[roundKey] === 'assessment'
+        );
+      }
+      
       await sendJobApplicationConfirmationEmail(
         candidate.email,
         candidate.name,
@@ -693,11 +701,12 @@ exports.applyForJob = async (req, res) => {
         job.companyName || job.employerId?.companyName || 'Company',
         new Date(),
         {
-          assessmentId: job.assessmentId,
-          assessmentStartDate: job.assessmentStartDate,
-          assessmentEndDate: job.assessmentEndDate,
-          assessmentStartTime: job.assessmentStartTime,
-          assessmentEndTime: job.assessmentEndTime,
+          assessmentId: includeAssessment ? job.assessmentId : null,
+          assessmentEnabled: includeAssessment,
+          assessmentStartDate: includeAssessment ? job.assessmentStartDate : null,
+          assessmentEndDate: includeAssessment ? job.assessmentEndDate : null,
+          assessmentStartTime: includeAssessment ? job.assessmentStartTime : null,
+          assessmentEndTime: includeAssessment ? job.assessmentEndTime : null,
           interviewRoundOrder: job.interviewRoundOrder,
           interviewRoundTypes: job.interviewRoundTypes,
           interviewRoundDetails: job.interviewRoundDetails,

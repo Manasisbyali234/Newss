@@ -220,6 +220,11 @@
     text-align: center;
 }
 
+.candidates-table tbody td:last-child {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
 .candidates-table tbody td i {
     color: #6c757d;
     margin-right: 4px;
@@ -236,16 +241,19 @@
     color: #6c757d !important;
 }
 
-.status-badge {
-    padding: 4px 8px;
+.candidates-table .status-badge {
+    padding: 8px 20px !important;
     border-radius: 15px;
     font-size: 0.7rem;
     font-weight: 500;
     text-transform: capitalize;
     letter-spacing: 0.2px;
-    display: inline-flex;
+    display: inline-flex !important;
     align-items: center;
     gap: 3px;
+    min-width: 140px !important;
+    max-width: none !important;
+    justify-content: center;
 }
 
 .badge-completed {
@@ -493,6 +501,15 @@
 }
 
 /* Responsive Design */
+@media (max-width: 991px) {
+    .candidates-table .btn-view {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+    }
+}
+
 @media (max-width: 768px) {
     .candidates-header h2 {
         font-size: 1.8rem;
@@ -509,6 +526,13 @@
     .action-btn {
         width: 100%;
         justify-content: center;
+    }
+    
+    .btn-view {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
     }
     
     .candidates-stats-card {

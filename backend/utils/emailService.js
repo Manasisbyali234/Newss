@@ -664,8 +664,8 @@ const sendJobApplicationConfirmationEmail = async (candidateEmail, candidateName
     // Build interview rounds section
     const rounds = [];
     
-    // Add assessment if present
-    if (jobDetails.assessmentId) {
+    // Add assessment if explicitly enabled
+    if (jobDetails.assessmentEnabled && jobDetails.assessmentId) {
       rounds.push({
         name: 'Technical Assessment',
         type: 'assessment',
@@ -807,7 +807,7 @@ const sendJobApplicationConfirmationEmail = async (candidateEmail, candidateName
             <li>Check your email regularly for updates</li>
             <li>Track your application status in your dashboard</li>
             <li>Prepare for potential interviews</li>
-            ${jobDetails && jobDetails.assessmentId ? '<li><strong>Complete the technical assessment when available</strong></li>' : ''}
+            ${jobDetails && jobDetails.assessmentEnabled && jobDetails.assessmentId ? '<li><strong>Complete the technical assessment when available</strong></li>' : ''}
           </ul>
         </div>
         
