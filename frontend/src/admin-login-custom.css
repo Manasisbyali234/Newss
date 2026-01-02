@@ -9,6 +9,17 @@
     padding-bottom: 20px !important;
 }
 
+/* Desktop positioning - move login form down */
+@media screen and (min-width: 769px) {
+    .twm-login-reg {
+        padding-top: 80px !important;
+    }
+    
+    .twm-login-reg-inner {
+        padding-top: 60px !important;
+    }
+}
+
 /* Mobile-only optimizations (screen width ≤ 768px) */
 @media screen and (max-width: 768px) {
     /* 1. Reduce top margin and padding below header */
