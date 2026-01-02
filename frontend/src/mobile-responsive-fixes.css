@@ -112,7 +112,6 @@
   p, span, div {
     word-wrap: break-word;
     overflow-wrap: break-word;
-    word-break: break-word;
   }
 
   /* Image responsiveness */

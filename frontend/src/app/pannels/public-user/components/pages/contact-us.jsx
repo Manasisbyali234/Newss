@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { validatePhoneNumber } from '../../../../../utils/phoneValidation';
 import CountryCodeSelector from '../../../../../components/CountryCodeSelector';
+import '../../../../../contact-us-styles.css';
 
 function ContactUsPage() {
     const [formData, setFormData] = useState({

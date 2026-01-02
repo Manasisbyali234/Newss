@@ -11,6 +11,7 @@ import JobZImage from '../../common/jobz-img';
 function PlacementDashboardRedesigned() {
     const { user, userType, isAuthenticated, loading: authLoading } = useAuth();
     const [placementData, setPlacementData] = useState(null);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [studentData, setStudentData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('overview');
@@ -46,31 +47,20 @@ function PlacementDashboardRedesigned() {
 
     useEffect(() => {
         const initializeDashboard = async () => {
-            debugAuth();
-            
-            const apiTest = await testAPIConnection();
-            if (!apiTest.success) {
-                console.error('API Connection failed:', apiTest.error);
-                setLoading(false);
-                return;
-            }
-            
             if (!authLoading && isAuthenticated() && userType === 'placement') {
-                const authTest = await testPlacementAuth();
-                if (!authTest.success) {
-                    console.error('Auth test failed:', authTest.error);
-                    if (authTest.status === 401) {
-                        localStorage.removeItem('placementToken');
-                        localStorage.removeItem('placementUser');
-                        window.location.href = '/login';
-                        return;
-                    }
+                try {
+                    setLoading(true);
+                    await Promise.all([
+                        fetchPlacementDetails(),
+                        fetchStudentData()
+                    ]);
+                } catch (error) {
+                    console.error('Initialization error:', error);
+                } finally {
+                    setLoading(false);
                 }
-                
-                Promise.all([
-                    fetchPlacementDetails(),
-                    fetchStudentData()
-                ]).catch(() => {});
+            } else if (!authLoading) {
+                setLoading(false);
             }
         };
         
@@ -85,35 +75,19 @@ function PlacementDashboardRedesigned() {
 
     const fetchPlacementDetails = async () => {
         try {
-            if (authLoading || !isAuthenticated() || userType !== 'placement') {
-                return;
-            }
-            
             const token = localStorage.getItem('placementToken');
-            if (!token) {
-                console.error('Authentication token missing');
-                return;
-            }
+            if (!token) return;
             
-            console.log('Fetching placement profile...');
-            console.log('API object:', api);
-            console.log('getPlacementProfile method:', api.getPlacementProfile);
             const profileData = await api.getPlacementProfile();
-            console.log('Profile data received:', profileData);
-            
             if (profileData && profileData.success) {
-                console.log('Setting placement data:', profileData.placement);
                 setPlacementData(profileData.placement);
-            } else {
-                console.error('Profile fetch failed:', profileData?.message || 'Unknown error');
             }
         } catch (error) {
             console.error('Profile fetch error:', error);
             if (error.message.includes('401')) {
-                showError('Authentication failed. Please login again.');
                 localStorage.removeItem('placementToken');
                 localStorage.removeItem('placementUser');
-                window.location.href = '/placement/login';
+                window.location.href = '/login';
             }
         }
     };
@@ -121,25 +95,15 @@ function PlacementDashboardRedesigned() {
     const fetchStudentData = async () => {
         try {
             const token = localStorage.getItem('placementToken');
-            if (!token) {
-                console.error('No placement token found');
-                setLoading(false);
-                return;
-            }
+            if (!token) return;
             
-            console.log('Fetching student data...');
             const data = await api.getMyPlacementData();
-            console.log('Student data response:', data);
-            
             if (data.success) {
                 setStudentData(data.students || []);
                 calculateStats(data.students || []);
-                console.log('Student data loaded:', data.students?.length || 0, 'students');
             }
         } catch (error) {
             console.error('Error fetching student data:', error);
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -422,19 +386,30 @@ function PlacementDashboardRedesigned() {
     }
 
     return (
-        <div className="dashboard-container">
+        <div className={`dashboard-container ${isSidebarOpen ? 'sidebar-open' : ''}`}>
+            {/* Sidebar Overlay */}
+            {isSidebarOpen && (
+                <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>
+            )}
+
             {/* Left Sidebar */}
-            <div className="sidebar">
+            <div className={`sidebar ${isSidebarOpen ? 'active' : ''}`}>
                 <div className="sidebar-header">
                     <div className="logo" onClick={() => window.location.href = '/'} style={{cursor: 'pointer'}}>
                         <JobZImage id="skin_header_logo" src="images/skins-logo/logo-skin-8.png" alt="Logo" style={{height: '40px', width: 'auto'}} />
                     </div>
+                    <button className="sidebar-close" onClick={() => setIsSidebarOpen(false)}>
+                        <i className="fa fa-times"></i>
+                    </button>
                 </div>
                 
                 <nav className="sidebar-nav">
                     <div 
                         className={`nav-item ${activeTab === 'overview' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('overview')}
+                        onClick={() => {
+                            setActiveTab('overview');
+                            setIsSidebarOpen(false);
+                        }}
                     >
                         <i className="fa fa-dashboard"></i>
                         <span>Overview</span>
@@ -445,6 +420,7 @@ function PlacementDashboardRedesigned() {
                             setActiveTab('students');
                             setViewingFileId(null);
                             setViewingFileName(null);
+                            setIsSidebarOpen(false);
                         }}
                     >
                         <i className="fa fa-users"></i>
@@ -452,7 +428,10 @@ function PlacementDashboardRedesigned() {
                     </div>
                     <div 
                         className={`nav-item ${activeTab === 'upload' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('upload')}
+                        onClick={() => {
+                            setActiveTab('upload');
+                            setIsSidebarOpen(false);
+                        }}
                     >
                         <i className="fa fa-upload"></i>
                         <span>Batch Upload</span>
@@ -475,6 +454,9 @@ function PlacementDashboardRedesigned() {
             <div className="main-content">
                 {/* Top Header */}
                 <div className="top-header">
+                    <button className="mobile-toggle" onClick={() => setIsSidebarOpen(true)}>
+                        <i className="fa fa-bars"></i>
+                    </button>
                     <div className="header-actions">
                         <NotificationBell userRole="placement" />
                         <div className="user-profile">
@@ -495,413 +477,417 @@ function PlacementDashboardRedesigned() {
 
                 {/* Content Area */}
                 <div className="content-area">
-                    {activeTab === 'overview' && (
+                    {loading ? (
+                        <div className="loading-state">
+                            <div className="spinner"></div>
+                            <h4>Loading dashboard data...</h4>
+                        </div>
+                    ) : (
                         <>
-                            {/* Profile Card with Notifications */}
-                            <div className="profile-notifications-container">
-                                <div className="profile-card">
-                                    <div className="profile-left">
-                                        <div className="profile-image-container">
-                                            <div className="profile-image">
-                                                {placementData?.logo ? (
-                                                    <img 
-                                                        src={placementData.logo.startsWith('data:') ? placementData.logo : `data:image/jpeg;base64,${placementData.logo}`} 
-                                                        alt="College Logo" 
-                                                    />
-                                                ) : (
-                                                    <i className="fa fa-university"></i>
-                                                )}
+                            {activeTab === 'overview' && (
+                                <>
+                                    {/* Profile Card with Notifications */}
+                                    <div className="profile-notifications-container">
+                                        <div className="profile-card">
+                                            <div className="profile-left">
+                                                <div className="profile-image-container">
+                                                    <div className="profile-image">
+                                                        {placementData?.logo ? (
+                                                            <img 
+                                                                src={placementData.logo.startsWith('data:') ? placementData.logo : `data:image/jpeg;base64,${placementData.logo}`} 
+                                                                alt="College Logo" 
+                                                            />
+                                                        ) : (
+                                                            <i className="fa fa-university"></i>
+                                                        )}
+                                                    </div>
+                                                    <small className="image-label">College Logo</small>
+                                                </div>
+                                                <div className="profile-image-container">
+                                                    <div className="id-card-image">
+                                                        {placementData?.idCard ? (
+                                                            <img 
+                                                                src={placementData.idCard.startsWith('data:') ? placementData.idCard : `data:image/jpeg;base64,${placementData.idCard}`} 
+                                                                alt="ID Card" 
+                                                            />
+                                                        ) : (
+                                                            <i className="fa fa-id-card"></i>
+                                                        )}
+                                                    </div>
+                                                    <small className="image-label">ID Card</small>
+                                                </div>
                                             </div>
-                                            <small className="image-label">College Logo</small>
+                                            <div className="profile-center">
+                                                <div className="role-label">PLACEMENT OFFICER</div>
+                                                <h2 className="officer-name">
+                                                    {placementData?.name || user?.name || 'Name not available'}
+                                                </h2>
+                                                <div className="contact-info">
+                                                    <div className="contact-item">
+                                                        <i className="fa fa-envelope"></i>
+                                                        <span>{placementData?.email || user?.email || 'Email not available'}</span>
+                                                    </div>
+                                                    <div className="contact-item">
+                                                        <i className="fa fa-phone"></i>
+                                                        <span>{placementData?.phone || 'Phone not available'}</span>
+                                                    </div>
+                                                    <div className="contact-item">
+                                                        <i className="fa fa-graduation-cap"></i>
+                                                        <span>{placementData?.collegeName || 'College Name Not Available'}</span>
+                                                    </div>
+                                                    {placementData?.collegeAddress && (
+                                                        <div className="contact-item">
+                                                            <i className="fa fa-map-marker"></i>
+                                                            <span>{placementData.collegeAddress}</span>
+                                                        </div>
+                                                    )}
+                                                    {placementData?.collegeOfficialEmail && (
+                                                        <div className="contact-item">
+                                                            <i className="fa fa-envelope-o"></i>
+                                                            <span>Official: {placementData.collegeOfficialEmail}</span>
+                                                        </div>
+                                                    )}
+                                                    {placementData?.collegeOfficialPhone && (
+                                                        <div className="contact-item">
+                                                            <i className="fa fa-phone-square"></i>
+                                                            <span>Official: {placementData.collegeOfficialPhone}</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="profile-right">
+                                                <button className="directory-btn" onClick={handleEditProfile}>
+                                                    <i className="fa fa-edit"></i>
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div className="profile-image-container">
-                                            <div className="id-card-image">
-                                                {placementData?.idCard ? (
-                                                    <img 
-                                                        src={placementData.idCard.startsWith('data:') ? placementData.idCard : `data:image/jpeg;base64,${placementData.idCard}`} 
-                                                        alt="ID Card" 
-                                                    />
-                                                ) : (
-                                                    <i className="fa fa-id-card"></i>
-                                                )}
-                                            </div>
-                                            <small className="image-label">ID Card</small>
+                                        
+                                        {/* Notifications Panel - Beside Profile */}
+                                        <div className="notifications-panel">
+                                            <PlacementNotificationsRedesigned />
                                         </div>
                                     </div>
-                                    <div className="profile-center">
-                                        <div className="role-label">PLACEMENT OFFICER</div>
-                                        <h2 className="officer-name">
-                                            {placementData?.name || user?.name || 'Name not available'}
-                                        </h2>
-                                        <div className="contact-info">
-                                            <div className="contact-item">
-                                                <i className="fa fa-envelope"></i>
-                                                <span>{placementData?.email || user?.email || 'Email not available'}</span>
-                                            </div>
-                                            <div className="contact-item">
-                                                <i className="fa fa-phone"></i>
-                                                <span>{placementData?.phone || 'Phone not available'}</span>
-                                            </div>
-                                            <div className="contact-item">
-                                                <i className="fa fa-graduation-cap"></i>
-                                                <span>{placementData?.collegeName || 'College Name Not Available'}</span>
-                                            </div>
-                                            {placementData?.collegeAddress && (
-                                                <div className="contact-item">
-                                                    <i className="fa fa-map-marker"></i>
-                                                    <span>{placementData.collegeAddress}</span>
-                                                </div>
-                                            )}
-                                            {placementData?.collegeOfficialEmail && (
-                                                <div className="contact-item">
-                                                    <i className="fa fa-envelope-o"></i>
-                                                    <span>Official: {placementData.collegeOfficialEmail}</span>
-                                                </div>
-                                            )}
-                                            {placementData?.collegeOfficialPhone && (
-                                                <div className="contact-item">
-                                                    <i className="fa fa-phone-square"></i>
-                                                    <span>Official: {placementData.collegeOfficialPhone}</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className="profile-right">
-                                        <button className="directory-btn" onClick={handleEditProfile}>
-                                            <i className="fa fa-edit"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                                {/* Notifications Panel - Beside Profile */}
-                                <div className="notifications-panel">
-                                    <PlacementNotificationsRedesigned />
-                                </div>
-                            </div>
 
-                            {/* Stats Cards */}
-                            <div className="stats-overview-section">
-                                <h3 className="section-title">Overview & Performance</h3>
-                                <div className="stats-cards-container">
-                                    <div className="stats-card">
-                                        <div className="stat-icon">
+                                    {/* Stats Cards */}
+                                    <div className="stats-overview-section">
+                                        <h3 className="section-title">Overview & Performance</h3>
+                                        <div className="stats-cards-container">
+                                            <div className="stats-card">
+                                                <div className="stat-icon">
+                                                    <i className="fa fa-users"></i>
+                                                </div>
+                                                <div className="stat-content">
+                                                    <p className="stat-label">Total Students</p>
+                                                    <h3 className="stat-value">{stats.totalStudents}</h3>
+                                                </div>
+                                            </div>
+                                            <div className="stats-card">
+                                                <div className="stat-icon">
+                                                    <i className="fa fa-graduation-cap"></i>
+                                                </div>
+                                                <div className="stat-content">
+                                                    <p className="stat-label">Active Batches</p>
+                                                    <h3 className="stat-value">{stats.activeBatches}</h3>
+                                                </div>
+                                            </div>
+                                            <div className="stats-card">
+                                                <div className="stat-icon">
+                                                    <i className="fa fa-book"></i>
+                                                </div>
+                                                <div className="stat-content">
+                                                    <p className="stat-label">Courses Covered</p>
+                                                    <h3 className="stat-value">{stats.coursesCovered}</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Recent Batch Activity */}
+                                    <div className="activity-section">
+                                        <div className="activity-header">
+                                            <div className="header-left">
+                                                <h3>Recent Batch Activity</h3>
+                                                <p className="activity-subtitle">Track your latest batch uploads and processing status</p>
+                                            </div>
+                                            <a href="#" className="manage-all-link">Manage All Batches</a>
+                                        </div>
+                                        <div className="activity-list">
+                                            {placementData?.fileHistory && placementData.fileHistory.length > 0 ? (
+                                                placementData.fileHistory.slice(0, 5).map((file, index) => (
+                                                    <div key={file._id || index} className="activity-item">
+                                                        <div className="activity-content">
+                                                            <div className="batch-name">{file.customName || 'CSE'}</div>
+                                                            <div className="file-name">{file.fileName}</div>
+                                                            <div className="activity-metadata">
+                                                                <span><i className="fa fa-university"></i>{placementData?.collegeName || 'College Name'}</span>
+                                                                <span><i className="fa fa-calendar"></i>{file.batch || 'Batch 2024'}</span>
+                                                                <span><i className="fa fa-clock-o"></i>{new Date(file.uploadedAt).toLocaleDateString()} {new Date(file.uploadedAt).toLocaleTimeString()}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="activity-action">
+                                                            <button className="view-btn" onClick={() => handleViewFile(file._id, file.fileName)}>
+                                                                <i className="fa fa-eye"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="no-activity">
+                                                    <i className="fa fa-history"></i>
+                                                    <p>No recent activity</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+
+                            {activeTab === 'students' && (
+                                <div className="students-section">
+                                    <div className="section-header">
+                                        <div className="header-left">
+                                            <h3>Student Directory</h3>
+                                            {viewingFileId && (
+                                                <div className="viewing-file-info">
+                                                    <i className="fa fa-file-excel-o"></i>
+                                                    <span>Viewing: {viewingFileName}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="student-count">{studentData.length} Students</div>
+                                    </div>
+                                    {studentData.length > 0 ? (
+                                        <div className="students-table">
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Email</th>
+                                                        <th>Phone</th>
+                                                        <th>Course</th>
+                                                        <th>Credits</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {studentData.map((student, index) => (
+                                                        <tr key={index}>
+                                                            <td>{student.name || '-'}</td>
+                                                            <td>{student.email || '-'}</td>
+                                                            <td>{student.phone || '-'}</td>
+                                                            <td>{student.course || 'Not Specified'}</td>
+                                                            <td>
+                                                                <span className="credits-badge">{student.credits || 0}</span>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    ) : (
+                                        <div className="no-data">
                                             <i className="fa fa-users"></i>
+                                            <h4>No student data available</h4>
+                                            <p>Upload a file and wait for admin approval to see students here</p>
                                         </div>
-                                        <div className="stat-content">
-                                            <p className="stat-label">Total Students</p>
-                                            <h3 className="stat-value">{stats.totalStudents}</h3>
-                                        </div>
-                                    </div>
-                                    <div className="stats-card">
-                                        <div className="stat-icon">
-                                            <i className="fa fa-graduation-cap"></i>
-                                        </div>
-                                        <div className="stat-content">
-                                            <p className="stat-label">Active Batches</p>
-                                            <h3 className="stat-value">{stats.activeBatches}</h3>
-                                        </div>
-                                    </div>
-                                    <div className="stats-card">
-                                        <div className="stat-icon">
-                                            <i className="fa fa-book"></i>
-                                        </div>
-                                        <div className="stat-content">
-                                            <p className="stat-label">Courses Covered</p>
-                                            <h3 className="stat-value">{stats.coursesCovered}</h3>
-                                        </div>
-                                    </div>
+                                    )}
                                 </div>
-                            </div>
+                            )}
 
-                            {/* Recent Batch Activity */}
-                            <div className="activity-section">
-                                <div className="activity-header">
-                                    <div className="header-left">
-                                        <h3>Recent Batch Activity</h3>
-                                        <p className="activity-subtitle">Track your latest batch uploads and processing status</p>
-                                    </div>
-                                    <a href="#" className="manage-all-link">Manage All Batches</a>
-                                </div>
-                                <div className="activity-list">
-                                    {placementData?.fileHistory && placementData.fileHistory.length > 0 ? (
-                                        placementData.fileHistory.slice(0, 5).map((file, index) => (
-                                            <div key={file._id || index} className="activity-item">
-                                                <div className="activity-content">
-                                                    <div className="batch-name">{file.customName || 'CSE'}</div>
-                                                    <div className="file-name">{file.fileName}</div>
-                                                    <div className="activity-metadata">
-                                                        <span><i className="fa fa-university"></i>{placementData?.collegeName || 'College Name'}</span>
-                                                        <span><i className="fa fa-calendar"></i>{file.batch || 'Batch 2024'}</span>
-                                                        <span><i className="fa fa-clock-o"></i>{new Date(file.uploadedAt).toLocaleDateString()} {new Date(file.uploadedAt).toLocaleTimeString()}</span>
+                            {activeTab === 'upload' && (
+                                <div className="upload-page">
+                                    <div className="upload-container">
+                                        <div className="upload-tips">
+                                            <h5>Upload Tips:</h5>
+                                            <ul>
+                                                <li>Ensure your file contains columns: Name, Email, Phone, Course, Credits</li>
+                                                <li>Use CSV or Excel format (.csv, .xlsx, .xls)</li>
+                                                <li>Maximum file size: 10MB</li>
+                                                <li>Remove empty rows and special characters</li>
+                                                <li>Verify all email addresses are valid</li>
+                                            </ul>
+                                        </div>
+                                        
+                                        {/* Configuration & Details Form */}
+                                        <div className="config-form-card">
+                                            <div className="form-header">
+                                                <h3>Configuration & Details</h3>
+                                                <p className="form-subtitle">Upload and configure student data files for batch processing</p>
+                                            </div>
+                                            
+                                            <div className="form-content">
+                                                {/* File Upload Area */}
+                                                <div className="upload-field">
+                                                    <label className="field-label">Student Data File *</label>
+                                                    <div 
+                                                        className="file-upload-area"
+                                                        onClick={() => !uploadingFile && document.getElementById('fileInput').click()}
+                                                    >
+                                                        <i className="fa fa-file-excel-o upload-icon"></i>
+                                                        <span className="upload-text">
+                                                            {uploadingFile ? 'Uploading...' : 
+                                                             selectedFileName ? selectedFileName : 
+                                                             'Click to select student data file (CSV, XLSX)'}
+                                                        </span>
+                                                        {uploadingFile && <div className="upload-spinner"></div>}
+                                                    </div>
+                                                    <input 
+                                                        id="fileInput"
+                                                        type="file" 
+                                                        accept=".xlsx,.xls,.csv"
+                                                        style={{display: 'none'}}
+                                                        onChange={(e) => {
+                                                            const file = e.target.files[0];
+                                                            if (file) {
+                                                                setSelectedFile(file);
+                                                                setSelectedFileName(file.name);
+                                                                console.log('File selected:', file.name);
+                                                            }
+                                                        }}
+                                                    />
+                                                </div>
+
+                                                {/* Form Fields */}
+                                                <div className="form-fields">
+                                                    <div className="field-group">
+                                                        <label className="field-label">Course Name</label>
+                                                        <input 
+                                                            type="text" 
+                                                            className="form-input"
+                                                            placeholder="Enter course name for this batch (optional)"
+                                                            value={courseName}
+                                                            onChange={(e) => setCourseName(e.target.value)}
+                                                        />
+                                                    </div>
+                                                    
+                                                    <div className="field-group">
+                                                        <label className="field-label">University</label>
+                                                        <input 
+                                                            type="text" 
+                                                            className="form-input"
+                                                            placeholder="Enter university name"
+                                                            value={university}
+                                                            onChange={(e) => setUniversity(e.target.value)}
+                                                        />
+                                                    </div>
+                                                    
+                                                    <div className="field-group">
+                                                        <label className="field-label">Batch</label>
+                                                        <input 
+                                                            type="text" 
+                                                            className="form-input"
+                                                            placeholder="Enter batch information (e.g., 2024, Spring 2024)"
+                                                            value={batch}
+                                                            onChange={(e) => setBatch(e.target.value)}
+                                                        />
                                                     </div>
                                                 </div>
-                                                <div className="activity-action">
-                                                    <button className="view-btn" onClick={() => handleViewFile(file._id, file.fileName)}>
-                                                        <i className="fa fa-eye"></i>
+
+                                                <div className="helper-text">
+                                                    <i className="fa fa-info-circle"></i>
+                                                    Files will be processed automatically after admin approval. Default naming will be used if custom name is not provided.
+                                                </div>
+                                                
+                                                <div className="sample-download">
+                                                    <button 
+                                                        className="sample-btn"
+                                                        onClick={() => {
+                                                            const link = document.createElement('a');
+                                                            link.href = '/assets/sample-student-data.csv';
+                                                            link.download = 'sample-student-data.csv';
+                                                            link.click();
+                                                        }}
+                                                    >
+                                                        <i className="fa fa-download"></i>
+                                                        Download Sample Data
                                                     </button>
                                                 </div>
                                             </div>
-                                        ))
-                                    ) : (
-                                        <div className="no-activity">
-                                            <i className="fa fa-history"></i>
-                                            <p>No recent activity</p>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </>
-                    )}
 
-                    {activeTab === 'students' && (
-                        <div className="students-section">
-                            <div className="section-header">
-                                <div className="header-left">
-                                    <h3>Student Directory</h3>
-                                    {viewingFileId && (
-                                        <div className="viewing-file-info">
-                                            <i className="fa fa-file-excel-o"></i>
-                                            <span>Viewing: {viewingFileName}</span>
+                                            {/* Action Buttons */}
+                                            <div className="form-actions">
+                                                <button className="btn-cancel">Cancel</button>
+                                                <button className="btn-upload" onClick={() => {
+                                                    if (selectedFile) {
+                                                        console.log('Manual upload triggered for:', selectedFileName);
+                                                        handleFileUpload({ target: { files: [selectedFile] } });
+                                                    } else {
+                                                        console.log('No file selected for upload');
+                                                        showWarning('Please select a file first');
+                                                    }
+                                                }} disabled={uploadingFile || !selectedFile}>
+                                                    <i className="fa fa-upload"></i>
+                                                    Upload Dataset
+                                                </button>
+                                            </div>
                                         </div>
-                                    )}
-                                </div>
-                                <div className="student-count">{studentData.length} Students</div>
-                            </div>
-                            {loading ? (
-                                <div className="loading-state">
-                                    <div className="spinner"></div>
-                                    <p>Loading student data...</p>
-                                </div>
-                            ) : studentData.length > 0 ? (
-                                <div className="students-table">
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Email</th>
-                                                <th>Phone</th>
-                                                <th>Course</th>
-                                                <th>Credits</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {studentData.map((student, index) => (
-                                                <tr key={index}>
-                                                    <td>{student.name || '-'}</td>
-                                                    <td>{student.email || '-'}</td>
-                                                    <td>{student.phone || '-'}</td>
-                                                    <td>{student.course || 'Not Specified'}</td>
-                                                    <td>
-                                                        <span className="credits-badge">{student.credits || 0}</span>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            ) : (
-                                <div className="no-data">
-                                    <i className="fa fa-users"></i>
-                                    <h4>No student data available</h4>
-                                    <p>Upload a file and wait for admin approval to see students here</p>
+                                    </div>
+
+                                    {/* Upload History Table */}
+                                    <div className="upload-history-section">
+                                        <div className="section-header">
+                                            <h3>Upload History</h3>
+                                            <div className="history-count">{placementData?.fileHistory?.length || 0} Files</div>
+                                        </div>
+                                        <div className="upload-history-table">
+                                            {console.log('File history data:', placementData?.fileHistory)}
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th>File Name</th>
+                                                        <th>Course Name</th>
+                                                        <th>University</th>
+                                                        <th>Batch</th>
+                                                        <th>Upload Date</th>
+                                                        <th>Status</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {placementData?.fileHistory && placementData.fileHistory.length > 0 ? (
+                                                        placementData.fileHistory.map((file, index) => {
+                                                            console.log('Rendering file:', file);
+                                                            return (
+                                                            <tr key={file._id || index}>
+                                                                <td>{file.fileName}</td>
+                                                                <td>{file.customName || '-'}</td>
+                                                                <td>{file.university || '-'}</td>
+                                                                <td>{file.batch || '-'}</td>
+                                                                <td>{new Date(file.uploadedAt).toLocaleDateString()}</td>
+                                                                <td>
+                                                                    <span className={`status-badge ${
+                                                                        file.status === 'processed' ? 'status-success' : 
+                                                                        file.status === 'approved' ? 'status-info' : 
+                                                                        file.status === 'rejected' ? 'status-danger' : 'status-warning'
+                                                                    }`}>
+                                                                        {file.status || 'Pending'}
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <button 
+                                                                        className="view-btn"
+                                                                        onClick={() => handleViewFile(file._id, file.fileName)}
+                                                                    >
+                                                                        <i className="fa fa-eye"></i>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                            );
+                                                        })
+                                                    ) : (
+                                                        <tr>
+                                                            <td colSpan="7" style={{textAlign: 'center', padding: '40px'}}>
+                                                                <i className="fa fa-history" style={{fontSize: '32px', marginBottom: '12px', opacity: '0.5'}}></i>
+                                                                <p>No upload history yet</p>
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
-                        </div>
-                    )}
-
-                    {activeTab === 'upload' && (
-                        <div className="upload-page">
-                            <div className="upload-container">
-                                <div className="upload-tips">
-                                    <h5>Upload Tips:</h5>
-                                    <ul>
-                                        <li>Ensure your file contains columns: Name, Email, Phone, Course, Credits</li>
-                                        <li>Use CSV or Excel format (.csv, .xlsx, .xls)</li>
-                                        <li>Maximum file size: 10MB</li>
-                                        <li>Remove empty rows and special characters</li>
-                                        <li>Verify all email addresses are valid</li>
-                                    </ul>
-                                </div>
-                                
-                                {/* Configuration & Details Form */}
-                                <div className="config-form-card">
-                                    <div className="form-header">
-                                        <h3>Configuration & Details</h3>
-                                        <p className="form-subtitle">Upload and configure student data files for batch processing</p>
-                                    </div>
-                                    
-                                    <div className="form-content">
-                                        {/* File Upload Area */}
-                                        <div className="upload-field">
-                                            <label className="field-label">Student Data File *</label>
-                                            <div 
-                                                className="file-upload-area"
-                                                onClick={() => !uploadingFile && document.getElementById('fileInput').click()}
-                                            >
-                                                <i className="fa fa-file-excel-o upload-icon"></i>
-                                                <span className="upload-text">
-                                                    {uploadingFile ? 'Uploading...' : 
-                                                     selectedFileName ? selectedFileName : 
-                                                     'Click to select student data file (CSV, XLSX)'}
-                                                </span>
-                                                {uploadingFile && <div className="upload-spinner"></div>}
-                                            </div>
-                                            <input 
-                                                id="fileInput"
-                                                type="file" 
-                                                accept=".xlsx,.xls,.csv"
-                                                style={{display: 'none'}}
-                                                onChange={(e) => {
-                                                    const file = e.target.files[0];
-                                                    if (file) {
-                                                        setSelectedFile(file);
-                                                        setSelectedFileName(file.name);
-                                                        console.log('File selected:', file.name);
-                                                    }
-                                                }}
-                                            />
-                                        </div>
-
-                                        {/* Form Fields */}
-                                        <div className="form-fields">
-                                            <div className="field-group">
-                                                <label className="field-label">Course Name</label>
-                                                <input 
-                                                    type="text" 
-                                                    className="form-input"
-                                                    placeholder="Enter course name for this batch (optional)"
-                                                    value={courseName}
-                                                    onChange={(e) => setCourseName(e.target.value)}
-                                                />
-                                            </div>
-                                            
-                                            <div className="field-group">
-                                                <label className="field-label">University</label>
-                                                <input 
-                                                    type="text" 
-                                                    className="form-input"
-                                                    placeholder="Enter university name"
-                                                    value={university}
-                                                    onChange={(e) => setUniversity(e.target.value)}
-                                                />
-                                            </div>
-                                            
-                                            <div className="field-group">
-                                                <label className="field-label">Batch</label>
-                                                <input 
-                                                    type="text" 
-                                                    className="form-input"
-                                                    placeholder="Enter batch information (e.g., 2024, Spring 2024)"
-                                                    value={batch}
-                                                    onChange={(e) => setBatch(e.target.value)}
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="helper-text">
-                                            <i className="fa fa-info-circle"></i>
-                                            Files will be processed automatically after admin approval. Default naming will be used if custom name is not provided.
-                                        </div>
-                                        
-                                        <div className="sample-download">
-                                            <button 
-                                                className="sample-btn"
-                                                onClick={() => {
-                                                    const link = document.createElement('a');
-                                                    link.href = '/assets/sample-student-data.csv';
-                                                    link.download = 'sample-student-data.csv';
-                                                    link.click();
-                                                }}
-                                            >
-                                                <i className="fa fa-download"></i>
-                                                Download Sample Data
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {/* Action Buttons */}
-                                    <div className="form-actions">
-                                        <button className="btn-cancel">Cancel</button>
-                                        <button className="btn-upload" onClick={() => {
-                                            if (selectedFile) {
-                                                console.log('Manual upload triggered for:', selectedFileName);
-                                                handleFileUpload({ target: { files: [selectedFile] } });
-                                            } else {
-                                                console.log('No file selected for upload');
-                                                showWarning('Please select a file first');
-                                            }
-                                        }} disabled={uploadingFile || !selectedFile}>
-                                            <i className="fa fa-upload"></i>
-                                            Upload Dataset
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Upload History Table */}
-                            <div className="upload-history-section">
-                                <div className="section-header">
-                                    <h3>Upload History</h3>
-                                    <div className="history-count">{placementData?.fileHistory?.length || 0} Files</div>
-                                </div>
-                                <div className="upload-history-table">
-                                    {console.log('File history data:', placementData?.fileHistory)}
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>File Name</th>
-                                                <th>Course Name</th>
-                                                <th>University</th>
-                                                <th>Batch</th>
-                                                <th>Upload Date</th>
-                                                <th>Status</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {placementData?.fileHistory && placementData.fileHistory.length > 0 ? (
-                                                placementData.fileHistory.map((file, index) => {
-                                                    console.log('Rendering file:', file);
-                                                    return (
-                                                    <tr key={file._id || index}>
-                                                        <td>{file.fileName}</td>
-                                                        <td>{file.customName || '-'}</td>
-                                                        <td>{file.university || '-'}</td>
-                                                        <td>{file.batch || '-'}</td>
-                                                        <td>{new Date(file.uploadedAt).toLocaleDateString()}</td>
-                                                        <td>
-                                                            <span className={`status-badge ${
-                                                                file.status === 'processed' ? 'status-success' : 
-                                                                file.status === 'approved' ? 'status-info' : 
-                                                                file.status === 'rejected' ? 'status-danger' : 'status-warning'
-                                                            }`}>
-                                                                {file.status || 'Pending'}
-                                                            </span>
-                                                        </td>
-                                                        <td>
-                                                            <button 
-                                                                className="view-btn"
-                                                                onClick={() => handleViewFile(file._id, file.fileName)}
-                                                            >
-                                                                <i className="fa fa-eye"></i>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                    );
-                                                })
-                                            ) : (
-                                                <tr>
-                                                    <td colSpan="7" style={{textAlign: 'center', padding: '40px'}}>
-                                                        <i className="fa fa-history" style={{fontSize: '32px', marginBottom: '12px', opacity: '0.5'}}></i>
-                                                        <p>No upload history yet</p>
-                                                    </td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                        </>
                     )}
                 </div>
             </div>
