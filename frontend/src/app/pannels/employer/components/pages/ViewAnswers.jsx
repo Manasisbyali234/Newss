@@ -8,6 +8,7 @@ export default function ViewAnswers() {
   const [attempt, setAttempt] = useState(null);
   const [assessment, setAssessment] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchAnswers();
@@ -16,25 +17,39 @@ export default function ViewAnswers() {
   const fetchAnswers = async () => {
     try {
       const token = localStorage.getItem('employerToken');
+      console.log('Fetching answers for attemptId:', attemptId);
+      console.log('Using token:', token ? 'Token exists' : 'No token found');
+      
       const response = await axios.get(`http://localhost:5000/api/employer/assessment-attempts/${attemptId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      
+      console.log('API Response:', response.data);
+      
       if (response.data.success) {
         console.log('Full attempt data:', JSON.stringify(response.data.attempt, null, 2));
         response.data.attempt.answers?.forEach((ans, idx) => {
           console.log(`Answer ${idx}:`, {
             questionIndex: ans.questionIndex,
+            selectedAnswer: ans.selectedAnswer,
             textAnswer: ans.textAnswer,
             textAnswerType: typeof ans.textAnswer,
             textAnswerLength: ans.textAnswer?.length,
-            hasUploadedFile: !!ans.uploadedFile
+            hasUploadedFile: !!ans.uploadedFile,
+            uploadedFile: ans.uploadedFile,
+            fullAnswer: ans
           });
         });
         setAttempt(response.data.attempt);
         setAssessment(response.data.attempt.assessmentId);
+      } else {
+        console.error('API returned success: false', response.data);
       }
     } catch (error) {
       console.error('Error fetching answers:', error);
+      console.error('Error response:', error.response?.data);
+      console.error('Error status:', error.response?.status);
+      setError(error.response?.data?.message || error.message || 'Failed to load answers');
     } finally {
       setLoading(false);
     }
@@ -44,6 +59,36 @@ export default function ViewAnswers() {
     return (
       <div style={{ padding: '2rem', textAlign: 'center' }}>
         <p>Loading answers...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ padding: '2rem', textAlign: 'center' }}>
+        <div style={{ 
+          background: '#fef2f2', 
+          border: '1px solid #fecaca', 
+          borderRadius: '8px', 
+          padding: '1rem',
+          color: '#dc2626'
+        }}>
+          <h3>Error Loading Answers</h3>
+          <p>{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            style={{
+              background: '#dc2626',
+              color: 'white',
+              border: 'none',
+              padding: '0.5rem 1rem',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            Retry
+          </button>
+        </div>
       </div>
     );
   }
@@ -64,6 +109,13 @@ export default function ViewAnswers() {
   console.log('Total answers:', attempt.answers?.length);
   console.log('Displayed answers:', allAnswers.length);
   console.log('All answers data:', JSON.stringify(attempt.answers, null, 2));
+
+  // Check if answers are empty submissions
+  const hasEmptyAnswers = allAnswers.some(a => 
+    a.selectedAnswer === null && 
+    a.textAnswer === null && 
+    !a.uploadedFile
+  );
 
   return (
     <div style={{ 
@@ -145,7 +197,26 @@ export default function ViewAnswers() {
             </p>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <div>
+            {hasEmptyAnswers && (
+              <div style={{
+                background: '#fff3cd',
+                border: '1px solid #ffeaa7',
+                borderRadius: '8px',
+                padding: '1rem',
+                marginBottom: '1.5rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}>
+                <i className="fa fa-exclamation-triangle" style={{ color: '#f39c12' }}></i>
+                <span style={{ color: '#856404' }}>
+                  Some questions were submitted without answers. These appear as empty responses below.
+                </span>
+              </div>
+            )}
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {allAnswers.map((answer, index) => {
               const question = assessment.questions[answer.questionIndex];
               const isCorrect = question.type === 'mcq' && parseInt(answer.selectedAnswer) === parseInt(question.correctAnswer);
@@ -368,15 +439,53 @@ export default function ViewAnswers() {
                           )}
                         </div>
                       ) : (
-                        <div>
-                          <p style={{ 
-                            color: '#9ca3af', 
-                            fontSize: '1rem', 
-                            fontStyle: 'italic',
-                            margin: 0
+                        <div style={{ 
+                          background: '#f9fafb', 
+                          padding: '1.5rem', 
+                          borderRadius: '8px',
+                          borderLeft: `4px solid ${
+                            question.type === 'image' ? '#8b5cf6' : 
+                            question.type === 'upload' ? '#f59e0b' : '#10b981'
+                          }`
+                        }}>
+                          <div style={{ 
+                            color: '#6b7280', 
+                            fontSize: '0.875rem', 
+                            fontWeight: '600',
+                            marginBottom: '0.75rem',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em'
                           }}>
-                            No answer provided
-                          </p>
+                            Expected: {question.type === 'image' ? 'Image Upload' : question.type === 'upload' ? 'File Upload' : 'Text Answer'}
+                          </div>
+                          <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.75rem',
+                            padding: '1rem',
+                            background: '#fef2f2',
+                            borderRadius: '6px',
+                            border: '1px solid #fecaca'
+                          }}>
+                            <i className="fa fa-exclamation-circle" style={{ color: '#ef4444', fontSize: '1.25rem' }}></i>
+                            <div>
+                              <p style={{ 
+                                color: '#dc2626', 
+                                fontSize: '0.875rem', 
+                                fontWeight: '600',
+                                margin: '0 0 0.25rem 0'
+                              }}>
+                                No {question.type === 'image' ? 'image' : question.type === 'upload' ? 'file' : 'answer'} submitted
+                              </p>
+                              <p style={{ 
+                                color: '#7f1d1d', 
+                                fontSize: '0.75rem',
+                                margin: 0
+                              }}>
+                                The candidate submitted this question but did not provide any {question.type === 'image' ? 'image' : question.type === 'upload' ? 'file' : 'text answer'}.
+                              </p>
+                            </div>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -395,6 +504,7 @@ export default function ViewAnswers() {
                 </div>
               );
             })}
+            </div>
           </div>
         )}
       </div>

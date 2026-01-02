@@ -470,7 +470,7 @@ exports.submitAnswer = async (req, res) => {
     const answerData = {
       questionIndex,
       selectedAnswer: question.type === 'mcq' ? parseInt(selectedAnswer) : null,
-      textAnswer: question.type === 'subjective' && textAnswer ? textAnswer : null,
+      textAnswer: (question.type === 'subjective' || question.type === 'image' || question.type === 'upload') && textAnswer ? textAnswer : null,
       timeSpent: timeSpent || 0,
       answeredAt: new Date()
     };
@@ -727,17 +727,10 @@ exports.submitAssessment = async (req, res) => {
         } else {
           console.warn(`Invalid MCQ answer ${selectedAnswer} for question ${answer.questionIndex}`);
         }
-      } else if (question.type === 'subjective') {
-        // For subjective questions, just add marks (manual evaluation needed)
-        if (answer.textAnswer && answer.textAnswer.trim()) {
-          // For now, give full marks for answered subjective questions
-          // This should be manually evaluated later
-          score += (question.marks || 1);
-          correctAnswers++;
-        }
-      } else if (question.type === 'upload' || question.type === 'image') {
-        // For upload questions, give marks if file is uploaded
-        if (answer.uploadedFile) {
+      } else if (question.type === 'subjective' || question.type === 'image' || question.type === 'upload') {
+        // For subjective, image, and upload questions, check for text answers or uploaded files
+        if ((answer.textAnswer && answer.textAnswer.trim()) || answer.uploadedFile) {
+          // Give full marks for answered questions (manual evaluation may be needed)
           score += (question.marks || 1);
           correctAnswers++;
         }
@@ -986,15 +979,25 @@ exports.getAssessmentResults = async (req, res) => {
 // Employer: Get Attempt Details
 exports.getAttemptDetails = async (req, res) => {
   try {
+    console.log('getAttemptDetails called with attemptId:', req.params.attemptId);
+    console.log('Employer ID:', req.user._id);
+    
     const attempt = await AssessmentAttempt.findById(req.params.attemptId)
       .populate('candidateId', 'name email phone')
       .populate('assessmentId');
     
+    console.log('Found attempt:', !!attempt);
+    
     if (!attempt) {
+      console.log('Attempt not found for ID:', req.params.attemptId);
       return res.status(404).json({ success: false, message: 'Attempt not found' });
     }
     
+    console.log('Assessment employerId:', attempt.assessmentId?.employerId);
+    console.log('Current user ID:', req.user._id);
+    
     if (attempt.assessmentId.employerId.toString() !== req.user._id.toString()) {
+      console.log('Unauthorized access attempt');
       return res.status(403).json({ success: false, message: 'Unauthorized' });
     }
     
