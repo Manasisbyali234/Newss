@@ -1044,53 +1044,7 @@ function EmployerDetails() {
                                                 border: 'none',
                                                 borderRadius: '8px'
                                             }}
-                                            onLoad={(e) => {
-                                                console.log('PDF loaded successfully');
-                                                // Hide fallback message if PDF loads
-                                                const fallback = e.target.parentNode.querySelector('.pdf-fallback');
-                                                if (fallback) fallback.style.display = 'none';
-                                            }}
-                                            onError={(e) => {
-                                                console.error('PDF loading error:', e);
-                                                e.target.style.display = 'none';
-                                                const fallback = e.target.parentNode.querySelector('.pdf-fallback');
-                                                if (fallback) fallback.style.display = 'block';
-                                            }}
                                         ></iframe>
-                                        <div className="pdf-fallback" style={{
-                                            display: 'none', 
-                                            padding: '40px', 
-                                            textAlign: 'center', 
-                                            color: '#666',
-                                            backgroundColor: '#f8f9fa',
-                                            borderRadius: '8px',
-                                            border: '2px dashed #dee2e6'
-                                        }}>
-                                            <i className="fa fa-file-pdf" style={{fontSize: '4rem', marginBottom: '20px', color: '#dc3545'}}></i>
-                                            <h5 style={{marginBottom: '15px', color: '#495057'}}>Unable to preview PDF</h5>
-                                            <p style={{marginBottom: '20px', color: '#6c757d'}}>The PDF document cannot be displayed in the browser preview.</p>
-                                            <div style={{display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap'}}>
-                                                <a 
-                                                    href={currentImage} 
-                                                    target="_blank" 
-                                                    rel="noopener noreferrer" 
-                                                    className="btn btn-primary"
-                                                    style={{backgroundColor: '#ff6b35', borderColor: '#ff6b35', textDecoration: 'none'}}
-                                                >
-                                                    <i className="fa fa-external-link-alt me-2"></i>
-                                                    Open in New Tab
-                                                </a>
-                                                <a 
-                                                    href={currentImage} 
-                                                    download
-                                                    className="btn btn-outline-secondary"
-                                                    style={{textDecoration: 'none'}}
-                                                >
-                                                    <i className="fa fa-download me-2"></i>
-                                                    Download PDF
-                                                </a>
-                                            </div>
-                                        </div>
                                     </div>
                                 ) : (
                                     <img src={currentImage} alt="Preview" className="modal-image" style={{

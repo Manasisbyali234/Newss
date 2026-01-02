@@ -661,6 +661,16 @@
     align-items: center;
     gap: 8px;
     transition: all 0.3s ease;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.pdf-fallback > div {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 .pdf-fallback .btn:hover {
