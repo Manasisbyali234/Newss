@@ -283,7 +283,16 @@ function SignUpPopup() {
 
         if (!termsAccepted.candidate) {
             setCurrentRole('candidate');
-            setShowTermsModal(true);
+            // Close signup modal first
+            const modal = document.getElementById('sign_up_popup');
+            if (modal) {
+                const modalInstance = window.bootstrap.Modal.getInstance(modal) || new window.bootstrap.Modal(modal);
+                modalInstance.hide();
+            }
+            // Show terms modal after a brief delay
+            setTimeout(() => {
+                setShowTermsModal(true);
+            }, 300);
             return;
         }
         
@@ -344,7 +353,16 @@ function SignUpPopup() {
 
         if (!termsAccepted.employer) {
             setCurrentRole('employer');
-            setShowTermsModal(true);
+            // Close signup modal first
+            const modal = document.getElementById('sign_up_popup');
+            if (modal) {
+                const modalInstance = window.bootstrap.Modal.getInstance(modal) || new window.bootstrap.Modal(modal);
+                modalInstance.hide();
+            }
+            // Show terms modal after a brief delay
+            setTimeout(() => {
+                setShowTermsModal(true);
+            }, 300);
             return;
         }
         
@@ -408,7 +426,16 @@ function SignUpPopup() {
 
         if (!termsAccepted.placement) {
             setCurrentRole('placement');
-            setShowTermsModal(true);
+            // Close signup modal first
+            const modal = document.getElementById('sign_up_popup');
+            if (modal) {
+                const modalInstance = window.bootstrap.Modal.getInstance(modal) || new window.bootstrap.Modal(modal);
+                modalInstance.hide();
+            }
+            // Show terms modal after a brief delay
+            setTimeout(() => {
+                setShowTermsModal(true);
+            }, 300);
             return;
         }
         
@@ -462,6 +489,13 @@ function SignUpPopup() {
         setTermsAccepted(prev => ({ ...prev, [currentRole]: true }));
         setShowTermsModal(false);
         
+        // Re-open signup modal and trigger form submission
+        const modal = document.getElementById('sign_up_popup');
+        if (modal) {
+            const modalInstance = window.bootstrap.Modal.getInstance(modal) || new window.bootstrap.Modal(modal);
+            modalInstance.show();
+        }
+        
         // Trigger form submission after accepting terms
         setTimeout(() => {
             if (currentRole === 'candidate') {
@@ -471,7 +505,7 @@ function SignUpPopup() {
             } else if (currentRole === 'placement') {
                 document.getElementById('placement-submit-btn')?.click();
             }
-        }, 100);
+        }, 300);
     };
 
     return (
