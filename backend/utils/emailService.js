@@ -1049,6 +1049,8 @@ const sendCandidateDetailsUpdatedEmail = async (email, name, credits = 3) => {
 
   await transporter.sendMail(mailOptions);
 };
+
+const sendPlacementOfficerApprovalEmail = async (email, name) => {
   const transporter = createTransport();
   const loginUrl = `${process.env.FRONTEND_URL || 'https://taleglobal.net'}/`;
   
