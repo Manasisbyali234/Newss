@@ -271,33 +271,51 @@
 }
 
 .status-badge {
-    padding: 8px 16px;
-    border-radius: 9999px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    padding: 6px 12px !important;
+    border-radius: 6px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.3px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    white-space: nowrap !important;
+    transition: all 0.2s ease !important;
+    min-width: 90px !important;
+    height: 28px !important;
+    line-height: 1 !important;
+    border: 1px solid transparent !important;
 }
 
 .status-pending {
-    background: rgba(255, 122, 0, 0.08) !important;
-    color: #FF7A00 !important;
-    border: 1px solid #FF7A00 !important;
+    background-color: #fff7ed !important;
+    color: #c2410c !important;
+    border-color: #fdba74 !important;
 }
 
 .status-approved {
-    background: rgba(255, 122, 0, 0.08) !important;
-    color: #FF7A00 !important;
-    border: 1px solid #FF7A00 !important;
+    background-color: #f0fdf4 !important;
+    color: #15803d !important;
+    border-color: #86efac !important;
 }
 
 .status-rejected {
-    background: rgba(255, 122, 0, 0.08) !important;
-    color: #FF7A00 !important;
-    border: 1px solid #FF7A00 !important;
+    background-color: #fef2f2 !important;
+    color: #b91c1c !important;
+    border-color: #fecaca !important;
+}
+
+.status-incomplete {
+    background-color: #f9fafb !important;
+    color: #374151 !important;
+    border-color: #d1d5db !important;
+}
+
+/* Icon support inside badge if needed */
+.status-badge i {
+    font-size: 10px !important;
 }
 
 .action-buttons {
@@ -581,6 +599,23 @@
     .admin-emp-manage-container .panel-body {
         padding: 15px !important;
     }
+
+    .status-badge {
+        padding: 4px 10px !important;
+        font-size: 0.65rem !important;
+        min-width: 80px !important;
+        line-height: 1.2 !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .status-badge {
+        padding: 2px 8px !important;
+        font-size: 0.55rem !important;
+        max-width: 85px !important;
+        min-width: 75px !important;
+        line-height: 1.1 !important;
+    }
 }
 
 @media (max-width: 480px) {
@@ -608,14 +643,4 @@
 
 [data-aos="zoom-in"] {
     animation-duration: 0.5s;
-}
-
-/* Force orange text color for status badges - Override all other styles */
-.status-badge,
-span.status-badge,
-.status-pending,
-.status-approved,
-.status-rejected {
-    color: #ff6b35 !important;
-    -webkit-text-fill-color: #ff6b35 !important;
 }

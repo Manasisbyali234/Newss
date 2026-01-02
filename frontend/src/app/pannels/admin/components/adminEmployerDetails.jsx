@@ -141,7 +141,14 @@ function EmployerDetails() {
             console.log('Object URL created successfully');
             
             setCurrentImage(imageUrl);
-            setCurrentImageType(blob.type);
+            // Better content type detection
+            if (contentType && contentType.includes('pdf')) {
+                setCurrentImageType('application/pdf');
+            } else if (blob.type && blob.type.includes('pdf')) {
+                setCurrentImageType('application/pdf');
+            } else {
+                setCurrentImageType('image');
+            }
             setShowImageModal(true);
             
             // Clean up the URL after modal is closed
@@ -1021,10 +1028,23 @@ function EmployerDetails() {
                         {!isMinimized && (
                             <div className="text-center" style={{ width: '100%' }}>
                                 {currentImageType === 'application/pdf' ? (
-                                    <iframe src={currentImage} className="pdf-viewer" title="PDF Preview"></iframe>
+                                    <iframe 
+                                        src={currentImage} 
+                                        className="pdf-viewer" 
+                                        title="PDF Preview"
+                                        onError={(e) => {
+                                            console.error('PDF loading error:', e);
+                                            e.target.style.display = 'none';
+                                            e.target.nextSibling.style.display = 'block';
+                                        }}
+                                    ></iframe>
                                 ) : (
                                     <img src={currentImage} alt="Preview" className="modal-image" />
                                 )}
+                                <div style={{display: 'none', padding: '20px', textAlign: 'center', color: '#666'}}>
+                                    <i className="fa fa-file-pdf" style={{fontSize: '3rem', marginBottom: '10px'}}></i>
+                                    <p>Unable to preview PDF. <a href={currentImage} target="_blank" rel="noopener noreferrer" style={{color: '#ff6b35'}}>Click here to open in new tab</a></p>
+                                </div>
                             </div>
                         )}
                     </div>

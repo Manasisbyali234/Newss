@@ -71,7 +71,7 @@ body {
 
 
 
-* {
+*:not(.modal):not(.modal *):not(.image-modal-content):not(.image-modal-content *) {
   color-scheme: light only !important;
 }
 

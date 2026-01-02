@@ -5,7 +5,7 @@ const Candidate = require('../models/Candidate');
 const CandidateProfile = require('../models/CandidateProfile');
 const PlacementCandidate = require('../models/PlacementCandidate');
 const { createNotification } = require('./notificationController');
-const { sendWelcomeEmail, sendPlacementCandidateWelcomeEmail } = require('../utils/emailService');
+const { sendApprovalEmail, sendPlacementCandidateWelcomeEmail } = require('../utils/emailService');
 const XLSX = require('xlsx');
 const { base64ToBuffer } = require('../utils/base64Helper');
 const { emitCreditUpdate, emitBulkCreditUpdate } = require('../utils/websocket');
@@ -56,7 +56,7 @@ exports.registerPlacement = async (req, res) => {
 
       // Send welcome email with password creation link
       try {
-        await sendWelcomeEmail(placement.email, placement.name, 'placement', placement.collegeName);
+        await sendApprovalEmail(placement.email, placement.name, 'placement', placement.collegeName);
       } catch (emailError) {
         console.error('Welcome email failed for placement officer:', emailError);
         return res.status(500).json({ success: false, message: 'Failed to send welcome email' });
@@ -101,7 +101,7 @@ exports.registerPlacement = async (req, res) => {
 
     // Send welcome email
     try {
-      await sendWelcomeEmail(placement.email, placement.name, 'placement', placement.collegeName);
+      await sendApprovalEmail(placement.email, placement.name, 'placement', placement.collegeName);
     } catch (emailError) {
       console.error('Welcome email failed for placement officer:', emailError);
     }

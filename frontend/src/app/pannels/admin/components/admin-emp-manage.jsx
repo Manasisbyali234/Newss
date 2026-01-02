@@ -237,13 +237,48 @@ function AdminEmployersAllRequest() {
                                                     {employer.profileSubmittedAt ? formatDate(employer.profileSubmittedAt) : 'Not submitted'}
                                                 </td>
                                                 <td style={{textAlign: 'center'}}>
-                                                    <span className={`status-badge ${
-                                                        employer.isApproved ? 'status-approved' :
-                                                        employer.profileSubmittedForReview ? 'status-pending' : 'status-incomplete'
-                                                    }`}>
-                                                        {employer.isApproved ? 'Approved' : 
-                                                         employer.profileSubmittedForReview ? 'Under Review' : 'Profile Incomplete'}
-                                                    </span>
+                                                    {(() => {
+                                                        const getStatusStyle = (status) => {
+                                                            switch(status) {
+                                                                case 'approved':
+                                                                    return { background: 'rgba(255, 122, 0, 0.08)', color: '#FF7A00', borderColor: '#FF7A00' };
+                                                                case 'pending':
+                                                                    return { background: 'rgba(255, 122, 0, 0.08)', color: '#FF7A00', borderColor: '#FF7A00' };
+                                                                case 'incomplete':
+                                                                    return { background: 'rgba(255, 122, 0, 0.08)', color: '#FF7A00', borderColor: '#FF7A00' };
+                                                                default:
+                                                                    return { background: 'rgba(255, 122, 0, 0.08)', color: '#FF7A00', borderColor: '#FF7A00' };
+                                                            }
+                                                        };
+                                                        
+                                                        const status = employer.isApproved ? 'approved' : 
+                                                                      employer.profileSubmittedForReview ? 'pending' : 'incomplete';
+                                                        const statusText = employer.isApproved ? 'Approved' : 
+                                                                          employer.profileSubmittedForReview ? 'Under Review' : 'Profile Incomplete';
+                                                        const style = getStatusStyle(status);
+                                                        
+                                                        return (
+                                                            <span style={{
+                                                                padding: '6px 12px',
+                                                                borderRadius: '6px',
+                                                                fontSize: '11px',
+                                                                fontWeight: '600',
+                                                                textTransform: 'uppercase',
+                                                                letterSpacing: '0.3px',
+                                                                display: 'inline-flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                whiteSpace: 'nowrap',
+                                                                minWidth: '90px',
+                                                                height: '28px',
+                                                                lineHeight: '1',
+                                                                border: '1px solid',
+                                                                ...style
+                                                            }}>
+                                                                {statusText}
+                                                            </span>
+                                                        );
+                                                    })()} 
                                                 </td>
                                                 <td style={{textAlign: 'center'}}>
                                                     <div className="action-buttons">
