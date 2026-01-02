@@ -65,7 +65,7 @@
 }
 
 .sidebar-close {
-    display: none;
+    display: none !important;
     background: none;
     border: none;
     font-size: 20px;
@@ -82,7 +82,7 @@
 }
 
 .mobile-toggle {
-    display: none;
+    display: none !important;
     background: none;
     border: none;
     font-size: 20px;
@@ -162,10 +162,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 240px;
+    right: 0;
     z-index: 100;
-    width: 100%;
+    width: auto;
 }
 
 .search-container {
@@ -225,6 +227,7 @@
     padding: 24px;
     flex: 1;
     overflow-y: auto;
+    margin-top: 73px;
 }
 
 /* Profile Sections - Personal Details and Placement Details */
@@ -1631,11 +1634,11 @@
     }
 
     .sidebar-close {
-        display: block;
+        display: block !important;
     }
 
     .mobile-toggle {
-        display: block;
+        display: block !important;
     }
     
     .dashboard-container {
@@ -1648,9 +1651,10 @@
     }
     
     .top-header {
+        position: fixed;
         padding: 24px 16px;
         width: 100% !important;
-        left: 0;
+        left: 0 !important;
         right: 0;
         margin: 0 !important;
     }
