@@ -346,7 +346,7 @@ export default function AssessmentResults() {
                                   const candidateId = typeof result.candidateId === 'object' ? result.candidateId._id : result.candidateId;
                                   const jobId = typeof result.jobId === 'object' ? result.jobId._id : result.jobId;
                                   
-                                  const response = await axios.get(`http://localhost:5000/api/employer/find-application?candidateId=${candidateId}&jobId=${jobId}`, {
+                                  const response = await axios.get(`${process.env.REACT_APP_API_URL || 'https://taleglobal.net'}/api/employer/find-application?candidateId=${candidateId}&jobId=${jobId}`, {
                                     headers: { Authorization: `Bearer ${token}` }
                                   });
                                   
@@ -439,42 +439,74 @@ export default function AssessmentResults() {
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
                 {selectedCaptures.map((capture, index) => {
-                  console.log(`Capture ${index + 1}:`, capture);
-                  const imageUrl = capture.startsWith('http') ? capture : `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${capture}`;
-                  console.log(`Image URL ${index + 1}:`, imageUrl);
+                  console.log('Capture data:', capture); // Debug log
+                  
+                  // Handle different capture formats
+                  let imagePath = '';
+                  if (typeof capture === 'string') {
+                    imagePath = capture;
+                  } else if (capture && capture.path) {
+                    imagePath = capture.path;
+                  } else if (capture && capture.url) {
+                    imagePath = capture.url;
+                  }
+                  
+                  if (!imagePath) {
+                    return (
+                      <div key={index} style={{ border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden' }}>
+                        <div style={{ 
+                          height: '200px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: '#f9fafb',
+                          color: '#6b7280'
+                        }}>
+                          <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📷</div>
+                          <div>No image path</div>
+                        </div>
+                        <div style={{ padding: '0.5rem', background: '#f9fafb', textAlign: 'center' }}>
+                          <small style={{ color: '#6b7280' }}>Capture {index + 1}</small>
+                        </div>
+                      </div>
+                    );
+                  }
+                  
+                  const imageUrl = imagePath.startsWith('http') ? imagePath : `${process.env.REACT_APP_API_URL || 'https://taleglobal.net'}${imagePath}`;
                   
                   return (
                     <div key={index} style={{ border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden' }}>
-                      <img 
-                        src={imageUrl}
-                        alt={`Capture ${index + 1}`}
-                        style={{ width: '100%', height: '200px', objectFit: 'cover', display: 'none' }}
-                        onLoad={(e) => {
-                          console.log(`✅ Image ${index + 1} loaded successfully`);
-                          e.target.style.display = 'block';
-                          e.target.nextSibling.style.display = 'none';
-                        }}
-                        onError={(e) => {
-                          console.error(`❌ Image ${index + 1} load error:`);
-                          console.error('  Path:', capture);
-                          console.error('  Full URL:', imageUrl);
-                          e.target.style.display = 'none';
-                          e.target.nextSibling.style.display = 'block';
-                        }}
-                      />
-                      <div style={{ 
-                        display: 'block', 
-                        padding: '2rem', 
-                        textAlign: 'center', 
-                        color: '#ef4444',
-                        background: '#fef2f2',
-                        border: '2px dashed #fca5a5',
-                        borderRadius: '8px'
-                      }}>
-                        <i className="fa fa-exclamation-triangle" style={{ fontSize: '2rem', marginBottom: '1rem' }}></i><br/>
-                        <strong>Capture Upload Failed</strong><br/>
-                        <small style={{ color: '#7f1d1d' }}>Image file not found on server</small><br/>
-                        <small style={{ color: '#991b1b', fontFamily: 'monospace' }}>{capture}</small>
+                      <div style={{ position: 'relative', height: '200px' }}>
+                        <img 
+                          src={imageUrl}
+                          alt={`Capture ${index + 1}`}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          onError={(e) => {
+                            console.log('Image load failed for:', imageUrl);
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'flex';
+                          }}
+                        />
+                        <div style={{ 
+                          display: 'none',
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: '#fef2f2',
+                          color: '#dc2626',
+                          textAlign: 'center',
+                          padding: '1rem'
+                        }}>
+                          <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📷</div>
+                          <div style={{ fontWeight: '600', marginBottom: '0.25rem' }}>Image Not Available</div>
+                          <div style={{ fontSize: '0.75rem', color: '#7f1d1d' }}>File not found on server</div>
+                        </div>
                       </div>
                       <div style={{ padding: '0.5rem', background: '#f9fafb', textAlign: 'center' }}>
                         <small style={{ color: '#6b7280' }}>Capture {index + 1}</small>
