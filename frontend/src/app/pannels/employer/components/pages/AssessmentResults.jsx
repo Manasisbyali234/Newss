@@ -439,17 +439,7 @@ export default function AssessmentResults() {
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
                 {selectedCaptures.map((capture, index) => {
-                  console.log('Capture data:', capture); // Debug log
-                  
-                  // Handle different capture formats
-                  let imagePath = '';
-                  if (typeof capture === 'string') {
-                    imagePath = capture;
-                  } else if (capture && capture.path) {
-                    imagePath = capture.path;
-                  } else if (capture && capture.url) {
-                    imagePath = capture.url;
-                  }
+                  const imagePath = typeof capture === 'string' ? capture : (capture?.path || capture?.url || capture?.data || '');
                   
                   if (!imagePath) {
                     return (
@@ -464,7 +454,7 @@ export default function AssessmentResults() {
                           color: '#6b7280'
                         }}>
                           <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📷</div>
-                          <div>No image path</div>
+                          <div>No image available</div>
                         </div>
                         <div style={{ padding: '0.5rem', background: '#f9fafb', textAlign: 'center' }}>
                           <small style={{ color: '#6b7280' }}>Capture {index + 1}</small>
@@ -473,7 +463,18 @@ export default function AssessmentResults() {
                     );
                   }
                   
-                  const imageUrl = imagePath.startsWith('http') ? imagePath : `${process.env.REACT_APP_API_URL || 'https://taleglobal.net'}${imagePath}`;
+                  // Handle Base64 data or file paths
+                  let imageUrl;
+                  if (imagePath.startsWith('data:image/')) {
+                    // Base64 image data
+                    imageUrl = imagePath;
+                  } else if (imagePath.startsWith('http')) {
+                    // Full URL
+                    imageUrl = imagePath;
+                  } else {
+                    // File path - construct URL
+                    imageUrl = `${process.env.REACT_APP_API_URL || 'https://taleglobal.net'}${imagePath}`;
+                  }
                   
                   return (
                     <div key={index} style={{ border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden' }}>
@@ -483,7 +484,6 @@ export default function AssessmentResults() {
                           alt={`Capture ${index + 1}`}
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                           onError={(e) => {
-                            console.log('Image load failed for:', imageUrl);
                             e.target.style.display = 'none';
                             e.target.nextSibling.style.display = 'flex';
                           }}
@@ -505,7 +505,7 @@ export default function AssessmentResults() {
                         }}>
                           <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📷</div>
                           <div style={{ fontWeight: '600', marginBottom: '0.25rem' }}>Image Not Available</div>
-                          <div style={{ fontSize: '0.75rem', color: '#7f1d1d' }}>File not found on server</div>
+                          <div style={{ fontSize: '0.75rem', color: '#7f1d1d' }}>Failed to load image</div>
                         </div>
                       </div>
                       <div style={{ padding: '0.5rem', background: '#f9fafb', textAlign: 'center' }}>

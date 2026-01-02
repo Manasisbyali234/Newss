@@ -317,19 +317,9 @@ const uploadEducation = multer({
   }
 });
 
-// Upload configuration for assessment answer files (disk storage)
-const answerStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadsDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'answer-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
+// Upload configuration for assessment answer files (memory storage for Base64 conversion)
 const uploadAnswerFile = multer({
-  storage: answerStorage,
+  storage,
   fileFilter: (req, file, cb) => {
     const allowedTypes = [
       'application/pdf',

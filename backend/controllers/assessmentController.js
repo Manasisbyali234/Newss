@@ -544,17 +544,20 @@ exports.uploadFileAnswer = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Question is not an upload type' });
     }
     
+    // Convert file to Base64
+    const base64File = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+    
     const existingAnswerIndex = attempt.answers.findIndex(a => a.questionIndex === parseInt(questionIndex));
     const answerData = {
       questionIndex: parseInt(questionIndex),
       selectedAnswer: null,
       textAnswer: null,
       uploadedFile: {
-        filename: req.file.filename,
+        filename: req.file.originalname,
         originalName: req.file.originalname,
         mimetype: req.file.mimetype,
         size: req.file.size,
-        path: `/uploads/${req.file.filename}`,
+        data: base64File, // Store Base64 data instead of path
         uploadedAt: new Date()
       },
       timeSpent: timeSpent || 0,
@@ -587,7 +590,6 @@ exports.uploadCapture = async (req, res) => {
       captureIndex,
       hasFile: !!req.file,
       fileSize: req.file?.size,
-      fileName: req.file?.filename,
       candidateId: req.user._id
     });
     
@@ -622,7 +624,8 @@ exports.uploadCapture = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Assessment is not in progress' });
     }
     
-    const capturePath = `/uploads/${req.file.filename}`;
+    // Convert image to Base64
+    const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
     
     if (!attempt.captures) {
       attempt.captures = [];
@@ -637,19 +640,18 @@ exports.uploadCapture = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Maximum captures reached' });
     }
     
-    attempt.captures.push(capturePath);
+    attempt.captures.push(base64Image);
     await attempt.save();
     
-    console.log('✅ Capture uploaded successfully:', {
+    console.log('✅ Capture uploaded successfully as Base64:', {
       attemptId,
-      capturePath,
       totalCaptures: attempt.captures.length,
       fileSize: req.file.size
     });
     
     res.json({ 
       success: true, 
-      capturePath,
+      captureData: base64Image,
       captureCount: attempt.captures.length,
       message: `Capture ${attempt.captures.length}/5 uploaded successfully`
     });
