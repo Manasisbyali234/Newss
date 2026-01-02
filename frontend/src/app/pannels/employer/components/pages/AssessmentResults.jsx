@@ -440,7 +440,7 @@ export default function AssessmentResults() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
                 {selectedCaptures.map((capture, index) => {
                   console.log(`Capture ${index + 1}:`, capture);
-                  const imageUrl = capture.startsWith('http') ? capture : `http://localhost:5000${capture}`;
+                  const imageUrl = capture.startsWith('http') ? capture : `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${capture}`;
                   console.log(`Image URL ${index + 1}:`, imageUrl);
                   
                   return (
