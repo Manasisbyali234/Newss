@@ -9,14 +9,8 @@ function InnerPageBanner({_data}) {
                 <div className="overlay-main site-bg-white opacity-01" />
 
                     <div className="wt-bnr-inr-entry">
-                        <div className="banner-title-outer">
-                            <div className="banner-title-name">
-                                <h2 className="wt-title">{_data.title}</h2>
-                            </div>
-                        </div>
-
                         {/* BREADCRUMB ROW */}
-                        {_data.crumb && (
+                        {_data.crumb && _data.title !== 'About TaleGlobal' && (
                             <div>
                                 <ul className="wt-breadcrumb breadcrumb-style-2">
                                     <li><NavLink to="/">Home</NavLink></li>
@@ -25,6 +19,13 @@ function InnerPageBanner({_data}) {
                             </div>
                         )}
                         {/* BREADCRUMB ROW END */}
+
+                        <div className="banner-title-outer">
+                            <div className="banner-title-name">
+                                <h2 className="wt-title">{_data.title}</h2>
+                            </div>
+                        </div>
+
                     </div>
             </div>
         </>

@@ -27,6 +27,8 @@ import "./candidate-header-mobile-fix.css";
 import "./mobile-responsive-enhancements.css";
 // MOBILE RESPONSIVE FIXES - Targeted fixes for specific alignment issues
 import "./mobile-responsive-fixes.css";
+// BADGE TEXT ORANGE - Make all status badge texts orange
+import "./badge-text-orange.css";
 
 
 function App() {

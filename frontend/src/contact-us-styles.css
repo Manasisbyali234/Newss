@@ -84,14 +84,14 @@ html body .wt-bnr-inr {
 
 .twm-contact-one .section-content {
     background-color: transparent !important;
-    padding: 2rem 0 !important;
+    padding: 0.5rem 0 !important;
     margin-left: 3rem !important;
 }
 
 .contact-one-inner {
     padding-left: 3rem !important;
     padding-right: 3rem !important;
-    padding-top: 40px !important;
+    padding-top: 10px !important;
     padding-bottom: 40px !important;
 }
 

@@ -325,25 +325,25 @@
 }
 
 .badge-approved {
-    background: rgba(40, 167, 69, 0.1) !important;
-    color: #28a745 !important;
-    border-color: #28a745 !important;
+    background: rgba(255, 122, 0, 0.08) !important;
+    color: #FF7A00 !important;
+    border-color: #FF7A00 !important;
     padding: 3px 8px !important;
     font-size: 0.6rem !important;
 }
 
 .badge-rejected {
-    background: rgba(220, 53, 69, 0.1) !important;
-    color: #dc3545 !important;
-    border-color: #dc3545 !important;
+    background: rgba(255, 122, 0, 0.08) !important;
+    color: #FF7A00 !important;
+    border-color: #FF7A00 !important;
     padding: 3px 8px !important;
     font-size: 0.6rem !important;
 }
 
 .badge-pending {
-    background: rgba(255, 193, 7, 0.1) !important;
-    color: #ffc107 !important;
-    border-color: #ffc107 !important;
+    background: rgba(255, 122, 0, 0.08) !important;
+    color: #FF7A00 !important;
+    border-color: #FF7A00 !important;
     padding: 3px 8px !important;
     font-size: 0.6rem !important;
 }
@@ -608,6 +608,65 @@
     border: none;
     border-radius: 10px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.pdf-container {
+    width: 100%;
+    height: 600px;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f8f9fa;
+}
+
+.pdf-fallback {
+    display: none;
+    padding: 40px;
+    text-align: center;
+    color: #666;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px dashed #dee2e6;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.pdf-fallback h5 {
+    margin-bottom: 15px;
+    color: #495057;
+    font-weight: 600;
+}
+
+.pdf-fallback p {
+    margin-bottom: 20px;
+    color: #6c757d;
+    line-height: 1.5;
+}
+
+.pdf-fallback .btn {
+    margin: 0 5px;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.pdf-fallback .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    text-decoration: none;
 }
 
 .image-modal-content.maximized .pdf-viewer {
@@ -1578,21 +1637,21 @@
 }
 
 .letter-header .badge-approved {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    color: white;
-    border-color: #28a745;
+    background: rgba(255, 122, 0, 0.08) !important;
+    color: #FF7A00 !important;
+    border-color: #FF7A00 !important;
 }
 
 .letter-header .badge-rejected {
-    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-    color: white;
-    border-color: #dc3545;
+    background: rgba(255, 122, 0, 0.08) !important;
+    color: #FF7A00 !important;
+    border-color: #FF7A00 !important;
 }
 
 .letter-header .badge-pending {
-    background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
-    color: #212529;
-    border-color: #ffc107;
+    background: rgba(255, 122, 0, 0.08) !important;
+    color: #FF7A00 !important;
+    border-color: #FF7A00 !important;
     font-weight: 700;
 }
 

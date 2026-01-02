@@ -52,7 +52,7 @@ export const banner = {
         pages: {
             about: {
                 title: "About Us",
-                crumb: "About Us"
+                crumb: ""
             },
             pricing: {
                 title: "Pricing Packages",
@@ -64,7 +64,7 @@ export const banner = {
             },
             contact: {
                 title: "Get in Touch with Us",
-                crumb: "Contact Us"
+                crumb: ""
             },
             icons: {
                 title: "Icons",

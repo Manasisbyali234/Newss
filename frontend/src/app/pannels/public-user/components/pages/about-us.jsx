@@ -75,7 +75,7 @@ function AboutUsPage() {
             </style>
             
             <div className="container">
-                <div className="section-full p-t120 p-b90">
+                <div className="section-full p-t40 p-b90">
                     <div className="privacy-container">
                         <div className="privacy-header">
                             <h1>About TaleGlobal</h1>

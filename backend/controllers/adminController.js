@@ -642,12 +642,28 @@ exports.viewDocument = async (req, res) => {
 
       console.log(`Buffer created, size: ${buffer.length} bytes`);
 
+      // Validate buffer content
+      if (buffer.length === 0) {
+        console.error('Buffer is empty');
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Document data is empty' 
+        });
+      }
+
       // Set appropriate headers with CORS support
       res.setHeader('Content-Type', mimeType);
+      res.setHeader('Content-Length', buffer.length);
       res.setHeader('Cache-Control', 'public, max-age=3600');
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Access-Control-Allow-Methods', 'GET');
       res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+      
+      // For PDF files, add specific headers to ensure proper display
+      if (mimeType === 'application/pdf') {
+        res.setHeader('Content-Disposition', 'inline; filename="document.pdf"');
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+      }
       
       console.log('Sending document response');
       res.send(buffer);
