@@ -15,13 +15,13 @@ function Footer1() {
             <footer className="site-footer-new" style={{
                 background: '#F9FAFB',
                 padding: '64px 0 0',
-                color: '#6B7280',
-                fontFamily: '"Plus Jakarta Sans", sans-serif'
+                color: '#000000',
+                fontFamily: 'Poppins, sans-serif'
             }}>
             <style>{`
                 .footer-col-title {
                     color: #0B1220;
-                    font-size: 12px;
+                    font-size: 16px;
                     font-weight: 600;
                     text-transform: uppercase;
                     margin-bottom: 24px;
@@ -36,7 +36,7 @@ function Footer1() {
                     margin-bottom: 12px;
                 }
                 .footer-link-list a {
-                    color: #6B7280;
+                    color: #000000;
                     text-decoration: none !important;
                     font-size: 14px;
                     transition: all 0.3s ease;
@@ -50,7 +50,7 @@ function Footer1() {
                     gap: 10px;
                     margin-bottom: 10px;
                     font-size: 14px;
-                    color: #6B7280;
+                    color: #000000;
                 }
                 .newsletter-input-group {
                     display: flex;
@@ -101,7 +101,7 @@ function Footer1() {
                     display: inline-flex;
                     align-items: center;
                     justify-content: center;
-                    color: #6B7280;
+                    color: #000000;
                     margin-left: 12px;
                     transition: all 0.3s ease;
                     text-decoration: none !important;

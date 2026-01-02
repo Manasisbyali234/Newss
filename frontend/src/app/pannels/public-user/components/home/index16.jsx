@@ -1211,7 +1211,8 @@ function Home16Page() {
                                     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#FF6A3D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                                 </div>
                                 <h5 className="text-center mb-3">Find the right talent</h5>
-                                <p className="text-center">Access a diverse pool of qualified candidates and use advanced filters to find the perfect match for your team.</p>
+                                <p className="text-center">Discover exceptional talent through our comprehensive candidate database.
+Leverage advanced filtering capabilities to identify qualified professionals.</p>
                             </div>
                         </Col>
                         <Col lg={4} md={6}>
