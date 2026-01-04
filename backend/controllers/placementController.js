@@ -996,7 +996,8 @@ exports.processFileApproval = async (req, res) => {
               name.trim(),
               password.trim(),
               placement.name,
-              placement.collegeName
+              placement.collegeName,
+              finalCredits
             );
           
             // Update placement candidate record to mark email as sent
