@@ -230,6 +230,35 @@
     padding: 0.25rem 0.5rem !important;
   }
 
+  /* CRITICAL FIX: Work Location and Skills badges - Force horizontal text */
+  .emp-candidate-review-page .card-body .badge.px-3.py-2.rounded-pill,
+  .emp-candidate-review-page .card-body .badge[style*="backgroundColor: #ff6600"],
+  .emp-candidate-review-page .card-body .badge[style*="background-color: #ff6600"] {
+    display: inline-block !important;
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-size: 0.8rem !important;
+    padding: 0.5rem 0.75rem !important;
+    margin: 0.25rem 0.25rem 0.25rem 0 !important;
+    border-radius: 1rem !important;
+    max-width: calc(100vw - 4rem) !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Badge container - ensure horizontal flow */
+  .emp-candidate-review-page .card-body .d-flex.flex-wrap.gap-2 {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0.5rem !important;
+  }
+
   /* Form elements */
   .emp-candidate-review-page .form-control,
   .emp-candidate-review-page .form-select {
@@ -458,6 +487,44 @@
   .emp-candidate-review-page .badge {
     font-size: 0.75rem !important;
     padding: 4px 8px !important;
+  }
+
+  /* FINAL COMPREHENSIVE FIX: All badges horizontal on extra small screens */
+  .emp-candidate-review-page .badge,
+  .emp-candidate-review-page .badge.px-3,
+  .emp-candidate-review-page .badge.py-2,
+  .emp-candidate-review-page .badge.rounded-pill,
+  .emp-candidate-review-page .badge.px-3.py-2.rounded-pill {
+    display: inline-block !important;
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+    word-wrap: normal !important;
+    overflow-wrap: normal !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    hyphens: none !important;
+    line-height: 1.2 !important;
+    max-width: calc(100vw - 3rem) !important;
+  }
+
+  /* Force all badge containers to be horizontal */
+  .emp-candidate-review-page .d-flex.flex-wrap.gap-2,
+  .emp-candidate-review-page .card-body .d-flex.flex-wrap.gap-2,
+  .emp-candidate-review-page .mb-3 .d-flex.flex-wrap.gap-2 {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Prevent any child elements from forcing vertical layout */
+  .emp-candidate-review-page .badge * {
+    display: inline !important;
+    white-space: nowrap !important;
   }
 
   /* Assigned Interview Processes Header - Extra Small Screens */
