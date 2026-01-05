@@ -697,7 +697,7 @@ const sendJobApplicationConfirmationEmail = async (candidateEmail, candidateName
       });
     }
     
-    // Add interview rounds based on order
+    // Add interview rounds based on order - only if they are enabled
     if (jobDetails.interviewRoundOrder && jobDetails.interviewRoundDetails) {
       const roundNames = {
         technical: 'Technical Round',
@@ -711,7 +711,8 @@ const sendJobApplicationConfirmationEmail = async (candidateEmail, candidateName
         const roundType = jobDetails.interviewRoundTypes[roundKey];
         const roundDetails = jobDetails.interviewRoundDetails[roundKey];
         
-        if (roundType && roundDetails && (roundDetails.fromDate || roundDetails.description)) {
+        // Only add rounds that are enabled and have proper details
+        if (roundType && roundDetails && roundDetails.enabled && (roundDetails.fromDate || roundDetails.description)) {
           rounds.push({
             name: roundNames[roundType] || roundType,
             type: roundType,

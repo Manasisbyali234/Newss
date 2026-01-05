@@ -1109,10 +1109,10 @@ function SectionCanEducation({ profile, onUpdate }) {
             <div className="panel-heading wt-panel-heading p-a20">
                 <h4 className="panel-tittle m-a0">Educational Qualification Details</h4>
             </div>
-            <div className="panel-body wt-panel-body p-a20 education-section-body">
-                <div className="twm-panel-inner">
+            <div className="panel-body wt-panel-body p-a20 education-section-body" style={{overflow: 'visible', zIndex: 1000, position: 'relative'}}>
+                <div className="twm-panel-inner" style={{overflow: 'visible', position: 'relative', zIndex: 100}}>
                     {/* Education Level Dropdown */}
-                    <div className="mb-4" style={{ maxWidth: '300px' }}>
+                    <div className="mb-4" style={{ maxWidth: '300px', position: 'relative', zIndex: 1001 }}>
                         <label className="form-label fw-bold">Select Education Level</label>
                         <SearchableSelect
                             options={educationLevels}
@@ -1376,25 +1376,37 @@ function SectionCanEducation({ profile, onUpdate }) {
                             <h5 className="mb-3">Education Summary</h5>
                             <style>{`
                                 .education-section-body {
-                                    overflow: hidden !important;
+                                    overflow: visible !important;
                                 }
                                 .twm-panel-inner {
-                                    overflow: hidden !important;
+                                    overflow: visible !important;
                                 }
                                 .education-table-wrapper {
-                                    overflow-x: scroll !important;
+                                    overflow-x: auto !important;
                                     -webkit-overflow-scrolling: touch !important;
                                     max-width: 100% !important;
                                     scrollbar-width: thin !important;
                                     scrollbar-color: #888 #f1f1f1 !important;
                                     padding: 2px 2px 2px 8px !important;
+                                    background: white !important;
+                                    border-radius: 8px !important;
                                 }
                                 .education-table-wrapper table {
                                     border: 1px solid #dee2e6 !important;
+                                    background: white !important;
                                 }
                                 .education-table-wrapper table th,
                                 .education-table-wrapper table td {
                                     border: 1px solid #dee2e6 !important;
+                                    background: white !important;
+                                    vertical-align: middle !important;
+                                }
+                                .education-table-wrapper table thead th {
+                                    background: #f8f9fa !important;
+                                    font-weight: 600 !important;
+                                    position: sticky !important;
+                                    top: 0 !important;
+                                    z-index: 10 !important;
                                 }
                                 .education-table-wrapper::-webkit-scrollbar {
                                     height: 14px !important;

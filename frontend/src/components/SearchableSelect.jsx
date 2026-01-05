@@ -183,7 +183,7 @@ const SearchableSelect = ({ options, value, onChange, placeholder, className, is
                     borderRadius: '4px',
                     maxHeight: '300px',
                     overflow: 'hidden',
-                    zIndex: 1000,
+                    zIndex: 9999,
                     boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
                 }}>
                     <input
