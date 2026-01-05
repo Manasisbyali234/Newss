@@ -226,7 +226,7 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
 
     return (
         <>
-            <div className="side-bar">
+            <div className="side-bar" style={{backgroundColor: 'transparent', background: 'transparent'}}>
                 <style>{`
                     .search-bx .form-control {
                         padding-left: 65px !important;
@@ -234,6 +234,10 @@ function SectionJobsSidebar1 ({ onFilterChange }) {
                     .search-bx i[class^="feather-"] {
                         left: 20px !important;
                         font-size: 18px !important;
+                    }
+                    .side-bar {
+                        background-color: transparent !important;
+                        background: transparent !important;
                     }
                 `}</style>
                 <div className="sidebar-elements search-bx">
