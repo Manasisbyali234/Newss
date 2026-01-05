@@ -716,37 +716,6 @@ function PlacementDashboardRedesigned() {
                                             </div>
                                             
                                             <div className="form-content">
-                                                {/* File Upload Area */}
-                                                <div className="upload-field">
-                                                    <label className="field-label">Student Data File *</label>
-                                                    <div 
-                                                        className="file-upload-area"
-                                                        onClick={() => !uploadingFile && document.getElementById('fileInput').click()}
-                                                    >
-                                                        <i className="fa fa-file-excel-o upload-icon"></i>
-                                                        <span className="upload-text">
-                                                            {uploadingFile ? 'Uploading...' : 
-                                                             selectedFileName ? selectedFileName : 
-                                                             'Click to select student data file (CSV, XLSX)'}
-                                                        </span>
-                                                        {uploadingFile && <div className="upload-spinner"></div>}
-                                                    </div>
-                                                    <input 
-                                                        id="fileInput"
-                                                        type="file" 
-                                                        accept=".xlsx,.xls,.csv"
-                                                        style={{display: 'none'}}
-                                                        onChange={(e) => {
-                                                            const file = e.target.files[0];
-                                                            if (file) {
-                                                                setSelectedFile(file);
-                                                                setSelectedFileName(file.name);
-                                                                console.log('File selected:', file.name);
-                                                            }
-                                                        }}
-                                                    />
-                                                </div>
-
                                                 {/* Form Fields */}
                                                 <div className="form-fields">
                                                     <div className="field-group">
@@ -781,6 +750,37 @@ function PlacementDashboardRedesigned() {
                                                             onChange={(e) => setBatch(e.target.value)}
                                                         />
                                                     </div>
+                                                </div>
+
+                                                {/* File Upload Area */}
+                                                <div className="upload-field">
+                                                    <label className="field-label">Student Data File *</label>
+                                                    <div 
+                                                        className="file-upload-area"
+                                                        onClick={() => !uploadingFile && document.getElementById('fileInput').click()}
+                                                    >
+                                                        <i className="fa fa-file-excel-o upload-icon"></i>
+                                                        <span className="upload-text">
+                                                            {uploadingFile ? 'Uploading...' : 
+                                                             selectedFileName ? selectedFileName : 
+                                                             'Click to select student data file (CSV, XLSX)'}
+                                                        </span>
+                                                        {uploadingFile && <div className="upload-spinner"></div>}
+                                                    </div>
+                                                    <input 
+                                                        id="fileInput"
+                                                        type="file" 
+                                                        accept=".xlsx,.xls,.csv"
+                                                        style={{display: 'none'}}
+                                                        onChange={(e) => {
+                                                            const file = e.target.files[0];
+                                                            if (file) {
+                                                                setSelectedFile(file);
+                                                                setSelectedFileName(file.name);
+                                                                console.log('File selected:', file.name);
+                                                            }
+                                                        }}
+                                                    />
                                                 </div>
 
                                                 <div className="helper-text">
