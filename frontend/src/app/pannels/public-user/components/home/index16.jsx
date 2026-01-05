@@ -1091,10 +1091,16 @@ function Home16Page() {
             </div>
 
             {/* SECTION 2: How It Works for Candidates */}
-            <div className="section-full redesign-section animate-on-scroll" style={{background: '#fff'}}>
+            <div className="section-full redesign-section animate-on-scroll" style={{
+                background: '#FFF7F3',
+                backgroundImage: "linear-gradient(rgba(255, 247, 243, 0.85), rgba(255, 247, 243, 0.85)), url('/assets/images/photo_2025-10-09_11-01-43.png')",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat"
+            }}>
                 <Container>
                     <div className="section-head center wt-small-separator-outer mb-5 text-center">
-                        <span className="badge-orange">Process</span>
+                        <span className="badge-orange" style={{background: '#FFEBE3', color: '#FF6A3D'}}>Process</span>
                         <h2 className="section-title-large">How It Works for Candidates</h2>
                         <p className="section-subtitle">Follow these simple steps to land your dream job</p>
                     </div>
