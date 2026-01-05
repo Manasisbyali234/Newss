@@ -3,12 +3,7 @@ import JobZImage from "../../../../common/jobz-img";
 function SectionHowItWorks() {
     return (
         <>
-            <div className="section-full p-t120 p-b90 site-bg-white twm-how-it-work-area2" style={{
-                backgroundImage: "url('/assets/images/photo_2025-10-09_11-01-43.png')",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat"
-            }}>
+            <div className="section-full p-t120 p-b90 site-bg-white twm-how-it-work-area2">
                 <div className="container">
                     <div className="row">
                         <div className="col-lg-4 col-md-12">
