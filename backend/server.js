@@ -110,20 +110,65 @@ app.set('trust proxy', 1);
 // Connect to Database
 connectDB();
 
-// Security Middleware
+// iOS Safari compatible security middleware
 app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" }
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  crossOriginOpenerPolicy: { policy: "unsafe-none" },
+  crossOriginEmbedderPolicy: false,
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      connectSrc: ["'self'", "*"],
+      imgSrc: ["'self'", "data:", "*"],
+      styleSrc: ["'self'", "'unsafe-inline'", "*"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      fontSrc: ["'self'", "*"]
+    }
+  }
 }));
+
+// iOS Safari compatible CORS configuration
 app.use(cors({
-  origin: [
-    process.env.FRONTEND_URL, 
-    'http://localhost:3000',
-    'https://taleglobal.cloud',
-    'https://www.taleglobal.cloud'
-  ],
+  origin: function(origin, callback) {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      process.env.FRONTEND_URL,
+      'http://localhost:3000',
+      'https://taleglobal.cloud',
+      'https://www.taleglobal.cloud',
+      'https://taleglobal.net',
+      'https://www.taleglobal.net'
+    ];
+    
+    // Allow any origin for development or if origin is in allowed list
+    if (process.env.NODE_ENV === 'development' || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    // For production, be more strict but still allow iOS Safari
+    callback(null, true); // Temporarily allow all for iOS compatibility
+  },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cache-Control', 'pragma']
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
+  allowedHeaders: [
+    'Content-Type', 
+    'Authorization', 
+    'Cache-Control', 
+    'pragma',
+    'X-Requested-With',
+    'Accept',
+    'Origin',
+    'User-Agent',
+    'DNT',
+    'Keep-Alive',
+    'X-Requested-With',
+    'If-Modified-Since',
+    'X-CSRF-Token'
+  ],
+  exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
+  maxAge: 86400 // 24 hours
 }));
 
 // Rate Limiting
@@ -223,6 +268,24 @@ app.use('/uploads', (req, res, next) => {
   next();
 }, express.static(path.join(__dirname, 'uploads')));
 
+// Enhanced preflight handling for iOS Safari
+app.use((req, res, next) => {
+  // Set additional headers for iOS Safari compatibility
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS,HEAD');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, pragma');
+  res.header('Access-Control-Max-Age', '86400');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  
+  next();
+});
+
 // Handle preflight requests
 app.options('*', cors());
 
@@ -241,13 +304,44 @@ app.get('/test-interview-status', (req, res) => {
   res.sendFile(path.join(__dirname, 'test-interview-status.html'));
 });
 
-// Health Check Route
+// Enhanced Health Check Routes - accessible from all paths
 app.get('/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Tale Job Portal API is running' });
+  res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.header('Pragma', 'no-cache');
+  res.header('Expires', '0');
+  res.status(200).json({ 
+    status: 'OK', 
+    message: 'Tale Job Portal API is running',
+    timestamp: new Date().toISOString(),
+    userAgent: req.headers['user-agent'] || 'unknown',
+    port: PORT
+  });
 });
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Tale Job Portal API is running' });
+  res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.header('Pragma', 'no-cache');
+  res.header('Expires', '0');
+  res.status(200).json({ 
+    status: 'OK', 
+    message: 'Tale Job Portal API is running',
+    timestamp: new Date().toISOString(),
+    userAgent: req.headers['user-agent'] || 'unknown',
+    port: PORT
+  });
+});
+
+// Root endpoint for testing
+app.get('/', (req, res) => {
+  res.status(200).json({
+    message: 'Tale Job Portal Backend API',
+    status: 'running',
+    endpoints: {
+      health: '/health',
+      api_health: '/api/health',
+      api_base: '/api'
+    }
+  });
 });
 
 // Error Handling Middleware

@@ -36,17 +36,18 @@
   <title>TaleGlobal</title>
 
   <!-- MOBILE SPECIFIC - COMPREHENSIVE RESPONSIVE SETUP -->
-  <!-- Viewport: Optimal settings for all mobile devices -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover, shrink-to-fit=no">
+  <!-- Viewport: iOS Safari optimized settings -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no">
   
   <!-- Format Detection: Prevent auto-detection that might interfere -->
   <meta name="format-detection" content="telephone=no, email=no, address=no">
   
-  <!-- iOS/Apple Settings -->
+  <!-- iOS/Apple Settings - Enhanced for iOS compatibility -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Jobzz">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="TaleGlobal">
+  <meta name="apple-touch-fullscreen" content="yes">
   
   <!-- Android/Google Settings -->
   <meta name="theme-color" content="#fd7e14">
@@ -56,8 +57,9 @@
   <meta name="supported-color-schemes" content="light">
   <style>
     :root { color-scheme: light only !important; }
-    html { color-scheme: light only !important; }
-    body { color-scheme: light only !important; background-color: #ffffff !important; color: #000000 !important; }
+    html { color-scheme: light only !important; -webkit-text-size-adjust: 100%; }
+    body { color-scheme: light only !important; background-color: #ffffff !important; color: #000000 !important; -webkit-touch-callout: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+    * { -webkit-overflow-scrolling: touch; touch-action: manipulation; }
   </style>
   
   <!-- Disable pinch-zoom on content scales (accessibility friendly) -->
@@ -143,7 +145,7 @@
       }
     };
     
-    // Force light mode immediately
+    // Force light mode immediately - iOS Safari compatible
     (function() {
       // Override matchMedia to always return false for dark mode
       if (window.matchMedia) {
@@ -161,7 +163,26 @@
               dispatchEvent: function() { return true; }
             };
           }
-          return originalMatchMedia(query);
+          return originalMatchMedia.call(this, query);
+        };
+      }
+      
+      // iOS Safari specific fixes
+      document.addEventListener('DOMContentLoaded', function() {
+        // Prevent iOS Safari zoom on input focus
+        const inputs = document.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+          input.addEventListener('focus', function() {
+            if (window.innerWidth < 768) {
+              document.querySelector('meta[name=viewport]').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+            }
+          });
+          input.addEventListener('blur', function() {
+            document.querySelector('meta[name=viewport]').setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no');
+          });
+        });
+      });
+    })();ia(query);
         };
       }
       

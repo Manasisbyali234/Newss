@@ -1,4 +1,39 @@
+// iOS Safari compatible API configuration
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
+// iOS Safari compatible fetch with retry mechanism
+const safeFetch = async (url, options = {}, retries = 3) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+  
+  const fetchOptions = {
+    ...options,
+    signal: controller.signal,
+    headers: {
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+      ...options.headers
+    }
+  };
+  
+  try {
+    const response = await fetch(url, fetchOptions);
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    
+    // Retry on network errors for iOS Safari
+    if (retries > 0 && (error.name === 'AbortError' || error.message.includes('network'))) {
+      console.log(`Retrying request to ${url}, attempts left: ${retries - 1}`);
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+      return safeFetch(url, options, retries - 1);
+    }
+    
+    throw error;
+  }
+};
 
 // Helper function to get auth headers
 const getAuthHeaders = (userType = 'candidate') => {
@@ -9,7 +44,7 @@ const getAuthHeaders = (userType = 'candidate') => {
   };
 };
 
-// Helper function to handle API responses
+// Helper function to handle API responses with iOS Safari compatibility
 const handleApiResponse = async (response) => {
   if (!response.ok) {
     if (response.status === 401) {
@@ -20,26 +55,53 @@ const handleApiResponse = async (response) => {
         window.location.href = '/login';
       }
     }
-    const errorData = await response.json().catch(() => ({ message: 'Network error' }));
+    
+    let errorData;
+    try {
+      const text = await response.text();
+      errorData = text ? JSON.parse(text) : { message: 'Network error' };
+    } catch (parseError) {
+      errorData = { message: `HTTP ${response.status}: Request failed` };
+    }
+    
     throw new Error(`HTTP ${response.status}: ${errorData.message || 'Request failed'}`);
   }
-  return response.json();
+  
+  const text = await response.text();
+  try {
+    return text ? JSON.parse(text) : {};
+  } catch (parseError) {
+    console.error('Failed to parse response:', text);
+    throw new Error('Invalid response format');
+  }
 };
 
 export const api = {
-  // Health check
+  // Health check with iOS Safari compatibility
   healthCheck: () => {
-    return fetch('/health').then((res) => res.json());
+    return safeFetch('/health', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    }).then(handleApiResponse);
   },
 
-  // Public APIs
+  // Public APIs with iOS Safari compatibility
   getJobs: (params = {}) => {
     const queryString = new URLSearchParams(params).toString();
-    return fetch(`${API_BASE_URL}/public/jobs?${queryString}`).then((res) => res.json());
+    return safeFetch(`${API_BASE_URL}/public/jobs?${queryString}`, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' }
+    }).then(handleApiResponse);
   },
 
   getJobById: (id) => {
-    return fetch(`${API_BASE_URL}/public/jobs/${id}`).then((res) => res.json());
+    return safeFetch(`${API_BASE_URL}/public/jobs/${id}`, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' }
+    }).then(handleApiResponse);
   },
 
   getCompanies: (params = {}) => {
