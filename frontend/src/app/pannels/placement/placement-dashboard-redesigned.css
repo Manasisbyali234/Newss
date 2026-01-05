@@ -1605,6 +1605,32 @@
         flex: 1 1 calc(50% - 20px);
         min-width: 200px;
     }
+    
+    /* Tablet Upload Section */
+    .config-form-card {
+        padding: 20px !important;
+    }
+    
+    .form-fields {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .field-group {
+        width: 100%;
+    }
+    
+    .form-actions {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    
+    .btn-cancel,
+    .btn-upload {
+        width: auto;
+        min-width: 120px;
+    }
 }
 
 @media (max-width: 768px) {
@@ -1657,10 +1683,129 @@
         left: 0 !important;
         right: 0;
         margin: 0 !important;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    /* Mobile header actions positioning */
+    .header-actions {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        margin-left: auto !important;
+        padding-left: 0 !important;
+        padding-right: 8px !important;
+        justify-content: flex-end !important;
+        position: absolute !important;
+        right: 16px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+    }
+    
+    /* Mobile notification bell positioning */
+    .header-actions .notification-bell-container {
+        order: 1;
+    }
+    
+    /* Mobile user profile positioning */
+    .header-actions .user-profile {
+        order: 2;
+        margin-left: 0 !important;
+        padding: 6px 8px !important;
+        background: rgba(255, 140, 0, 0.1) !important;
+        border-radius: 20px !important;
+    }
+    
+    /* Mobile profile avatar */
+    .header-actions .profile-avatar {
+        width: 28px !important;
+        height: 28px !important;
+        border: 1px solid rgba(255, 140, 0, 0.3) !important;
+    }
+    
+    /* Mobile profile text */
+    .header-actions .user-profile span {
+        color: var(--accent-orange) !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
     }
     
     .content-area {
         padding: 16px;
+    }
+    
+    /* CRITICAL: Upload Section Mobile Fixes */
+    .dashboard-container .upload-page {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+    }
+    
+    .dashboard-container .upload-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+    
+    .dashboard-container .config-form-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 16px 0 !important;
+        padding: 16px !important;
+        box-sizing: border-box !important;
+    }
+    
+    .dashboard-container .form-content {
+        width: 100% !important;
+    }
+    
+    .dashboard-container .file-upload-area {
+        width: 100% !important;
+        padding: 20px 12px !important;
+        box-sizing: border-box !important;
+    }
+    
+    .dashboard-container .form-fields {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 16px !important;
+    }
+    
+    .dashboard-container .field-group {
+        width: 100% !important;
+        margin-bottom: 16px !important;
+    }
+    
+    .dashboard-container .form-input {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 14px !important;
+        box-sizing: border-box !important;
+    }
+    
+    .dashboard-container .form-actions {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        margin-top: 20px !important;
+    }
+    
+    .dashboard-container .btn-cancel,
+    .dashboard-container .btn-upload {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 14px !important;
+        box-sizing: border-box !important;
+    }
+    
+    .dashboard-container .upload-history-section {
+        width: 100% !important;
+        margin-top: 20px !important;
+        padding: 16px !important;
+        overflow-x: auto !important;
     }
     
     .profile-card {
@@ -1728,6 +1873,36 @@
 @media (max-width: 576px) {
     .card, [class*="card"] {
         margin-bottom: 1rem;
+    }
+    
+    /* Extra small mobile adjustments */
+    .config-form-card {
+        margin: 12px 0 !important;
+        padding: 12px !important;
+    }
+    
+    .form-header h3 {
+        font-size: 16px !important;
+    }
+    
+    .file-upload-area {
+        padding: 16px 8px !important;
+    }
+    
+    .upload-text {
+        font-size: 12px !important;
+        line-height: 1.4 !important;
+    }
+    
+    .form-input {
+        padding: 10px !important;
+        font-size: 13px !important;
+    }
+    
+    .btn-cancel,
+    .btn-upload {
+        padding: 10px !important;
+        font-size: 13px !important;
     }
 }
 
@@ -1991,4 +2166,54 @@
 
 * {
     color-scheme: light only !important;
+}
+
+/* CRITICAL MOBILE RESPONSIVE OVERRIDES - HIGHEST PRIORITY */
+@media screen and (max-width: 768px) {
+    .dashboard-container .upload-page,
+    .dashboard-container .upload-container,
+    .dashboard-container .config-form-card,
+    .dashboard-container .form-content,
+    .dashboard-container .file-upload-area,
+    .dashboard-container .form-fields,
+    .dashboard-container .field-group,
+    .dashboard-container .form-input,
+    .dashboard-container .form-actions,
+    .dashboard-container .upload-history-section {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    .dashboard-container .config-form-card {
+        margin: 8px 0 !important;
+        padding: 12px !important;
+    }
+    
+    .dashboard-container .form-fields {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+    
+    .dashboard-container .form-actions {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+    
+    .dashboard-container .btn-cancel,
+    .dashboard-container .btn-upload {
+        width: 100% !important;
+        padding: 10px !important;
+        text-align: center !important;
+    }
+    
+    .dashboard-container .file-upload-area {
+        padding: 16px 8px !important;
+    }
+    
+    .dashboard-container .upload-history-table {
+        overflow-x: auto !important;
+    }
 }

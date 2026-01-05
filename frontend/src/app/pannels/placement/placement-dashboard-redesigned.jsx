@@ -4,6 +4,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { debugAuth, testAPIConnection, testPlacementAuth } from '../../../utils/authDebug';
 import PlacementNotificationsRedesigned from './sections/PlacementNotificationsRedesigned';
 import './placement-dashboard-redesigned.css';
+import '../../../placement-mobile-fix.css';
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../utils/popupNotification';
 import NotificationBell from '../../../components/NotificationBell';
 import JobZImage from '../../common/jobz-img';
