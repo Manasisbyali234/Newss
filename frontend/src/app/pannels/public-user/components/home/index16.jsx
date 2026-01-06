@@ -22,6 +22,29 @@ import "./naukri-preview.css";
 import "../../../../../home-alignment.css";
 
 import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
+
+// Add error boundary to catch rendering errors
+const ErrorBoundary = ({ children }) => {
+    const [hasError, setHasError] = useState(false);
+    
+    useEffect(() => {
+        const handleError = (error) => {
+            if (error.message && error.message.includes('Objects are not valid as a React child')) {
+                setHasError(true);
+                console.error('Notification rendering error caught:', error);
+            }
+        };
+        
+        window.addEventListener('error', handleError);
+        return () => window.removeEventListener('error', handleError);
+    }, []);
+    
+    if (hasError) {
+        return <div>Loading...</div>;
+    }
+    
+    return children;
+};
 function Home16Page() {
     const [jobs, setJobs] = useState([]);
     const [allJobs, setAllJobs] = useState([]);
@@ -43,6 +66,39 @@ function Home16Page() {
         recruiters: false
     });
     const [appliedJobs, setAppliedJobs] = useState(new Set());
+
+    // Safe notification wrapper functions
+    const safeShowError = (message) => {
+        try {
+            showError(message);
+        } catch (error) {
+            console.error('Error showing notification:', error);
+        }
+    };
+    
+    const safeShowSuccess = (message) => {
+        try {
+            showSuccess(message);
+        } catch (error) {
+            console.error('Error showing notification:', error);
+        }
+    };
+    
+    const safeShowWarning = (message) => {
+        try {
+            showWarning(message);
+        } catch (error) {
+            console.error('Error showing notification:', error);
+        }
+    };
+    
+    const safeShowInfo = (message) => {
+        try {
+            showInfo(message);
+        } catch (error) {
+            console.error('Error showing notification:', error);
+        }
+    };
 
     useEffect(() => {
         updateSkinStyle("8", false, false)
@@ -251,12 +307,12 @@ function Home16Page() {
                 const searchTerm = String(filters.search).trim().toLowerCase();
 
                 if (searchTerm.length < 2) {
-                    showWarning('Search term must be at least 2 characters');
+                    safeShowWarning('Search term must be at least 2 characters');
                     return;
                 }
 
                 if (searchTerm.length > 100) {
-                    showWarning('Search term is too long (max 100 characters)');
+                    safeShowWarning('Search term is too long (max 100 characters)');
                     return;
                 }
 
@@ -278,7 +334,7 @@ function Home16Page() {
                 const jobType = String(filters.jobType).trim().toLowerCase();
 
                 if (jobType.length > 50) {
-                    showWarning('Job type filter is invalid');
+                    safeShowWarning('Job type filter is invalid');
                     return;
                 }
 
@@ -297,12 +353,12 @@ function Home16Page() {
                 const location = String(filters.location).trim().toLowerCase();
 
                 if (location.length < 2) {
-                    showWarning('Location must be at least 2 characters');
+                    safeShowWarning('Location must be at least 2 characters');
                     return;
                 }
 
                 if (location.length > 100) {
-                    showWarning('Location filter is too long (max 100 characters)');
+                    safeShowWarning('Location filter is too long (max 100 characters)');
                     return;
                 }
 
@@ -320,7 +376,7 @@ function Home16Page() {
                 const education = String(filters.education).trim().toLowerCase();
 
                 if (education.length > 50) {
-                    showWarning('Education filter is invalid');
+                    safeShowWarning('Education filter is invalid');
                     return;
                 }
 
@@ -342,7 +398,7 @@ function Home16Page() {
                 const category = String(filters.category).trim().toLowerCase();
 
                 if (category.length > 100) {
-                    showWarning('Category filter is too long');
+                    safeShowWarning('Category filter is too long');
                     return;
                 }
 
@@ -362,7 +418,7 @@ function Home16Page() {
 
             // Show success message with result count
             if (Object.keys(filters).length > 0) {
-                showSuccess(`Found ${filtered.length} job(s) matching your criteria`);
+                safeShowSuccess(`Found ${filtered.length} job(s) matching your criteria`);
 
                 // Scroll to jobs section when search is performed
                 setTimeout(() => {
@@ -374,7 +430,7 @@ function Home16Page() {
             }
         } catch (error) {
             setError('An error occurred while searching. Please try again.');
-            showError('An error occurred while searching. Please try again.');
+            safeShowError('An error occurred while searching. Please try again.');
         }
     }, [allJobs]);
     
@@ -383,7 +439,7 @@ function Home16Page() {
             // Validate current state
             if (!Array.isArray(allJobs) || !Array.isArray(filteredJobs)) {
                 setError('Unable to load more jobs. Please refresh the page.');
-                showError('Unable to load more jobs. Please refresh the page.');
+                safeShowError('Unable to load more jobs. Please refresh the page.');
                 return;
             }
 
@@ -391,7 +447,7 @@ function Home16Page() {
 
             // Validate newCount
             if (newCount < 0 || newCount > 1000) {
-                showInfo('No more jobs to load');
+                safeShowInfo('No more jobs to load');
                 return;
             }
 
@@ -403,14 +459,15 @@ function Home16Page() {
 
             // Show feedback to user
             const loadedCount = Math.min(6, sourceJobs.length - showingCount);
-            showInfo(`Loaded ${loadedCount} more job(s)`);
+            safeShowInfo(`Loaded ${loadedCount} more job(s)`);
         } catch (error) {
             setError('An error occurred while loading more jobs.');
-            showError('An error occurred while loading more jobs.');
+            safeShowError('An error occurred while loading more jobs.');
         }
     }, [showingCount, isFiltered, filteredJobs, allJobs]);
 
     return (
+        <ErrorBoundary>
         <div className="home-page-alignment">
             {/* Error Alert */}
             {error && (
@@ -989,10 +1046,10 @@ function Home16Page() {
                                                                 if (sanitizedJobId) {
                                                                     window.location.href = `/job-detail/${sanitizedJobId}`;
                                                                 } else {
-                                                                    showError('Invalid job ID. Cannot navigate to job details.');
+                                                                    safeShowError('Invalid job ID. Cannot navigate to job details.');
                                                                 }
                                                             } else {
-                                                                showError('Job ID is missing. Cannot navigate to job details.');
+                                                                safeShowError('Job ID is missing. Cannot navigate to job details.');
                                                             }
                                                         }}
                                                     >
@@ -1264,6 +1321,7 @@ Leverage advanced filtering capabilities to identify qualified professionals.</p
 
             {/* SECTION 6: Footer Section */}
         </div>
+        </ErrorBoundary>
     );
 }
 

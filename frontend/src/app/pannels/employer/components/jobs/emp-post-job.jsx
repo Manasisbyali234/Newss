@@ -2142,13 +2142,7 @@ export default function EmpPostJob({ onNext }) {
 											setSelectedAssessment(e.target.value);
 											// Show assessment duration popup when selecting an assessment
 											if (e.target.value) {
-												showPopup({
-													title: '⏰ Assessment Duration - 24 Hours',
-													message: 'Important: The assessment duration is 24 hours. Candidates will have a full 24-hour window to complete the assessment from the start time to the end time you specify. Please set your start and end times accordingly.',
-													type: 'info',
-													icon: 'fa-clock',
-													duration: 6000
-												});
+												showInfo('⏰ Assessment Duration - 24 Hours: The assessment duration is 24 hours. Candidates will have a full 24-hour window to complete the assessment from the start time to the end time you specify. Please set your start and end times accordingly.', 6000);
 											}
 										}}
 									>

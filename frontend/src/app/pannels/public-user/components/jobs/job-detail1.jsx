@@ -299,6 +299,18 @@ function JobDetail1Page() {
                                                     </p>
                                                     <p className="twm-job-address"><i className="feather-map-pin" />{job.location}</p>
                                                     
+                                                    {job.shift && (
+                                                        <p className="twm-job-shift" style={{marginTop: '10px'}}>
+                                                            <i className="feather-clock" style={{marginRight: '8px', color: '#ff6b35'}}></i>
+                                                            <strong>Work Shift: </strong>
+                                                            <span style={{color: '#495057', textTransform: 'capitalize'}}>
+                                                                {job.shift === 'day' ? 'Day Shift' : 
+                                                                 job.shift === 'night' ? 'Night Shift' : 
+                                                                 job.shift === 'rotational' ? 'Rotational Shift' : job.shift}
+                                                            </span>
+                                                        </p>
+                                                    )}
+                                                    
                                                     <div className="hiring-type-badge" style={{marginTop: '15px', marginBottom: '10px'}}>
                                                         <span className={`badge ${job.employerId?.employerType === 'consultant' ? 'badge-warning' : 'badge-success'}`} 
                                                             style={{fontSize: '14px', padding: '8px 16px', fontWeight: '600'}}>
