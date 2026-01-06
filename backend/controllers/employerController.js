@@ -804,6 +804,17 @@ exports.createJob = async (req, res) => {
       }
     }
     
+    // Validate time format if provided
+    if (jobData.lastDateOfApplicationTime) {
+      const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+      if (!timeRegex.test(jobData.lastDateOfApplicationTime)) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Invalid time format for Last Date of Application. Please use HH:MM format (24-hour).' 
+        });
+      }
+    }
+    
     console.log('Creating job with data:', JSON.stringify(jobData, null, 2)); // Debug log
     console.log('Company fields:', {
       companyLogo: jobData.companyLogo ? 'Present' : 'Missing',
@@ -935,6 +946,17 @@ exports.updateJob = async (req, res) => {
     }
     console.log('Final req.body.responsibilities:', req.body.responsibilities);
     console.log('=== END UPDATE DEBUG ===');
+    
+    // Validate time format if provided
+    if (req.body.lastDateOfApplicationTime) {
+      const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+      if (!timeRegex.test(req.body.lastDateOfApplicationTime)) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Invalid time format for Last Date of Application. Please use HH:MM format (24-hour).' 
+        });
+      }
+    }
     
     // Parse CTC from string format to proper structure
     if (req.body.ctc && typeof req.body.ctc === 'string') {
@@ -1910,7 +1932,35 @@ exports.scheduleInterviewRound = async (req, res) => {
     res.json({ 
       success: true, 
       message: `${roundType === 'assessment' ? 'Assessment' : 'Interview round'} scheduled successfully`,
-      job: updatedJob
+      job: updatedJob,
+      formattedMessage: (() => {
+        const roundNames = {
+          technical: 'Technical round',
+          nonTechnical: 'Non-Technical round',
+          managerial: 'Managerial round',
+          final: 'Final round',
+          hr: 'HR round',
+          assessment: 'Assessment'
+        };
+        
+        const roundName = roundNames[roundType] || roundType;
+        let message = `${roundName} scheduled Successfully!!`;
+        
+        const formatDate = (date) => {
+          const day = date.getDate().toString().padStart(2, '0');
+          const month = (date.getMonth() + 1).toString().padStart(2, '0');
+          const year = date.getFullYear();
+          return `${day}/${month}/${year}`;
+        };
+        
+        message += ` From: ${formatDate(new Date(fromDate))} | To: ${formatDate(new Date(toDate))}`;
+        
+        if (time) {
+          message += ` | Time: ${time}`;
+        }
+        
+        return message;
+      })()
     });
   } catch (error) {
     console.error('Schedule interview round error:', error);

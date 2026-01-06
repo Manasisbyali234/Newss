@@ -72,6 +72,7 @@ const jobSchema = new mongoose.Schema({
   assessmentPassingPercentage: { type: Number, default: 60 },
   offerLetterDate: { type: Date },
   lastDateOfApplication: { type: Date },
+  lastDateOfApplicationTime: { type: String }, // Time in HH:MM format (24-hour)
   transportation: {
     oneWay: { type: Boolean, default: false },
     twoWay: { type: Boolean, default: false },

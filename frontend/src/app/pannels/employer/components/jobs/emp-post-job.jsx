@@ -214,6 +214,7 @@ export default function EmpPostJob({ onNext }) {
 		offerLetterDate: "",
 		joiningDate: "",
 		lastDateOfApplication: "",
+		lastDateOfApplicationTime: "",
 		transportation: {
 			oneWay: false,
 			twoWay: false,
@@ -400,6 +401,7 @@ export default function EmpPostJob({ onNext }) {
 					offerLetterDate: job.offerLetterDate ? job.offerLetterDate.split('T')[0] : '',
 					joiningDate: job.lastDateOfApplication ? job.lastDateOfApplication.split('T')[0] : '',
 					lastDateOfApplication: job.lastDateOfApplication ? job.lastDateOfApplication.split('T')[0] : '',
+					lastDateOfApplicationTime: job.lastDateOfApplicationTime || '',
 					transportation: job.transportation || {
 						oneWay: false,
 						twoWay: false,
@@ -793,6 +795,7 @@ export default function EmpPostJob({ onNext }) {
 				assessmentEndTime: assessmentDetails?.endTime || null,
 				offerLetterDate: formData.offerLetterDate || null,
 				lastDateOfApplication: formData.lastDateOfApplication || null,
+				lastDateOfApplicationTime: formData.lastDateOfApplicationTime || null,
 				transportation: formData.transportation,
 				category: formData.category,
 				typeOfEmployment: formData.typeOfEmployment,
@@ -2250,7 +2253,17 @@ export default function EmpPostJob({ onNext }) {
 															
 															// Mark this assessment as scheduled
 															setScheduledRounds(prev => ({...prev, [assessmentKey]: true}));
-															showSuccess(`Assessment ${assessmentIndex + 1} scheduled successfully! Assessment: ${availableAssessments.find(a => a._id === selectedAssessment)?.title} | From: ${new Date(assessmentDetails.fromDate).toLocaleDateString()} | To: ${new Date(assessmentDetails.toDate).toLocaleDateString()}`);
+															
+															// Format dates as DD/MM/YYYY
+															const formatDate = (date) => {
+																const d = new Date(date);
+																const day = d.getDate().toString().padStart(2, '0');
+																const month = (d.getMonth() + 1).toString().padStart(2, '0');
+																const year = d.getFullYear();
+																return `${day}/${month}/${year}`;
+															};
+															
+															showSuccess(`Assessment ${assessmentIndex + 1} scheduled successfully! Assessment: ${availableAssessments.find(a => a._id === selectedAssessment)?.title} | From: ${formatDate(assessmentDetails.fromDate)} | To: ${formatDate(assessmentDetails.toDate)}`);
 														}}
 													>
 														<i className="fa fa-calendar-plus"></i>
@@ -2775,7 +2788,17 @@ export default function EmpPostJob({ onNext }) {
 															
 															// Mark this round as scheduled
 															setScheduledRounds(prev => ({...prev, [uniqueKey]: true}));
-															showSuccess(`${roundNames[roundType]} scheduled successfully! From: ${new Date(roundDetails.fromDate).toLocaleDateString()} | To: ${new Date(roundDetails.toDate).toLocaleDateString()} | Time: ${roundDetails.time}`);
+															
+															// Format dates as DD/MM/YYYY
+															const formatDate = (date) => {
+																const d = new Date(date);
+																const day = d.getDate().toString().padStart(2, '0');
+																const month = (d.getMonth() + 1).toString().padStart(2, '0');
+																const year = d.getFullYear();
+																return `${day}/${month}/${year}`;
+															};
+															
+															showSuccess(`${roundNames[roundType]} scheduled successfully! From: ${formatDate(roundDetails.fromDate)} | To: ${formatDate(roundDetails.toDate)} | Time: ${roundDetails.time}`);
 														}}
 													>
 														<i className="fa fa-calendar-plus"></i>
@@ -3020,19 +3043,39 @@ export default function EmpPostJob({ onNext }) {
 								</span>
 							)}
 						</label>
-						<input
-							style={{
-								...input,
-								borderColor: formData.lastDateOfApplication ? '#10b981' : '#d1d5db',
-								background: formData.lastDateOfApplication ? '#f0fdf4' : '#fff'
-							}}
-							type="date"
-							min={new Date().toISOString().split('T')[0]}
-							value={formData.lastDateOfApplication}
-							onChange={(e) => update({ lastDateOfApplication: e.target.value })}
-							placeholder="DD/MM/YYYY"
-							readOnly={false}
-						/>
+						<div style={{display: 'flex', gap: 12, alignItems: 'flex-end'}}>
+							<div style={{flex: 1}}>
+								<input
+									style={{
+										...input,
+										borderColor: formData.lastDateOfApplicationTime ? '#10b981' : '#d1d5db',
+										background: formData.lastDateOfApplicationTime ? '#f0fdf4' : '#fff'
+									}}
+									type="time"
+									value={formData.lastDateOfApplicationTime || ''}
+									onChange={(e) => update({ lastDateOfApplicationTime: e.target.value })}
+									placeholder="HH:MM"
+								/>
+							</div>
+							<div style={{flex: 1}}>
+								<input
+									style={{
+										...input,
+										borderColor: formData.lastDateOfApplication ? '#10b981' : '#d1d5db',
+										background: formData.lastDateOfApplication ? '#f0fdf4' : '#fff'
+									}}
+									type="date"
+									min={new Date().toISOString().split('T')[0]}
+									value={formData.lastDateOfApplication}
+									onChange={(e) => update({ lastDateOfApplication: e.target.value })}
+									placeholder="DD/MM/YYYY"
+									readOnly={false}
+								/>
+							</div>
+						</div>
+						<small style={{color: '#6b7280', fontSize: 11, marginTop: 4, display: 'block'}}>
+							Time (24-hour format) and Date - Optional: Set deadline time (e.g., 23:59)
+						</small>
 						{errors.lastDateOfApplication && (
 							<div style={{color: '#dc2626', fontSize: 12, marginTop: 4, display: 'flex', alignItems: 'center', gap: 4}}>
 								<i className="fa fa-exclamation-circle"></i>

@@ -188,7 +188,42 @@ const scheduleInterviewStage = async (req, res) => {
     res.json({
       success: true,
       message: 'Interview stage scheduled successfully',
-      interviewProcess
+      interviewProcess,
+      formattedMessage: (() => {
+        const stageNames = {
+          technical: 'Technical round',
+          nonTechnical: 'Non-Technical round', 
+          managerial: 'Managerial round',
+          final: 'Final round',
+          hr: 'HR round',
+          assessment: 'Assessment'
+        };
+        
+        const stageName = stageNames[stage.stageType] || stage.stageName || 'Interview round';
+        let message = `${stageName} scheduled Successfully!!`;
+        
+        if (stage.fromDate && stage.toDate) {
+          const formatDate = (date) => {
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+          };
+          
+          message += ` From: ${formatDate(stage.fromDate)} | To: ${formatDate(stage.toDate)}`;
+        } else if (stage.scheduledDate) {
+          const day = stage.scheduledDate.getDate().toString().padStart(2, '0');
+          const month = (stage.scheduledDate.getMonth() + 1).toString().padStart(2, '0');
+          const year = stage.scheduledDate.getFullYear();
+          message += ` Date: ${day}/${month}/${year}`;
+        }
+        
+        if (stage.scheduledTime) {
+          message += ` | Time: ${stage.scheduledTime}`;
+        }
+        
+        return message;
+      })()
     });
   } catch (error) {
     console.error('Error scheduling interview stage:', error);

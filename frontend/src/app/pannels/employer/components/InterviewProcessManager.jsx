@@ -254,7 +254,61 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
       });
       
       setInterviewProcess(data.interviewProcess);
-      showSuccess('Interview process saved successfully!');
+      
+      // Use formatted message from backend if available, otherwise generate one
+      if (data.formattedMessage) {
+        showSuccess(data.formattedMessage);
+      } else {
+        // Generate success message with proper date format for scheduled stages
+        const scheduledStages = stages.filter(stage => 
+          stage.status === 'scheduled' && (stage.fromDate || stage.scheduledDate)
+        );
+        
+        if (scheduledStages.length > 0) {
+          const stage = scheduledStages[0]; // Get first scheduled stage for message
+          const stageNames = {
+            technical: 'Technical round',
+            nonTechnical: 'Non-Technical round', 
+            managerial: 'Managerial round',
+            final: 'Final round',
+            hr: 'HR round',
+            assessment: 'Assessment'
+          };
+          
+          const stageName = stageNames[stage.stageType] || stage.stageName || 'Interview round';
+          
+          let message = `${stageName} scheduled Successfully!!`;
+          
+          if (stage.fromDate && stage.toDate) {
+            // Format dates as DD/MM/YYYY
+            const fromDate = new Date(stage.fromDate);
+            const toDate = new Date(stage.toDate);
+            const formatDate = (date) => {
+              const day = date.getDate().toString().padStart(2, '0');
+              const month = (date.getMonth() + 1).toString().padStart(2, '0');
+              const year = date.getFullYear();
+              return `${day}/${month}/${year}`;
+            };
+            
+            message += ` From: ${formatDate(fromDate)} | To: ${formatDate(toDate)}`;
+          } else if (stage.scheduledDate) {
+            const scheduledDate = new Date(stage.scheduledDate);
+            const day = scheduledDate.getDate().toString().padStart(2, '0');
+            const month = (scheduledDate.getMonth() + 1).toString().padStart(2, '0');
+            const year = scheduledDate.getFullYear();
+            message += ` Date: ${day}/${month}/${year}`;
+          }
+          
+          if (stage.scheduledTime) {
+            message += ` | Time: ${stage.scheduledTime}`;
+          }
+          
+          showSuccess(message);
+        } else {
+          showSuccess('Interview process saved successfully!');
+        }
+      }
+      
       if (onSave) onSave(data.interviewProcess);
     } catch (error) {
       console.error('Error saving interview process:', error);
@@ -308,7 +362,13 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
             <div className="row">
               <div className="col-md-6 mb-2">
                 <small className="text-muted d-block">Proposed Date:</small>
-                <strong>{new Date(interviewProcess.interviewInvite.proposedDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</strong>
+                <strong>{(() => {
+                  const date = new Date(interviewProcess.interviewInvite.proposedDate);
+                  const day = date.getDate().toString().padStart(2, '0');
+                  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                  const year = date.getFullYear();
+                  return `${day}/${month}/${year}`;
+                })()}</strong>
               </div>
               <div className="col-md-6 mb-2">
                 <small className="text-muted d-block">Proposed Time:</small>
@@ -434,7 +494,13 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
             <div className="row">
               <div className="col-md-6 mb-2">
                 <small className="text-muted d-block">Available Date:</small>
-                <strong>{new Date(candidateResponse.availableDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</strong>
+                <strong>{(() => {
+                  const date = new Date(candidateResponse.availableDate);
+                  const day = date.getDate().toString().padStart(2, '0');
+                  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                  const year = date.getFullYear();
+                  return `${day}/${month}/${year}`;
+                })()}</strong>
               </div>
               <div className="col-md-6 mb-2">
                 <small className="text-muted d-block">Available Time:</small>
@@ -474,7 +540,13 @@ const InterviewProcessManager = ({ applicationId, onSave }) => {
             <div className="row">
               <div className="col-md-6 mb-2">
                 <small className="text-muted d-block">Confirmed Date:</small>
-                <strong>{new Date(interviewProcess.interviewInvite.confirmedDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</strong>
+                <strong>{(() => {
+                  const date = new Date(interviewProcess.interviewInvite.confirmedDate);
+                  const day = date.getDate().toString().padStart(2, '0');
+                  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                  const year = date.getFullYear();
+                  return `${day}/${month}/${year}`;
+                })()}</strong>
               </div>
               <div className="col-md-6 mb-2">
                 <small className="text-muted d-block">Confirmed Time:</small>
