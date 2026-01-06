@@ -42,7 +42,18 @@ function SectionJobsSidebar2 ({ _config, job }) {
 									<div className="twm-s-info-inner">
 										<i className="fas fa-calendar-alt" />
 										<span className="twm-title">Application Last Date</span>
-										<div className="twm-s-info-discription" style={{fontWeight: 'bold', color: 'red'}}>{job?.lastDateOfApplication ? formatDate(job.lastDateOfApplication) : 'Not specified'}</div>
+										<div className="twm-s-info-discription" style={{fontWeight: 'bold', color: 'red'}}>
+											{job?.lastDateOfApplication ? (
+												<>
+													{formatDate(job.lastDateOfApplication)}
+													{job?.lastDateOfApplicationTime && (
+														<span style={{display: 'block', fontSize: '12px', marginTop: '2px'}}>
+															at {job.lastDateOfApplicationTime}
+													</span>
+													)}
+												</>
+											) : 'Not specified'}
+										</div>
 									</div>
 								</li>
 
