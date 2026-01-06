@@ -51,6 +51,13 @@ function Footer1() {
                     margin-bottom: 10px;
                     font-size: 14px;
                     color: #000000;
+                    justify-content: flex-start;
+                }
+                @media (max-width: 768px) {
+                    .footer-contact-item {
+                        justify-content: flex-start;
+                        text-align: left;
+                    }
                 }
                 .newsletter-input-group {
                     display: flex;
