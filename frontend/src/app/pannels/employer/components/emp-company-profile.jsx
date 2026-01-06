@@ -92,6 +92,8 @@ function EmpCompanyProfilePage() {
     const [errors, setErrors] = useState({});
     const [globalErrors, setGlobalErrors] = useState([]);
     const [fetchingCity, setFetchingCity] = useState(false);
+    const [fetchingGST, setFetchingGST] = useState(false);
+    const [gstAutoFilled, setGstAutoFilled] = useState(false);
     const [deleteConfirmation, setDeleteConfirmation] = useState(null);
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [imageToDelete, setImageToDelete] = useState(null);
@@ -326,6 +328,11 @@ function EmpCompanyProfilePage() {
         if (field === 'pincode' && value.length === 6) {
             await fetchCityFromPincode(value);
         }
+        
+        // Fetch GST info when GST number is entered (15 characters)
+        if (field === 'gstNumber' && value.length === 15) {
+            await fetchGSTInfo(value);
+        }
     };
 
     const fetchCityFromPincode = async (pincode) => {
@@ -364,6 +371,86 @@ function EmpCompanyProfilePage() {
             showError('Failed to fetch city from pincode');
         } finally {
             setFetchingCity(false);
+        }
+    };
+
+    const fetchGSTInfo = async (gstNumber) => {
+        // Validate GST format first
+        const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+        if (!gstRegex.test(gstNumber)) {
+            return;
+        }
+        
+        setFetchingGST(true);
+        try {
+            const token = localStorage.getItem('employerToken');
+            if (!token) {
+                showWarning('Please login to access GST information.');
+                return;
+            }
+            
+            const response = await fetch(`http://localhost:5000/api/employer/gst/${gstNumber}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success && data.data?.autoFillSuggestions) {
+                const suggestions = data.data.autoFillSuggestions;
+                
+                // Show success message
+                showSuccess(data.message || 'Company information retrieved from GST database!');
+                
+                // Auto-fill form fields with GST data
+                setFormData(prev => ({
+                    ...prev,
+                    companyName: suggestions.companyName || prev.companyName,
+                    panNumber: suggestions.panNumber || prev.panNumber,
+                    state: suggestions.state || prev.state,
+                    city: suggestions.city || prev.city,
+                    pincode: suggestions.pincode || prev.pincode,
+                    corporateAddress: suggestions.corporateAddress || prev.corporateAddress,
+                    companyType: suggestions.companyType || prev.companyType
+                }));
+                
+                // Clear validation errors for auto-filled fields
+                setErrors(prev => {
+                    const newErrors = { ...prev };
+                    if (suggestions.companyName) delete newErrors.companyName;
+                    if (suggestions.panNumber) delete newErrors.panNumber;
+                    if (suggestions.state) delete newErrors.state;
+                    if (suggestions.city) delete newErrors.city;
+                    if (suggestions.pincode) delete newErrors.pincode;
+                    if (suggestions.corporateAddress) delete newErrors.corporateAddress;
+                    if (suggestions.companyType) delete newErrors.companyType;
+                    return newErrors;
+                });
+                
+                setGstAutoFilled(true);
+                
+                // Show additional info if available
+                if (data.data.gstInfo?.suggestions) {
+                    const gstSuggestions = data.data.gstInfo.suggestions;
+                    if (gstSuggestions.tradeName && gstSuggestions.tradeName !== suggestions.companyName) {
+                        showInfo(`Trade Name from GST: ${gstSuggestions.tradeName}`);
+                    }
+                }
+                
+            } else {
+                showWarning(data.message || 'GST number is valid but detailed information could not be retrieved. Please fill other details manually.');
+            }
+        } catch (error) {
+            console.error('Error fetching GST info:', error);
+            if (error.message?.includes('timeout')) {
+                showError('GST service timeout. Please try again or fill details manually.');
+            } else {
+                showError('Failed to fetch GST information. Please fill details manually.');
+            }
+        } finally {
+            setFetchingGST(false);
         }
     };
 
@@ -1143,9 +1230,13 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-xl-4 col-lg-12 col-md-12">
                                 <div className="form-group">
-                                    <label className="required-field"><Building size={16} className="me-2" /> Company Name</label>
+                                    <label className="required-field">
+                                        <Building size={16} className="me-2" /> 
+                                        Company Name
+                                        {gstAutoFilled && <i className="fas fa-robot text-success ms-2" title="Auto-filled from GST"></i>}
+                                    </label>
                                     <input
-                                        className={`form-control ${errors.companyName ? 'is-invalid' : ''}`}
+                                        className={`form-control ${errors.companyName ? 'is-invalid' : ''} ${gstAutoFilled ? 'border-success' : ''}`}
                                         type="text"
                                         value={formData.companyName}
                                         onChange={(e) => handleInputChange('companyName', e.target.value)}
@@ -1345,9 +1436,13 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label className="required-field"><MapPin size={16} className="me-2" /> Corporate Office Address</label>
+                                    <label className="required-field">
+                                        <MapPin size={16} className="me-2" /> 
+                                        Corporate Office Address
+                                        {gstAutoFilled && <i className="fas fa-robot text-success ms-2" title="Auto-filled from GST"></i>}
+                                    </label>
                                     <input
-                                        className={`form-control ${errors.corporateAddress ? 'is-invalid' : ''}`}
+                                        className={`form-control ${errors.corporateAddress ? 'is-invalid' : ''} ${gstAutoFilled ? 'border-success' : ''}`}
                                         type="text"
                                         value={formData.corporateAddress}
                                         onChange={(e) => handleInputChange('corporateAddress', e.target.value)}
@@ -1525,14 +1620,66 @@ function EmpCompanyProfilePage() {
                             <div className="col-md-6">
                                 <div className="form-group">
                                     <label className="required-field"><Hash size={16} className="me-2" /> GST Number</label>
-                                    <input
-                                        className={`form-control ${errors.gstNumber ? 'is-invalid' : ''}`}
-                                        type="text"
-                                        value={formData.gstNumber}
-                                        onChange={(e) => handleInputChange('gstNumber', e.target.value)}
-                                        placeholder="12ABCDE1234F1Z5"
-                                    />
+                                    <div className="position-relative">
+                                        <input
+                                            className={`form-control ${errors.gstNumber ? 'is-invalid' : ''} ${gstAutoFilled ? 'border-success' : ''}`}
+                                            type="text"
+                                            value={formData.gstNumber}
+                                            onChange={(e) => {
+                                                handleInputChange('gstNumber', e.target.value);
+                                                if (gstAutoFilled && e.target.value !== formData.gstNumber) {
+                                                    setGstAutoFilled(false);
+                                                }
+                                            }}
+                                            placeholder="12ABCDE1234F1Z5"
+                                            maxLength="15"
+                                        />
+                                        {fetchingGST && (
+                                            <div className="position-absolute" style={{right: '10px', top: '50%', transform: 'translateY(-50%)'}}>
+                                                <div className="spinner-border spinner-border-sm text-primary" role="status">
+                                                    <span className="visually-hidden">Loading...</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {gstAutoFilled && !fetchingGST && (
+                                            <div className="position-absolute" style={{right: '10px', top: '50%', transform: 'translateY(-50%)'}}>
+                                                <i className="fas fa-check-circle text-success" title="Information auto-filled from GST database"></i>
+                                            </div>
+                                        )}
+                                    </div>
                                     <ErrorDisplay errors={errors} fieldName="gstNumber" />
+                                    {fetchingGST && <small className="text-info">Fetching company information from GST database...</small>}
+                                    {gstAutoFilled && !fetchingGST && (
+                                        <small className="text-success">
+                                            <i className="fas fa-info-circle me-1"></i>
+                                            Company information auto-filled from GST database. Please verify and update if needed.
+                                        </small>
+                                    )}
+                                    <small className="text-muted d-block mt-1">
+                                        Enter your 15-digit GST number to auto-fill company information
+                                    </small>
+                                    {formData.gstNumber && formData.gstNumber.length === 15 && !gstAutoFilled && (
+                                        <div className="mt-2">
+                                            <button
+                                                type="button"
+                                                className="btn btn-sm btn-outline-primary"
+                                                onClick={() => fetchGSTInfo(formData.gstNumber)}
+                                                disabled={fetchingGST}
+                                            >
+                                                {fetchingGST ? (
+                                                    <>
+                                                        <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                                                        Fetching...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <i className="fas fa-search me-2"></i>
+                                                        Fetch Company Info
+                                                    </>
+                                                )}
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 

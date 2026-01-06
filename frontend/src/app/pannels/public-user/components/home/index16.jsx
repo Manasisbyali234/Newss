@@ -85,8 +85,8 @@ function Home16Page() {
         if (!token) return;
 
         try {
-            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-            const response = await fetch(`${apiUrl}/api/candidate/applications`, {
+            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+            const response = await fetch(`${apiUrl}/candidate/applications`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
@@ -1257,9 +1257,7 @@ Leverage advanced filtering capabilities to identify qualified professionals.</p
                                 Learn More
                             </NavLink>
                         </div>
-                        <p className="mb-0 text-center" style={{color: '#6B7280', fontSize: '14px', maxWidth: '300px', margin: '0 auto'}}>
-                            No credit card required. Start posting today.
-                        </p>
+                        
                     </div>
                 </Container>
             </div>

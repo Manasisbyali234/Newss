@@ -565,9 +565,9 @@ function EmpCandidateReviewPage () {
 								<button
 									className="btn btn-lg rounded-pill px-4 py-2 fw-semibold"
 									style={{backgroundColor: '#ff6600', color: 'white', border: 'none', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}
-									onClick={() => downloadDocument(candidate.resume, 'resume.pdf')}
+									onClick={() => viewDocument(candidate.resume)}
 								>
-									<Download size={18} className="me-2" />Download Resume
+									<i className="fa fa-eye me-2" style={{color: 'white'}}></i>View Resume
 								</button>
 							</div>
 						</div>
@@ -1032,13 +1032,6 @@ function EmpCandidateReviewPage () {
 															onClick={() => viewDocument(edu.marksheet)}
 														>
 															<i className="fa fa-eye me-1" style={{color: 'white'}}></i>View
-														</button>
-														<button
-															className="btn btn-outline-secondary btn-sm"
-															style={{color: 'white', backgroundColor: '#ff6600', borderColor: '#ff6600', flex: 1, whiteSpace: 'nowrap'}}
-															onClick={() => downloadDocument(edu.marksheet, `marksheet_${index}.pdf`)}
-														>
-															<Download size={14} className="me-1" />Download
 														</button>
 													</div>
 												)}

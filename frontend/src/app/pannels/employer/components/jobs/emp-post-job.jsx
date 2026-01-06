@@ -231,7 +231,9 @@ export default function EmpPostJob({ onNext }) {
 		companyDescription: "",
 		category: "",
 		// Type of Employment
-		typeOfEmployment: ""
+		typeOfEmployment: "",
+		// Work Shift
+		shift: ""
 	});
 
 	const [employerType, setEmployerType] = useState('company');
@@ -413,7 +415,8 @@ export default function EmpPostJob({ onNext }) {
 					companyName: job.companyName || '',
 					companyDescription: job.companyDescription || '',
 					category: job.category || '',
-					typeOfEmployment: job.typeOfEmployment || ''
+					typeOfEmployment: job.typeOfEmployment || '',
+					shift: job.shift || ''
 				});
 
 				// Set selected assessment
@@ -793,6 +796,7 @@ export default function EmpPostJob({ onNext }) {
 				transportation: formData.transportation,
 				category: formData.category,
 				typeOfEmployment: formData.typeOfEmployment,
+				shift: formData.shift,
 				companyLogo: formData.companyLogo,
 				companyName: formData.companyName,
 				companyDescription: formData.companyDescription
@@ -1310,6 +1314,50 @@ export default function EmpPostJob({ onNext }) {
 								{errors.typeOfEmployment[0]}
 							</div>
 						)}
+					</div>
+
+					<div>
+						<label style={label}>
+							<i className="fa fa-clock" style={{marginRight: '8px', color: '#ff6b35'}}></i>
+							Work Shift
+						</label>
+						<div style={{
+							display: 'grid',
+							gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+							gap: 8,
+							padding: 12,
+							border: '1px solid #d1d5db',
+							borderRadius: 8,
+							background: '#fff'
+						}}>
+							{[
+								{ value: 'day', label: 'Day Shift' },
+								{ value: 'night', label: 'Night Shift' },
+								{ value: 'rotational', label: 'Rotational Shift' }
+							].map(shiftType => (
+								<label key={shiftType.value} style={{
+									display: 'flex',
+									alignItems: 'center',
+									gap: 6,
+									cursor: 'pointer',
+									fontSize: 13,
+									padding: '6px 8px',
+									borderRadius: 4,
+									transition: 'background 0.2s',
+									background: formData.shift === shiftType.value ? '#fff5f2' : 'transparent'
+								}}>
+									<input
+										type="radio"
+										name="shift"
+										value={shiftType.value}
+										checked={formData.shift === shiftType.value}
+										onChange={(e) => update({ shift: e.target.value })}
+										style={{cursor: 'pointer'}}
+									/>
+									<span>{shiftType.label}</span>
+								</label>
+							))}
+						</div>
 					</div>
 
 					{/* Row 2 */}

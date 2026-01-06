@@ -7,6 +7,7 @@ const Message = require('../models/Message');
 const Subscription = require('../models/Subscription');
 const { sendWelcomeEmail } = require('../utils/emailService');
 const { cacheInvalidation } = require('../utils/cacheInvalidation');
+const { validateGSTFormat, fetchGSTInfo, mapGSTToProfile } = require('../utils/gstService');
 
 const generateToken = (id, role) => {
   return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
@@ -2224,5 +2225,79 @@ exports.getInterviewProcessStatus = async (req, res) => {
   } catch (error) {
     console.error('Error getting interview process status:', error);
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// GST API Controller
+exports.getGSTInfo = async (req, res) => {
+  try {
+    const { gstNumber } = req.params;
+    
+    // Validate GST number format
+    if (!validateGSTFormat(gstNumber)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid GST number format. Please enter a valid 15-digit GST number.'
+      });
+    }
+    
+    console.log('Fetching GST info for:', gstNumber);
+    
+    // Fetch GST information
+    const gstInfo = await fetchGSTInfo(gstNumber);
+    
+    // Map GST info to profile fields
+    const profileData = mapGSTToProfile(gstInfo);
+    
+    console.log('GST Info fetched successfully:', {
+      companyName: profileData.companyName,
+      state: profileData.state,
+      city: profileData.city,
+      isActive: gstInfo.isActive
+    });
+    
+    res.json({
+      success: true,
+      message: gstInfo.isActive === false ? 
+        'GST number found but status is inactive. Please verify the GST number.' :
+        gstInfo.message || 'Company information retrieved successfully from GST database.',
+      data: {
+        gstInfo: gstInfo,
+        profileData: profileData,
+        autoFillSuggestions: {
+          companyName: profileData.companyName,
+          gstNumber: profileData.gstNumber,
+          panNumber: profileData.panNumber,
+          state: profileData.state,
+          city: profileData.city,
+          pincode: profileData.pincode,
+          corporateAddress: profileData.corporateAddress,
+          companyType: profileData.companyType
+        }
+      }
+    });
+    
+  } catch (error) {
+    console.error('GST API Error:', error);
+    
+    // Return appropriate error message
+    if (error.message.includes('Invalid GST number')) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid GST number format. Please check and try again.'
+      });
+    }
+    
+    if (error.message.includes('timeout') || error.message.includes('ECONNREFUSED')) {
+      return res.status(503).json({
+        success: false,
+        message: 'GST service is temporarily unavailable. Please try again later or fill the details manually.'
+      });
+    }
+    
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Unable to fetch GST information. Please fill the details manually.'
+    });
   }
 };
