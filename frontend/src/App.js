@@ -29,6 +29,8 @@ import "./mobile-responsive-enhancements.css";
 import "./mobile-responsive-fixes.css";
 // BADGE TEXT ORANGE - Make all status badge texts orange
 import "./badge-text-orange.css";
+// HEADER Z-INDEX FIX - Fix header appearing above popup notifications
+import "./header-zindex-fix.css";
 
 
 function App() {

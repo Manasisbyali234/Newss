@@ -1604,11 +1604,11 @@ const handleNavbarScroll = () => {
         if (window.scrollY > 50) {
             navbar.classList.remove('navbar-transparent');
             navbar.classList.add('navbar-scrolled');
-            navbar.style.cssText = 'background: #fff !important; background-color: #fff !important; box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important; position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 10000 !important; transition: all 0.3s ease !important;';
+            navbar.style.cssText = 'background: #fff !important; background-color: #fff !important; box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important; position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 1000 !important; transition: all 0.3s ease !important;';
         } else {
             navbar.classList.remove('navbar-scrolled');
             navbar.classList.add('navbar-transparent');
-            navbar.style.cssText = 'background: transparent !important; background-color: transparent !important; box-shadow: none !important; position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 10000 !important; transition: all 0.3s ease !important;';
+            navbar.style.cssText = 'background: transparent !important; background-color: transparent !important; box-shadow: none !important; position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 1000 !important; transition: all 0.3s ease !important;';
         }
     });
 };

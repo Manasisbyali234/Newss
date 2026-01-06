@@ -626,26 +626,38 @@ function CanStatusPage() {
 																						}
 																					}
 																				}
+																				
+																				// For Assessment rounds, also check if there are assessment-specific details
+																				if (roundName === 'Assessment' && !roundDetails) {
+																					// Check for assessment details in various possible keys
+																					const assessmentKeys = ['assessment', 'Assessment', 'technical_assessment', 'online_assessment'];
+																					for (const key of assessmentKeys) {
+																						if (app.jobId.interviewRoundDetails[key]) {
+																							roundDetails = app.jobId.interviewRoundDetails[key];
+																							break;
+																						}
+																					}
+																					
+																					// If still no details, create a basic one from job assessment info
+																					if (!roundDetails && app.jobId?.assessmentId) {
+																						roundDetails = {
+																							description: app.jobId.assessmentInstructions || 'Complete the technical assessment within the given timeframe',
+																							fromDate: app.jobId.assessmentStartDate,
+																							toDate: app.jobId.assessmentEndDate
+																						};
+																					}
+																				}
 																			}
 																			const formatDate = (dateStr) => {
 																				if (!dateStr) return null;
 																				try {
 																					return new Date(dateStr).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'});
 																				} catch (error) {
-																					console.error('Date formatting error:', error, 'for date:', dateStr);
 																					return null;
 																				}
 																			};
 																			// For Assessment, use job-level dates
 																			let startDate, endDate, dateDisplay;
-																			console.log('=== DATE DEBUG ===');
-																			console.log('Job ID:', app.jobId?._id);
-																			console.log('Assessment fields:', {
-																				assessmentId: app.jobId?.assessmentId,
-																				assessmentStartDate: app.jobId?.assessmentStartDate,
-																				assessmentEndDate: app.jobId?.assessmentEndDate
-																			});
-																			console.log('All job fields:', Object.keys(app.jobId || {}));
 																			
 																			if (roundName === 'Assessment') {
 																				// Try multiple possible field names for assessment dates
@@ -660,7 +672,6 @@ function CanStatusPage() {
 																						  startDate ? `From: ${startDate}` : 
 																						  endDate ? `Until: ${endDate}` : null;
 																			
-																			console.log('Formatted dates:', {startDate, endDate, dateDisplay});
 																			return (
 																				<div key={roundIndex} className="interview-round-item" style={{minWidth: '100px', padding: '4px'}}>
 																					<div className="round-name" style={{fontSize: '12px', fontWeight: '600', marginBottom: '4px'}}>{roundName}</div>
@@ -674,6 +685,14 @@ function CanStatusPage() {
 																								{app.assessmentResult === 'pass' ? 'PASS' : 'FAIL'}
 																							</span>
 																						)}
+																						{/* Show assessment description if available */}
+																						{roundName === 'Assessment' && roundDetails?.description && (
+																							<div style={{fontSize: '8px', color: '#1976d2', textAlign: 'center', padding: '2px 4px', backgroundColor: '#e3f2fd', borderRadius: '3px', marginTop: '2px', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={roundDetails.description}>
+																								<i className="fa fa-info-circle me-1" style={{fontSize: '7px'}}></i>
+																								{roundDetails.description.length > 15 ? roundDetails.description.substring(0, 15) + '...' : roundDetails.description}
+																							</div>
+																						)}
+																						{/* Show assessment remarks if available - removed from table, only in modal */}
 																						{dateDisplay && (
 																							<div style={{fontSize: '9px', color: '#666', textAlign: 'center', padding: '2px 4px', backgroundColor: '#f8f9fa', borderRadius: '3px', marginTop: '2px'}}>
 																								{dateDisplay}
@@ -684,6 +703,27 @@ function CanStatusPage() {
 																								Dates TBD
 																							</div>
 																						)}
+																						{/* Show non-assessment round description and remarks */}
+																						{roundName !== 'Assessment' && roundDetails?.description && (
+																							<div style={{fontSize: '8px', color: '#666', textAlign: 'center', padding: '2px 4px', backgroundColor: '#e8f5e9', borderRadius: '3px', marginTop: '2px', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={roundDetails.description}>
+																								<i className="fa fa-info-circle me-1" style={{fontSize: '7px'}}></i>
+																								{roundDetails.description.length > 15 ? roundDetails.description.substring(0, 15) + '...' : roundDetails.description}
+																							</div>
+																						)}
+																						{/* Show non-assessment round employer remarks */}
+																						{(() => {
+																							if (roundName === 'Assessment') return null;
+																							const process = app.interviewProcesses?.find(p => p.type === (typeof round === 'object' ? round.roundType : round.toLowerCase()));
+																							const processRemarks = process?.id ? app.processRemarks?.[process.id] : null;
+																							const remarks = roundDetails?.employerRemarks || processRemarks;
+																							if (!remarks) return null;
+																							return (
+																								<div style={{fontSize: '8px', color: '#e65100', textAlign: 'center', padding: '2px 4px', backgroundColor: '#fff3e0', borderRadius: '3px', marginTop: '2px', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={remarks}>
+																									<i className="fa fa-comment me-1" style={{fontSize: '7px'}}></i>
+																									{remarks.length > 12 ? remarks.substring(0, 12) + '...' : remarks}
+																								</div>
+																							);
+																						})()}
 																					</div>
 																				</div>
 																			);
@@ -888,6 +928,21 @@ function CanStatusPage() {
 															</div>
 														)}
 
+														{/* Assessment Employer Remarks */}
+														{(() => {
+															const assessmentProcess = selectedApplication.interviewProcesses?.find(p => p.type === 'assessment' || p.name?.toLowerCase().includes('assessment'));
+															const processRemarks = assessmentProcess?.id ? selectedApplication.processRemarks?.[assessmentProcess.id] : null;
+															const remarks = processRemarks || roundDetails?.employerRemarks;
+															
+															if (!remarks) return null;
+															return (
+																<div className="mb-3 p-2" style={{backgroundColor: '#fff3e0', borderRadius: '6px', border: '1px solid #ffe0b3'}}>
+																	<small className="text-muted d-block mb-1"><i className="fa fa-comment me-1" style={{color: '#ff6b35'}}></i><strong>Assessment Remarks:</strong></small>
+																	<div style={{fontSize: '14px', lineHeight: '1.5', color: '#495057'}}>{remarks}</div>
+																</div>
+															);
+														})()}
+
 														{/* Assessment Action Buttons */}
 														<div className="mt-3 pt-2 border-top d-flex gap-2 flex-wrap">
 															{selectedApplication.assessmentStatus === 'expired' || getAssessmentWindowInfo(selectedApplication.jobId).isAfterEnd ? (
@@ -981,7 +1036,7 @@ function CanStatusPage() {
 																			)}
 																		</>
 																	);
-																})()}
+																})()}}
 																{(roundDetails.fromDate || roundDetails.toDate) && (
 																	<div className="mb-2">
 																		<small className="text-muted"><i className="fa fa-calendar me-1"></i>Interview Period:</small>

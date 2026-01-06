@@ -1,9 +1,9 @@
 .popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
   background-color: transparent;
   display: flex;
   justify-content: center;
@@ -12,6 +12,14 @@
   animation: fadeIn 0.2s ease-in;
   padding: 20px;
   pointer-events: none;
+}
+
+/* Ensure popup is always on top of everything */
+.popup-overlay,
+.popup-overlay *,
+.popup-box,
+.popup-box * {
+  z-index: 2147483647 !important;
 }
 
 @keyframes fadeIn {
@@ -24,16 +32,16 @@
 }
 
 .popup-box {
-  background: white;
+  background: white !important;
   border-radius: 12px;
   padding: 30px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
   max-width: 500px;
   width: 90%;
   animation: slideIn 0.3s ease-out;
   max-height: 80vh;
   overflow-y: auto;
-  position: relative;
+  position: relative !important;
   z-index: 2147483647 !important;
   pointer-events: auto;
 }
