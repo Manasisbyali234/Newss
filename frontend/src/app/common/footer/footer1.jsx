@@ -58,6 +58,9 @@ function Footer1() {
                         justify-content: flex-start;
                         text-align: left;
                     }
+                    .contact-info {
+                        align-items: flex-start !important;
+                    }
                 }
                 .newsletter-input-group {
                     display: flex;
