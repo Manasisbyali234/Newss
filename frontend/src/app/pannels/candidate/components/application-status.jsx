@@ -676,7 +676,7 @@ function CanStatusPage() {
 																				<div key={roundIndex} className="interview-round-item" style={{minWidth: '100px', padding: '4px'}}>
 																					<div className="round-name" style={{fontSize: '12px', fontWeight: '600', marginBottom: '4px'}}>{roundName}</div>
 																					<div style={{display: 'flex', flexDirection: 'column', gap: '3px', alignItems: 'center'}}>
-																						<span className={`badge ${roundStatus.class}`} style={{fontSize: '10px', padding: '3px 8px', minWidth: '70px', textAlign: 'center'}}>
+																						<span className={`badge ${roundStatus.class}`} style={{fontSize: '12px', padding: '4px 8px', minWidth: '60px', textAlign: 'center'}}>
 																							{roundStatus?.text || 'Pending'}
 																						</span>
 																						{/* Show pass/fail result for completed assessments */}
@@ -891,9 +891,25 @@ function CanStatusPage() {
 														<i className="fa fa-circle me-2" style={{color: '#ff6b35', fontSize: '8px'}}></i>
 														{roundName}
 													</h6>
-													<span className={`badge ${roundStatus.class}`} style={{fontSize: '10px', padding: '3px 8px', minWidth: '70px', textAlign: 'center'}}>
-														{roundStatus.text}
-													</span>
+													<div className="d-flex gap-2 align-items-center">
+														{/* Interview Process Status Badge */}
+														{(() => {
+															const process = selectedApplication.interviewProcesses?.find(p => p.type === (typeof round === 'object' ? round.roundType : round.toLowerCase()));
+															if (process?.status) {
+																const statusColors = {shortlisted: '#6f42c1', under_review: '#fd7e14', interview_scheduled: '#0dcaf0', interview_completed: '#198754', selected: '#198754', rejected: '#dc3545', on_hold: '#6c757d'};
+																const statusLabels = {shortlisted: 'Shortlisted', under_review: 'Under Review', interview_scheduled: 'Interview Scheduled', interview_completed: 'Interview Completed', selected: 'Selected', rejected: 'Rejected', on_hold: 'On Hold'};
+																return (
+																	<span className="badge" style={{fontSize: '12px', padding: '4px 8px', backgroundColor: statusColors[process.status] || '#6c757d', color: 'white', border: 'none'}}>
+																		{statusLabels[process.status] || process.status}
+																	</span>
+																);
+															}
+															return null;
+														})()}
+														<span className={`badge ${roundStatus.class}`} style={{fontSize: '12px', padding: '4px 8px', minWidth: '60px', textAlign: 'center'}}>
+															{roundStatus.text}
+														</span>
+													</div>
 												</div>
 												
 												{/* Assessment Details */}

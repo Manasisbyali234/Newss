@@ -169,14 +169,14 @@
 }
 
 .interview-round-item .badge {
-    font-size: 8px !important;
-    padding: 1px 3px !important;
-    border-radius: 4px !important;
+    font-size: 12px !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
     white-space: nowrap;
-    min-width: 35px !important;
+    min-width: 60px !important;
     text-align: center;
-    font-weight: 500;
-    line-height: 1.1 !important;
+    font-weight: 600;
+    line-height: 1.2 !important;
 }
 
 /* Date display styling */
@@ -198,13 +198,13 @@
 
 /* Status Column */
 .table tbody td:nth-child(5) .badge {
-    font-size: 8px !important;
-    padding: 1px 3px !important;
-    border-radius: 4px !important;
-    font-weight: 500;
+    font-size: 12px !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+    font-weight: 600;
     white-space: nowrap;
-    min-width: 35px !important;
-    line-height: 1.1 !important;
+    min-width: 60px !important;
+    line-height: 1.2 !important;
 }
 
 /* View Details Column */
@@ -325,13 +325,14 @@ td .text-success {
     font-weight: 500 !important;
 }
 
-/* All badge variants smaller */
+/* All badge variants larger */
 .badge {
-    font-size: 8px !important;
-    padding: 1px 3px !important;
-    border-radius: 4px !important;
-    min-width: 35px !important;
-    line-height: 1.1 !important;
+    font-size: 12px !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+    min-width: 60px !important;
+    line-height: 1.2 !important;
+    font-weight: 600 !important;
 }
 
 /* Mobile Responsive */
@@ -544,12 +545,36 @@ td .text-success {
     z-index: 99999 !important;
 }
 
-/* Modal Badge Size Fix */
-.modal-dialog .badge {
-    font-size: 8px !important;
-    padding: 1px 3px !important;
-    min-width: 35px !important;
-    border-radius: 4px !important;
-    font-weight: 500 !important;
-    line-height: 1.1 !important;
+/* Modal Badge Size Fix - Higher Specificity */
+.modal-dialog .badge,
+.modal-content .badge,
+.modal-body .badge {
+    font-size: 12px !important;
+    padding: 4px 8px !important;
+    min-width: 60px !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    vertical-align: top !important;
+}
+
+/* Force override for all badges in modal */
+.modal .badge[style*="font-size"],
+.modal-dialog .badge[style*="font-size"],
+.modal-content .badge[style*="font-size"],
+.modal-body .badge[style*="font-size"] {
+    font-size: 12px !important;
+    padding: 4px 8px !important;
+    min-width: 60px !important;
+    vertical-align: top !important;
+}
+
+/* Align badges in modal header */
+.modal-body .d-flex.gap-2.align-items-center {
+    align-items: flex-start !important;
+}
+
+.modal-body .d-flex.gap-2.align-items-center .badge {
+    margin-top: 0 !important;
+    vertical-align: top !important;
 }
