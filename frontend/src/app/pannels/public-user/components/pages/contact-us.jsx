@@ -222,6 +222,10 @@ function ContactUsPage() {
                                                     <p><a href="tel:+919876543210">+91 9876543210</a></p>
                                                     <p><a href="tel:+919807623145">+91 9807623145</a></p>
                                                 </div>
+                                                <div className="c-info-column" style={{marginBottom: '10px'}}>
+                                                    <h3 className="twm-title">Address</h3>
+                                                    <p>C/o, FCG ADVISORS LLP, No.10, 1st main Road, J lingaiah Road, Seshadripuram, bangalore - 560020</p>
+                                                </div>
                                                 <div className="c-info-column">
                                                     <h3 className="twm-title">Support</h3>
                                                     <p><a href="mailto:info@taleglobal.net" style={{color: '#1976d2 !important', textDecoration: 'underline !important', cursor: 'pointer !important', pointerEvents: 'auto !important', position: 'relative', zIndex: 999}}>info@taleglobal.net</a></p>
