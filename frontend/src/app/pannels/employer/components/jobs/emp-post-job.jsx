@@ -2138,7 +2138,19 @@ export default function EmpPostJob({ onNext }) {
 									<select
 										style={{ ...input, flex: 1, cursor: 'pointer', borderColor: selectedAssessment ? '#10b981' : '#d1d5db', borderWidth: 2 }}
 										value={selectedAssessment}
-										onChange={(e) => setSelectedAssessment(e.target.value)}
+										onChange={(e) => {
+											setSelectedAssessment(e.target.value);
+											// Show assessment duration popup when selecting an assessment
+											if (e.target.value) {
+												showPopup({
+													title: '⏰ Assessment Duration - 24 Hours',
+													message: 'Important: The assessment duration is 24 hours. Candidates will have a full 24-hour window to complete the assessment from the start time to the end time you specify. Please set your start and end times accordingly.',
+													type: 'info',
+													icon: 'fa-clock',
+													duration: 6000
+												});
+											}
+										}}
 									>
 										<option value="">-- Select Assessment --</option>
 										{availableAssessments.map((assessment) => (
@@ -2157,19 +2169,22 @@ export default function EmpPostJob({ onNext }) {
 								{selectedAssessment && (
 									<div style={{
 										marginTop: 8,
-										padding: '8px 12px',
-										background: '#d1fae5',
-										borderRadius: 6,
-										color: '#065f46',
+										padding: '12px 16px',
+										background: 'linear-gradient(135deg, #fef3c7 0%, #fbbf24 100%)',
+										borderRadius: 8,
+										color: '#92400e',
 										fontSize: 13,
 										display: 'flex',
 										alignItems: 'center',
-										gap: 6
+										gap: 8,
+										border: '2px solid #f59e0b',
+										boxShadow: '0 2px 8px rgba(245, 158, 11, 0.2)'
 									}}>
-										<i className="fa fa-info-circle"></i>
-										<span>
-											Assessment "{availableAssessments.find(a => a._id === selectedAssessment)?.title}" will be used for all {formData.interviewRoundOrder.filter(key => formData.interviewRoundTypes[key] === 'assessment').length} assessment round(s)
-										</span>
+										<i className="fa fa-clock" style={{fontSize: 16, color: '#d97706'}}></i>
+										<div>
+											<div style={{fontWeight: 700, marginBottom: 2}}>⏰ 24-Hour Assessment Duration</div>
+											<div style={{fontSize: 12, opacity: 0.9}}>Candidates get a full 24-hour window to complete the assessment</div>
+										</div>
 									</div>
 								)}
 							</div>
@@ -2309,24 +2324,134 @@ export default function EmpPostJob({ onNext }) {
 														<i className="fa fa-clock" style={{marginRight: 4, color: '#ff6b35'}}></i>
 														Start Time
 													</label>
-													<input
-														style={{...input, fontSize: 13}}
-														type="time"
-														value={formData.interviewRoundDetails[assessmentKey]?.startTime || ''}
-														onChange={(e) => updateRoundDetails(assessmentKey, 'startTime', e.target.value)}
-													/>
+													<div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
+														<select
+															style={{...input, fontSize: 13, flex: 1}}
+															value={(() => {
+																const time = formData.interviewRoundDetails[assessmentKey]?.startTime || '';
+																if (!time) return '';
+																const [hours, minutes] = time.split(':');
+																const hour12 = hours === '00' ? 12 : hours > 12 ? hours - 12 : parseInt(hours);
+																return `${hour12}:${minutes}`;
+															})()}
+															onChange={(e) => {
+																const timeValue = e.target.value;
+																if (timeValue) {
+																	const currentAmPm = (() => {
+																		const existingTime = formData.interviewRoundDetails[assessmentKey]?.startTime || '';
+																		if (!existingTime) return 'AM';
+																		const [hours] = existingTime.split(':');
+																		return parseInt(hours) >= 12 ? 'PM' : 'AM';
+																	})();
+																	const [hour, minute] = timeValue.split(':');
+																	let hour24 = parseInt(hour);
+																	if (currentAmPm === 'PM' && hour24 !== 12) hour24 += 12;
+																	if (currentAmPm === 'AM' && hour24 === 12) hour24 = 0;
+																	updateRoundDetails(assessmentKey, 'startTime', `${hour24.toString().padStart(2, '0')}:${minute}`);
+																}
+															}}
+														>
+															<option value="">Select Time</option>
+															{Array.from({length: 12}, (_, i) => i + 1).map(hour => 
+																Array.from({length: 4}, (_, j) => j * 15).map(minute => (
+																	<option key={`${hour}:${minute.toString().padStart(2, '0')}`} value={`${hour}:${minute.toString().padStart(2, '0')}`}>
+																		{hour}:{minute.toString().padStart(2, '0')}
+																	</option>
+																))
+															).flat()}
+														</select>
+														<select
+															style={{...input, fontSize: 13, width: '70px'}}
+															value={(() => {
+																const time = formData.interviewRoundDetails[assessmentKey]?.startTime || '';
+																if (!time) return 'AM';
+																const [hours] = time.split(':');
+																return parseInt(hours) >= 12 ? 'PM' : 'AM';
+															})()}
+															onChange={(e) => {
+																const ampm = e.target.value;
+																const currentTime = formData.interviewRoundDetails[assessmentKey]?.startTime || '';
+																if (currentTime) {
+																	const [hours, minutes] = currentTime.split(':');
+																	let hour12 = hours === '00' ? 12 : hours > 12 ? hours - 12 : parseInt(hours);
+																	let hour24 = hour12;
+																	if (ampm === 'PM' && hour12 !== 12) hour24 = hour12 + 12;
+																	if (ampm === 'AM' && hour12 === 12) hour24 = 0;
+																	updateRoundDetails(assessmentKey, 'startTime', `${hour24.toString().padStart(2, '0')}:${minutes}`);
+																}
+															}}
+														>
+															<option value="AM">AM</option>
+															<option value="PM">PM</option>
+														</select>
+													</div>
 												</div>
 												<div>
 													<label style={{...label, marginBottom: 4}}>
 														<i className="fa fa-clock" style={{marginRight: 4, color: '#ff6b35'}}></i>
 														End Time
 													</label>
-													<input
-														style={{...input, fontSize: 13}}
-														type="time"
-														value={formData.interviewRoundDetails[assessmentKey]?.endTime || ''}
-														onChange={(e) => updateRoundDetails(assessmentKey, 'endTime', e.target.value)}
-													/>
+													<div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
+														<select
+															style={{...input, fontSize: 13, flex: 1}}
+															value={(() => {
+																const time = formData.interviewRoundDetails[assessmentKey]?.endTime || '';
+																if (!time) return '';
+																const [hours, minutes] = time.split(':');
+																const hour12 = hours === '00' ? 12 : hours > 12 ? hours - 12 : parseInt(hours);
+																return `${hour12}:${minutes}`;
+															})()}
+															onChange={(e) => {
+																const timeValue = e.target.value;
+																if (timeValue) {
+																	const currentAmPm = (() => {
+																		const existingTime = formData.interviewRoundDetails[assessmentKey]?.endTime || '';
+																		if (!existingTime) return 'AM';
+																		const [hours] = existingTime.split(':');
+																		return parseInt(hours) >= 12 ? 'PM' : 'AM';
+																	})();
+																	const [hour, minute] = timeValue.split(':');
+																	let hour24 = parseInt(hour);
+																	if (currentAmPm === 'PM' && hour24 !== 12) hour24 += 12;
+																	if (currentAmPm === 'AM' && hour24 === 12) hour24 = 0;
+																	updateRoundDetails(assessmentKey, 'endTime', `${hour24.toString().padStart(2, '0')}:${minute}`);
+																}
+															}}
+														>
+															<option value="">Select Time</option>
+															{Array.from({length: 12}, (_, i) => i + 1).map(hour => 
+																Array.from({length: 4}, (_, j) => j * 15).map(minute => (
+																	<option key={`${hour}:${minute.toString().padStart(2, '0')}`} value={`${hour}:${minute.toString().padStart(2, '0')}`}>
+																		{hour}:{minute.toString().padStart(2, '0')}
+																	</option>
+																))
+															).flat()}
+														</select>
+														<select
+															style={{...input, fontSize: 13, width: '70px'}}
+															value={(() => {
+																const time = formData.interviewRoundDetails[assessmentKey]?.endTime || '';
+																if (!time) return 'AM';
+																const [hours] = time.split(':');
+																return parseInt(hours) >= 12 ? 'PM' : 'AM';
+															})()}
+															onChange={(e) => {
+																const ampm = e.target.value;
+																const currentTime = formData.interviewRoundDetails[assessmentKey]?.endTime || '';
+																if (currentTime) {
+																	const [hours, minutes] = currentTime.split(':');
+																	let hour12 = hours === '00' ? 12 : hours > 12 ? hours - 12 : parseInt(hours);
+																	let hour24 = hour12;
+																	if (ampm === 'PM' && hour12 !== 12) hour24 = hour12 + 12;
+																	if (ampm === 'AM' && hour12 === 12) hour24 = 0;
+																	updateRoundDetails(assessmentKey, 'endTime', `${hour24.toString().padStart(2, '0')}:${minutes}`);
+																}
+															}}
+														>
+															<option value="AM">AM</option>
+															<option value="PM">PM</option>
+														</select>
+													</div>
 												</div>
 											</div>
 										</div>
