@@ -171,17 +171,17 @@ function Footer1() {
                     <Col lg={4} md={6}>
                         <h4 className="footer-col-title">Stay Connected</h4>
                         <div className="social-links d-flex align-items-center" style={{ marginTop: '0' }}>
-                            <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" className="social-icon-outline" style={{ marginLeft: '0', marginRight: '12px' }}>
+                            <a href="https://tr.ee/eAe5pWxs9h" target="_blank" rel="noopener noreferrer" className="social-icon-outline" style={{ marginLeft: '0', marginRight: '12px' }}>
                                 <i className="feather-facebook"></i>
                             </a>
-                            <a href="https://x.com/" target="_blank" rel="noopener noreferrer" className="social-icon-outline" style={{ marginLeft: '0', marginRight: '12px' }}>
-                                <i className="feather-twitter"></i>
+                            <a href="https://www.instagram.com/taleglobal/" target="_blank" rel="noopener noreferrer" className="social-icon-outline" style={{ marginLeft: '0', marginRight: '12px' }}>
+                                <i className="feather-instagram"></i>
                             </a>
-                            <a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer" className="social-icon-outline" style={{ marginLeft: '0', marginRight: '12px' }}>
+                            <a href="https://tr.ee/ivHDwcvSHh" target="_blank" rel="noopener noreferrer" className="social-icon-outline" style={{ marginLeft: '0', marginRight: '12px' }}>
                                 <i className="feather-linkedin"></i>
                             </a>
-                            <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" className="social-icon-outline" style={{ marginLeft: '0', marginRight: '12px' }}>
-                                <i className="feather-instagram"></i>
+                            <a href="https://tr.ee/C_9jM1dniT" target="_blank" rel="noopener noreferrer" className="social-icon-outline" style={{ marginLeft: '0', marginRight: '12px' }}>
+                                <i className="feather-youtube"></i>
                             </a>
                         </div>
                     </Col>
