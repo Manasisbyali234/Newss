@@ -265,7 +265,7 @@ const PopupInterviewRoundDetails = ({ isOpen, onClose, roundDetails, roundType, 
                                                 </div>
                                             </div>
                                             
-                                            {roundDetails.description && (
+                                            {roundDetails.description && typeof roundDetails.description === 'string' && (
                                                 <div className="mt-3">
                                                     <div className="d-flex align-items-center gap-2 mb-2">
                                                         <FileText size={16} style={{ color: '#f97316' }} />

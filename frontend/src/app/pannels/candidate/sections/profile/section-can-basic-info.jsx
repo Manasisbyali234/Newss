@@ -16,13 +16,6 @@ const indianCities = [
 
 
 function SectionCandicateBasicInfo() {
-    const mobileStyles = `
-        @media (max-width: 767px) {
-            .phone-input-field {
-                padding-left: 90px !important;
-            }
-        }
-    `;
     const [formData, setFormData] = useState({
         name: '',
         middleName: '',
@@ -479,7 +472,6 @@ function SectionCandicateBasicInfo() {
 
     return (
         <>
-        <style>{mobileStyles}</style>
         <form onSubmit={handleSubmit}>
             {notification && (
                 <div className={`alert alert-${notification.type === 'error' ? 'danger' : 'success'} alert-dismissible fade show mb-4`} role="alert">

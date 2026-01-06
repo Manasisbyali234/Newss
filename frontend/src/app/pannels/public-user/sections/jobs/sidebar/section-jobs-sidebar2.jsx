@@ -47,7 +47,7 @@ function SectionJobsSidebar2 ({ _config, job }) {
 												<>
 													{formatDate(job.lastDateOfApplication)}
 													{job?.lastDateOfApplicationTime && (
-														<span style={{display: 'block', fontSize: '12px', marginTop: '2px'}}>
+														<span style={{fontSize: '12px', marginLeft: '8px'}}>
 															at {job.lastDateOfApplicationTime}
 													</span>
 													)}

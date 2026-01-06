@@ -11,45 +11,6 @@ import CanPostedJobs from "./can-posted-jobs";
 import PopupInterviewRoundDetails from "../../../common/popups/popup-interview-round-details";
 import "./status-styles.css";
 
-// Add CSS for hover effect and highlighting
-const styles = `
-.hover-primary:hover {
-	color: #0d6efd !important;
-	cursor: pointer;
-}
-
-.highlight-shortlisted {
-	animation: highlightPulse 2s ease-in-out 3;
-	box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
-}
-
-.highlight-company-position {
-	animation: highlightCompanyPosition 3s ease-in-out 3;
-	box-shadow: 0 0 20px rgba(255, 107, 53, 0.4);
-	border: 2px solid #ff6b35 !important;
-}
-
-@keyframes highlightPulse {
-	0% { background-color: #e8f5e9; }
-	50% { background-color: #c8e6c9; }
-	100% { background-color: #e8f5e9; }
-}
-
-@keyframes highlightCompanyPosition {
-	0% { background-color: #fff3e0; }
-	50% { background-color: #ffe0b3; }
-	100% { background-color: #fff3e0; }
-}
-`;
-
-// Inject styles
-if (typeof document !== 'undefined') {
-	const styleSheet = document.createElement('style');
-	styleSheet.type = 'text/css';
-	styleSheet.innerText = styles;
-	document.head.appendChild(styleSheet);
-}
-
 function CanStatusPage() {
 	const navigate = useNavigate();
 	const [applications, setApplications] = useState([]);
@@ -686,7 +647,7 @@ function CanStatusPage() {
 																							</span>
 																						)}
 																						{/* Show assessment description if available */}
-																						{roundName === 'Assessment' && roundDetails?.description && (
+																						{roundName === 'Assessment' && roundDetails?.description && typeof roundDetails.description === 'string' && (
 																							<div style={{fontSize: '8px', color: '#1976d2', textAlign: 'center', padding: '2px 4px', backgroundColor: '#e3f2fd', borderRadius: '3px', marginTop: '2px', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={roundDetails.description}>
 																								<i className="fa fa-info-circle me-1" style={{fontSize: '7px'}}></i>
 																								{roundDetails.description.length > 15 ? roundDetails.description.substring(0, 15) + '...' : roundDetails.description}
@@ -704,7 +665,7 @@ function CanStatusPage() {
 																							</div>
 																						)}
 																						{/* Show non-assessment round description and remarks */}
-																						{roundName !== 'Assessment' && roundDetails?.description && (
+																						{roundName !== 'Assessment' && roundDetails?.description && typeof roundDetails.description === 'string' && (
 																							<div style={{fontSize: '8px', color: '#666', textAlign: 'center', padding: '2px 4px', backgroundColor: '#e8f5e9', borderRadius: '3px', marginTop: '2px', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={roundDetails.description}>
 																								<i className="fa fa-info-circle me-1" style={{fontSize: '7px'}}></i>
 																								{roundDetails.description.length > 15 ? roundDetails.description.substring(0, 15) + '...' : roundDetails.description}
@@ -716,7 +677,7 @@ function CanStatusPage() {
 																							const process = app.interviewProcesses?.find(p => p.type === (typeof round === 'object' ? round.roundType : round.toLowerCase()));
 																							const processRemarks = process?.id ? app.processRemarks?.[process.id] : null;
 																							const remarks = roundDetails?.employerRemarks || processRemarks;
-																							if (!remarks) return null;
+																							if (!remarks || typeof remarks !== 'string') return null;
 																							return (
 																								<div style={{fontSize: '8px', color: '#e65100', textAlign: 'center', padding: '2px 4px', backgroundColor: '#fff3e0', borderRadius: '3px', marginTop: '2px', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}} title={remarks}>
 																									<i className="fa fa-comment me-1" style={{fontSize: '7px'}}></i>
@@ -950,7 +911,7 @@ function CanStatusPage() {
 															const processRemarks = assessmentProcess?.id ? selectedApplication.processRemarks?.[assessmentProcess.id] : null;
 															const remarks = processRemarks || roundDetails?.employerRemarks;
 															
-															if (!remarks) return null;
+															if (!remarks || typeof remarks !== 'string') return null;
 															return (
 																<div className="mb-3 p-2" style={{backgroundColor: '#fff3e0', borderRadius: '6px', border: '1px solid #ffe0b3'}}>
 																	<small className="text-muted d-block mb-1"><i className="fa fa-comment me-1" style={{color: '#ff6b35'}}></i><strong>Assessment Remarks:</strong></small>
@@ -1022,7 +983,7 @@ function CanStatusPage() {
 													<div className="mt-2">
 														{roundDetails && (
 															<>
-																{roundDetails.description && (
+																{roundDetails.description && typeof roundDetails.description === 'string' && (
 																	<div className="mb-3 p-2" style={{backgroundColor: '#f8f9fa', borderRadius: '6px', border: '1px solid #e9ecef'}}>
 																		<small className="text-muted d-block mb-1"><i className="fa fa-info-circle me-1" style={{color: '#ff6b35'}}></i><strong>Interview Process Description:</strong></small>
 																		<div style={{fontSize: '14px', lineHeight: '1.5', color: '#495057'}}>{roundDetails.description}</div>

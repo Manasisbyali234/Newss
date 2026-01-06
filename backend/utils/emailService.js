@@ -641,6 +641,11 @@ const sendJobApplicationConfirmationEmail = async (candidateEmail, candidateName
   let termsAndConditionsSection = '';
   
   if (jobDetails) {
+    console.log('=== EMAIL DEBUG: Processing job details ===');
+    console.log('interviewRoundOrder:', jobDetails.interviewRoundOrder);
+    console.log('interviewRoundTypes:', jobDetails.interviewRoundTypes);
+    console.log('interviewRoundDetails keys:', jobDetails.interviewRoundDetails ? Object.keys(jobDetails.interviewRoundDetails) : 'null');
+    
     // Build interview rounds section
     const rounds = [];
     
@@ -673,8 +678,18 @@ const sendJobApplicationConfirmationEmail = async (candidateEmail, candidateName
         const roundType = jobDetails.interviewRoundTypes[roundKey];
         const roundDetails = jobDetails.interviewRoundDetails[roundKey];
         
-        // Only add rounds that are enabled and have proper details
-        if (roundType && roundDetails && roundDetails.enabled && (roundDetails.fromDate || roundDetails.description)) {
+        console.log(`Processing round ${index + 1}: key=${roundKey}, type=${roundType}, hasDetails=${!!roundDetails}`);
+        if (roundDetails) {
+          console.log(`Round details:`, {
+            description: roundDetails.description,
+            fromDate: roundDetails.fromDate,
+            toDate: roundDetails.toDate,
+            time: roundDetails.time
+          });
+        }
+        
+        // Only add rounds that have proper details (remove enabled check as it may not be set)
+        if (roundType && roundDetails && (roundDetails.fromDate || roundDetails.toDate || roundDetails.description || roundDetails.time)) {
           rounds.push({
             name: roundNames[roundType] || roundType,
             type: roundType,
@@ -684,8 +699,16 @@ const sendJobApplicationConfirmationEmail = async (candidateEmail, candidateName
               'Date will be communicated',
             time: roundDetails.time || 'Time will be communicated'
           });
+          console.log(`Added round: ${roundNames[roundType] || roundType}`);
+        } else {
+          console.log(`Skipped round ${roundKey} - missing required details`);
         }
       });
+    }
+    
+    console.log(`Total rounds processed: ${rounds.length}`);
+    if (rounds.length > 0) {
+      console.log('Rounds to be included in email:', rounds.map(r => r.name));
     }
     
     if (rounds.length > 0) {
