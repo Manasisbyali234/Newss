@@ -70,11 +70,6 @@ export default function AdminLogin() {
                                         <div className="twm-login-reg-title">
                                             <h4>Admin Login</h4>
                                             <p>Access Admin Panel</p>
-                                            <div className="alert alert-info mt-3">
-                                                <strong>Default Admin Credentials:</strong><br/>
-                                                Email: admin@tale.com<br/>
-                                                Password: admin123456
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

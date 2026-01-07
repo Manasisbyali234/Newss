@@ -285,17 +285,17 @@ function BatchUpload() {
                                     <button 
                                         className="btn-download-sample"
                                         onClick={() => {
-                                            const csvContent = `ID,Candidate Name,College Name,Email,Phone,Course,Password,Credits Assigned
-1,Rahul Sharma,Delhi Technical University,rahul.sharma@email.com,9876543210,Computer Science Engineering,pass123,100
-2,Priya Patel,Mumbai Engineering College,priya.patel@email.com,9876543211,Information Technology,pass456,100
-3,Amit Kumar,Bangalore Institute of Technology,amit.kumar@email.com,9876543212,Electronics & Communication Engineering,pass789,100
-4,Sneha Gupta,Chennai Technical College,sneha.gupta@email.com,9876543213,Mechanical Engineering,pass101,100
-5,Vikash Singh,Hyderabad Engineering University,vikash.singh@email.com,9876543214,Civil Engineering,pass202,100
-6,Anita Rao,Pune Technical Institute,anita.rao@email.com,9876543215,Electrical Engineering,pass303,100
-7,Ravi Verma,Kolkata Engineering College,ravi.verma@email.com,9876543216,Chemical Engineering,pass404,100
-8,Kavya Nair,Kerala Technical University,kavya.nair@email.com,9876543217,Biotechnology Engineering,pass505,100
-9,Suresh Reddy,Andhra Engineering College,suresh.reddy@email.com,9876543218,Aerospace Engineering,pass606,100
-10,Deepika Joshi,Rajasthan Technical Institute,deepika.joshi@email.com,9876543219,Environmental Engineering,pass707,100`;
+                                            const csvContent = `ID,Candidate Name,Email,Phone
+1,Rahul Sharma,rahul.sharma@email.com,9876543210
+2,Priya Patel,priya.patel@email.com,9876543211
+3,Amit Kumar,amit.kumar@email.com,9876543212
+4,Sneha Gupta,sneha.gupta@email.com,9876543213
+5,Vikash Singh,vikash.singh@email.com,9876543214
+6,Anita Rao,anita.rao@email.com,9876543215
+7,Ravi Verma,ravi.verma@email.com,9876543216
+8,Kavya Nair,kavya.nair@email.com,9876543217
+9,Suresh Reddy,suresh.reddy@email.com,9876543218
+10,Deepika Joshi,deepika.joshi@email.com,9876543219`;
                                             const blob = new Blob([csvContent], { type: 'text/csv' });
                                             const link = document.createElement('a');
                                             link.href = URL.createObjectURL(blob);

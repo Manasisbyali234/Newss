@@ -1399,6 +1399,50 @@ export default function EmpPostJob({ onNext }) {
 						</div>
 					</div>
 
+					<div>
+						<label style={label}>
+							<i className="fa fa-clock" style={{marginRight: '8px', color: '#ff6b35'}}></i>
+							Work Shift
+						</label>
+						<div style={{
+							display: 'grid',
+							gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+							gap: 8,
+							padding: 12,
+							border: '1px solid #d1d5db',
+							borderRadius: 8,
+							background: '#fff'
+						}}>
+							{[
+								{ value: 'day-shift', label: 'Day Shift' },
+								{ value: 'night-shift', label: 'Night Shift' },
+								{ value: 'rotational', label: 'Rotational' }
+							].map(shift => (
+								<label key={shift.value} style={{
+									display: 'flex',
+									alignItems: 'center',
+									gap: 6,
+									cursor: 'pointer',
+									fontSize: 13,
+									padding: '6px 8px',
+									borderRadius: 4,
+									transition: 'background 0.2s',
+									background: formData.shift === shift.value ? '#fff5f2' : 'transparent'
+								}}>
+									<input
+										type="radio"
+										name="shift"
+										value={shift.value}
+										checked={formData.shift === shift.value}
+										onChange={(e) => update({ shift: e.target.value })}
+										style={{cursor: 'pointer'}}
+									/>
+									<span>{shift.label}</span>
+								</label>
+							))}
+						</div>
+					</div>
+
 					{/* Row 2 */}
 					<div>
 						<label style={label}>

@@ -15,6 +15,7 @@ function AdminEmployersAllRequest() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [actionLoading, setActionLoading] = useState({});
+    const [statusFilter, setStatusFilter] = useState('pending');
 
     useEffect(() => {
         AOS.init({
@@ -28,18 +29,10 @@ function AdminEmployersAllRequest() {
     const fetchEmployers = async () => {
         try {
             setLoading(true);
-            const response = await api.getAllEmployers({ approvalStatus: 'pending' });
+            const response = await api.getAllEmployers();
             if (response.success) {
-                // Double filter to ensure only pending employers show
-                const pendingEmployers = response.data.filter(emp => 
-                    emp.isApproved !== true && 
-                    emp.status !== 'approved' && 
-                    emp.status !== 'rejected' &&
-                    emp.status !== 'inactive'
-                );
-                
                 const employersWithProfiles = await Promise.all(
-                    pendingEmployers.map(async (emp) => {
+                    response.data.map(async (emp) => {
                         try {
                             const profileRes = await api.getEmployerProfile(emp._id);
                             if (profileRes.success && profileRes.profile) {
@@ -51,16 +44,59 @@ function AdminEmployersAllRequest() {
                 );
                 
                 setEmployers(employersWithProfiles);
-                setFilteredEmployers(employersWithProfiles);
+                filterEmployersByStatus(employersWithProfiles, statusFilter);
             } else {
                 setError(response.message || 'Failed to fetch employers');
             }
         } catch (error) {
             setError('Error fetching employers');
-            
         } finally {
             setLoading(false);
         }
+    };
+
+    const filterEmployersByStatus = (employersList, status) => {
+        let filtered = [];
+        
+        switch(status) {
+            case 'pending':
+                filtered = employersList.filter(emp => 
+                    emp.isApproved !== true && 
+                    emp.status !== 'approved' && 
+                    emp.status !== 'rejected' &&
+                    emp.status !== 'inactive' &&
+                    emp.profileSubmittedForReview
+                );
+                break;
+            case 'incomplete':
+                filtered = employersList.filter(emp => 
+                    !emp.profileSubmittedForReview &&
+                    emp.isApproved !== true && 
+                    emp.status !== 'approved'
+                );
+                break;
+            case 'approved':
+                filtered = employersList.filter(emp => 
+                    emp.isApproved === true || emp.status === 'approved'
+                );
+                break;
+            case 'rejected':
+                filtered = employersList.filter(emp => 
+                    emp.status === 'rejected'
+                );
+                break;
+            case 'all':
+            default:
+                filtered = employersList;
+                break;
+        }
+        
+        setFilteredEmployers(filtered);
+    };
+
+    const handleStatusFilter = (status) => {
+        setStatusFilter(status);
+        filterEmployersByStatus(employers, status);
     };
 
     const handleSearch = (searchTerm) => {
@@ -167,16 +203,41 @@ function AdminEmployersAllRequest() {
                 <div className="panel panel-default site-bg-white">
                     <div className="panel-heading wt-panel-heading p-a20">
                         <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap', gap: '15px', width: '100%'}}>
-                            <h4 className="panel-tittle m-a0" style={{marginRight: 'auto'}}>Pending Employers ({filteredEmployers.length})</h4>
+                            <h4 className="panel-tittle m-a0" style={{marginRight: 'auto'}}>Employers ({filteredEmployers.length})</h4>
+                            
+                            <div className="status-filter" style={{display: 'flex', gap: '8px', alignItems: 'center'}}>
+                                <label style={{fontSize: '14px', fontWeight: '600', color: '#374151'}}>Filter by Status:</label>
+                                <select 
+                                    value={statusFilter}
+                                    onChange={(e) => handleStatusFilter(e.target.value)}
+                                    style={{
+                                        padding: '8px 12px',
+                                        border: '1px solid #d1d5db',
+                                        borderRadius: '6px',
+                                        fontSize: '14px',
+                                        cursor: 'pointer',
+                                        background: '#fff'
+                                    }}
+                                >
+                                    <option value="all">All Status</option>
+                                    <option value="pending">Under Review</option>
+                                    <option value="incomplete">Profile Incomplete</option>
+                                    <option value="approved">Approved</option>
+                                    <option value="rejected">Rejected</option>
+                                </select>
+                            </div>
+                            
                             <div className="search-section" style={{marginLeft: 'auto'}}>
                                 <label className="search-label">
                                     <i className="fa fa-filter"></i> Search by Name or Email
                                 </label>
-                                <SearchBar 
-                                    onSearch={handleSearch}
-                                    placeholder="Search employers by name, email, phone, or type..."
-                                    className="employer-search"
-                                />
+                                <div style={{width: '200px'}}>
+                                    <SearchBar 
+                                        onSearch={handleSearch}
+                                        placeholder="Search employers..."
+                                        className="employer-search"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
