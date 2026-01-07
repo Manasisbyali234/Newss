@@ -15,7 +15,7 @@ function AdminEmployersAllRequest() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [actionLoading, setActionLoading] = useState({});
-    const [statusFilter, setStatusFilter] = useState('pending');
+    const [statusFilter, setStatusFilter] = useState('all');
 
     useEffect(() => {
         AOS.init({
@@ -36,10 +36,27 @@ function AdminEmployersAllRequest() {
                         try {
                             const profileRes = await api.getEmployerProfile(emp._id);
                             if (profileRes.success && profileRes.profile) {
-                                return { ...emp, companyName: profileRes.profile.companyName || emp.companyName };
+                                return { 
+                                    ...emp, 
+                                    companyName: profileRes.profile.companyName || emp.companyName,
+                                    documents: profileRes.profile.documents || [],
+                                    gallery: profileRes.profile.gallery || [],
+                                    panCardImage: profileRes.profile.panCardImage,
+                                    cinImage: profileRes.profile.cinImage,
+                                    gstImage: profileRes.profile.gstImage,
+                                    certificateOfIncorporation: profileRes.profile.certificateOfIncorporation,
+                                    panCardVerified: profileRes.profile.panCardVerified || 'pending',
+                                    cinVerified: profileRes.profile.cinVerified || 'pending',
+                                    gstVerified: profileRes.profile.gstVerified || 'pending',
+                                    incorporationVerified: profileRes.profile.incorporationVerified || 'pending',
+                                    panCardReuploadedAt: profileRes.profile.panCardReuploadedAt,
+                                    cinReuploadedAt: profileRes.profile.cinReuploadedAt,
+                                    gstReuploadedAt: profileRes.profile.gstReuploadedAt,
+                                    incorporationReuploadedAt: profileRes.profile.incorporationReuploadedAt
+                                };
                             }
                         } catch (err) {}
-                        return emp;
+                        return { ...emp, documents: [], gallery: [] };
                     })
                 );
                 
@@ -255,6 +272,7 @@ function AdminEmployersAllRequest() {
                                         <th>Email</th>
                                         <th>Phone</th>
                                         <th>Profile Submitted</th>
+                                        <th>Document Status</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -263,7 +281,7 @@ function AdminEmployersAllRequest() {
                                 <tbody>
                                     {filteredEmployers.length === 0 ? (
                                         <tr>
-                                            <td colSpan="7" className="text-center" style={{padding: '40px', fontSize: '1rem', color: '#6c757d'}}>
+                                            <td colSpan="8" className="text-center" style={{padding: '40px', fontSize: '1rem', color: '#6c757d'}}>
                                                 <i className="fa fa-building" style={{fontSize: '2rem', marginBottom: '10px', display: 'block', color: '#dee2e6'}}></i>
                                                 No employers found
                                             </td>
@@ -296,6 +314,36 @@ function AdminEmployersAllRequest() {
                                                 </td>
                                                 <td style={{textAlign: 'center', fontSize: '0.85rem'}}>
                                                     {employer.profileSubmittedAt ? formatDate(employer.profileSubmittedAt) : 'Not submitted'}
+                                                </td>
+                                                <td style={{textAlign: 'center'}}>
+                                                    {(() => {
+                                                        const docs = [
+                                                            { name: 'PAN', uploaded: employer.panCardImage, status: employer.panCardVerified, reuploadedAt: employer.panCardReuploadedAt },
+                                                            { name: 'CIN', uploaded: employer.cinImage, status: employer.cinVerified, reuploadedAt: employer.cinReuploadedAt },
+                                                            { name: 'GST', uploaded: employer.gstImage, status: employer.gstVerified, reuploadedAt: employer.gstReuploadedAt },
+                                                            { name: 'COI', uploaded: employer.certificateOfIncorporation, status: employer.incorporationVerified, reuploadedAt: employer.incorporationReuploadedAt }
+                                                        ];
+                                                        
+                                                        const uploadedDocs = docs.filter(doc => doc.uploaded);
+                                                        const approvedDocs = docs.filter(doc => doc.uploaded && doc.status === 'approved');
+                                                        const rejectedDocs = docs.filter(doc => doc.uploaded && doc.status === 'rejected');
+                                                        const pendingDocs = docs.filter(doc => doc.uploaded && (doc.status === 'pending' || !doc.status));
+                                                        const reuploadedDocs = docs.filter(doc => doc.uploaded && doc.reuploadedAt);
+                                                        
+                                                        if (uploadedDocs.length === 0) {
+                                                            return <span style={{color: '#6b7280', fontSize: '0.8rem'}}>No documents</span>;
+                                                        }
+                                                        
+                                                        return (
+                                                            <div style={{fontSize: '0.75rem', lineHeight: '1.3'}}>
+                                                                <div style={{fontWeight: '600', marginBottom: '3px', color: '#374151'}}>Total: {uploadedDocs.length}</div>
+                                                                {approvedDocs.length > 0 && <div style={{color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px'}}><span>✓</span> {approvedDocs.length} Approved</div>}
+                                                                {rejectedDocs.length > 0 && <div style={{color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px'}}><span>✗</span> {rejectedDocs.length} Rejected</div>}
+                                                                {pendingDocs.length > 0 && <div style={{color: '#f59e0b', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px'}}><span>⏳</span> {pendingDocs.length} Pending</div>}
+                                                                {reuploadedDocs.length > 0 && <div style={{color: '#8b5cf6', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px'}}><span>↻</span> {reuploadedDocs.length} Reuploaded</div>}
+                                                            </div>
+                                                        );
+                                                    })()} 
                                                 </td>
                                                 <td style={{textAlign: 'center'}}>
                                                     {(() => {
