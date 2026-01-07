@@ -142,16 +142,19 @@ function AdminPlacementOfficersAllRequest() {
                 <div className="panel-heading wt-panel-heading p-a20">
                     <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap', gap: '15px', width: '100%'}}>
                         <h4 className="panel-tittle m-a0" style={{marginRight: 'auto'}}>Placement Officers ({filteredPlacements.length})</h4>
-                        <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+                        
+                        <div className="status-filter" style={{display: 'flex', gap: '8px', alignItems: 'center'}}>
+                            <label style={{fontSize: '14px', fontWeight: '600', color: '#374151'}}>Filter by Status:</label>
                             <select 
                                 value={statusFilter} 
                                 onChange={(e) => handleStatusFilter(e.target.value)}
                                 style={{
                                     padding: '8px 12px',
-                                    border: '1px solid #ddd',
-                                    borderRadius: '4px',
+                                    border: '1px solid #d1d5db',
+                                    borderRadius: '6px',
                                     fontSize: '14px',
-                                    backgroundColor: 'white'
+                                    cursor: 'pointer',
+                                    background: '#fff'
                                 }}
                             >
                                 <option value="all">All Status</option>
@@ -159,11 +162,19 @@ function AdminPlacementOfficersAllRequest() {
                                 <option value="approved">Approved</option>
                                 <option value="rejected">Rejected</option>
                             </select>
-                            <SearchBar 
-                                onSearch={handleSearch}
-                                placeholder="Search placement officers by name, email, or phone..."
-                                className="placement-search"
-                            />
+                        </div>
+                        
+                        <div className="search-section" style={{marginLeft: 'auto'}}>
+                            <label className="search-label">
+                                <i className="fa fa-filter"></i> Search by Name or Email
+                            </label>
+                            <div style={{width: '200px'}}>
+                                <SearchBar 
+                                    onSearch={handleSearch}
+                                    placeholder="Search placement officers..."
+                                    className="placement-search"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
