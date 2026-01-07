@@ -10,6 +10,7 @@ function AdminPlacementOfficersTabs() {
     const [placements, setPlacements] = useState([]);
     const [filteredPlacements, setFilteredPlacements] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [statusFilter, setStatusFilter] = useState('all');
 
     useEffect(() => {
         fetchPlacements();
@@ -21,18 +22,8 @@ function AdminPlacementOfficersTabs() {
             const response = await api.getAllPlacements();
             if (response.success) {
                 const allPlacements = response.data || [];
-                let filtered = [];
-                
-                if (activeTab === 'pending') {
-                    filtered = allPlacements.filter(p => p.status === 'pending' || (!p.status && !p.isApproved));
-                } else if (activeTab === 'approved') {
-                    filtered = allPlacements.filter(p => p.status === 'active' || p.isApproved);
-                } else if (activeTab === 'uploads') {
-                    filtered = allPlacements.filter(p => p.fileHistory && p.fileHistory.length > 0);
-                }
-                
-                setPlacements(filtered);
-                setFilteredPlacements(filtered);
+                setPlacements(allPlacements);
+                applyFilters(allPlacements, statusFilter);
             }
         } catch (error) {
             showError('Error fetching placement officers');
@@ -41,17 +32,50 @@ function AdminPlacementOfficersTabs() {
         }
     };
 
+    const applyFilters = (placementList, status) => {
+        let filtered = placementList;
+        
+        if (status !== 'all') {
+            if (status === 'pending') {
+                filtered = placementList.filter(p => p.status === 'pending' || (!p.status && !p.isApproved));
+            } else if (status === 'approved') {
+                filtered = placementList.filter(p => p.status === 'approved' || p.status === 'active' || p.isApproved);
+            } else if (status === 'rejected') {
+                filtered = placementList.filter(p => p.status === 'rejected');
+            }
+        }
+        
+        setFilteredPlacements(filtered);
+    };
+
     const handleSearch = (searchTerm) => {
+        let baseList = placements;
+        
+        if (statusFilter !== 'all') {
+            if (statusFilter === 'pending') {
+                baseList = placements.filter(p => p.status === 'pending' || (!p.status && !p.isApproved));
+            } else if (statusFilter === 'approved') {
+                baseList = placements.filter(p => p.status === 'approved' || p.status === 'active' || p.isApproved);
+            } else if (statusFilter === 'rejected') {
+                baseList = placements.filter(p => p.status === 'rejected');
+            }
+        }
+        
         if (!searchTerm.trim()) {
-            setFilteredPlacements(placements);
+            setFilteredPlacements(baseList);
             return;
         }
-        const filtered = placements.filter(p => 
+        const filtered = baseList.filter(p => 
             p.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             p.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             p.phone?.includes(searchTerm)
         );
         setFilteredPlacements(filtered);
+    };
+
+    const handleStatusFilter = (status) => {
+        setStatusFilter(status);
+        applyFilters(placements, status);
     };
 
     const handleApprove = async (placementId) => {
@@ -100,15 +124,33 @@ function AdminPlacementOfficersTabs() {
 
                     <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap', gap: '15px', width: '100%'}}>
                         <h4 className="panel-tittle m-a0" style={{marginRight: 'auto'}}>Placement Officers ({filteredPlacements.length})</h4>
-                        <div className="search-section" style={{marginLeft: 'auto'}}>
-                            <label className="search-label">
-                                <i className="fa fa-filter"></i> Search by Name or Email
-                            </label>
-                            <SearchBar 
-                                onSearch={handleSearch}
-                                placeholder="Search placement officers..."
-                                className="placement-search"
-                            />
+                        <div className="search-section" style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+                            <select 
+                                value={statusFilter} 
+                                onChange={(e) => handleStatusFilter(e.target.value)}
+                                style={{
+                                    padding: '8px 12px',
+                                    border: '1px solid #ddd',
+                                    borderRadius: '4px',
+                                    fontSize: '14px',
+                                    backgroundColor: 'white'
+                                }}
+                            >
+                                <option value="all">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                            <div>
+                                <label className="search-label">
+                                    <i className="fa fa-filter"></i> Search by Name or Email
+                                </label>
+                                <SearchBar 
+                                    onSearch={handleSearch}
+                                    placeholder="Search placement officers..."
+                                    className="placement-search"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

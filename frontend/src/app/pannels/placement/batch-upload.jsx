@@ -285,20 +285,8 @@ function BatchUpload() {
                                     <button 
                                         className="btn-download-sample"
                                         onClick={() => {
-                                            const csvContent = `ID,Candidate Name,Email,Phone
-1,Rahul Sharma,rahul.sharma@email.com,9876543210
-2,Priya Patel,priya.patel@email.com,9876543211
-3,Amit Kumar,amit.kumar@email.com,9876543212
-4,Sneha Gupta,sneha.gupta@email.com,9876543213
-5,Vikash Singh,vikash.singh@email.com,9876543214
-6,Anita Rao,anita.rao@email.com,9876543215
-7,Ravi Verma,ravi.verma@email.com,9876543216
-8,Kavya Nair,kavya.nair@email.com,9876543217
-9,Suresh Reddy,suresh.reddy@email.com,9876543218
-10,Deepika Joshi,deepika.joshi@email.com,9876543219`;
-                                            const blob = new Blob([csvContent], { type: 'text/csv' });
                                             const link = document.createElement('a');
-                                            link.href = URL.createObjectURL(blob);
+                                            link.href = '/assets/sample-student-data.csv';
                                             link.download = 'sample-student-data.csv';
                                             link.click();
                                         }}

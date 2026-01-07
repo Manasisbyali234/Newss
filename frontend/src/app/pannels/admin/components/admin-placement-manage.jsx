@@ -14,6 +14,7 @@ function AdminPlacementOfficersAllRequest() {
     const [filteredPlacements, setFilteredPlacements] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [statusFilter, setStatusFilter] = useState('all');
 
     useEffect(() => {
         fetchPlacements();
@@ -25,11 +26,8 @@ function AdminPlacementOfficersAllRequest() {
             const response = await api.getAllPlacements();
             if (response.success) {
                 const allPlacements = response.data || [];
-                const pendingPlacements = allPlacements.filter(placement => 
-                    placement.status === 'pending' || (!placement.status && !placement.isApproved)
-                );
-                setPlacements(pendingPlacements);
-                setFilteredPlacements(pendingPlacements);
+                setPlacements(allPlacements);
+                applyFilters(allPlacements, statusFilter);
             } else {
                 setError(response.message || 'Failed to fetch placement officers');
             }
@@ -40,18 +38,51 @@ function AdminPlacementOfficersAllRequest() {
         }
     };
 
+    const applyFilters = (placementList, status) => {
+        let filtered = placementList;
+        
+        if (status !== 'all') {
+            if (status === 'pending') {
+                filtered = placementList.filter(p => p.status === 'pending' || (!p.status && !p.isApproved));
+            } else if (status === 'approved') {
+                filtered = placementList.filter(p => p.status === 'approved' || p.status === 'active' || p.isApproved);
+            } else if (status === 'rejected') {
+                filtered = placementList.filter(p => p.status === 'rejected');
+            }
+        }
+        
+        setFilteredPlacements(filtered);
+    };
+
     const handleSearch = (searchTerm) => {
+        let baseList = placements;
+        
+        if (statusFilter !== 'all') {
+            if (statusFilter === 'pending') {
+                baseList = placements.filter(p => p.status === 'pending' || (!p.status && !p.isApproved));
+            } else if (statusFilter === 'approved') {
+                baseList = placements.filter(p => p.status === 'approved' || p.status === 'active' || p.isApproved);
+            } else if (statusFilter === 'rejected') {
+                baseList = placements.filter(p => p.status === 'rejected');
+            }
+        }
+        
         if (!searchTerm.trim()) {
-            setFilteredPlacements(placements);
+            setFilteredPlacements(baseList);
             return;
         }
         
-        const filtered = placements.filter(placement => 
+        const filtered = baseList.filter(placement => 
             placement.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             placement.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             placement.phone?.includes(searchTerm)
         );
         setFilteredPlacements(filtered);
+    };
+
+    const handleStatusFilter = (status) => {
+        setStatusFilter(status);
+        applyFilters(placements, status);
     };
 
     const handleApprove = async (placementId) => {
@@ -110,8 +141,24 @@ function AdminPlacementOfficersAllRequest() {
             <div className="panel panel-default site-bg-white">
                 <div className="panel-heading wt-panel-heading p-a20">
                     <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap', gap: '15px', width: '100%'}}>
-                        <h4 className="panel-tittle m-a0" style={{marginRight: 'auto'}}>Pending Placement Officers ({filteredPlacements.length})</h4>
-                        <div style={{marginLeft: 'auto'}}>
+                        <h4 className="panel-tittle m-a0" style={{marginRight: 'auto'}}>Placement Officers ({filteredPlacements.length})</h4>
+                        <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+                            <select 
+                                value={statusFilter} 
+                                onChange={(e) => handleStatusFilter(e.target.value)}
+                                style={{
+                                    padding: '8px 12px',
+                                    border: '1px solid #ddd',
+                                    borderRadius: '4px',
+                                    fontSize: '14px',
+                                    backgroundColor: 'white'
+                                }}
+                            >
+                                <option value="all">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
                             <SearchBar 
                                 onSearch={handleSearch}
                                 placeholder="Search placement officers by name, email, or phone..."
