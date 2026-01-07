@@ -13,6 +13,10 @@ const HeroBody = ({ onSearch }) => {
   });
   const [locationSuggestions, setLocationSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [industrySuggestions, setIndustrySuggestions] = useState([]);
+  const [showIndustrySuggestions, setShowIndustrySuggestions] = useState(false);
+  const [designationSuggestions, setDesignationSuggestions] = useState([]);
+  const [showDesignationSuggestions, setShowDesignationSuggestions] = useState(false);
   const [errors, setErrors] = useState({
     what: '',
     category: '',
@@ -36,6 +40,35 @@ const HeroBody = ({ onSearch }) => {
     'New Delhi', 'Noida', 'Patna', 'Pondicherry', 'Pune', 'Raipur', 'Rajkot', 'Ranchi', 'Salem', 'Sangli',
     'Shimla', 'Siliguri', 'Solapur', 'Srinagar', 'Surat', 'Thiruvananthapuram', 'Thrissur', 'Tiruchirappalli', 'Tirunelveli', 'Tiruppur',
     'Udaipur', 'Ujjain', 'Vadodara', 'Varanasi', 'Vijayawada', 'Visakhapatnam', 'Warangal', 'Remote', 'Work From Home'
+  ];
+
+  const industries = [
+    'Information Technology (IT) & Software', 'Design & Creative', 'Marketing & Advertising', 'Sales & Business Development',
+    'Customer Support & Service', 'Finance & Accounting', 'Human Resources (HR) & Recruitment', 'Engineering & Manufacturing',
+    'Construction & Real Estate', 'Healthcare & Medical', 'Education & Training', 'Hospitality & Travel',
+    'Retail & Commerce', 'Logistics & Supply Chain', 'Legal & Compliance', 'Administration & Operations',
+    'Government & Public Sector', 'Media & Journalism', 'Agriculture & Environment', 'Energy & Utilities',
+    'Automobile', 'E-commerce', 'Non-Profit & Social Work', 'Product & Project Management',
+    'Cybersecurity', 'Data Science & Analytics', 'AI & Machine Learning', 'Skilled Trades',
+    'Security Services', 'Domestic & Care Services'
+  ];
+
+  const designations = [
+    'Data Entry Operator', 'Computer Operator', 'IT Support Assistant', 'Junior Web Developer', 'Software Developer',
+    'Full-Stack Developer', 'DevOps Engineer', 'Cloud Engineer', 'Network Administrator', 'Cybersecurity Analyst',
+    'Data Analyst', 'Data Scientist', 'AI/ML Engineer', 'UI/UX Designer', 'Graphic Designer',
+    'Motion Designer', '3D Artist', 'Video Editor', 'Digital Marketing Specialist', 'SEO Specialist',
+    'Social Media Manager', 'Content Writer', 'Performance Marketer', 'Brand Manager', 'Sales Executive',
+    'Business Development Executive', 'Regional Sales Manager', 'Inside Sales Specialist', 'Tele Sales Executive', 'HR Executive',
+    'Talent Acquisition Specialist', 'HR Manager', 'L&D Manager', 'Accountant', 'Auditor',
+    'Tax Consultant', 'Finance Manager', 'Billing Executive', 'Site Engineer', 'Safety Officer',
+    'Doctor', 'Nurse', 'Lab Technician', 'IVF Specialist', 'Pharmacist',
+    'Medical Equipment Specialist', 'Teacher', 'Professor', 'HOD', 'Principal',
+    'Logistics Coordinator', 'Warehouse Manager', 'Supply Chain Executive', 'Receptionist', 'Chef',
+    'Housekeeping Staff', 'Store Manager', 'Cashier', 'Delivery Executive', 'Legal Advisor',
+    'Compliance Officer', 'Office Administrator', 'Operations Manager', 'Security Guard', 'Social Worker',
+    'Program Coordinator (NGO)', 'Machine Operator', 'Welder', 'Electrician', 'Plumber',
+    'Carpenter', 'Technician'
   ];
 
   // Validation functions
@@ -121,9 +154,50 @@ const HeroBody = ({ onSearch }) => {
   const selectLocation = (location) => {
     setSearchData({...searchData, location});
     setShowSuggestions(false);
-    // Clear location error when selecting from suggestions
     setErrors({...errors, location: ''});
     setTouched({...touched, location: true});
+  };
+
+  const handleIndustryChange = (value) => {
+    handleFieldChange('category', value);
+    
+    if (value.length > 0) {
+      const filtered = industries.filter(industry => 
+        industry.toLowerCase().includes(value.toLowerCase())
+      );
+      setIndustrySuggestions(filtered);
+      setShowIndustrySuggestions(true);
+    } else {
+      setShowIndustrySuggestions(false);
+    }
+  };
+
+  const selectIndustry = (industry) => {
+    setSearchData({...searchData, category: industry});
+    setShowIndustrySuggestions(false);
+    setErrors({...errors, category: ''});
+    setTouched({...touched, category: true});
+  };
+
+  const handleDesignationChange = (value) => {
+    handleFieldChange('what', value);
+    
+    if (value.length > 0) {
+      const filtered = designations.filter(designation => 
+        designation.toLowerCase().includes(value.toLowerCase())
+      );
+      setDesignationSuggestions(filtered);
+      setShowDesignationSuggestions(true);
+    } else {
+      setShowDesignationSuggestions(false);
+    }
+  };
+
+  const selectDesignation = (designation) => {
+    setSearchData({...searchData, what: designation});
+    setShowDesignationSuggestions(false);
+    setErrors({...errors, what: ''});
+    setTouched({...touched, what: true});
   };
 
   const jobCategories = [
@@ -325,46 +399,39 @@ const HeroBody = ({ onSearch }) => {
             )}
           </div>
           
-          <div className="search-field">
+          <div className="search-field location-field">
             <label className="search-label">INDUSTRY</label>
-            <select 
-              className={`search-select${touched.category && errors.category ? ' has-error' : ''}`}
-              value={searchData.category}
-              onChange={(e) => handleFieldChange('category', e.target.value)}
-              onBlur={() => handleFieldBlur('category')}
-            >
-              <option value=""hidden>Select</option>
-              <option value="Information Technology (IT) & Software">Information Technology (IT) & Software</option>
-              <option value="Design & Creative">Design & Creative</option>
-              <option value="Marketing & Advertising">Marketing & Advertising</option>
-              <option value="Sales & Business Development">Sales & Business Development</option>
-              <option value="Customer Support & Service">Customer Support & Service</option>
-              <option value="Finance & Accounting">Finance & Accounting</option>
-              <option value="Human Resources (HR) & Recruitment">Human Resources (HR) & Recruitment</option>
-              <option value="Engineering & Manufacturing">Engineering & Manufacturing</option>
-              <option value="Construction & Real Estate">Construction & Real Estate</option>
-              <option value="Healthcare & Medical">Healthcare & Medical</option>
-              <option value="Education & Training">Education & Training</option>
-              <option value="Hospitality & Travel">Hospitality & Travel</option>
-              <option value="Retail & Commerce">Retail & Commerce</option>
-              <option value="Logistics & Supply Chain">Logistics & Supply Chain</option>
-              <option value="Legal & Compliance">Legal & Compliance</option>
-              <option value="Administration & Operations">Administration & Operations</option>
-              <option value="Government & Public Sector">Government & Public Sector</option>
-              <option value="Media & Journalism">Media & Journalism</option>
-              <option value="Agriculture & Environment">Agriculture & Environment</option>
-              <option value="Energy & Utilities">Energy & Utilities</option>
-              <option value="Automobile">Automobile</option>
-              <option value="E-commerce">E-commerce</option>
-              <option value="Non-Profit & Social Work">Non-Profit & Social Work</option>
-              <option value="Product & Project Management">Product & Project Management</option>
-              <option value="Cybersecurity">Cybersecurity</option>
-              <option value="Data Science & Analytics">Data Science & Analytics</option>
-              <option value="AI & Machine Learning">AI & Machine Learning</option>
-              <option value="Skilled Trades">Skilled Trades</option>
-              <option value="Security Services">Security Services</option>
-              <option value="Domestic & Care Services">Domestic & Care Services</option>
-            </select>
+            <div className="location-input">
+              <svg className="location-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <circle cx="11" cy="11" r="8" stroke="#000000" strokeWidth="2" fill="none"/>
+                <path d="m21 21-4.35-4.35" stroke="#000000" strokeWidth="2" fill="none"/>
+              </svg>
+              <input
+                type="text"
+                className={`search-select location-select${touched.category && errors.category ? ' has-error' : ''}`}
+                value={searchData.category}
+                onChange={(e) => handleIndustryChange(e.target.value)}
+                onFocus={() => searchData.category && setShowIndustrySuggestions(true)}
+                onBlur={() => {
+                  handleFieldBlur('category');
+                  setTimeout(() => setShowIndustrySuggestions(false), 200);
+                }}
+                placeholder="Enter Industry"
+              />
+              {showIndustrySuggestions && industrySuggestions.length > 0 && (
+                <div className="location-suggestions">
+                  {industrySuggestions.map((industry, index) => (
+                    <div
+                      key={index}
+                      className="suggestion-item"
+                      onClick={() => selectIndustry(industry)}
+                    >
+                      {industry}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             {touched.category && errors.category && (
               <div className="search-error">
                 {errors.category}
@@ -372,88 +439,39 @@ const HeroBody = ({ onSearch }) => {
             )}
           </div>
           
-          <div className="search-field">
-            <label className="search-label">Designation</label>
-            <select 
-              className={`search-select${touched.what && errors.what ? ' has-error' : ''}`}
-              value={searchData.what}
-              onChange={(e) => handleFieldChange('what', e.target.value)}
-              onBlur={() => handleFieldBlur('what')}
-            >
-              <option value="" hidden>Select</option>
-              <option value="Data Entry Operator">Data Entry Operator</option>
-              <option value="Computer Operator">Computer Operator</option>
-              <option value="IT Support Assistant">IT Support Assistant</option>
-              <option value="Junior Web Developer">Junior Web Developer</option>
-              <option value="Software Developer">Software Developer</option>
-              <option value="Full-Stack Developer">Full-Stack Developer</option>
-              <option value="DevOps Engineer">DevOps Engineer</option>
-              <option value="Cloud Engineer">Cloud Engineer</option>
-              <option value="Network Administrator">Network Administrator</option>
-              <option value="Cybersecurity Analyst">Cybersecurity Analyst</option>
-              <option value="Data Analyst">Data Analyst</option>
-              <option value="Data Scientist">Data Scientist</option>
-              <option value="AI/ML Engineer">AI/ML Engineer</option>
-              <option value="UI/UX Designer">UI/UX Designer</option>
-              <option value="Graphic Designer">Graphic Designer</option>
-              <option value="Motion Designer">Motion Designer</option>
-              <option value="3D Artist">3D Artist</option>
-              <option value="Video Editor">Video Editor</option>
-              <option value="Digital Marketing Specialist">Digital Marketing Specialist</option>
-              <option value="SEO Specialist">SEO Specialist</option>
-              <option value="Social Media Manager">Social Media Manager</option>
-              <option value="Content Writer">Content Writer</option>
-              <option value="Performance Marketer">Performance Marketer</option>
-              <option value="Brand Manager">Brand Manager</option>
-              <option value="Sales Executive">Sales Executive</option>
-              <option value="Business Development Executive">Business Development Executive</option>
-              <option value="Regional Sales Manager">Regional Sales Manager</option>
-              <option value="Inside Sales Specialist">Inside Sales Specialist</option>
-              <option value="Tele Sales Executive">Tele Sales Executive</option>
-              <option value="HR Executive">HR Executive</option>
-              <option value="Talent Acquisition Specialist">Talent Acquisition Specialist</option>
-              <option value="HR Manager">HR Manager</option>
-              <option value="L&D Manager">L&D Manager</option>
-              <option value="Accountant">Accountant</option>
-              <option value="Auditor">Auditor</option>
-              <option value="Tax Consultant">Tax Consultant</option>
-              <option value="Finance Manager">Finance Manager</option>
-              <option value="Billing Executive">Billing Executive</option>
-              <option value="Site Engineer">Site Engineer</option>
-              <option value="Safety Officer">Safety Officer</option>
-              <option value="Doctor">Doctor</option>
-              <option value="Nurse">Nurse</option>
-              <option value="Lab Technician">Lab Technician</option>
-              <option value="IVF Specialist">IVF Specialist</option>
-              <option value="Pharmacist">Pharmacist</option>
-              <option value="Medical Equipment Specialist">Medical Equipment Specialist</option>
-              <option value="Teacher">Teacher</option>
-              <option value="Professor">Professor</option>
-              <option value="HOD">HOD</option>
-              <option value="Principal">Principal</option>
-              <option value="Logistics Coordinator">Logistics Coordinator</option>
-              <option value="Warehouse Manager">Warehouse Manager</option>
-              <option value="Supply Chain Executive">Supply Chain Executive</option>
-              <option value="Receptionist">Receptionist</option>
-              <option value="Chef">Chef</option>
-              <option value="Housekeeping Staff">Housekeeping Staff</option>
-              <option value="Store Manager">Store Manager</option>
-              <option value="Cashier">Cashier</option>
-              <option value="Delivery Executive">Delivery Executive</option>
-              <option value="Legal Advisor">Legal Advisor</option>
-              <option value="Compliance Officer">Compliance Officer</option>
-              <option value="Office Administrator">Office Administrator</option>
-              <option value="Operations Manager">Operations Manager</option>
-              <option value="Security Guard">Security Guard</option>
-              <option value="Social Worker">Social Worker</option>
-              <option value="Program Coordinator (NGO)">Program Coordinator (NGO)</option>
-              <option value="Machine Operator">Machine Operator</option>
-              <option value="Welder">Welder</option>
-              <option value="Electrician">Electrician</option>
-              <option value="Plumber">Plumber</option>
-              <option value="Carpenter">Carpenter</option>
-              <option value="Technician">Technician</option>
-            </select>
+          <div className="search-field location-field">
+            <label className="search-label">DESIGNATION</label>
+            <div className="location-input">
+              <svg className="location-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <circle cx="11" cy="11" r="8" stroke="#000000" strokeWidth="2" fill="none"/>
+                <path d="m21 21-4.35-4.35" stroke="#000000" strokeWidth="2" fill="none"/>
+              </svg>
+              <input
+                type="text"
+                className={`search-select location-select${touched.what && errors.what ? ' has-error' : ''}`}
+                value={searchData.what}
+                onChange={(e) => handleDesignationChange(e.target.value)}
+                onFocus={() => searchData.what && setShowDesignationSuggestions(true)}
+                onBlur={() => {
+                  handleFieldBlur('what');
+                  setTimeout(() => setShowDesignationSuggestions(false), 200);
+                }}
+                placeholder="Enter Designation"
+              />
+              {showDesignationSuggestions && designationSuggestions.length > 0 && (
+                <div className="location-suggestions">
+                  {designationSuggestions.map((designation, index) => (
+                    <div
+                      key={index}
+                      className="suggestion-item"
+                      onClick={() => selectDesignation(designation)}
+                    >
+                      {designation}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             {touched.what && errors.what && (
               <div className="search-error">
                 {errors.what}

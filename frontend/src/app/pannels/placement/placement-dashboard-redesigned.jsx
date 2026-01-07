@@ -127,6 +127,22 @@ function PlacementDashboardRedesigned() {
         const file = e.target.files[0];
         if (!file) return;
         
+        // Validate required fields
+        if (!courseName.trim()) {
+            showWarning('Course Name is required.');
+            return;
+        }
+        
+        if (!university.trim()) {
+            showWarning('University name is required.');
+            return;
+        }
+        
+        if (!batch.trim()) {
+            showWarning('Batch information is required.');
+            return;
+        }
+        
         console.log('File selected:', file.name, file.type, file.size);
         
         setUploadingFile(true);

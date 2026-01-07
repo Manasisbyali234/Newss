@@ -220,7 +220,7 @@ exports.updateProfile = async (req, res) => {
     try {
       const { createNotification } = require('./notificationController');
       const requiredFields = ['companyName', 'description', 'location', 'phone', 'email'];
-      const requiredDocuments = ['panCardImage', 'cinImage', 'gstImage', 'certificateOfIncorporation'];
+      const requiredDocuments = ['panCardImage', 'gstImage', 'certificateOfIncorporation'];
       const allRequiredItems = [...requiredFields, ...requiredDocuments];
       
       const isProfileComplete = allRequiredItems.every(field => {
@@ -274,7 +274,7 @@ exports.updateProfile = async (req, res) => {
     // Check if this is the first time profile is being completed
     const employer = await Employer.findById(req.user._id);
     const requiredFields = ['companyName', 'description', 'location', 'phone', 'email'];
-    const requiredDocuments = ['panCardImage', 'cinImage', 'gstImage', 'certificateOfIncorporation'];
+    const requiredDocuments = ['panCardImage', 'gstImage', 'certificateOfIncorporation'];
     const allRequiredItems = [...requiredFields, ...requiredDocuments];
     
     const isProfileComplete = allRequiredItems.every(field => {
@@ -554,7 +554,7 @@ exports.createJob = async (req, res) => {
 
     // Check required profile fields and documents
     const requiredFields = ['companyName', 'description', 'location', 'phone', 'email'];
-    const requiredDocuments = ['panCardImage', 'cinImage', 'gstImage', 'certificateOfIncorporation'];
+    const requiredDocuments = ['panCardImage', 'gstImage', 'certificateOfIncorporation'];
     
     const missingFields = requiredFields.filter(field => {
       const value = profile[field];
@@ -1592,7 +1592,6 @@ exports.getProfileCompletion = async (req, res) => {
       
       // Required documents (weight: 2 each)
       panCardImage: { weight: 2, required: true },
-      cinImage: { weight: 2, required: true },
       gstImage: { weight: 2, required: true },
       certificateOfIncorporation: { weight: 2, required: true },
       
@@ -2308,23 +2307,7 @@ exports.getGSTInfo = async (req, res) => {
     
     res.json({
       success: true,
-      message: gstInfo.isActive === false ? 
-        'GST number found but status is inactive. Please verify the GST number.' :
-        gstInfo.message || 'Company information retrieved successfully from GST database.',
-      data: {
-        gstInfo: gstInfo,
-        profileData: profileData,
-        autoFillSuggestions: {
-          companyName: profileData.companyName,
-          gstNumber: profileData.gstNumber,
-          panNumber: profileData.panNumber,
-          state: profileData.state,
-          city: profileData.city,
-          pincode: profileData.pincode,
-          corporateAddress: profileData.corporateAddress,
-          companyType: profileData.companyType
-        }
-      }
+      message: 'GST number is valid'
     });
     
   } catch (error) {

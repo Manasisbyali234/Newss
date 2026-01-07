@@ -144,7 +144,7 @@ function Footer1() {
                             <div className="contact-info">
                                 <div className="footer-contact-item">
                                     <i className="feather-map-pin" style={{color: '#FF6A3D'}}></i>
-                                    <span>Bangalore 560020</span>
+                                    <span>C/o, FCG ADVISORS LLP, No.10, 1st main Road, J lingaiah Road, Seshadripuram, bangalore - 560020</span>
                                 </div>
                                 <div className="footer-contact-item">
                                     <i className="feather-mail" style={{color: '#FF6A3D'}}></i>

@@ -62,15 +62,6 @@
     color: white !important;
 }
 
-.rich-text-editor-wrapper .ql-toolbar .ql-active .ql-picker-label {
-    color: white !important;
-}
-
-.rich-text-editor-wrapper .ql-toolbar .ql-active .ql-picker-label svg {
-    stroke: white !important;
-    fill: white !important;
-}
-
 .rich-text-editor-wrapper .ql-toolbar .ql-picker {
     height: 32px;
     display: inline-flex;
@@ -150,15 +141,6 @@
 }
 
 /* Dropdown Styling */
-.rich-text-editor-wrapper .ql-picker-label {
-    padding: 4px 8px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    height: 32px;
-    display: inline-flex;
-    align-items: center;
-}
-
 .rich-text-editor-wrapper .ql-picker-label:hover {
     background: #e9ecef;
 }
@@ -178,7 +160,7 @@
     overflow-y: auto !important;
 }
 
-.rich-text-editor-wrapper .ql-picker.ql-expanded .ql-picker-label {
+.rich-text-editor-wrapper .ql-picker.ql-expanded {
     border-color: #ff6b35;
 }
 
@@ -219,4 +201,14 @@
         min-height: 150px;
         padding: 12px;
     }
+}
+
+/* Override global CSS conflicts for Rich Text Editor */
+.rich-text-editor-wrapper .ql-picker-item {
+    color: #495057 !important;
+    background: white !important;
+}
+
+.rich-text-editor-wrapper .ql-picker-item:hover {
+    background: #f8f9fa !important;
 }

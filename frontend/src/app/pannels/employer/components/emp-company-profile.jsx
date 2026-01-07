@@ -115,7 +115,7 @@ function EmpCompanyProfilePage() {
         officialEmail: { required: true, email: true },
         officialMobile: { required: true, phone: true },
         companyType: { required: true },
-        cin: { required: true, pattern: /^[A-Z]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/, patternMessage: 'Invalid CIN format. Must be 21 characters (e.g., U12345AB1234ABC123456)' },
+        cin: { pattern: /^[A-Z]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/, patternMessage: 'Invalid CIN format. Must be 21 characters (e.g., U12345AB1234ABC123456)' },
         gstNumber: { required: true, pattern: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/, patternMessage: 'Invalid GST format. Must be 15 characters (e.g., 12ABCDE1234F1Z5)' },
         industrySector: { required: true },
         panNumber: { required: true, pattern: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, patternMessage: 'Invalid PAN format. Must be 10 characters (e.g., ABCDE1234F)' },
@@ -398,57 +398,16 @@ function EmpCompanyProfilePage() {
             
             const data = await response.json();
             
-            if (data.success && data.data?.autoFillSuggestions) {
-                const suggestions = data.data.autoFillSuggestions;
-                
-                // Show success message
-                showSuccess(data.message || 'Company information retrieved from GST database!');
-                
-                // Auto-fill form fields with GST data
-                setFormData(prev => ({
-                    ...prev,
-                    companyName: suggestions.companyName || prev.companyName,
-                    panNumber: suggestions.panNumber || prev.panNumber,
-                    state: suggestions.state || prev.state,
-                    city: suggestions.city || prev.city,
-                    pincode: suggestions.pincode || prev.pincode,
-                    corporateAddress: suggestions.corporateAddress || prev.corporateAddress,
-                    companyType: suggestions.companyType || prev.companyType
-                }));
-                
-                // Clear validation errors for auto-filled fields
-                setErrors(prev => {
-                    const newErrors = { ...prev };
-                    if (suggestions.companyName) delete newErrors.companyName;
-                    if (suggestions.panNumber) delete newErrors.panNumber;
-                    if (suggestions.state) delete newErrors.state;
-                    if (suggestions.city) delete newErrors.city;
-                    if (suggestions.pincode) delete newErrors.pincode;
-                    if (suggestions.corporateAddress) delete newErrors.corporateAddress;
-                    if (suggestions.companyType) delete newErrors.companyType;
-                    return newErrors;
-                });
-                
-                setGstAutoFilled(true);
-                
-                // Show additional info if available
-                if (data.data.gstInfo?.suggestions) {
-                    const gstSuggestions = data.data.gstInfo.suggestions;
-                    if (gstSuggestions.tradeName && gstSuggestions.tradeName !== suggestions.companyName) {
-                        showInfo(`Trade Name from GST: ${gstSuggestions.tradeName}`);
-                    }
-                }
-                
+            console.log('GST API Response:', data);
+            
+            if (data.success) {
+                showSuccess('GST Number is Valid');
             } else {
-                showWarning(data.message || 'GST number is valid but detailed information could not be retrieved. Please fill other details manually.');
+                showError('GST Number is Invalid');
             }
         } catch (error) {
             console.error('Error fetching GST info:', error);
-            if (error.message?.includes('timeout')) {
-                showError('GST service timeout. Please try again or fill details manually.');
-            } else {
-                showError('Failed to fetch GST information. Please fill details manually.');
-            }
+            showError('GST Number is Invalid');
         } finally {
             setFetchingGST(false);
         }
@@ -1410,7 +1369,7 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-md-12">
                                 <div className="form-group">
-                                    <label><Briefcase size={16} className="me-2" /> Why Join Us</label>
+                                    <label><Briefcase size={16} className="me-2" /> About Our Company</label>
                                     <RichTextEditor
                                         value={formData.whyJoinUs}
                                         onChange={(value) => handleInputChange('whyJoinUs', value)}
@@ -1605,7 +1564,7 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-md-6">
                                 <div className="form-group">
-                                    <label className="required-field"><Hash size={16} className="me-2" /> Corporate Identification Number (CIN)</label>
+                                    <label><Hash size={16} className="me-2" /> Corporate Identification Number (CIN) <span className="text-muted">(Optional)</span></label>
                                     <input
                                         className={`form-control ${errors.cin ? 'is-invalid' : ''}`}
                                         type="text"

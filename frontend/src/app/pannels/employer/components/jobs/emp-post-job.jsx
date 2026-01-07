@@ -234,7 +234,9 @@ export default function EmpPostJob({ onNext }) {
 		// Type of Employment
 		typeOfEmployment: "",
 		// Work Shift
-		shift: ""
+		shift: "",
+		// Work Mode
+		workMode: ""
 	});
 
 	const [employerType, setEmployerType] = useState('company');
@@ -282,11 +284,43 @@ export default function EmpPostJob({ onNext }) {
 		});
 	};
 
-	// Auto-save CTC to localStorage with debouncing
+	// Auto-save CTC to localStorage with debouncing and calculate net salary
 	const autoSaveCTC = useCallback((ctcValue) => {
 		if (ctcValue && String(ctcValue).trim()) {
 			localStorage.setItem('draft_ctc', ctcValue);
 			
+			// Auto-calculate net salary (approximately 75-80% of CTC)
+			const calculateNetSalary = (ctc) => {
+				const ctcStr = String(ctc).trim();
+				if (!ctcStr) return '';
+				
+				// Handle range format (e.g., "6-8" or "6-8 L.P.A")
+				if (ctcStr.includes('-')) {
+					const parts = ctcStr.split('-');
+					if (parts.length === 2) {
+						const minCTC = parseFloat(parts[0].replace(/[^0-9.]/g, ''));
+						const maxCTC = parseFloat(parts[1].replace(/[^0-9.]/g, ''));
+						if (!isNaN(minCTC) && !isNaN(maxCTC)) {
+							const minNet = Math.round((minCTC * 100000 * 0.77) / 12);
+							const maxNet = Math.round((maxCTC * 100000 * 0.77) / 12);
+							return `${minNet}-${maxNet}`;
+						}
+					}
+				} else {
+					// Handle single value (e.g., "8" or "8 L.P.A")
+					const ctcNum = parseFloat(ctcStr.replace(/[^0-9.]/g, ''));
+					if (!isNaN(ctcNum)) {
+						const monthlyNet = Math.round((ctcNum * 100000 * 0.77) / 12);
+						return monthlyNet.toString();
+					}
+				}
+				return '';
+			};
+			
+			const netSalary = calculateNetSalary(ctcValue);
+			if (netSalary) {
+				update({ netSalary });
+			}
 		}
 	}, []);
 
@@ -418,7 +452,8 @@ export default function EmpPostJob({ onNext }) {
 					companyDescription: job.companyDescription || '',
 					category: job.category || '',
 					typeOfEmployment: job.typeOfEmployment || '',
-					shift: job.shift || ''
+					shift: job.shift || '',
+					workMode: job.workMode || ''
 				});
 
 				// Set selected assessment
@@ -800,6 +835,7 @@ export default function EmpPostJob({ onNext }) {
 				category: formData.category,
 				typeOfEmployment: formData.typeOfEmployment,
 				shift: formData.shift,
+				workMode: formData.workMode,
 				companyLogo: formData.companyLogo,
 				companyName: formData.companyName,
 				companyDescription: formData.companyDescription
@@ -1321,8 +1357,8 @@ export default function EmpPostJob({ onNext }) {
 
 					<div>
 						<label style={label}>
-							<i className="fa fa-clock" style={{marginRight: '8px', color: '#ff6b35'}}></i>
-							Work Shift
+							<i className="fa fa-home" style={{marginRight: '8px', color: '#ff6b35'}}></i>
+							Work Mode
 						</label>
 						<div style={{
 							display: 'grid',
@@ -1334,11 +1370,11 @@ export default function EmpPostJob({ onNext }) {
 							background: '#fff'
 						}}>
 							{[
-								{ value: 'day', label: 'Day Shift' },
-								{ value: 'night', label: 'Night Shift' },
-								{ value: 'rotational', label: 'Rotational Shift' }
-							].map(shiftType => (
-								<label key={shiftType.value} style={{
+								{ value: 'work-from-home', label: 'Work from Home' },
+								{ value: 'remote', label: 'Remote' },
+								{ value: 'hybrid', label: 'Hybrid' }
+							].map(workMode => (
+								<label key={workMode.value} style={{
 									display: 'flex',
 									alignItems: 'center',
 									gap: 6,
@@ -1347,17 +1383,17 @@ export default function EmpPostJob({ onNext }) {
 									padding: '6px 8px',
 									borderRadius: 4,
 									transition: 'background 0.2s',
-									background: formData.shift === shiftType.value ? '#fff5f2' : 'transparent'
+									background: formData.workMode === workMode.value ? '#fff5f2' : 'transparent'
 								}}>
 									<input
 										type="radio"
-										name="shift"
-										value={shiftType.value}
-										checked={formData.shift === shiftType.value}
-										onChange={(e) => update({ shift: e.target.value })}
+										name="workMode"
+										value={workMode.value}
+										checked={formData.workMode === workMode.value}
+										onChange={(e) => update({ workMode: e.target.value })}
 										style={{cursor: 'pointer'}}
 									/>
-									<span>{shiftType.label}</span>
+									<span>{workMode.label}</span>
 								</label>
 							))}
 						</div>
@@ -1418,10 +1454,17 @@ export default function EmpPostJob({ onNext }) {
 							style={input}
 							placeholder="e.g., 8 L.P.A or 6-8 L.P.A"
 							value={formData.ctc}
-							onChange={(e) => update({ ctc: e.target.value })}
+							onChange={(e) => {
+								const value = e.target.value;
+								update({ ctc: value });
+								// Trigger auto-calculation immediately
+								if (value.trim()) {
+									autoSaveCTC(value);
+								}
+							}}
 						/>
 						<small style={{color: '#6b7280', fontSize: 12, marginTop: 4, display: 'block'}}>
-							Enter annual CTC in lakhs (e.g., 8 or 6-8)
+							Enter annual CTC in lakhs (e.g., 8 or 6-8) - Net salary will auto-calculate
 						</small>
 					</div>
 
@@ -1429,15 +1472,32 @@ export default function EmpPostJob({ onNext }) {
 						<label style={label}>
 							<i className="fa fa-money-bill-wave" style={{marginRight: '8px', color: '#ff6b35'}}></i>
 							Net Salary (Monthly)
+							{formData.netSalary && (
+								<span style={{
+									fontSize: 11, 
+									color: '#10b981', 
+									fontWeight: 500,
+									marginLeft: 8,
+									background: '#d1fae5',
+									padding: '2px 8px',
+									borderRadius: 4,
+								}}>
+									✓ Auto-calculated
+								</span>
+							)}
 						</label>
 						<input
-							style={input}
-							placeholder="e.g., 50000 or 40000-50000"
+							style={{
+								...input,
+								borderColor: formData.netSalary ? '#10b981' : '#d1d5db',
+								background: formData.netSalary ? '#f0fdf4' : '#fff'
+							}}
+							placeholder="Auto-calculated from CTC"
 							value={formData.netSalary}
 							onChange={(e) => update({ netSalary: e.target.value })}
 						/>
 						<small style={{color: '#6b7280', fontSize: 12, marginTop: 4, display: 'block'}}>
-							Enter monthly take-home salary in rupees
+							Auto-calculated as ~77% of CTC (monthly take-home). You can edit if needed.
 						</small>
 					</div>
 

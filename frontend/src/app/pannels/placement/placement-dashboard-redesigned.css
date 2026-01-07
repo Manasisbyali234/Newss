@@ -1,5 +1,12 @@
 /* Placement Dashboard Redesigned - Modern UI/UX */
 
+/* Required field asterisk styling */
+.field-label:after {
+    content: ' *';
+    color: #ef4444;
+    font-weight: bold;
+}
+
 /* Color Variables */
 :root {
     --primary-white: #ffffff;

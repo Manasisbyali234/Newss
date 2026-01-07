@@ -68,6 +68,11 @@ function BatchUpload() {
             return;
         }
 
+        if (!customFileName.trim()) {
+            showWarning('Custom Display Name is required.');
+            return;
+        }
+
         if (!university.trim()) {
             showWarning('University name is required.');
             return;
@@ -240,13 +245,14 @@ function BatchUpload() {
                                 {/* Configuration Fields */}
                                 <div className="config-fields">
                                     <div className="field-group">
-                                        <label>Custom Display Name</label>
+                                        <label>Custom Display Name *</label>
                                         <input
                                             type="text"
                                             value={customFileName}
                                             onChange={(e) => setCustomFileName(e.target.value)}
-                                            placeholder="Enter a custom name for this batch (optional)"
+                                            placeholder="Enter a custom name for this batch"
                                             maxLength="100"
+                                            required
                                         />
                                     </div>
 
@@ -273,11 +279,6 @@ function BatchUpload() {
                                             required
                                         />
                                     </div>
-                                </div>
-
-                                <div className="helper-text">
-                                    <i className="fa fa-info-circle"></i>
-                                    If left empty, system will use default values based on your profile settings
                                 </div>
 
                                 <div className="sample-download">
@@ -319,7 +320,7 @@ function BatchUpload() {
                                 <button 
                                     className="btn-upload"
                                     onClick={handleUpload}
-                                    disabled={uploading || !selectedFile}
+                                    disabled={uploading || !selectedFile || !customFileName.trim() || !university.trim() || !batch.trim()}
                                 >
                                     {uploading ? (
                                         <>

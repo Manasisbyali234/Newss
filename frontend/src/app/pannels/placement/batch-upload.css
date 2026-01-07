@@ -40,6 +40,26 @@
     font-weight: 600;
 }
 
+/* Required field asterisk styling */
+label:after {
+    content: '';
+}
+
+label:has(+ input[required]):after,
+label:has(+ .file-upload-area):after {
+    content: ' *';
+    color: #ef4444;
+    font-weight: bold;
+}
+
+/* Alternative approach for labels with asterisks */
+.upload-field label:after,
+.field-group label:after {
+    content: ' *';
+    color: #ef4444;
+    font-weight: bold;
+}
+
 .file-upload-area {
     border: 2px dashed #d1d5db;
     border-radius: 12px;
