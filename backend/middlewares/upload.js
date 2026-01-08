@@ -202,12 +202,16 @@ const validateExcelContent = (buffer, mimetype) => {
       return { valid: false, message: 'Your file only contains headers. Please add student data rows' };
     }
     
-    // Check for duplicate emails within the file
+    // Check for duplicate emails and IDs within the file
     const emails = [];
+    const ids = [];
     const duplicateEmails = [];
+    const duplicateIds = [];
     
     jsonData.forEach((row, index) => {
       const email = (row.Email || row.email || row.EMAIL || '').toString().trim().toLowerCase();
+      const id = (row.ID || row.id || row.Id || '').toString().trim();
+      
       if (email) {
         if (emails.includes(email)) {
           if (!duplicateEmails.includes(email)) {
@@ -217,33 +221,50 @@ const validateExcelContent = (buffer, mimetype) => {
           emails.push(email);
         }
       }
+      
+      if (id) {
+        if (ids.includes(id)) {
+          if (!duplicateIds.includes(id)) {
+            duplicateIds.push(id);
+          }
+        } else {
+          ids.push(id);
+        }
+      }
     });
     
-    if (duplicateEmails.length > 0) {
+    if (duplicateEmails.length > 0 || duplicateIds.length > 0) {
+      let message = 'Duplicates found in your file:';
+      if (duplicateEmails.length > 0) {
+        message += ` Emails: ${duplicateEmails.join(', ')}`;
+      }
+      if (duplicateIds.length > 0) {
+        message += ` IDs: ${duplicateIds.join(', ')}`;
+      }
+      message += '. Please fix the duplicates and upload again.';
+      
       return { 
         valid: false, 
-        message: `Duplicate emails found in your file: ${duplicateEmails.join(', ')}. Please fix the duplicates and upload again.`,
-        duplicateEmails: duplicateEmails
+        message: message,
+        duplicateEmails: duplicateEmails,
+        duplicateIds: duplicateIds
       };
     }
     
-    // Validate required fields in each row
+    // Validate only required fields: ID, Candidate Name, Email, Phone
     const missingFields = [];
     jsonData.forEach((row, index) => {
       const rowNum = index + 2; // +2 because Excel rows start at 1 and we have a header row
+      const id = row.ID || row.id || row.Id || '';
       const name = row['Candidate Name'] || row['candidate name'] || row['CANDIDATE NAME'] || row.Name || row.name || row.NAME || row['Full Name'] || row['Student Name'] || '';
       const email = row.Email || row.email || row.EMAIL || '';
-      const password = row.Password || row.password || row.PASSWORD || '';
       const phone = row.Phone || row.phone || row.PHONE || row.Mobile || row.mobile || row.MOBILE || '';
-      const collegeName = row['College Name'] || row['college name'] || row['COLLEGE NAME'] || row.College || row.college || row.COLLEGE || '';
-      const course = row.Course || row.course || row.COURSE || row.Branch || row.branch || row.BRANCH || '';
       
       const missing = [];
+      if (!id || String(id).trim() === '') missing.push('ID');
       if (!name || String(name).trim() === '') missing.push('Candidate Name');
       if (!email || String(email).trim() === '') missing.push('Email');
       if (!phone || String(phone).trim() === '') missing.push('Phone');
-      if (!collegeName || String(collegeName).trim() === '') missing.push('College Name');
-      if (!course || String(course).trim() === '') missing.push('Course');
       
       if (missing.length > 0) {
         missingFields.push(`Row ${rowNum}: Missing ${missing.join(', ')}`);
@@ -264,11 +285,10 @@ Your Excel file has ${totalRows} row(s) with missing required information:
 ${displayRows.map(row => `• ${row}`).join('\n')}${moreMsg ? '\n• ' + moreMsg : ''}
 
 📋 Required fields for ALL rows:
+• ID
 • Candidate Name
 • Email
 • Phone
-• College Name
-• Course
 
 Please fill in all required fields and upload again.`
       };

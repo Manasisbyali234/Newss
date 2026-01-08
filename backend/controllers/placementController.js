@@ -205,7 +205,7 @@ exports.uploadStudentData = async (req, res) => {
     
     console.log(`File validation passed: ${validation.rowCount} rows found`);
 
-    // Check for duplicate emails in the uploaded file
+    // Check for duplicate emails and IDs in the uploaded file
     const XLSX = require('xlsx');
     let workbook;
     if (req.file.mimetype.includes('csv')) {
@@ -219,12 +219,16 @@ exports.uploadStudentData = async (req, res) => {
     const worksheet = workbook.Sheets[sheetName];
     const jsonData = XLSX.utils.sheet_to_json(worksheet);
     
-    // Extract emails and check for duplicates
+    // Extract emails and IDs and check for duplicates
     const emails = [];
+    const ids = [];
     const duplicateEmails = [];
+    const duplicateIds = [];
     
     jsonData.forEach((row, index) => {
       const email = (row.Email || row.email || row.EMAIL || '').toString().trim().toLowerCase();
+      const id = (row.ID || row.id || row.Id || '').toString().trim();
+      
       if (email) {
         if (emails.includes(email)) {
           if (!duplicateEmails.includes(email)) {
@@ -234,14 +238,34 @@ exports.uploadStudentData = async (req, res) => {
           emails.push(email);
         }
       }
+      
+      if (id) {
+        if (ids.includes(id)) {
+          if (!duplicateIds.includes(id)) {
+            duplicateIds.push(id);
+          }
+        } else {
+          ids.push(id);
+        }
+      }
     });
     
     // If duplicates found, return error with specific message
-    if (duplicateEmails.length > 0) {
+    if (duplicateEmails.length > 0 || duplicateIds.length > 0) {
+      let message = 'Duplicates found in your file:';
+      if (duplicateEmails.length > 0) {
+        message += ` Emails: ${duplicateEmails.join(', ')}`;
+      }
+      if (duplicateIds.length > 0) {
+        message += ` IDs: ${duplicateIds.join(', ')}`;
+      }
+      message += '. Please fix the duplicates and upload again.';
+      
       return res.status(400).json({ 
         success: false, 
-        message: `Duplicate emails found in your file: ${duplicateEmails.join(', ')}. Please fix the duplicates and upload again.`,
-        duplicateEmails: duplicateEmails
+        message: message,
+        duplicateEmails: duplicateEmails,
+        duplicateIds: duplicateIds
       });
     }
 
@@ -389,11 +413,10 @@ exports.getPlacementData = async (req, res) => {
     const worksheet = workbook.Sheets[sheetName];
     const jsonData = XLSX.utils.sheet_to_json(worksheet);
     
-    // Parse and format data with new field structure
+    // Parse and format data with only required fields
     const students = jsonData.map(row => ({
       id: row.ID || row.id || row.Id || '',
       name: row['Candidate Name'] || row['candidate name'] || row['CANDIDATE NAME'] || row.Name || row.name || row.NAME || row['Full Name'] || row['full name'] || row['FULL NAME'] || row['Student Name'] || row['student name'] || row['STUDENT NAME'] || '',
-      collegeName: row['College Name'] || row['college name'] || row['COLLEGE NAME'] || row.College || row.college || row.COLLEGE || '',
       email: row.Email || row.email || row.EMAIL || '',
       phone: row.Phone || row.phone || row.PHONE || row.Mobile || row.mobile || row.MOBILE || '',
       course: row.Course || row.course || row.COURSE || row.Branch || row.branch || row.BRANCH || 'Not Specified',
@@ -657,11 +680,10 @@ exports.getFileData = async (req, res) => {
       return res.json({ success: true, students: [] });
     }
     
-    // Parse and format data with new field structure
+    // Parse and format data with only required fields
     const students = jsonData.map(row => ({
       id: row.ID || row.id || row.Id || '',
       name: row['Candidate Name'] || row['candidate name'] || row['CANDIDATE NAME'] || row.Name || row.name || row.NAME || row['Full Name'] || row['full name'] || row['FULL NAME'] || row['Student Name'] || row['student name'] || row['STUDENT NAME'] || '',
-      collegeName: row['College Name'] || row['college name'] || row['COLLEGE NAME'] || row.College || row.college || row.COLLEGE || '',
       email: row.Email || row.email || row.EMAIL || '',
       phone: row.Phone || row.phone || row.PHONE || row.Mobile || row.mobile || row.MOBILE || '',
       course: row.Course || row.course || row.COURSE || row.Branch || row.branch || row.BRANCH || 'Not Specified',
@@ -1165,11 +1187,10 @@ exports.viewFileData = async (req, res) => {
       });
     }
     
-    // Format the data to ensure Course field is properly displayed
+    // Format the data to show only required fields
     const formattedData = jsonData.map(row => ({
       'ID': row.ID || row.id || row.Id || '',
       'Candidate Name': row['Candidate Name'] || row['candidate name'] || row['CANDIDATE NAME'] || row.Name || row.name || row.NAME || row['Full Name'] || row['Student Name'] || '',
-      'College Name': row['College Name'] || row['college name'] || row['COLLEGE NAME'] || row.College || row.college || row.COLLEGE || '',
       'Email': row.Email || row.email || row.EMAIL || '',
       'Phone': row.Phone || row.phone || row.PHONE || row.Mobile || row.mobile || row.MOBILE || '',
       'Course': row.Course || row.course || row.COURSE || row.Branch || row.branch || row.BRANCH || 'Not Specified',

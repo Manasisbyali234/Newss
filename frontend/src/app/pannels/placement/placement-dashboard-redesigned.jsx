@@ -71,7 +71,11 @@ function PlacementDashboardRedesigned() {
     }, [authLoading, userType, isAuthenticated]);
 
     useEffect(() => {
-        if (activeTab === 'students' && !viewingFileId) {
+        if (activeTab === 'overview') {
+            // Refresh data when switching to overview tab
+            fetchPlacementDetails();
+            fetchStudentData();
+        } else if (activeTab === 'students' && !viewingFileId) {
             fetchStudentData();
         }
     }, [activeTab, viewingFileId]);
@@ -168,7 +172,10 @@ function PlacementDashboardRedesigned() {
                 setUniversity('');
                 setUniversityOption('');
                 setBatch('');
-                await fetchPlacementDetails(); // Refresh placement data to show new file
+                await Promise.all([
+                    fetchPlacementDetails(), // Refresh placement data to show new file
+                    fetchStudentData() // Refresh student data
+                ]);
             } else {
                 showError(data.message || 'Upload failed');
             }
@@ -634,15 +641,32 @@ function PlacementDashboardRedesigned() {
                                         </div>
                                         <div className="activity-list">
                                             {placementData?.fileHistory && placementData.fileHistory.length > 0 ? (
-                                                placementData.fileHistory.slice(0, 5).map((file, index) => (
+                                                placementData.fileHistory
+                                                    .sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt)) // Sort by newest first
+                                                    .slice(0, 5)
+                                                    .map((file, index) => (
                                                     <div key={file._id || index} className="activity-item">
                                                         <div className="activity-content">
-                                                            <div className="batch-name">{file.customName || 'CSE'}</div>
+                                                            <div className="batch-name">{file.customName || file.fileName}</div>
                                                             <div className="file-name">{file.fileName}</div>
                                                             <div className="activity-metadata">
-                                                                <span><i className="fa fa-university"></i>{placementData?.collegeName || 'College Name'}</span>
+                                                                <span><i className="fa fa-university"></i>{file.university || placementData?.collegeName || 'University'}</span>
                                                                 <span><i className="fa fa-calendar"></i>{file.batch || 'Batch 2024'}</span>
-                                                                <span><i className="fa fa-clock-o"></i>{new Date(file.uploadedAt).toLocaleDateString()} {new Date(file.uploadedAt).toLocaleTimeString()}</span>
+                                                                <span><i className="fa fa-clock-o"></i>{new Date(file.uploadedAt).toLocaleDateString()}</span>
+                                                                <span className={`status-indicator ${
+                                                                    file.status === 'processed' ? 'status-processed' : 
+                                                                    file.status === 'approved' ? 'status-approved' : 
+                                                                    file.status === 'rejected' ? 'status-rejected' : 'status-pending'
+                                                                }`}>
+                                                                    <i className={`fa ${
+                                                                        file.status === 'processed' ? 'fa-check-circle' : 
+                                                                        file.status === 'approved' ? 'fa-thumbs-up' : 
+                                                                        file.status === 'rejected' ? 'fa-times-circle' : 'fa-clock-o'
+                                                                    }`}></i>
+                                                                    {file.status === 'processed' ? 'Processed' : 
+                                                                     file.status === 'approved' ? 'Approved' : 
+                                                                     file.status === 'rejected' ? 'Rejected' : 'Pending'}
+                                                                </span>
                                                             </div>
                                                         </div>
                                                         <div className="activity-action">
