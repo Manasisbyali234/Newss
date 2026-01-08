@@ -12,7 +12,7 @@ const jobSchema = new mongoose.Schema({
   companyDescription: { type: String }, // Company description (only for consultants)
   category: { type: String }, // Job category (IT, Sales, Marketing, etc.)
   typeOfEmployment: { type: String, enum: ['permanent', 'temporary', 'freelance', 'consultant', 'trainee'] }, // Type of employment
-  shift: { type: String, enum: ['day', 'night', 'rotational'] }, // Work shift
+  shift: { type: String, enum: ['day-shift', 'night-shift', 'rotational'] }, // Work shift
   workMode: { type: String, enum: ['work-from-home', 'remote', 'hybrid'] }, // Work mode
   salary: {
     min: { type: Number },

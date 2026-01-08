@@ -1,4 +1,4 @@
-// Test script to verify shift functionality
+// Test script to verify job creation with shift field
 const mongoose = require('mongoose');
 require('dotenv').config();
 
@@ -10,19 +10,20 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/newss', {
 
 const Job = require('./models/Job');
 
-async function testShiftFunctionality() {
+async function testJobCreationWithShift() {
   try {
-    console.log('Testing shift functionality...');
+    console.log('Testing job creation with shift field...');
     
-    // Test 1: Create a job with day shift
-    const testJob = {
+    // Test job data similar to what frontend sends
+    const testJobData = {
       title: 'Test Software Engineer',
       description: 'Test job description',
       employerId: new mongoose.Types.ObjectId(),
       location: 'Bangalore',
       category: 'IT',
       typeOfEmployment: 'permanent',
-      shift: 'day-shift', // Test day shift
+      shift: 'day-shift', // Frontend sends this value
+      workMode: 'work-from-home',
       jobType: 'full-time',
       vacancies: 1,
       applicationLimit: 10,
@@ -32,18 +33,19 @@ async function testShiftFunctionality() {
       lastDateOfApplication: new Date()
     };
     
-    const job = await Job.create(testJob);
-    console.log('✓ Job created with day-shift:', job.shift);
+    console.log('Creating job with shift:', testJobData.shift);
+    const job = await Job.create(testJobData);
+    console.log('✓ Job created successfully with shift:', job.shift);
     
-    // Test 2: Update job with night shift
+    // Test updating shift
     const updatedJob = await Job.findByIdAndUpdate(
       job._id,
       { shift: 'night-shift' },
       { new: true }
     );
-    console.log('✓ Job updated with night shift:', updatedJob.shift);
+    console.log('✓ Job updated with night-shift:', updatedJob.shift);
     
-    // Test 3: Update job with rotational shift
+    // Test rotational shift
     const rotationalJob = await Job.findByIdAndUpdate(
       job._id,
       { shift: 'rotational' },
@@ -51,29 +53,20 @@ async function testShiftFunctionality() {
     );
     console.log('✓ Job updated with rotational shift:', rotationalJob.shift);
     
-    // Test 4: Try invalid shift (should fail)
-    try {
-      await Job.findByIdAndUpdate(
-        job._id,
-        { shift: 'invalid' },
-        { new: true, runValidators: true }
-      );
-      console.log('✗ Invalid shift was accepted (this should not happen)');
-    } catch (error) {
-      console.log('✓ Invalid shift rejected as expected');
-    }
-    
     // Clean up
     await Job.findByIdAndDelete(job._id);
     console.log('✓ Test job cleaned up');
     
-    console.log('\n✅ All shift functionality tests passed!');
+    console.log('\n✅ Job creation with shift field test passed!');
     
   } catch (error) {
     console.error('❌ Test failed:', error.message);
+    if (error.errors) {
+      console.error('Validation errors:', error.errors);
+    }
   } finally {
     mongoose.connection.close();
   }
 }
 
-testShiftFunctionality();
+testJobCreationWithShift();

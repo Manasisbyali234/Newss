@@ -20,7 +20,9 @@ function PlacementDashboardRedesigned() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [selectedFileName, setSelectedFileName] = useState('');
     const [courseName, setCourseName] = useState('');
+    const [courseNameOption, setCourseNameOption] = useState('');
     const [university, setUniversity] = useState('');
+    const [universityOption, setUniversityOption] = useState('');
     const [batch, setBatch] = useState('');
     const [viewingFileId, setViewingFileId] = useState(null);
     const [viewingFileName, setViewingFileName] = useState(null);
@@ -162,7 +164,9 @@ function PlacementDashboardRedesigned() {
                 setSelectedFile(null);
                 setSelectedFileName('');
                 setCourseName('');
+                setCourseNameOption('');
                 setUniversity('');
+                setUniversityOption('');
                 setBatch('');
                 await fetchPlacementDetails(); // Refresh placement data to show new file
             } else {
@@ -736,24 +740,78 @@ function PlacementDashboardRedesigned() {
                                                 <div className="form-fields">
                                                     <div className="field-group">
                                                         <label className="field-label">Course Name</label>
-                                                        <input 
-                                                            type="text" 
+                                                        <select 
                                                             className="form-input"
-                                                            placeholder="Enter course name for this batch (optional)"
-                                                            value={courseName}
-                                                            onChange={(e) => setCourseName(e.target.value)}
-                                                        />
+                                                            value={courseNameOption}
+                                                            onChange={(e) => {
+                                                                setCourseNameOption(e.target.value);
+                                                                if (e.target.value !== 'other') {
+                                                                    setCourseName(e.target.value);
+                                                                } else {
+                                                                    setCourseName('');
+                                                                }
+                                                            }}
+                                                        >
+                                                            <option value="">Select course name</option>
+                                                            <option value="Computer Science Engineering">Computer Science Engineering</option>
+                                                            <option value="Information Technology">Information Technology</option>
+                                                            <option value="Electronics and Communication">Electronics and Communication</option>
+                                                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                                            <option value="Civil Engineering">Civil Engineering</option>
+                                                            <option value="Electrical Engineering">Electrical Engineering</option>
+                                                            <option value="Business Administration">Business Administration</option>
+                                                            <option value="Commerce">Commerce</option>
+                                                            <option value="Arts">Arts</option>
+                                                            <option value="other">Other</option>
+                                                        </select>
+                                                        {courseNameOption === 'other' && (
+                                                            <input 
+                                                                type="text" 
+                                                                className="form-input" 
+                                                                style={{marginTop: '8px'}}
+                                                                placeholder="Enter custom course name"
+                                                                value={courseName}
+                                                                onChange={(e) => setCourseName(e.target.value)}
+                                                            />
+                                                        )}
                                                     </div>
                                                     
                                                     <div className="field-group">
                                                         <label className="field-label">University</label>
-                                                        <input 
-                                                            type="text" 
+                                                        <select 
                                                             className="form-input"
-                                                            placeholder="Enter university name"
-                                                            value={university}
-                                                            onChange={(e) => setUniversity(e.target.value)}
-                                                        />
+                                                            value={universityOption}
+                                                            onChange={(e) => {
+                                                                setUniversityOption(e.target.value);
+                                                                if (e.target.value !== 'other') {
+                                                                    setUniversity(e.target.value);
+                                                                } else {
+                                                                    setUniversity('');
+                                                                }
+                                                            }}
+                                                        >
+                                                            <option value="">Select university</option>
+                                                            <option value="Delhi University">Delhi University</option>
+                                                            <option value="Jawaharlal Nehru University">Jawaharlal Nehru University</option>
+                                                            <option value="University of Mumbai">University of Mumbai</option>
+                                                            <option value="University of Calcutta">University of Calcutta</option>
+                                                            <option value="Anna University">Anna University</option>
+                                                            <option value="Bangalore University">Bangalore University</option>
+                                                            <option value="Pune University">Pune University</option>
+                                                            <option value="Osmania University">Osmania University</option>
+                                                            <option value="Andhra University">Andhra University</option>
+                                                            <option value="other">Other</option>
+                                                        </select>
+                                                        {universityOption === 'other' && (
+                                                            <input 
+                                                                type="text" 
+                                                                className="form-input" 
+                                                                style={{marginTop: '8px'}}
+                                                                placeholder="Enter custom university name"
+                                                                value={university}
+                                                                onChange={(e) => setUniversity(e.target.value)}
+                                                            />
+                                                        )}
                                                     </div>
                                                     
                                                     <div className="field-group">
