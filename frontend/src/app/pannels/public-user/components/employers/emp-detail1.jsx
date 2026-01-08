@@ -299,7 +299,7 @@ function EmployersDetail1Page() {
 													__html: employer.description || employer.companyDescription || 'No company description available.'
 												}} />
 
-												<h4 className="twm-s-title">Why Join Us</h4>
+												<h4 className="twm-s-title">About Company</h4>
 												<div dangerouslySetInnerHTML={{
 													__html: employer.whyJoinUs || 'No information available about why to join this company.'
 												}} />

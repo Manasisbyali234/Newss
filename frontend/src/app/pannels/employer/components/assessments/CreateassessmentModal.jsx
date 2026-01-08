@@ -151,8 +151,18 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 	};
 
 	const handleSubmit = (isDraft = false) => {
+		if (!designation.trim()) {
+			showWarning("Please enter a designation");
+			return;
+		}
+		
 		if (!title.trim()) {
-			showWarning("Please enter an assessment title");
+			showWarning("Please select an assessment title");
+			return;
+		}
+		
+		if (!description.trim()) {
+			showWarning("Please provide instructions for the assessment");
 			return;
 		}
 		
@@ -197,20 +207,10 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 			}
 		}
 		
-		// Show encryption notification for published assessments
-		if (!isDraft) {
-			setTimeout(() => {
-				showInfo(
-					"🔒 End-to-end encryption keeps your assessments secure between you and the candidates you choose.\n\n• No one outside can read, copy, or share them\n• 📝 Questions and answers are protected\n• 📄 Assessment content is encrypted\n• 💬 Candidate responses are secure\n• 📊 Results and evaluations are private\n• 🔒 All assessment data is protected",
-					12000
-				);
-			}, 500);
-		}
-		
 		onCreate({
 			id: editData?._id,
 			title,
-			type,
+			type: title, // Use title as type since Type field is hidden
 			designation,
 			timer: timeLimit,
 			description,
@@ -318,51 +318,8 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 				>
 					<div className="mb-3">
 						<label className="form-label small text-muted mb-2">
-							Assessment Title
+							Designation
 						</label>
-						<input
-							type="text"
-							className="form-control"
-							placeholder="e.g., JavaScript Fundamentals"
-							value={title}
-							onChange={(e) => setTitle(e.target.value)}
-						/>
-					</div>
-
-					<div className="row mb-3">
-						<div className="col-6">
-							<label className="form-label small text-muted mb-2">Type</label>
-							<select
-								className="form-select"
-								value={type}
-								onChange={(e) => setType(e.target.value)}
-							>
-								<option value="Aptitude Test">Aptitude Test</option>
-								<option value="Coding Assessment">Coding Assessment</option>
-								<option value="Case Study Round">Case Study Round</option>
-								<option value="Group Discussion">Group Discussion</option>
-								<option value="Managerial Round">Managerial Round</option>
-								<option value="Panel Interview">Panel Interview</option>
-								<option value="Final HR Round">Final HR Round</option>
-								<option value="Leadership Interview">Leadership Interview</option>
-							</select>
-						</div>
-						<div className="col-6">
-							<label className="form-label small text-muted mb-2">
-								Time Limit (min)
-							</label>
-							<input
-								type="number"
-								className="form-control"
-								value={timeLimit}
-								onChange={(e) => setTimeLimit(e.target.value)}
-								min="1"
-							/>
-						</div>
-					</div>
-
-					<div className="mb-3">
-						<label className="form-label small text-muted mb-2">Designation</label>
 						<input
 							type="text"
 							className="form-control"
@@ -370,6 +327,7 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 							value={designation}
 							onChange={(e) => setDesignation(e.target.value)}
 							list="designations"
+							required
 						/>
 						<datalist id="designations">
 							<option value="Software Engineer" />
@@ -403,16 +361,58 @@ export default function CreateAssessmentModal({ onClose, onCreate, editData = nu
 						</datalist>
 					</div>
 
+					<div className="mb-3">
+						<label className="form-label small text-muted mb-2">
+							Assessment Title
+						</label>
+						<select
+							className="form-select"
+							value={title}
+							onChange={(e) => setTitle(e.target.value)}
+							required
+						>
+							<option value="">Select Assessment Title</option>
+							<option value="Aptitude Test">Aptitude Test</option>
+							<option value="Coding Assessment">Coding Assessment</option>
+							<option value="Case Study Round">Case Study Round</option>
+							<option value="Group Discussion">Group Discussion</option>
+							<option value="Managerial Round">Managerial Round</option>
+							<option value="Panel Interview">Panel Interview</option>
+							<option value="Final HR Round">Final HR Round</option>
+							<option value="Leadership Interview">Leadership Interview</option>
+							<option value="Technical Interview">Technical Interview</option>
+							<option value="Behavioral Interview">Behavioral Interview</option>
+							<option value="Skills Assessment">Skills Assessment</option>
+						</select>
+					</div>
+
+					<div className="row mb-3">
+						<div className="col-6">
+							<label className="form-label small text-muted mb-2">
+								Time Limit (min)
+							</label>
+							<input
+								type="number"
+								className="form-control"
+								value={timeLimit}
+								onChange={(e) => setTimeLimit(e.target.value)}
+								min="1"
+								required
+							/>
+						</div>
+					</div>
+
 					<div className="mb-4">
 						<label className="form-label small text-muted mb-2">
-							Description
+							Instructions
 						</label>
 						<textarea
 							className="form-control"
-							placeholder="Describe what this assessment covers..."
-							rows={2}
+							placeholder="Provide instructions for this assessment..."
+							rows={3}
 							value={description}
 							onChange={(e) => setDescription(e.target.value)}
+							required
 						/>
 					</div>
 

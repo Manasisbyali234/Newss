@@ -15,24 +15,23 @@ export default function AssessmentCard({ data, onDelete, onEdit, index }) {
 	return (
 		<div className="card h-100 shadow-sm">
 			<div className="card-body">
-				{/* Designation Name - Prominently displayed at top */}
+				{/* Serial Number - First */}
+				<div className="mb-2">
+					<h6 className="fw-bold mb-1" style={{fontSize: '14px'}}>
+						<span className="text-primary">#{data.serialNumber || (index + 1)}</span>
+					</h6>
+				</div>
+				
+				{/* Designation - Second */}
 				{data.designation && (
 					<div className="mb-2">
 						<h6 className="fw-bold mb-1" style={{fontSize: '14px'}}>
-							<span style={{color: '#8B7355'}}>Designation Name:</span> <span className="text-primary">{data.designation}</span>
+							<span style={{color: '#8B7355'}}>Designation:</span> <span className="text-primary">{data.designation}</span>
 						</h6>
 					</div>
 				)}
 				
-				{/* Serial Number and Created Date */}
-				<div className="d-flex justify-content-between align-items-center mb-2">
-					<small className="text-muted fw-bold">#{data.serialNumber || (index + 1)}</small>
-					<small className="text-muted">
-						<i className="fa fa-calendar me-1"></i>
-						{formatDate(data.createdAt)}
-					</small>
-				</div>
-				
+				{/* Assessment Title - Third */}
 				<div className="d-flex justify-content-between align-items-start mb-2">
 					<h5 className="card-title mb-0">{data.title}</h5>
 					<div className="d-flex flex-column align-items-end gap-1">
@@ -40,6 +39,14 @@ export default function AssessmentCard({ data, onDelete, onEdit, index }) {
 							{data.type}
 						</span>
 					</div>
+				</div>
+				
+				{/* Created Date */}
+				<div className="mb-2">
+					<small className="text-muted">
+						<i className="fa fa-calendar me-1"></i>
+						{formatDate(data.createdAt)}
+					</small>
 				</div>
 				{data.description && (
 					<p className="card-text text-muted small">{data.description}</p>

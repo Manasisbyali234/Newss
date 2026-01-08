@@ -4,12 +4,28 @@ import CreateAssessmentModal from "../assessments/CreateassessmentModal";
 import axios from "axios";
 import './assessment-dashboard.css';
 
-import { showPopup, showSuccess, showError, showWarning, showInfo } from '../../../../../utils/popupNotification';
+import { showPopup, showSuccess, showError, showWarning, showInfo, showConfirmation } from '../../../../../utils/popupNotification';
 export default function AssessmentDashboard() {
 	const [assessments, setAssessments] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const [editingAssessment, setEditingAssessment] = useState(null);
+
+	const handleCreateAssessmentClick = () => {
+		showConfirmation(
+			'🔒 End-to-end encryption keeps your assessments secure between you and the candidates you choose.\n\n' +
+			'🚫 Not Even Tale-Global can read or copy the content\n' +
+			'👥 No one outside can read, copy, or share them\n' +
+			'❓ Questions and answers are protected\n' +
+			'🔐 Assessment content is encrypted\n' +
+			'🛡️ Candidate responses are secure\n' +
+			'🔒 Results and evaluations are private\n' +
+			'🛡️ All assessment data is protected',
+			() => setShowModal(true),
+			null,
+			'info'
+		);
+	};
 
 	useEffect(() => {
 		fetchAssessments();
@@ -130,7 +146,7 @@ export default function AssessmentDashboard() {
 								<span className="badge bg-light text-dark px-3 py-2" style={{fontSize: '14px'}}>
 									Number of Cards: {assessments.length}
 								</span>
-								<button className="btn btn-dark" onClick={() => setShowModal(true)}>
+								<button className="btn btn-dark" onClick={handleCreateAssessmentClick}>
 									<i className="fa fa-plus me-2"></i>Create Assessment
 								</button>
 							</div>

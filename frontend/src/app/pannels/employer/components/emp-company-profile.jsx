@@ -1369,7 +1369,7 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-md-12">
                                 <div className="form-group">
-                                    <label><Briefcase size={16} className="me-2" /> About Our Company</label>
+                                    <label><Briefcase size={16} className="me-2" /> About Company</label>
                                     <RichTextEditor
                                         value={formData.whyJoinUs}
                                         onChange={(value) => handleInputChange('whyJoinUs', value)}
