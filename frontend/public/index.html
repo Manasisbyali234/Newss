@@ -117,33 +117,12 @@
   <link rel="stylesheet" type="text/css" href="%PUBLIC_URL%/image-modal-header-fix.css">
 
   <!-- POPUP HEADER Z-INDEX FIX - Force header behind popup notifications -->
-  <link rel="stylesheet" type="text/css" href="%PUBLIC_URL%/../src/popup-header-fix.css">
+  <link rel="stylesheet" type="text/css" href="%PUBLIC_URL%/popup-header-fix.css">
 
-  <!-- Tailwind CSS (CDN) for noukary-style homepage; preflight disabled to avoid conflicts -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tailwind CSS removed - install locally for production -->
   <script>
     // Configure Tailwind: disable preflight to prevent base resets clashing with existing CSS
-    tailwind.config = {
-      corePlugins: { preflight: false },
-      theme: {
-        extend: {
-          colors: {
-            orange: {
-              50: '#fff7ed',
-              100: '#ffedd5',
-              200: '#fed7aa',
-              300: '#fdba74',
-              400: '#fb923c',
-              500: '#f97316',
-              600: '#ea580c',
-              700: '#c2410c',
-              800: '#9a3412',
-              900: '#7c2d12',
-            }
-          }
-        }
-      }
-    };
+    // Note: Install Tailwind CSS locally for production use
     
     // Force light mode immediately - iOS Safari compatible
     (function() {
@@ -164,25 +143,6 @@
             };
           }
           return originalMatchMedia.call(this, query);
-        };
-      }
-      
-      // iOS Safari specific fixes
-      document.addEventListener('DOMContentLoaded', function() {
-        // Prevent iOS Safari zoom on input focus
-        const inputs = document.querySelectorAll('input, select, textarea');
-        inputs.forEach(input => {
-          input.addEventListener('focus', function() {
-            if (window.innerWidth < 768) {
-              document.querySelector('meta[name=viewport]').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-            }
-          });
-          input.addEventListener('blur', function() {
-            document.querySelector('meta[name=viewport]').setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no');
-          });
-        });
-      });
-    })();ia(query);
         };
       }
       
@@ -210,6 +170,22 @@
           document.documentElement.classList.add('light-mode-forced');
         }
       }, 100);
+      
+      // iOS Safari specific fixes
+      document.addEventListener('DOMContentLoaded', function() {
+        // Prevent iOS Safari zoom on input focus
+        const inputs = document.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+          input.addEventListener('focus', function() {
+            if (window.innerWidth < 768) {
+              document.querySelector('meta[name=viewport]').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+            }
+          });
+          input.addEventListener('blur', function() {
+            document.querySelector('meta[name=viewport]').setAttribute('content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no');
+          });
+        });
+      });
     })();
   </script>
 </head>

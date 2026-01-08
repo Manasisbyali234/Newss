@@ -30,17 +30,24 @@ export default function EmpPostedJobs() {
         } else if (statusFilter === 'inactive') {
             next = jobs.filter(job => job.status !== 'active');
         }
-        // Then filter by search text (title or location)
+        // Then filter by search text (title, location, and company name for consultants)
         const query = (searchText || '').trim().toLowerCase();
         if (query) {
             next = next.filter(job => {
                 const title = (job.title || '').toLowerCase();
                 const location = (job.location || '').toLowerCase();
+                const companyName = (job.companyName || '').toLowerCase();
+                
+                // For consultants, search in title, location, and company name
+                if (employerType === 'consultant') {
+                    return title.includes(query) || location.includes(query) || companyName.includes(query);
+                }
+                // For companies, search only in title and location
                 return title.includes(query) || location.includes(query);
             });
         }
         setFilteredJobs(next);
-    }, [jobs, statusFilter, searchText]);
+    }, [jobs, statusFilter, searchText, employerType]);
 
     const fetchJobs = async () => {
         try {
@@ -65,9 +72,9 @@ export default function EmpPostedJobs() {
             
             if (response.ok) {
                 const data = await response.json();
-                setJobs(data.jobs);
-                setFilteredJobs(data.jobs);
-                fetchApplicationCounts(data.jobs);
+                setJobs(data.jobs || []);
+                setFilteredJobs(data.jobs || []);
+                fetchApplicationCounts(data.jobs || []);
             }
         } catch (error) {
             
@@ -228,7 +235,7 @@ export default function EmpPostedJobs() {
 							<input
 								type="text"
 								className="form-control ps-5"
-								placeholder="Search by title or location..."
+								placeholder={employerType === 'consultant' ? "Search by title, location, or company name..." : "Search by title or location..."}
 								value={searchText}
 								onChange={(e) => setSearchText(e.target.value)}
 								style={{paddingLeft: '40px'}}

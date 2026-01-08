@@ -31,6 +31,8 @@ import "./mobile-responsive-fixes.css";
 import "./badge-text-orange.css";
 // HEADER Z-INDEX FIX - Fix header appearing above popup notifications
 import "./header-zindex-fix.css";
+// POPUP HEADER FIX - Additional popup header z-index fixes
+import "./popup-header-fix.css";
 
 
 function App() {

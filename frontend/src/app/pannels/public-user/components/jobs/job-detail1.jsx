@@ -274,8 +274,8 @@ function JobDetail1Page() {
 
                                                 <div className="twm-mid-content">
                                                     <div className="twm-media">
-                                                        {job.employerProfile?.logo ? (
-                                                            <img src={job.employerProfile.logo} alt="Company Logo" />
+                                                        {(job.companyLogo || job.employerProfile?.logo) ? (
+                                                            <img src={job.companyLogo || job.employerProfile.logo} alt="Company Logo" />
                                                         ) : (
                                                             <JobZImage src="images/jobs-company/pic1.jpg" alt="#" />
                                                         )}
@@ -396,51 +396,56 @@ function JobDetail1Page() {
                                             )}
                                         </div>
                                         
-                                        {job?.transportation && (job.transportation.oneWay || job.transportation.twoWay || job.transportation.noCab) && (
-                                            <div style={{marginTop: '25px'}}>
-                                                <h5 style={{color: '#2c3e50', marginBottom: '15px', fontSize: '18px', fontWeight: '600'}}>
-                                                    Transportation
-                                                </h5>
-                                                <p style={{color: '#495057', fontSize: '16px', lineHeight: '1.6'}}>
-                                                    {[
-                                                        job.transportation.oneWay && 'One-way Cab',
-                                                        job.transportation.twoWay && 'Two-way Cab',
-                                                        job.transportation.noCab && 'No Cab Facility'
-                                                    ].filter(Boolean).join(', ')}
-                                                </p>
+                                        {(job?.transportation && (job.transportation.oneWay || job.transportation.twoWay || job.transportation.noCab)) || job?.workMode ? (
+                                            <div style={{marginTop: '25px', display: 'flex', gap: '30px', flexWrap: 'wrap'}}>
+                                                {job?.transportation && (job.transportation.oneWay || job.transportation.twoWay || job.transportation.noCab) && (
+                                                    <div style={{flex: '1', minWidth: '200px'}}>
+                                                        <h5 style={{color: '#2c3e50', marginBottom: '15px', fontSize: '18px', fontWeight: '600'}}>
+                                                            Transportation
+                                                        </h5>
+                                                        <p style={{color: '#495057', fontSize: '16px', lineHeight: '1.6'}}>
+                                                            {[
+                                                                job.transportation.oneWay && 'One-way Cab',
+                                                                job.transportation.twoWay && 'Two-way Cab',
+                                                                job.transportation.noCab && 'No Cab Facility'
+                                                            ].filter(Boolean).join(', ')}
+                                                        </p>
+                                                    </div>
+                                                )}
+                                                
+                                                {job?.workMode && (
+                                                    <div style={{flex: '1', minWidth: '200px'}}>
+                                                        <h5 style={{color: '#2c3e50', marginBottom: '15px', fontSize: '18px', fontWeight: '600'}}>
+                                                            <i className="feather-home" style={{marginRight: '8px', color: '#ff6b35'}}></i>
+                                                            Work Mode
+                                                        </h5>
+                                                        <p style={{color: '#495057', fontSize: '16px', lineHeight: '1.6', textTransform: 'capitalize'}}>
+                                                            {job.workMode === 'work-from-home' ? 'Work from Home' : 
+                                                             job.workMode === 'remote' ? 'Remote' : 
+                                                             job.workMode === 'hybrid' ? 'Hybrid' : job.workMode}
+                                                        </p>
+                                                    </div>
+                                                )}
                                             </div>
-                                        )}
+                                        ) : null}
                                     </div>
 
                                     {job.employerId?.employerType === 'consultant' && job.employerProfile && (
-                                        <div style={{marginBottom: '40px'}}>
-                                            <h4 className="twm-s-title" style={{color: '#2c3e50', marginBottom: '20px', fontSize: '24px', fontWeight: '600'}}>
-                                                <i className="feather-users" style={{marginRight: '10px', color: '#3498db'}}></i>
-                                                About the Consultancy
-                                            </h4>
-                                            <div className="row">
-                                                <div className="col-md-3">
-                                                    {job.employerProfile.logo && (
-                                                        <img 
-                                                            src={job.employerProfile.logo} 
-                                                            alt="Consultant Logo" 
-                                                            style={{width: '80px', height: '80px', objectFit: 'contain', borderRadius: '8px'}}
-                                                            loading="lazy"
-                                                        />
-                                                    )}
-                                                </div>
-                                                <div className="col-md-9">
-                                                    <h5 style={{color: '#2c3e50', fontSize: '18px', fontWeight: '600', marginBottom: '15px'}}>{job.employerId?.companyName || 'Consultant'}</h5>
-                                                    {job.employerProfile.description && <div style={{lineHeight: '1.8', fontSize: '16px', color: '#495057'}} dangerouslySetInnerHTML={{__html: job.employerProfile.description}} />}
-                                                    {job.employerProfile.website && (
-                                                        <p style={{fontSize: '16px', color: '#495057'}}><strong>Website:</strong> <a href={job.employerProfile.website} target="_blank" rel="noopener noreferrer">{job.employerProfile.website}</a></p>
-                                                    )}
-                                                    {job.employerProfile.location && (
-                                                        <p style={{fontSize: '16px', color: '#495057'}}><strong>Location:</strong> {job.employerProfile.location}</p>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <>
+                                            <h4 className="twm-s-title">About the Consultancy:</h4>
+                                            <ul className="description-list-2">
+                                                <li><strong>Company:</strong> {job.employerId?.companyName || 'Consultant'}</li>
+                                                {job.employerProfile.description && (
+                                                    <li><strong>Description:</strong> <div dangerouslySetInnerHTML={{__html: job.employerProfile.description}} /></li>
+                                                )}
+                                                {job.employerProfile.website && (
+                                                    <li><strong>Website:</strong> <a href={job.employerProfile.website} target="_blank" rel="noopener noreferrer">{job.employerProfile.website}</a></li>
+                                                )}
+                                                {job.employerProfile.location && (
+                                                    <li><strong>Location:</strong> {job.employerProfile.location}</li>
+                                                )}
+                                            </ul>
+                                        </>
                                     )}
 
 

@@ -1,5 +1,10 @@
 /* Job Detail Spacing Improvements */
 
+/* Add spacing after breadcrumb */
+.wt-breadcrumb {
+    margin-bottom: 30px;
+}
+
 /* Add spacing after colons in job details */
 .job-details-grid .detail-item h5::after {
     content: " ";

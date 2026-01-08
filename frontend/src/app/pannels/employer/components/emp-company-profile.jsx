@@ -1304,7 +1304,7 @@ function EmpCompanyProfilePage() {
 
                             <div className="col-md-12">
                                 <div className="form-group">
-                                    <label className="required-field"><FileText size={16} className="me-2" /> Description</label>
+                                    <label className="required-field"><FileText size={16} className="me-2" /> Why join us</label>
                                     <RichTextEditor
                                         value={formData.description || 'We are a dynamic company focused on delivering excellent services and creating opportunities for talented professionals.'}
                                         onChange={(value) => handleInputChange('description', value)}
@@ -2066,8 +2066,6 @@ function EmpCompanyProfilePage() {
                                             <p className="text-info small">
                                                 <strong>Tip:</strong> Large files are uploaded in batches of 3 for better reliability.
                                             </p>
-                                            <p className="text-info small">
-                                                <i className></i></p>
                                             {formData.gallery?.length >= 10 && (
                                                 <p className="text-warning small">
                                                     <i className="fas fa-exclamation-triangle me-1"></i>

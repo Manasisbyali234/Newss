@@ -84,7 +84,7 @@ const HomeJobCard = ({ job }) => {
     const vacancies = deriveVacancies(job);
     const postedBy = normalizePostedBy(job);
     const companyName = job?.companyName || job?.employerProfile?.companyName || "Company";
-    const logo = job?.employerProfile?.logo;
+    const logo = job?.companyLogo || job?.employerProfile?.logo;
     const placeholderInitial = companyName?.charAt(0)?.toUpperCase() || "?";
 
     return (

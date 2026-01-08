@@ -116,8 +116,8 @@ function HomeJobsList() {
                         <li key={job._id}>
                             <div className="twm-jobs-list-style1 mb-5">
                                 <div className="twm-media">
-                                    {job.employerProfile?.logo ? (
-                                        <img src={job.employerProfile.logo} alt="Company Logo" style={{width: '60px', height: '60px', objectFit: 'cover'}} />
+                                    {(job.companyLogo || job.employerProfile?.logo) ? (
+                                        <img src={job.companyLogo || job.employerProfile.logo} alt="Company Logo" style={{width: '60px', height: '60px', objectFit: 'cover'}} />
                                     ) : (
                                         <JobZImage src="images/jobs-company/pic1.jpg" alt="#" />
                                     )}
@@ -127,8 +127,8 @@ function HomeJobsList() {
                                         <h4>{job.title}<span className="twm-job-post-duration">/ {formatDate(job.createdAt)}</span></h4>
                                     </NavLink>
                                     <p className="twm-job-address">{job.location}</p>
-                                    {job.companyName && (
-                                        <a href="#" className="twm-job-websites site-text-primary">{job.companyName}</a>
+                                    {(job.companyName || job.employerId?.companyName) && (
+                                        <a href="#" className="twm-job-websites site-text-primary">{job.companyName || job.employerId?.companyName}</a>
                                     )}
                                     <div style={{fontSize: '12px', color: '#888', marginTop: '4px'}}>
                                         Posted by: <strong>{job.employerId?.employerType === 'consultant' ? 'Consultancy' : 'Company'}</strong>

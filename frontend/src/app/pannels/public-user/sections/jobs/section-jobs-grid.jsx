@@ -210,7 +210,7 @@ const SectionJobsGrid = memo(({ filters, onTotalChange }) => {
                     <div className="job-card-header">
                         <div className="job-card-left">
                             <div className="company-logo">
-                                {job.employerProfile?.logo ? (
+                                {(job.companyLogo || job.employerProfile?.logo) ? (
                                     <img
                                         src={
                                             job.companyLogo ||
@@ -222,7 +222,7 @@ const SectionJobsGrid = memo(({ filters, onTotalChange }) => {
                                     />
                                 ) : (
                                     <div className="logo-placeholder">
-                                        {(job.employerId?.companyName || job.companyName || "C").charAt(0).toUpperCase()}
+                                        {(job.companyName || job.employerId?.companyName || "C").charAt(0).toUpperCase()}
                                     </div>
                                 )}
                             </div>
@@ -272,7 +272,7 @@ const SectionJobsGrid = memo(({ filters, onTotalChange }) => {
                         <div className="company-info">
                             <div className="posted-by-label">Posted by:</div>
                             <div className="company-name">
-                                {job.employerId?.companyName || job.companyName || "Company"}
+                                {job.companyName || job.employerId?.companyName || "Company"}
                             </div>
                             <div className="poster-type">
                                 {job.postedBy || (job.employerId?.employerType === "consultant" ? "Consultancy" : "Company")}

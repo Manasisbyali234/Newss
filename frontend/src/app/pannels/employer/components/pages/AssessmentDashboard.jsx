@@ -7,9 +7,11 @@ import './assessment-dashboard.css';
 import { showPopup, showSuccess, showError, showWarning, showInfo, showConfirmation } from '../../../../../utils/popupNotification';
 export default function AssessmentDashboard() {
 	const [assessments, setAssessments] = useState([]);
+	const [filteredAssessments, setFilteredAssessments] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const [editingAssessment, setEditingAssessment] = useState(null);
+	const [searchTerm, setSearchTerm] = useState('');
 
 	const handleCreateAssessmentClick = () => {
 		showConfirmation(
@@ -39,6 +41,7 @@ export default function AssessmentDashboard() {
 			});
 			if (response.data.success) {
 				setAssessments(response.data.assessments);
+				setFilteredAssessments(response.data.assessments);
 			}
 		} catch (error) {
 			console.error('Error fetching assessments:', error);
@@ -57,7 +60,9 @@ export default function AssessmentDashboard() {
 					headers: { Authorization: `Bearer ${token}` }
 				});
 				if (response.data.success) {
-					setAssessments((prev) => prev.map(a => a._id === assessmentData.id ? response.data.assessment : a));
+					const updatedAssessments = assessments.map(a => a._id === assessmentData.id ? response.data.assessment : a);
+					setAssessments(updatedAssessments);
+					setFilteredAssessments(updatedAssessments);
 					setShowModal(false);
 					setEditingAssessment(null);
 					showSuccess('Assessment updated successfully!');
@@ -68,7 +73,9 @@ export default function AssessmentDashboard() {
 					headers: { Authorization: `Bearer ${token}` }
 				});
 				if (response.data.success) {
-					setAssessments((prev) => [response.data.assessment, ...prev]);
+					const newAssessments = [response.data.assessment, ...assessments];
+					setAssessments(newAssessments);
+					setFilteredAssessments(newAssessments);
 					setShowModal(false);
 					showSuccess('Assessment created successfully!');
 				}
@@ -100,11 +107,26 @@ export default function AssessmentDashboard() {
 			await axios.delete(`http://localhost:5000/api/employer/assessments/${id}`, {
 				headers: { Authorization: `Bearer ${token}` }
 			});
-			setAssessments(prev => prev.filter(a => a._id !== id));
+			const updatedAssessments = assessments.filter(a => a._id !== id);
+			setAssessments(updatedAssessments);
+			setFilteredAssessments(updatedAssessments);
 			showSuccess('Assessment deleted successfully');
 		} catch (error) {
 			console.error('Error deleting assessment:', error);
 			showError('Failed to delete assessment');
+		}
+	};
+
+	// Handle dropdown selection
+	const handleTitleSelect = (title) => {
+		setSearchTerm(title);
+		if (title) {
+			const filtered = assessments.filter(assessment => 
+				assessment.title?.toLowerCase().includes(title.toLowerCase())
+			);
+			setFilteredAssessments(filtered);
+		} else {
+			setFilteredAssessments(assessments);
 		}
 	};
 
@@ -144,13 +166,32 @@ export default function AssessmentDashboard() {
 							</div>
 							<div className="d-flex align-items-center gap-3">
 								<span className="badge bg-light text-dark px-3 py-2" style={{fontSize: '14px'}}>
-									Number of Cards: {assessments.length}
+									Showing: {filteredAssessments.length} of {assessments.length}
 								</span>
 								<button className="btn btn-dark" onClick={handleCreateAssessmentClick}>
 									<i className="fa fa-plus me-2"></i>Create Assessment
 								</button>
 							</div>
 						</div>
+				</div>
+			</div>
+
+			{/* Search Bar */}
+			<div style={{ padding: '0 2rem 1rem 2rem' }}>
+				<div className="d-flex gap-3 align-items-center" style={{ background: 'white', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)' }}>
+					<select 
+						className="form-select" 
+						style={{ width: '200px', color: '#007bff' }}
+						onChange={(e) => handleTitleSelect(e.target.value)}
+						value={searchTerm}
+					>
+						<option value="" style={{ color: '#6c757d' }}>Select Assessment</option>
+						{assessments.map(assessment => (
+							<option key={assessment._id} value={assessment.title} style={{ color: '#28a745' }}>
+								{assessment.title}
+							</option>
+						))}
+					</select>
 				</div>
 			</div>
 
@@ -162,9 +203,23 @@ export default function AssessmentDashboard() {
 							<i className="fa fa-clipboard-list" style={{fontSize: '64px', color: '#ccc'}}></i>
 							<p className="mt-3 text-muted">No assessments yet. Create one to get started.</p>
 						</div>
+					) : filteredAssessments.length === 0 ? (
+						<div className="text-center py-5">
+							<i className="fa fa-search" style={{fontSize: '64px', color: '#ccc'}}></i>
+							<p className="mt-3 text-muted">No assessments match your search criteria.</p>
+							<button 
+								className="btn btn-outline-primary mt-2"
+								onClick={() => {
+									setSearchTerm('');
+									setFilteredAssessments(assessments);
+								}}
+							>
+								Clear Filters
+							</button>
+						</div>
 					) : (
 						<div className="row">
-							{assessments.map((assessment, index) => (
+							{filteredAssessments.map((assessment, index) => (
 								<div key={assessment._id} className="col-md-6 mb-4">
 									<AssessmentCard 
 										data={assessment} 
